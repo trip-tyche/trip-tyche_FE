@@ -1,0 +1,3 @@
+interface Type {
+  type: string;
+}
