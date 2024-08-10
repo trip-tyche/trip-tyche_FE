@@ -1,6 +1,6 @@
 name: 🎨 Design
 description: 디자인(UI 및 레이아웃) 추가/수정/삭제가 필요한가요?
-title: '[Design]] '
+title: '[design]] '
 labels: ['🎨 Design']
 body:
   - type: textarea

@@ -1,6 +1,6 @@
 name: 📃 Docs
 description: 문서 추가/수정/삭제가 필요한가요?
-title: '[Docs] '
+title: '[docs] '
 labels: ['📃 Docs']
 body:
   - type: textarea
