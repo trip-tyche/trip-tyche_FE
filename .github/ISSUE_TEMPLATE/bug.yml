@@ -17,7 +17,7 @@ body:
       description: 버그를 발견한 상황을 단계별로 작성해 주세요.
     validations:
       required: true
-   - type: textarea
+  - type: textarea
     id: bug-action
     attributes:
       label: 📀 예상 동작
