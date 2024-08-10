@@ -1,0 +1,19 @@
+name: ⚙️ Setting
+description: 새로운 세팅을 하시나요?
+title: '[Setting] '
+labels: ['⚙️ Setting']
+body:
+  - type: textarea
+    id: setting-description
+    attributes:
+      label: ⚙️ 설명
+      description: 세팅에 대한 설명을 작성해 주세요.
+    validations:
+      required: true
+  - type: textarea
+    id: setting-more
+    attributes:
+      label: 📝 메모
+      description: 더 하고 싶은 말이 있다면 작성해 주세요.
+    validations:
+      required: false
