@@ -1,5 +1,5 @@
 import React from 'react';
 
 export default function TripEdit() {
-  return <div>TripEdit</div>;
+  return <h1>TripEdit</h1>;
 }

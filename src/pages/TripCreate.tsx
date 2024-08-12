@@ -1,3 +1,3 @@
 export default function TripCreate() {
-  return <div>TripCreate</div>;
+  return <h1>TripCreate</h1>;
 }

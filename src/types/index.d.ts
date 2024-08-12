@@ -1,3 +1,0 @@
-interface Type {
-  type: string;
-}

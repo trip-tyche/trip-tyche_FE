@@ -1,3 +1,3 @@
 export default function TripList() {
-  return <div>TripList</div>;
+  return <h1>TripList</h1>;
 }
