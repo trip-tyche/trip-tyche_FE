@@ -1,4 +1,4 @@
-import { useStore } from '../store/store';
+import useStore from '../store/store';
 import { BearState } from '../types/store';
 
 export default function Home() {
