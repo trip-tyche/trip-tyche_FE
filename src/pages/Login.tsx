@@ -1,18 +1,25 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import useIsLoginStore from '../store/loginStore';
-import { LoginState } from '../types/isLoginStore';
+import { LoginState } from '../types/loginStore';
 import '../styles/Login.css';
+import KakaoButton from '../components/common/Button/KakaoButton';
+import SmallButton from '../components/common/Button/SmallButton';
+import LargeButton from '../components/common/Button/LargeButton';
+import Button from '../components/common/Button/Button';
 
 export default function Login() {
   const setIsLogin = useIsLoginStore((state: LoginState) => state.setIsLogin);
   setIsLogin(false);
 
-  const REST_API_KEY = '111111111';
-  const REDIRECT_URI = '/kakao/callback';
-  const link = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+  const navigate = useNavigate();
 
-  const loginHandler = () => {
-    window.location.href = link;
+  // const REST_API_KEY = '111111111';
+  // const REDIRECT_URI = '/kakao/callback';
+  // const link: string = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
+  const handleLogin = (): void => {
+    // window.location.href = link;
+    navigate('/home');
   };
 
   return (
@@ -41,12 +48,11 @@ export default function Login() {
         <img src='../../public/earth.png' alt='earth' className='earth' />
       </div>
       <div className='button-container'>
-        <Link to={'/home'} className='google-btn'>
-          구글 로그인
-        </Link>
-        <button className='kakao-btn' type='button' onClick={loginHandler}>
-          카카오 로그인
-        </button>
+        {/* <LargeButton text='로그아웃' theme='pri' /> */}
+        {/* <LargeButton text='최소' theme='sec' /> */}
+        <Button confirmText='로그아웃' cancelText='취소' size='lg' />
+        <Button confirmText='로그아웃' cancelText='취소' size='sm' />
+        <KakaoButton handleLogin={handleLogin} />
       </div>
     </div>
   );

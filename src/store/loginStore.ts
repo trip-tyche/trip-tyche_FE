@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { LoginState } from '../types/isLoginStore';
+import { LoginState } from '../types/loginStore';
 
 const useIsLoginStore = create<LoginState>()(
   devtools(
