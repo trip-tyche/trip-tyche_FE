@@ -11,45 +11,45 @@ import MusicVideo from '../pages/MusicVideo';
 import Redirection from '../pages/Redirection';
 
 export const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Root />,
-    errorElement: <PageNotFound />,
-    children: [
-      {
-        index: true,
-        element: <Login />,
-      },
-      {
-        path: 'home',
-        element: <Home />,
-      },
-      {
-        path: 'trip-list',
-        element: <TripList />,
+    {
+        path: '/',
+        element: <Root />,
+        errorElement: <PageNotFound />,
         children: [
-          {
-            path: 'timeline/:tripId',
-            element: <TimeLine />,
-          },
-          {
-            path: 'timeline/:tripId/musicvideo/:pointId',
-            element: <MusicVideo />,
-          },
+            {
+                index: true,
+                element: <Login />,
+            },
+            {
+                path: 'home',
+                element: <Home />,
+            },
+            {
+                path: 'trip-list',
+                element: <TripList />,
+                children: [
+                    {
+                        path: 'timeline/:tripId',
+                        element: <TimeLine />,
+                    },
+                    {
+                        path: 'timeline/:tripId/musicvideo/:pointId',
+                        element: <MusicVideo />,
+                    },
+                ],
+            },
+            {
+                path: 'trip-create',
+                element: <TripCreate />,
+            },
+            {
+                path: '/my-page',
+                element: <MyPage />,
+            },
+            {
+                path: '/kakao/callback',
+                element: <Redirection />,
+            },
         ],
-      },
-      {
-        path: 'trip-create',
-        element: <TripCreate />,
-      },
-      {
-        path: '/my-page',
-        element: <MyPage />,
-      },
-      {
-        path: '/kakao/callback',
-        element: <Redirection />,
-      },
-    ],
-  },
+    },
 ]);
