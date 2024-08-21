@@ -1,0 +1,34 @@
+.nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 30px;
+  display: flex;
+}
+
+.nav a {
+  font-size: 18px;
+  flex: 1;
+  border: 1px solid #ccc;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  background-color: #fff;
+}
+
+.nav a:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+.nav a:first-child {
+  border-radius: 10px 0 0 10px;
+}
+
+.nav a:last-child {
+  border-radius: 0 10px 10px 0;
+}

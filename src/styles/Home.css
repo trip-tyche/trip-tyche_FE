@@ -1,0 +1,61 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-character {
+  width: 55px;
+  z-index: 1;
+}
+
+.home-earth {
+  width: 380px;
+  margin-top: -80px;
+}
+
+.home-img-container {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-svg-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.home-trips {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 15px 20px;
+  width: 85%;
+  margin-top: 10px;
+  border-radius: 40px;
+}
+
+.home-trips p {
+  font-size: 24px;
+  font-weight: bold;
+}
+.home-trips span {
+  font-size: 40px;
+  font-weight: bold;
+}
+.home-trips div.home-flags {
+  width: 60%;
+  text-align: center;
+  font-size: 14px;
+}
+
+.home-description {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: -20px;
+}

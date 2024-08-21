@@ -1,0 +1,20 @@
+.create-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 68px;
+  border-bottom: 1px solid #ccc;
+  font-size: 28px;
+  font-weight: bold;
+  width: 100%;
+}
+
+.create-container {
+  position: relative;
+}
+.create-container svg {
+  position: absolute;
+  top: 14px;
+  left: 10px;
+  width: 40px;
+}
