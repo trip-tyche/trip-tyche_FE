@@ -22,12 +22,12 @@ const SmallButtonStyle = (theme: 'pri' | 'sec') => css`
     height: 40px;
     transition: background-color 0.3s ease;
 
-    color: ${theme === 'pri' ? '#333' : '#fff'};
-    background-color: ${theme === 'pri' ? '#fff' : '#333'};
+    color: ${theme === 'pri' ? '#000' : '#000'};
+    background-color: ${theme === 'pri' ? '#000' : '#333'};
 
     &:hover {
-        color: ${theme === 'pri' ? '#fff' : '#333'};
-        background-color: ${theme === 'pri' ? '#333' : '#fff'};
+        color: ${theme === 'pri' ? '#000' : '#000'};
+        background-color: ${theme === 'pri' ? '#000' : '#fff'};
     }
 
     &:active {

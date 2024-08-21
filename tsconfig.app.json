@@ -1,5 +1,6 @@
 {
     "extends": "./tsconfig.json",
+    "include": ["src", "global.d.ts"],
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
@@ -20,6 +21,5 @@
         "types": ["vite-plugin-svgr/client"], //svg를 컴포넌트로 만들기 위한 내용 -> 근데 없어도 오류가 안난다. (해결!)
         "jsx": "react-jsx",
         "jsxImportSource": "@emotion/react"
-    },
-    "include": ["src", "emotion.d.ts"]
+    }
 }

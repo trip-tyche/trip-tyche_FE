@@ -1,36 +1,37 @@
-import React from 'react';
 import { css } from '@emotion/react';
-import SmallButton from './SmallButton';
-import LargeButton from './LargeButton';
 
-interface ButtonProps {
-    confirmText: string;
-    cancelText: string;
+interface SmallButtonProps {
+    text: string;
+    theme: 'pri' | 'sec';
     size: 'lg' | 'sm';
 }
 
-const Button = ({ confirmText, cancelText, size }: ButtonProps): JSX.Element => {
-    return (
-        <>
-            {size === 'lg' ? (
-                <div css={ButtonContainer(size)}>
-                    <LargeButton text={confirmText} theme='pri' />
-                    <LargeButton text={cancelText} theme='sec' />
-                </div>
-            ) : (
-                <div css={ButtonContainer(size)}>
-                    <SmallButton text={confirmText} theme='pri' />
-                    <SmallButton text={cancelText} theme='sec' />
-                </div>
-            )}
-        </>
-    );
+const SmallButton = ({ text, theme, size }: SmallButtonProps): JSX.Element => {
+    return <button css={SmallButtonStyle(theme, size)}>{text}</button>;
 };
 
-export default Button;
+export default SmallButton;
 
-const ButtonContainer = (size: 'lg' | 'sm') => css`
-    display: flex;
-    flex-direction: ${size === 'lg' ? 'column' : 'row'};
-    gap: 8px;
+const SmallButtonStyle = (theme: 'pri' | 'sec', size: 'lg' | 'sm') => css`
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 2px solid #333;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    width: ${size === 'lg' ? '220px' : '120px'};
+    height: 40px;
+    transition: background-color 0.3s ease;
+
+    color: ${theme === 'pri' ? '#333' : '#fff'};
+    background-color: ${theme === 'pri' ? '#fff' : '#333'};
+
+    &:hover {
+        color: ${theme === 'pri' ? '#fff' : '#333'};
+        background-color: ${theme === 'pri' ? '#333' : '#fff'};
+    }
+
+    &:active {
+        opacity: 0.8;
+    }
 `;
