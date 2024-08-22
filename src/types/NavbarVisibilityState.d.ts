@@ -1,4 +1,4 @@
 export interface NavbarVisibilityState {
     isNavbarVisible: boolean;
-    setNavbarVisibility: (isVisible: boolean) => void;
+    setNavbarVisibility: (isNavbarVisible: boolean) => void;
 }

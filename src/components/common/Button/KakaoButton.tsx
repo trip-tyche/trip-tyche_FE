@@ -1,15 +1,14 @@
 import { css } from '@emotion/react';
 
 interface KakaoButtonProps {
-    handleLogin: () => void;
     text?: string;
+    handleLogin: () => void;
 }
 
-const KakaoButton = ({ handleLogin, text }: KakaoButtonProps): JSX.Element => {
+const KakaoButton = ({ text, handleLogin }: KakaoButtonProps): JSX.Element => {
     return (
         <button css={KakaoButtonStyle} onClick={handleLogin}>
             <span css={KakoButtonIcon}>🗨️</span>
-            <rect x='0.25' y='0.5' width='17.5' height='16.25' fill='url(#pattern0_5_10390)'></rect>
             {text || '카카오톡으로 시작하기'}
         </button>
     );

@@ -1,8 +1,8 @@
 import { css } from '@emotion/react';
+
 import ButtonContainer from '@/components/common/Button/ButtonContainer';
 
-export interface ColumnButtonModalProps {
-    titleText: string;
+export interface RowButtonModalProps {
     descriptionText: string;
     confirmText: string;
     cancelText: string;
@@ -10,23 +10,21 @@ export interface ColumnButtonModalProps {
     closeModal?: () => void;
 }
 
-const ColumnButtonModal = ({
-    titleText,
+const RowButtonModal = ({
     descriptionText,
     confirmText,
     cancelText,
     confirmModal,
     closeModal,
-}: ColumnButtonModalProps): JSX.Element => {
+}: RowButtonModalProps): JSX.Element => {
     return (
         <div css={modalStyle}>
-            <h2>{titleText}</h2>
             <p>{descriptionText}</p>
             <div>
                 <ButtonContainer
                     confirmText={confirmText}
                     cancelText={cancelText}
-                    size='lg'
+                    size='sm'
                     confirmModal={confirmModal}
                     closeModal={closeModal}
                 />
@@ -35,13 +33,9 @@ const ColumnButtonModal = ({
     );
 };
 
-export default ColumnButtonModal;
+export default RowButtonModal;
 
 const modalStyle = css`
-    h2 {
-        font-size: 24px;
-        font-weight: 600;
-    }
     p {
         font-size: 18px;
     }
@@ -59,8 +53,8 @@ const modalStyle = css`
 
     background-color: #fff;
     width: 300px;
-    height: 210px;
-    padding: 1.8rem;
+    height: 165px;
+    padding: 2rem;
     display: flex;
     flex-direction: column;
     gap: 10px;

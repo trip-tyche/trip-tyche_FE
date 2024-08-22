@@ -3,9 +3,11 @@ import { css } from '@emotion/react';
 import KakaoButton from '@/components/common/Button/KakaoButton';
 import FightHeader from '@/components/layout/Header/AirplaneHeader';
 import LogoImages from '@/components/common/LogoImages';
+import useLoginState from '@/store/LoginState';
 
 export default function Login() {
     const navigate = useNavigate();
+    const setIsLogin = useLoginState((state) => state.setIsLogin);
 
     // const REST_API_KEY = '111111111';
     // const REDIRECT_URI = '/kakao/callback';
@@ -13,6 +15,7 @@ export default function Login() {
 
     const handleLogin = () => {
         // window.location.href = link;
+        setIsLogin(true);
         navigate('/home');
     };
 

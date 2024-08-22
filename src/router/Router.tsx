@@ -2,11 +2,11 @@ import { createBrowserRouter } from 'react-router-dom';
 import PageNotFound from '../pages/PageNotFound';
 import Root from '../layouts/Root';
 import Home from '../pages/Home';
-import TripList from '../pages/TripList';
-import TripCreate from '../pages/TripCreate';
+import TripList from '../pages/Trip/TripList';
+import TripCreate from '../pages/Trip/TripCreate';
 import Login from '../pages/Login';
 import MyPage from '../pages/MyPage';
-import TimeLine from '../pages/TimeLine';
+import TimeLine from '../pages/Trip/TimeLine';
 import MusicVideo from '../pages/MusicVideo';
 import Redirection from '../pages/Redirection';
 

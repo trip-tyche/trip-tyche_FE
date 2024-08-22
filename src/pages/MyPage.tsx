@@ -7,9 +7,14 @@ import { useState } from 'react';
 import ColumnButtonModal from '@/components/common/Modal/ColumnButtonModal';
 import OverLay from '@/components/common/OverLay';
 import { useNavigate } from 'react-router-dom';
+import useFirstUser from '@/store/FirstUser';
+import useLoginState from '@/store/LoginState';
 
 export default function MyPage() {
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+    const setIsLogin = useLoginState((state) => state.setIsLogin);
+    const setIsFirstUser = useFirstUser((state) => state.setIsFirstUser);
+
     const navigator = useNavigate();
 
     const openModal = () => {
@@ -21,6 +26,8 @@ export default function MyPage() {
 
     const confirmModal = () => {
         setIsLogoutModalOpen(false);
+        setIsLogin(false);
+        setIsFirstUser(true);
         navigator('/');
     };
 
@@ -42,8 +49,15 @@ export default function MyPage() {
 
             {isLogoutModalOpen && (
                 <>
-                    <ColumnButtonModal confirmModal={confirmModal} closeLogoutModal={closeModal} />
-                    <OverLay />
+                    <OverLay closeModal={closeModal} />
+                    <ColumnButtonModal
+                        titleText='로그아웃'
+                        descriptionText='정말 로그아웃할까요?'
+                        confirmText='로그아웃'
+                        cancelText='닫기'
+                        confirmModal={confirmModal}
+                        closeModal={closeModal}
+                    />
                 </>
             )}
 
