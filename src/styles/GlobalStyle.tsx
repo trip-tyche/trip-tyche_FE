@@ -104,6 +104,7 @@ const baseStyles = css`
 
         margin: 0 auto;
         position: relative;
+        overflow: auto;
     }
 `;
 

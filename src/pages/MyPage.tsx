@@ -74,6 +74,7 @@ const containerStyle = css`
 
 const mainContentStyle = css`
     flex: 1;
+    margin-bottom: 6rem;
 
     display: flex;
     flex-direction: column;

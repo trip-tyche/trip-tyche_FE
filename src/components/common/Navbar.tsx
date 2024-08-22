@@ -12,13 +12,19 @@ export default function Navbar() {
 }
 
 const navbarStyle = css`
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    max-width: 430px;
+    height: 6rem;
+
     display: flex;
     background-color: #fff;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 
     a {
         flex: 1;
-        padding: 2rem 0;
+        padding: 2rem;
         font-size: 14px;
         text-align: center;
         text-decoration: none;
