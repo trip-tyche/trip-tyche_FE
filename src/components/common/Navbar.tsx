@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 
 export default function Navbar() {
     return (
-        <nav className='nav' css={NavbarStyle}>
+        <nav className='nav' css={navbarStyle}>
             <NavLink to={'/home'}>홈</NavLink>
             <NavLink to={'/trip-list'}>여행관리</NavLink>
             <NavLink to={'/my-page'}>마이페이지</NavLink>
@@ -11,36 +11,24 @@ export default function Navbar() {
     );
 }
 
-const NavbarStyle = css`
-    position: fixed;
-    bottom: 0;
-    padding: 4px;
-    margin-bottom: 10px;
+const navbarStyle = css`
     display: flex;
+    background-color: #fff;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 
     a {
-        font-size: 18px;
         flex: 1;
-        border: 1px solid #ccc;
-        padding: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        padding: 2rem 0;
+        font-size: 14px;
+        text-align: center;
         text-decoration: none;
         color: #333;
-        background-color: #fff;
-    }
+        transition: background-color 0.3s;
 
-    a:hover {
-        background-color: #333;
-        color: #fff;
-    }
-
-    a:first-child {
-        border-radius: 10px 0 0 10px;
-    }
-
-    a:last-child {
-        border-radius: 0 10px 10px 0;
+        &:hover,
+        &.active {
+            background-color: #f0f0f0;
+            color: #000;
+        }
     }
 `;

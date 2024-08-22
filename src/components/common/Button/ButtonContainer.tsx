@@ -1,17 +1,24 @@
 import { css } from '@emotion/react';
-import Button from './Button';
+import Button, { ButtonProps } from './Button';
 
-interface ButtonContainerProps {
+interface ButtonContainerProps extends ButtonProps {
     confirmText: string;
     cancelText: string;
-    size: 'lg' | 'sm';
+    confirmModal?: () => void;
+    closeModal?: () => void;
 }
 
-const ButtonContainer = ({ confirmText, cancelText, size }: ButtonContainerProps): JSX.Element => {
+const ButtonContainer = ({
+    confirmText,
+    cancelText,
+    size,
+    confirmModal,
+    closeModal,
+}: ButtonContainerProps): JSX.Element => {
     return (
         <div css={ButtonContainerStyle(size)}>
-            <Button text={confirmText} theme='pri' size={size === 'lg' ? 'lg' : 'sm'} />
-            <Button text={cancelText} theme='sec' size={size === 'lg' ? 'lg' : 'sm'} />
+            <Button text={confirmText} theme='pri' size={size === 'lg' ? 'lg' : 'sm'} onClick={confirmModal} />
+            <Button text={cancelText} theme='sec' size={size === 'lg' ? 'lg' : 'sm'} onClick={closeModal} />
         </div>
     );
 };

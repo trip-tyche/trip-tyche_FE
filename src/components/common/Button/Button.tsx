@@ -1,25 +1,30 @@
 import { css } from '@emotion/react';
 
-interface SmallButtonProps {
+export interface ButtonProps {
     text: string;
     theme: 'pri' | 'sec';
     size: 'lg' | 'sm';
+    onClick?: () => void;
 }
 
-const SmallButton = ({ text, theme, size }: SmallButtonProps): JSX.Element => {
-    return <button css={SmallButtonStyle(theme, size)}>{text}</button>;
+const Button = ({ text, theme, size, onClick }: ButtonProps): JSX.Element => {
+    return (
+        <button css={ButtonStyle(theme, size)} onClick={onClick}>
+            {text}
+        </button>
+    );
 };
 
-export default SmallButton;
+export default Button;
 
-const SmallButtonStyle = (theme: 'pri' | 'sec', size: 'lg' | 'sm') => css`
+const ButtonStyle = (theme: 'pri' | 'sec', size: 'lg' | 'sm') => css`
     padding: 8px 16px;
     border-radius: 10px;
     border: 2px solid #333;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    width: ${size === 'lg' ? '220px' : '120px'};
+    width: ${size === 'lg' ? '240px' : '120px'};
     height: 40px;
     transition: background-color 0.3s ease;
 

@@ -80,7 +80,9 @@ const baseStyles = css`
         box-sizing: border-box;
         /* outline: 1px solid red; */
     }
-
+    html {
+        font-size: 10px;
+    }
     body {
         margin: 0;
         padding: 0;
@@ -88,7 +90,6 @@ const baseStyles = css`
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
     }
 
     #root {
@@ -98,19 +99,10 @@ const baseStyles = css`
 
         background-color: #fff;
         width: 100%;
-        height: 100%;
-        max-width: 428px;
-        max-height: 932px;
+        max-width: 430px;
+        height: 100vh;
 
         margin: 0 auto;
-    }
-
-    @media screen and (min-width: 768px) {
-        #root {
-            border-radius: 8px;
-            width: 414px;
-            height: 770px;
-        }
     }
 `;
 

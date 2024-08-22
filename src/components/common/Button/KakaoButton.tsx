@@ -9,7 +9,8 @@ const KakaoButton = ({ handleLogin, text }: KakaoButtonProps): JSX.Element => {
     return (
         <button css={KakaoButtonStyle} onClick={handleLogin}>
             <span css={KakoButtonIcon}>🗨️</span>
-            {text || '카카오 로그인'}
+            <rect x='0.25' y='0.5' width='17.5' height='16.25' fill='url(#pattern0_5_10390)'></rect>
+            {text || '카카오톡으로 시작하기'}
         </button>
     );
 };
@@ -17,15 +18,19 @@ const KakaoButton = ({ handleLogin, text }: KakaoButtonProps): JSX.Element => {
 export default KakaoButton;
 
 const KakaoButtonStyle = css`
-    background-color: #fee500;
+    /* background-color: rgb(254, 229, 0); */
+    background-color: rgb(255 227 78);
     color: #333;
     border: none;
     border-radius: 12px;
-    padding: 8px 16px;
+    /* padding: 8px 16px; */
+    padding: 0.875rem;
     font-size: 16px;
+    line-height: 1.5rem;
     font-weight: 600;
+    /* width: 100%; */
     width: 345px;
-    height: 45px;
+    height: 52px;
     cursor: pointer;
     display: flex;
     align-items: center;
