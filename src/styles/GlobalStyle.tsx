@@ -103,6 +103,7 @@ const baseStyles = css`
         height: 100vh;
 
         margin: 0 auto;
+        position: relative;
     }
 `;
 
