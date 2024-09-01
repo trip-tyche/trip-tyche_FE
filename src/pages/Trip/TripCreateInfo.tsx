@@ -7,10 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 
 import Button from '@/components/common/Button/Button';
-import Header from '@/components/layout/Header/Header';
+import Header from '@/components/layout/Header';
 import 'react-toastify/dist/ReactToastify.css';
 
-const TripRegistration: React.FC = () => {
+const TripCreateInfo: React.FC = () => {
     const [title, setTitle] = useState('');
     const [country, setCountry] = useState('');
     const [startDate, setStartDate] = useState('');
@@ -226,4 +226,4 @@ const submitButtonStyle = css`
     justify-content: end;
 `;
 
-export default TripRegistration;
+export default TripCreateInfo;

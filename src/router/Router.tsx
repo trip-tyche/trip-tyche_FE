@@ -1,68 +1,62 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router-dom';
 
-import Root from '../layouts/Root';
+import RootLayout from '../layouts/RootLayout';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
-import MusicVideo from '../pages/MusicVideo';
 import MyPage from '../pages/MyPage';
 import PageNotFound from '../pages/PageNotFound';
-import Redirection from '../pages/Redirection';
-import TimeLine from '../pages/Trip/TimeLine';
-import TripCreate from '../pages/Trip/TripCreate';
-import TripList from '../pages/Trip/TripList';
+import Trips from '../pages/Trip/Trips';
+import { PATH } from '@/constants/path';
+import TripCreateInfo from '@/pages/Trip/TripCreateInfo';
 import TripEdit from '@/pages/Trip/TripEdit';
-import TripFile from '@/pages/Trip/TripFile';
+import TripFileUpload from '@/pages/Trip/TripFileUpload';
+import TripMap from '@/pages/Trip/TripMap';
 
+const AuthProtectedRoute = () => {
+    // 현재 경로와 URL쿼리 문자열 가져옴
+    const { pathname, search } = useLocation();
+
+    const authOK = true; // 로그인 여부 확인(임시)
+
+    // 로그인 통과? 그럼 Outlet을 렌더링
+    // 로그인 실패? 로그인 페이지로 Redirect
+    // <Outlet/>: 자식 라우트를 렌더링
+    // replace: 현재 페이지를 브라우저 히스토리에서 교체
+    // state={..} :현재 URL 정보를 로그인 페이지로 전달
+    // return authOK ? <Outlet /> : <Navigate to={`${PATH.SIGNIN}`} replace state={pathname + search} />;
+    return authOK ? <Outlet /> : <Navigate to={`${PATH.SIGNIN}`} replace state={pathname + search} />;
+};
 export const router = createBrowserRouter([
     {
-        path: '/',
-        element: <Root />,
+        path: PATH.HOME,
+        element: <AuthProtectedRoute />,
         errorElement: <PageNotFound />,
         children: [
+            { path: PATH.SIGNIN, element: <Login /> },
             {
-                index: true,
-                element: <Login />,
-            },
-            {
-                path: 'home',
-                element: <Home />,
-            },
-            {
-                path: 'trips',
-                element: <TripList />,
+                element: <RootLayout />,
                 children: [
+                    { index: true, element: <Home /> },
                     {
-                        path: ':tripId/edit',
-                        element: <TripEdit />,
-                    },
-                    {
-                        path: ':tripId/map',
-                        element: <TimeLine />,
+                        path: PATH.MYPAGE,
                         children: [
-                            {
-                                path: 'points/{pointId}/music-video',
-                                element: <MusicVideo />,
-                            },
+                            { index: true, element: <MyPage /> },
+                            //   { path: PATH.SETTINGS, element: <Settings /> },
                         ],
                     },
+                    { path: PATH.TRIPS, element: <Trips /> },
+                    {
+                        path: PATH.TRIP_CREATE_INFO,
+                        children: [
+                            { index: true, element: <TripCreateInfo /> },
+                            { path: PATH.TRIP_UPLOAD, element: <TripFileUpload /> },
+                        ],
+                    },
+                    { path: PATH.TRIPS_EDIT, element: <TripEdit /> },
+                    { path: PATH.TRIP_MAP, element: <TripMap /> },
+                    //   { path: PATH.ONBOARDING, element: <Onboarding /> },
+                    //   { path: '/test', element: <Test /> },
                 ],
-            },
-            {
-                path: 'trips/new',
-                element: <TripCreate />,
-            },
-            {
-                path: 'trips/new/file',
-                element: <TripFile />,
-            },
-
-            {
-                path: '/my-page',
-                element: <MyPage />,
-            },
-            {
-                path: '/kakao/callback',
-                element: <Redirection />,
             },
         ],
     },

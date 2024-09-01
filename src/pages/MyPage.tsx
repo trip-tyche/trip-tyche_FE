@@ -6,9 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import characterImg from '@/assets/images/character.png';
 import Button from '@/components/common/Button/Button';
 import ColumnButtonModal from '@/components/common/Modal/ColumnButtonModal';
-import Navbar from '@/components/common/Navbar';
 import OverLay from '@/components/common/OverLay';
-import Header from '@/components/layout/Header/Header';
+import Header from '@/components/layout/Header';
 import useFirstUser from '@/stores/FirstUser';
 import useLoginState from '@/stores/LoginState';
 import useUserStore from '@/stores/useUserStore';
@@ -64,8 +63,6 @@ const MyPage = () => {
                     />
                 </>
             )}
-
-            <Navbar />
         </div>
     );
 };

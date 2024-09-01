@@ -6,9 +6,9 @@ import { FaCloudUploadAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button/Button';
-import Header from '@/components/layout/Header/Header';
+import Header from '@/components/layout/Header';
 
-const TripFile: React.FC = () => {
+const TripFileUpload: React.FC = () => {
     const [images, setImages] = useState<File[]>([]);
     const [voices, setVoices] = useState<File[]>([]);
     const [memos, setMemos] = useState<File[]>([]);
@@ -206,4 +206,4 @@ const errorToastStyle = css`
     background-color: #f44336;
 `;
 
-export default TripFile;
+export default TripFileUpload;

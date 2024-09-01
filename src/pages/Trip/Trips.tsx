@@ -37,10 +37,10 @@ import { css } from '@emotion/react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-import BorderPass from '@/components/BorderPass';
 import Button from '@/components/common/Button/Button';
-import Navbar from '@/components/common/Navbar';
-import Header from '@/components/layout/Header/Header';
+import Header from '@/components/layout/Header';
+import Navbar from '@/components/layout/Navbar';
+import BorderPass from '@/components/pages/BorderPass';
 
 // 인터페이스 정의
 interface Trip {
@@ -62,7 +62,7 @@ interface FormattedTrip extends Omit<Trip, 'startDate' | 'endDate'> {
     endDate: string;
 }
 
-const TripList = () => {
+const Trips = () => {
     const navigator = useNavigate();
     const [trips, setTrips] = useState<FormattedTrip[]>([]);
     const [userNickName, setUserNickName] = useState<string>('');
@@ -159,4 +159,4 @@ const tripListStyle = css`
     padding: 10px;
 `;
 
-export default TripList;
+export default Trips;

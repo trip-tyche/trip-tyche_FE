@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import KakaoButton from '@/components/common/Button/KakaoButton';
 import LogoImages from '@/components/common/LogoImages';
-import FightHeader from '@/components/layout/Header/AirplaneHeader';
+import FightHeader from '@/components/layout/AirplaneHeader';
 import useLoginState from '@/stores/LoginState';
 
 const Login = () => {

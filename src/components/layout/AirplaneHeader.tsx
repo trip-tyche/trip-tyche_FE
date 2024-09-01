@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import AirplaneSvg from '../../../assets/icons/AirplaneSvg';
+import AirplaneSvg from '@/components/svg-component/AirplaneSvg';
 
 const AirplaneHeader = (): JSX.Element => (
     <>

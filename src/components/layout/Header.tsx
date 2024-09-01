@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import BackButtonSvg from '../../../assets/icons/BackButtonSvg';
+import BackButtonSvg from '@/components/svg-component/BackButtonSvg';
 
 interface HeaderProps {
     title: string;

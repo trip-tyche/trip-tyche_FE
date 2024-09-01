@@ -3,13 +3,11 @@ import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import axios from 'axios';
 
-import S3Test from '../mock/S3Test';
 import Card from '@/components/common/Card';
 import LogoImages from '@/components/common/LogoImages';
 import SingleInputModal from '@/components/common/Modal/SingleInputModal';
-import Navbar from '@/components/common/Navbar';
 import OverLay from '@/components/common/OverLay';
-import FightHeader from '@/components/layout/Header/AirplaneHeader';
+import FightHeader from '@/components/layout/AirplaneHeader';
 import useFirstUser from '@/stores/FirstUser';
 import useLoginState from '@/stores/LoginState';
 
@@ -89,7 +87,7 @@ const Home = () => {
 
                 <LogoImages />
 
-                <p css={description}> {userInfo?.userNickName} 님의 여행을 기억해주세요 😀</p>
+                <p css={description}> {userInfo?.userNickname} 님의 여행을 기억해주세요 😀</p>
             </main>
 
             {isFirstUser && (
@@ -105,8 +103,6 @@ const Home = () => {
                     />
                 </>
             )}
-            {/* <S3Test /> */}
-            <Navbar />
         </div>
     );
 };
