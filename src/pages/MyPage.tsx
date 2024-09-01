@@ -13,7 +13,7 @@ import useFirstUser from '@/stores/FirstUser';
 import useLoginState from '@/stores/LoginState';
 import useUserStore from '@/stores/useUserStore';
 
-export default function MyPage() {
+const MyPage = () => {
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
     const setIsLogin = useLoginState((state) => state.setIsLogin);
     const setIsFirstUser = useFirstUser((state) => state.setIsFirstUser);
@@ -68,7 +68,7 @@ export default function MyPage() {
             <Navbar />
         </div>
     );
-}
+};
 
 const containerStyle = css`
     display: flex;
@@ -109,3 +109,5 @@ const buttonWrapper = css`
     justify-content: center;
     align-items: center;
 `;
+
+export default MyPage;

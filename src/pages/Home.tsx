@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import axios from 'axios';
 
-import S3Test from '../../server/S3Test';
+import S3Test from '../mock/S3Test';
 import Card from '@/components/common/Card';
 import LogoImages from '@/components/common/LogoImages';
 import SingleInputModal from '@/components/common/Modal/SingleInputModal';
@@ -31,7 +31,7 @@ interface UserInfo {
     pinPoints: PinPoint[];
 }
 
-export default function Home() {
+const Home = () => {
     const setIsLogin = useLoginState((state) => state.setIsLogin);
     const isFirstUser = useFirstUser((state) => state.isFirstUser);
     const setIsFirstUser = useFirstUser((state) => state.setIsFirstUser);
@@ -56,7 +56,7 @@ export default function Home() {
 
     const fetchUserInfo = async (): Promise<void> => {
         try {
-            const response = await axios.get('/server/userInfo.json');
+            const response = await axios.get('/src/mock/userInfo.json');
             formatCountryName(response.data.trips);
             setUserInfo(response.data);
         } catch (error) {
@@ -81,7 +81,7 @@ export default function Home() {
 
     return (
         <div css={containerStyle}>
-            {/* <main css={mainContentStyle}>
+            <main css={mainContentStyle}>
                 <FightHeader />
                 <div css={cardContainerStyle}>
                     {userInfo && <Card trips={userInfo?.trips.length} tripCountries={tripCountries} />}
@@ -104,12 +104,12 @@ export default function Home() {
                         value={userName}
                     />
                 </>
-            )} */}
-            <S3Test />
-            {/* <Navbar /> */}
+            )}
+            {/* <S3Test /> */}
+            <Navbar />
         </div>
     );
-}
+};
 
 const containerStyle = css`
     display: flex;
@@ -145,3 +145,5 @@ const description = css`
     text-align: center;
     /* margin-top: 5rem; */
 `;
+
+export default Home;

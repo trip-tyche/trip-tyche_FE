@@ -5,7 +5,7 @@ const S3Test = () => {
     const [imageUrl, setImageUrl] = useState('');
 
     useEffect(() => {
-        fetch('/server/s3test.json')
+        fetch('/src/mock/s3test.json')
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);

@@ -1,3 +1,5 @@
-export default function TimeLine() {
-    return <div>TimeLine</div>;
-}
+import React from 'react';
+
+const TimeLine = () => <div>TimeLine</div>;
+
+export default TimeLine;

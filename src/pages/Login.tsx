@@ -6,7 +6,7 @@ import LogoImages from '@/components/common/LogoImages';
 import FightHeader from '@/components/layout/Header/AirplaneHeader';
 import useLoginState from '@/stores/LoginState';
 
-export default function Login() {
+const Login = () => {
     const navigate = useNavigate();
     const setIsLogin = useLoginState((state) => state.setIsLogin);
 
@@ -36,7 +36,7 @@ export default function Login() {
             </div>
         </div>
     );
-}
+};
 
 const containerStyle = css`
     display: flex;
@@ -74,3 +74,5 @@ const buttonContainerStyle = css`
     margin-top: 7rem;
     margin-bottom: 1rem;
 `;
+
+export default Login;

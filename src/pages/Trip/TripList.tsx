@@ -62,7 +62,7 @@ interface FormattedTrip extends Omit<Trip, 'startDate' | 'endDate'> {
     endDate: string;
 }
 
-export default function TripList() {
+const TripList = () => {
     const navigator = useNavigate();
     const [trips, setTrips] = useState<FormattedTrip[]>([]);
     const [userNickName, setUserNickName] = useState<string>('');
@@ -112,7 +112,7 @@ export default function TripList() {
             <Navbar />
         </div>
     );
-}
+};
 
 const containerStyle = css`
     display: flex;
@@ -158,3 +158,5 @@ const tripListStyle = css`
     gap: 18px;
     padding: 10px;
 `;
+
+export default TripList;
