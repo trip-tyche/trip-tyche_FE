@@ -1,9 +1,11 @@
 import { css, Global } from '@emotion/react';
 
-// import fontStyles from './globalFonts';
-// import theme from './theme';
+import fontStyles from '@/styles/globalFonts';
+import theme from '@/styles/theme';
 
 const baseStyles = css`
+    ${fontStyles} /* @font-face */
+
     /* reset */
     html,
     body,
@@ -81,30 +83,50 @@ const baseStyles = css`
         /* outline: 1px solid red; */
     }
     html {
-        font-size: 10px;
+        /* 스크롤바 각 브라우저마다 보이지 않게 동작 */
+        // Webkit browsers (Chrome, Safari)
+        &::-webkit-scrollbar {
+            display: none;
+        }
+        scrollbar-width: none; // Firefox
+        -ms-overflow-style: none; // IE and Edge
+
+        // (추가) 터치 기기에서의 스크롤 동작 개선, 네이티브와 같이 동작
+        -webkit-overflow-scrolling: touch;
     }
     body {
-        margin: 0;
-        padding: 0;
-        background-color: #eee;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        font-family: 'Pretendard', sans-serif;
+        font-weight: 400;
+        line-height: 1;
+        font-size: ${theme.fontSizes.large}; /* 16px */
+        color: ${theme.colors.black};
+        background-color: ${theme.colors.black};
+        letter-spacing: -0.14px;
     }
 
-    #root {
-        font-weight: 400;
-        font-size: 10px;
-        /* letter-spacing: -0.14px; */
+    input,
+    textarea {
+        font-family: 'Pretendard', sans-serif;
+        letter-spacing: -0.14px;
+        color: ${theme.colors.black};
 
-        background-color: #fff;
-        width: 100%;
-        max-width: 430px;
-        height: 100vh;
+        &::placeholder {
+            color: ${theme.colors.darkGray};
+            opacity: 1; /* Firefox */
+        }
+    }
 
-        margin: 0 auto;
-        position: relative;
-        overflow: auto;
+    /* 공통 페이지 여백 */
+    .wrapper {
+        background-color: ${theme.colors.white};
+        padding: 0 16px; /* 1rem */
+    }
+    /* 공통 페이지 타이틀 */
+    .page-title {
+        padding: 32px 0 20px 16px;
+        font-weight: bold;
+        font-size: ${theme.fontSizes.xxlarge};
+        background-color: ${theme.colors.white};
     }
 `;
 

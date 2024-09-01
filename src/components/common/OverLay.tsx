@@ -4,9 +4,7 @@ export interface OverLayProps {
     closeModal?: () => void;
 }
 
-const OverLay = ({ closeModal }: OverLayProps): JSX.Element => {
-    return <div css={overlay} onClick={closeModal}></div>;
-};
+const OverLay = ({ closeModal }: OverLayProps): JSX.Element => <div css={overlay} onClick={closeModal}></div>;
 
 export default OverLay;
 

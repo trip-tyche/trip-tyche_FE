@@ -1,3 +1,5 @@
-export default function Redirection() {
-  return <div>Redirection!!!!!!!!!!!!!!!!!!!!!!!!!</div>;
-}
+import React from 'react';
+
+const Redirection = () => <div>Redirection</div>;
+
+export default Redirection;

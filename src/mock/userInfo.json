@@ -1,0 +1,28 @@
+{
+    "userId": 1,
+    "userNickName": "TestUser1",
+    "trips": [
+        {
+            "tripId": 1,
+            "country": "South Korea"
+        },
+        {
+            "tripId": 2,
+            "country": "Japan"
+        }
+    ],
+    "pinPoints": [
+        {
+            "tripId": 1,
+            "pinPointId": 1,
+            "latitude": 37.5665,
+            "longitude": 126.978
+        },
+        {
+            "tripId": 2,
+            "pinPointId": 2,
+            "latitude": 35.6762,
+            "longitude": 139.65
+        }
+    ]
+}

@@ -1,5 +1,7 @@
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useEffect } from 'react';
+
 import { css } from '@emotion/react';
+
 import Button from '@/components/common/Button/Button';
 
 export interface SingleInputModalProps {
@@ -18,21 +20,19 @@ const SingleInputModal = ({
     submitModal,
     setInputValue,
     value,
-}: SingleInputModalProps): JSX.Element => {
-    return (
-        <div css={modalStyle}>
-            <h2>{titleText}</h2>
-            <input type='text' value={value} onChange={(e) => setInputValue(e.target.value)} />
-            <div className='description'>
-                <p>{descriptionText}</p>
-                <p>{exampleText}</p>
-            </div>
-            <div className='buttonWrapper'>
-                <Button text='완료' theme='sec' size='sm' onClick={submitModal} />
-            </div>
+}: SingleInputModalProps): JSX.Element => (
+    <div css={modalStyle}>
+        <h2>{titleText}</h2>
+        <input type='text' value={value} onChange={(e) => setInputValue(e.target.value)} />
+        <div className='description'>
+            <p>{descriptionText}</p>
+            <p>{exampleText}</p>
         </div>
-    );
-};
+        <div className='buttonWrapper'>
+            <Button text='완료' theme='sec' size='sm' onClick={submitModal} />
+        </div>
+    </div>
+);
 
 export default SingleInputModal;
 

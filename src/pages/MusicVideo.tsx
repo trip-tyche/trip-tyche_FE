@@ -1,3 +1,3 @@
-export default function MusicVideo() {
-  return <div>MusicVideo</div>;
-}
+const MusicVideo = () => <div>MusicVideo</div>;
+
+export default MusicVideo;

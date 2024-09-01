@@ -1,4 +1,5 @@
+import React from 'react';
 
-export default function TripEdit() {
-  return <h1>TripEdit</h1>;
-}
+const TripEdit = () => <div>TripEdit</div>;
+
+export default TripEdit;

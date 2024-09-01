@@ -1,16 +1,19 @@
 import { css } from '@emotion/react';
 
-const Card = () => {
-    return (
-        <div className='home-trips' css={CardStyle}>
-            <p>지금까지 여행한 국가는</p>
-            <p>
-                <span>8</span> 군데입니다.
-            </p>
-            <div className='home-flags'>🇰🇷🇯🇵🇫🇷🇺🇸🇪🇸🇮🇹🇹🇼🇰🇷</div>
-        </div>
-    );
-};
+interface CardProps {
+    trips: number | undefined;
+    tripCountries?: string[];
+}
+
+const Card = ({ trips, tripCountries }: CardProps): JSX.Element => (
+    <div className='home-trips' css={CardStyle}>
+        <p>지금까지 여행한 국가는</p>
+        <p>
+            <span>{trips}</span> 군데입니다.
+        </p>
+        <div className='home-flags'>🇰🇷🇯🇵🇫🇷🇺🇸🇪🇸🇮🇹🇹🇼🇰🇷</div>
+    </div>
+);
 
 export default Card;
 

@@ -1,3 +1,5 @@
-export default function TripTimeline() {
-  return <h1>TripTimeline</h1>;
-}
+import React from 'react';
+
+const TripTimeline = () => <div>TripTimeline</div>;
+
+export default TripTimeline;

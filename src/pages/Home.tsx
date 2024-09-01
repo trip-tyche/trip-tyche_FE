@@ -1,25 +1,66 @@
+import { useEffect, useState } from 'react';
+
 import { css } from '@emotion/react';
-import FightHeader from '@/components/layout/Header/AirplaneHeader';
+import axios from 'axios';
+
 import Card from '@/components/common/Card';
 import LogoImages from '@/components/common/LogoImages';
-import Navbar from '@/components/common/Navbar';
-import OverLay from '@/components/common/OverLay';
-import { useEffect, useState } from 'react';
 import SingleInputModal from '@/components/common/Modal/SingleInputModal';
-import useLoginState from '@/store/LoginState';
-import useFirstUser from '@/store/FirstUser';
+import OverLay from '@/components/common/OverLay';
+import FightHeader from '@/components/layout/AirplaneHeader';
+import useFirstUser from '@/stores/FirstUser';
+import useLoginState from '@/stores/LoginState';
 
-export default function Home() {
-    const [_, setIsOpenModal] = useState<boolean>(false);
-    const [useName, setUseName] = useState<string>('');
+// import { getCode, getName } from 'country-list';
+interface Trip {
+    tripId: number;
+    country: string;
+}
+interface PinPoint {
+    tripId: number;
+    pinPointId: string;
+    latitude: number;
+    longitude: number;
+}
+interface UserInfo {
+    userId: number;
+    userNickname: string;
+    trips: Trip[];
+    pinPoints: PinPoint[];
+}
+
+const Home = () => {
     const setIsLogin = useLoginState((state) => state.setIsLogin);
     const isFirstUser = useFirstUser((state) => state.isFirstUser);
     const setIsFirstUser = useFirstUser((state) => state.setIsFirstUser);
+    const [_, setIsOpenModal] = useState<boolean>(false);
+    const [userName, setUserName] = useState<string>('');
+    const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+    const [tripCountries, setTripCountries] = useState<string[]>([]);
 
     useEffect(() => {
         setIsLogin(true);
         checkFirstUser();
     }, []);
+
+    useEffect(() => {
+        fetchUserInfo();
+    }, []);
+
+    const formatCountryName = (trips: Trip[]): void => {
+        const countries = trips.map((trip) => trip.country);
+        setTripCountries(countries);
+    };
+
+    const fetchUserInfo = async (): Promise<void> => {
+        try {
+            const response = await axios.get('/src/mock/userInfo.json');
+            formatCountryName(response.data.trips);
+            setUserInfo(response.data);
+        } catch (error) {
+            console.error('==> ', error);
+        }
+    };
 
     const checkFirstUser = () => {
         if (isFirstUser) setIsOpenModal(true);
@@ -31,8 +72,8 @@ export default function Home() {
     };
 
     const submitUserName = () => {
-        console.log(`${useName} 님이 가입했습니다.`);
-        setUseName('');
+        console.log(`${userName} 님이 가입했습니다.`);
+        setUserName('');
         closeModal();
     };
 
@@ -41,12 +82,12 @@ export default function Home() {
             <main css={mainContentStyle}>
                 <FightHeader />
                 <div css={cardContainerStyle}>
-                    <Card />
+                    {userInfo && <Card trips={userInfo?.trips.length} tripCountries={tripCountries} />}
                 </div>
 
                 <LogoImages />
 
-                <p css={description}>동남아킬러 님의 여행을 기억해주세요 😀</p>
+                <p css={description}> {userInfo?.userNickname} 님의 여행을 기억해주세요 😀</p>
             </main>
 
             {isFirstUser && (
@@ -57,16 +98,14 @@ export default function Home() {
                         descriptionText='한국어, 영어, 숫자 등 최소 4자리를 입력해주세요.'
                         exampleText='(예. 동남아킬러24)'
                         submitModal={submitUserName}
-                        setInputValue={setUseName}
-                        value={useName}
+                        setInputValue={setUserName}
+                        value={userName}
                     />
                 </>
             )}
-
-            <Navbar />
         </div>
     );
-}
+};
 
 const containerStyle = css`
     display: flex;
@@ -102,3 +141,5 @@ const description = css`
     text-align: center;
     /* margin-top: 5rem; */
 `;
+
+export default Home;

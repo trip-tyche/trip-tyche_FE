@@ -1,18 +1,16 @@
-import { css } from '@emotion/react';
+import { css, SerializedStyles } from '@emotion/react';
 
 interface KakaoButtonProps {
     text?: string;
     handleLogin: () => void;
 }
 
-const KakaoButton = ({ text, handleLogin }: KakaoButtonProps): JSX.Element => {
-    return (
-        <button css={KakaoButtonStyle} onClick={handleLogin}>
-            <span css={KakoButtonIcon}>🗨️</span>
-            {text || '카카오톡으로 시작하기'}
-        </button>
-    );
-};
+const KakaoButton = ({ text, handleLogin }: KakaoButtonProps): JSX.Element => (
+    <button css={KakaoButtonStyle} onClick={handleLogin}>
+        <span css={KakoButtonIcon}>🗨️</span>
+        {text || '카카오톡으로 시작하기'}
+    </button>
+);
 
 export default KakaoButton;
 
@@ -47,6 +45,6 @@ const KakaoButtonStyle = css`
     }
 `;
 
-const KakoButtonIcon = css`
+const KakoButtonIcon: SerializedStyles = css`
     margin-right: 8px;
 `;
