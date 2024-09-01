@@ -1,15 +1,15 @@
-import { NavLink } from 'react-router-dom';
 import { css } from '@emotion/react';
+import { NavLink } from 'react-router-dom';
 
-export default function Navbar() {
-    return (
-        <nav className='nav' css={navbarStyle}>
-            <NavLink to={'/home'}>홈</NavLink>
-            <NavLink to={'/trip-list'}>여행관리</NavLink>
-            <NavLink to={'/my-page'}>마이페이지</NavLink>
-        </nav>
-    );
-}
+const Navbar = () => (
+    <nav className='nav' css={navbarStyle}>
+        <NavLink to={'/home'}>홈</NavLink>
+        <NavLink to={'/trips'}>여행관리</NavLink>
+        <NavLink to={'/my-page'}>마이페이지</NavLink>
+    </nav>
+);
+
+export default Navbar;
 
 const navbarStyle = css`
     position: fixed;

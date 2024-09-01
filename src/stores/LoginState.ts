@@ -10,7 +10,7 @@ const useLoginState = create<LoginState>()(
     devtools(
         (set) => ({
             isLogin: false,
-            setIsLogin: (isLogin) => set({ isLogin: isLogin }),
+            setIsLogin: (isLogin) => set({ isLogin }),
         }),
         {
             name: 'login-store',

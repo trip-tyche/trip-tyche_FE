@@ -10,7 +10,7 @@ const useFirstUser = create<FirstUserState>()(
     devtools(
         (set) => ({
             isFirstUser: true,
-            setIsFirstUser: (isFirstUser) => set({ isFirstUser: isFirstUser }),
+            setIsFirstUser: (isFirstUser) => set({ isFirstUser }),
         }),
         {
             name: 'firstUser-store',

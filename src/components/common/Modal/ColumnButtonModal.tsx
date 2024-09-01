@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+
 import ButtonContainer from '@/components/common/Button/ButtonContainer';
 
 export interface ColumnButtonModalProps {
@@ -17,23 +18,21 @@ const ColumnButtonModal = ({
     cancelText,
     confirmModal,
     closeModal,
-}: ColumnButtonModalProps): JSX.Element => {
-    return (
-        <div css={modalStyle}>
-            <h2>{titleText}</h2>
-            <p>{descriptionText}</p>
-            <div>
-                <ButtonContainer
-                    confirmText={confirmText}
-                    cancelText={cancelText}
-                    size='lg'
-                    confirmModal={confirmModal}
-                    closeModal={closeModal}
-                />
-            </div>
+}: ColumnButtonModalProps): JSX.Element => (
+    <div css={modalStyle}>
+        <h2>{titleText}</h2>
+        <p>{descriptionText}</p>
+        <div>
+            <ButtonContainer
+                confirmText={confirmText}
+                cancelText={cancelText}
+                size='lg'
+                confirmModal={confirmModal}
+                closeModal={closeModal}
+            />
         </div>
-    );
-};
+    </div>
+);
 
 export default ColumnButtonModal;
 

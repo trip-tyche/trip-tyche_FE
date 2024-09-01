@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+
 import BackButtonSvg from '../../../assets/icons/BackButtonSvg';
 
 interface HeaderProps {
@@ -7,20 +8,18 @@ interface HeaderProps {
     onClick?: () => void;
 }
 
-const Header = ({ title, isBackButton, onClick }: HeaderProps): JSX.Element => {
-    return (
-        <>
-            <div css={HeaderStyle}>
-                {isBackButton && (
-                    <div css={backButtonContainerStyle} onClick={onClick}>
-                        <BackButtonSvg />
-                    </div>
-                )}
-                <h1>{title}</h1>
-            </div>
-        </>
-    );
-};
+const Header = ({ title, isBackButton, onClick }: HeaderProps): JSX.Element => (
+    <>
+        <div css={HeaderStyle}>
+            {isBackButton && (
+                <div css={backButtonContainerStyle} onClick={onClick}>
+                    <BackButtonSvg />
+                </div>
+            )}
+            <h1>{title}</h1>
+        </div>
+    </>
+);
 
 export default Header;
 

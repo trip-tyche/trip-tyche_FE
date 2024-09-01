@@ -1,4 +1,3 @@
-
 export default function TripEdit() {
-  return <h1>TripEdit</h1>;
+    return <h1>TripEdit</h1>;
 }

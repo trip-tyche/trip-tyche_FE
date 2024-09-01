@@ -1,19 +1,23 @@
-import Navbar from '@/components/common/Navbar';
-import Header from '@/components/layout/Header/Header';
-import characterImg from '@/assets/images/character.png';
-import { css } from '@emotion/react';
-import Button from '@/components/common/Button/Button';
 import { useState } from 'react';
-import ColumnButtonModal from '@/components/common/Modal/ColumnButtonModal';
-import OverLay from '@/components/common/OverLay';
+
+import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
-import useFirstUser from '@/store/FirstUser';
-import useLoginState from '@/store/LoginState';
+
+import characterImg from '@/assets/images/character.png';
+import Button from '@/components/common/Button/Button';
+import ColumnButtonModal from '@/components/common/Modal/ColumnButtonModal';
+import Navbar from '@/components/common/Navbar';
+import OverLay from '@/components/common/OverLay';
+import Header from '@/components/layout/Header/Header';
+import useFirstUser from '@/stores/FirstUser';
+import useLoginState from '@/stores/LoginState';
+import useUserStore from '@/stores/useUserStore';
 
 export default function MyPage() {
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
     const setIsLogin = useLoginState((state) => state.setIsLogin);
     const setIsFirstUser = useFirstUser((state) => state.setIsFirstUser);
+    const userNickName = useUserStore((state) => state.userNickName);
 
     const navigator = useNavigate();
 
@@ -40,7 +44,7 @@ export default function MyPage() {
                     <img src={characterImg} className='characterImg' alt='character' />
                 </div>
 
-                <p css={textWrapper}>안녕하세요, 동남아킬러 님</p>
+                <p css={textWrapper}>안녕하세요, {userNickName} 님</p>
 
                 <div css={buttonWrapper}>
                     <Button text='로그아웃' theme='sec' size='sm' onClick={openModal} />

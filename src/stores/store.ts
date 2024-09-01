@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
+
 import { BearState } from '../types/store';
 
 const useStore = create<BearState>()(

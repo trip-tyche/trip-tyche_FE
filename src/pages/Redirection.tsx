@@ -1,3 +1,3 @@
 export default function Redirection() {
-  return <div>Redirection!!!!!!!!!!!!!!!!!!!!!!!!!</div>;
+    return <div>Redirection!!!!!!!!!!!!!!!!!!!!!!!!!</div>;
 }

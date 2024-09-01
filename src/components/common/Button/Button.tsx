@@ -7,13 +7,11 @@ export interface ButtonProps {
     onClick?: () => void;
 }
 
-const Button = ({ text, theme, size, onClick }: ButtonProps): JSX.Element => {
-    return (
-        <button css={ButtonStyle(theme, size)} onClick={onClick}>
-            {text}
-        </button>
-    );
-};
+const Button = ({ text, theme, size, onClick }: ButtonProps): JSX.Element => (
+    <button css={ButtonStyle(theme, size)} onClick={onClick}>
+        {text}
+    </button>
+);
 
 export default Button;
 

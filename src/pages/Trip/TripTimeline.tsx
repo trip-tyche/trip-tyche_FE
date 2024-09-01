@@ -1,3 +1,3 @@
 export default function TripTimeline() {
-  return <h1>TripTimeline</h1>;
+    return <h1>TripTimeline</h1>;
 }

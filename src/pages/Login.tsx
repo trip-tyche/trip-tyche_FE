@@ -1,9 +1,10 @@
-import { useNavigate } from 'react-router-dom';
 import { css } from '@emotion/react';
+import { useNavigate } from 'react-router-dom';
+
 import KakaoButton from '@/components/common/Button/KakaoButton';
-import FightHeader from '@/components/layout/Header/AirplaneHeader';
 import LogoImages from '@/components/common/LogoImages';
-import useLoginState from '@/store/LoginState';
+import FightHeader from '@/components/layout/Header/AirplaneHeader';
+import useLoginState from '@/stores/LoginState';
 
 export default function Login() {
     const navigate = useNavigate();

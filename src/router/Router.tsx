@@ -1,14 +1,17 @@
 import { createBrowserRouter } from 'react-router-dom';
-import PageNotFound from '../pages/PageNotFound';
+
 import Root from '../layouts/Root';
 import Home from '../pages/Home';
-import TripList from '../pages/Trip/TripList';
-import TripCreate from '../pages/Trip/TripCreate';
 import Login from '../pages/Login';
-import MyPage from '../pages/MyPage';
-import TimeLine from '../pages/Trip/TimeLine';
 import MusicVideo from '../pages/MusicVideo';
+import MyPage from '../pages/MyPage';
+import PageNotFound from '../pages/PageNotFound';
 import Redirection from '../pages/Redirection';
+import TimeLine from '../pages/Trip/TimeLine';
+import TripCreate from '../pages/Trip/TripCreate';
+import TripList from '../pages/Trip/TripList';
+import TripEdit from '@/pages/Trip/TripEdit';
+import TripFile from '@/pages/Trip/TripFile';
 
 export const router = createBrowserRouter([
     {
@@ -25,23 +28,34 @@ export const router = createBrowserRouter([
                 element: <Home />,
             },
             {
-                path: 'trip-list',
+                path: 'trips',
                 element: <TripList />,
                 children: [
                     {
-                        path: 'timeline/:tripId',
-                        element: <TimeLine />,
+                        path: ':tripId/edit',
+                        element: <TripEdit />,
                     },
                     {
-                        path: 'timeline/:tripId/musicvideo/:pointId',
-                        element: <MusicVideo />,
+                        path: ':tripId/map',
+                        element: <TimeLine />,
+                        children: [
+                            {
+                                path: 'points/{pointId}/music-video',
+                                element: <MusicVideo />,
+                            },
+                        ],
                     },
                 ],
             },
             {
-                path: 'trip-create',
+                path: 'trips/new',
                 element: <TripCreate />,
             },
+            {
+                path: 'trips/new/file',
+                element: <TripFile />,
+            },
+
             {
                 path: '/my-page',
                 element: <MyPage />,

@@ -16,22 +16,20 @@ const RowButtonModal = ({
     cancelText,
     confirmModal,
     closeModal,
-}: RowButtonModalProps): JSX.Element => {
-    return (
-        <div css={modalStyle}>
-            <p>{descriptionText}</p>
-            <div>
-                <ButtonContainer
-                    confirmText={confirmText}
-                    cancelText={cancelText}
-                    size='sm'
-                    confirmModal={confirmModal}
-                    closeModal={closeModal}
-                />
-            </div>
+}: RowButtonModalProps): JSX.Element => (
+    <div css={modalStyle}>
+        <p>{descriptionText}</p>
+        <div>
+            <ButtonContainer
+                confirmText={confirmText}
+                cancelText={cancelText}
+                size='sm'
+                confirmModal={confirmModal}
+                closeModal={closeModal}
+            />
         </div>
-    );
-};
+    </div>
+);
 
 export default RowButtonModal;
 
