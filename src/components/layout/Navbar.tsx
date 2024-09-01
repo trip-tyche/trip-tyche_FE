@@ -1,64 +1,95 @@
 import { css } from '@emotion/react';
-import { Camera } from 'lucide-react';
+import { UserRound, TicketsPlane, Earth } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
-// import { PATH, PATH_TITLE } from '@/constants/path';
+import { PATH, PATH_TITLE } from '@/constants/path';
 import theme from '@/styles/theme';
 
-const Navbar = () => (
-    //       const menus = [
-    //     { path: PATH.HOME, title: PATH_TITLE.HOME, Icon: RiHome5Line, ActiveIcon: RiHome5Fill },
-    //     { path: PATH.SEARCH, title: PATH_TITLE.SEARCH, Icon: RiSearchLine, ActiveIcon: RiSearch2Fill },
-    //     {
-    //       path: PATH.SUBSCRIPTIONS,
-    //       title: PATH_TITLE.SUBSCRIPTIONS,
-    //       Icon: RiStackLine,
-    //       ActiveIcon: RiStackFill,
-    //     },
-    //     { path: PATH.MYPAGE, title: PATH_TITLE.MYPAGE, Icon: RiUserLine, ActiveIcon: RiUserFill },
-    //   ];
+const Navbar = () => {
+    const menus = [
+        { path: PATH.HOME, title: PATH_TITLE.HOME, Icon: Earth },
+        { path: PATH.TRIPS, title: PATH_TITLE.TRIPS, Icon: TicketsPlane },
+        { path: PATH.MYPAGE, title: PATH_TITLE.MYPAGE, Icon: UserRound },
+    ];
 
-    <nav className='nav' css={navbarStyle}>
-        <NavLink to={'/home'}>
-            <Camera size={24} />홈
-        </NavLink>
-        <NavLink to={'/trips'}>
-            <Camera size={24} />
-            여행관리
-        </NavLink>
-        <NavLink to={'/my-page'}>
-            <Camera size={24} />
-            마이페이지
-        </NavLink>
-    </nav>
-);
+    return (
+        <nav css={navStyle}>
+            <ul css={ulStyle}>
+                {menus.map(({ path, title, Icon }) => (
+                    <li key={path} css={liStyle}>
+                        <NavLink to={path} css={linkStyle}>
+                            {({ isActive }) => (
+                                <>
+                                    {isActive ? (
+                                        <Icon strokeWidth={3} css={activeIconStyle} />
+                                    ) : (
+                                        <Icon css={iconStyle} />
+                                    )}
+                                    <span>{title}</span>
+                                </>
+                            )}
+                        </NavLink>
+                    </li>
+                ))}
+            </ul>
+        </nav>
+    );
+};
 
-export default Navbar;
-
-const navbarStyle = css`
+const navStyle = css`
+    z-index: 10;
     position: fixed;
+    left: 50%;
     bottom: 0;
-    width: 100%;
-    max-width: 430px;
-    height: 6rem;
-
+    transform: translateX(-50%);
+    max-width: 498px;
+    width: 100vw;
+    height: 80px;
+    border-top: 1px solid ${theme.colors.disabled};
+    background-color: ${theme.colors.white};
+`;
+const ulStyle = css`
     display: flex;
-    background-color: #fff;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+`;
+const liStyle = css`
+    flex-grow: 1;
+    flex-basis: 0;
+`;
+const linkStyle = css`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 80px;
+    gap: 8px;
+    padding-top: 14px;
+    text-decoration: none;
+    color: ${theme.colors.disabledText};
+    font-weight: 400;
 
-    a {
-        flex: 1;
-        padding: 2rem;
-        font-size: 14px;
+    &.active {
+        color: ${theme.colors.tertiary};
+        font-weight: 600;
+    }
+
+    span {
+        width: 100%;
         text-align: center;
-        text-decoration: none;
-        color: #333;
-        transition: background-color 0.3s;
-
-        &:hover,
-        &.active {
-            background-color: #f0f0f0;
-            color: #000;
-        }
+        font-size: ${theme.fontSizes.small};
     }
 `;
+const iconStyle = css`
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+const activeIconStyle = css`
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+export default Navbar;

@@ -24,7 +24,7 @@ const AuthProtectedRoute = () => {
     // replace: 현재 페이지를 브라우저 히스토리에서 교체
     // state={..} :현재 URL 정보를 로그인 페이지로 전달
     // return authOK ? <Outlet /> : <Navigate to={`${PATH.SIGNIN}`} replace state={pathname + search} />;
-    return authOK ? <Outlet /> : <Navigate to={`${PATH.SIGNIN}`} replace state={pathname + search} />;
+    return authOK ? <Outlet /> : <Navigate to={`${PATH.LOGIN}`} replace state={pathname + search} />;
 };
 export const router = createBrowserRouter([
     {
@@ -32,7 +32,7 @@ export const router = createBrowserRouter([
         element: <AuthProtectedRoute />,
         errorElement: <PageNotFound />,
         children: [
-            { path: PATH.SIGNIN, element: <Login /> },
+            { path: PATH.LOGIN, element: <Login /> },
             {
                 element: <RootLayout />,
                 children: [
@@ -47,11 +47,10 @@ export const router = createBrowserRouter([
                     { path: PATH.TRIPS, element: <Trips /> },
                     {
                         path: PATH.TRIP_CREATE_INFO,
-                        children: [
-                            { index: true, element: <TripCreateInfo /> },
-                            { path: PATH.TRIP_UPLOAD, element: <TripFileUpload /> },
-                        ],
+                        element: <TripCreateInfo />,
                     },
+                    { path: PATH.TRIP_UPLOAD, element: <TripFileUpload /> },
+
                     { path: PATH.TRIPS_EDIT, element: <TripEdit /> },
                     { path: PATH.TRIP_MAP, element: <TripMap /> },
                     //   { path: PATH.ONBOARDING, element: <Onboarding /> },

@@ -1,7 +1,7 @@
 export const PATH = {
     ONBOARDING: '/onboarding',
-    SIGNIN: '/',
-    HOME: '/home',
+    HOME: '/',
+    LOGIN: '/login',
     MYPAGE: '/my-page',
     SETTINGS: '/my-page/settings',
     TRIPS: '/trips',
@@ -14,7 +14,7 @@ export const PATH = {
 
 export const PATH_TITLE = {
     ONBOARDING: '온보딩',
-    SIGNIN: '로그인',
+    LOGIN: '로그인',
     HOME: '홈',
     MYPAGE: '나',
     SETTINGS: '설정',
