@@ -17,7 +17,7 @@ const Login = () => {
     const handleLogin = () => {
         // window.location.href = link;
         setIsLogin(true);
-        navigate('/home');
+        navigate('/');
     };
 
     return (
@@ -31,7 +31,7 @@ const Login = () => {
 
             <LogoImages />
 
-            <div className='button-container' css={buttonContainerStyle}>
+            <div css={buttonContainerStyle}>
                 <KakaoButton handleLogin={handleLogin} />
             </div>
         </div>
@@ -41,12 +41,10 @@ const Login = () => {
 const containerStyle = css`
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: 100%;
 `;
 
 const textContainerStyle = css`
-    flex: 2;
+    /* flex: 2; */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -66,7 +64,7 @@ const textContainerStyle = css`
 `;
 
 const buttonContainerStyle = css`
-    flex: 1;
+    /* flex: 1; */
     display: flex;
     flex-direction: column;
     align-items: center;

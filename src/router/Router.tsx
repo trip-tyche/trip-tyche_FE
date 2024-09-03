@@ -29,12 +29,12 @@ const AuthProtectedRoute = () => {
 export const router = createBrowserRouter([
     {
         path: PATH.HOME,
-        element: <AuthProtectedRoute />,
+        element: <RootLayout />,
         errorElement: <PageNotFound />,
         children: [
             { path: PATH.LOGIN, element: <Login /> },
             {
-                element: <RootLayout />,
+                element: <AuthProtectedRoute />,
                 children: [
                     { index: true, element: <Home /> },
                     {

@@ -80,9 +80,8 @@ const baseStyles = css`
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        /* outline: 1px solid red; */
-    }
-    html {
+
+        /* 브라우저 기본 스크롤 숨기기 */
         /* 스크롤바 각 브라우저마다 보이지 않게 동작 */
         // Webkit browsers (Chrome, Safari)
         &::-webkit-scrollbar {
@@ -94,6 +93,7 @@ const baseStyles = css`
         // (추가) 터치 기기에서의 스크롤 동작 개선, 네이티브와 같이 동작
         -webkit-overflow-scrolling: touch;
     }
+
     body {
         font-family: 'Pretendard', sans-serif;
         font-weight: 400;
