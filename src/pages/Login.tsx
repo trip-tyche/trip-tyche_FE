@@ -4,20 +4,21 @@ import { useNavigate } from 'react-router-dom';
 import KakaoButton from '@/components/common/Button/KakaoButton';
 import LogoImages from '@/components/common/LogoImages';
 import FightHeader from '@/components/layout/AirplaneHeader';
-import useLoginState from '@/stores/LoginState';
+import { PATH } from '@/constants/path';
+import useLoginStore from '@/stores/useLoginStore';
 
 const Login = () => {
     const navigate = useNavigate();
-    const setIsLogin = useLoginState((state) => state.setIsLogin);
+
+    const setIsLogin = useLoginStore((state) => state.setIsLogin);
 
     // const REST_API_KEY = '111111111';
     // const REDIRECT_URI = '/kakao/callback';
     // const link: string = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
     const handleLogin = () => {
-        // window.location.href = link;
         setIsLogin(true);
-        navigate('/');
+        navigate(PATH.HOME);
     };
 
     return (

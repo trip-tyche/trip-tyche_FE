@@ -6,16 +6,16 @@ interface LoginState {
     setIsLogin: (isLogin: boolean) => void;
 }
 
-const useLoginState = create<LoginState>()(
+const useLoginStore = create<LoginState>()(
     devtools(
         (set) => ({
             isLogin: false,
             setIsLogin: (isLogin) => set({ isLogin }),
         }),
         {
-            name: 'login-store',
+            name: 'LoginStore',
         },
     ),
 );
 
-export default useLoginState;
+export default useLoginStore;

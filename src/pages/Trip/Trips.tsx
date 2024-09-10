@@ -67,31 +67,36 @@ const Trips = () => {
     const [trips, setTrips] = useState<FormattedTrip[]>([]);
     const [userNickName, setUserNickName] = useState<string>('');
 
-    const formatTrips = (tripsData: Trip[]): FormattedTrip[] =>
-        tripsData.map((trip) => ({
-            ...trip,
-            country: trip.country.toUpperCase(),
-            startDate: new Date(trip.startDate).toLocaleDateString('ko-KR'),
-            endDate: new Date(trip.endDate).toLocaleDateString('ko-KR'),
-        }));
+    // const formatTrips = (tripsData: Trip[]): FormattedTrip[] =>
+    //     tripsData.map((trip) => ({
+    //         ...trip,
+    //         country: trip.country.toUpperCase(),
+    //         startDate: new Date(trip.startDate).toLocaleDateString('ko-KR'),
+    //         endDate: new Date(trip.endDate).toLocaleDateString('ko-KR'),
+    //     }));
 
-    const fetchUserData = async (): Promise<void> => {
+    const fetchTrips = async (): Promise<void> => {
         try {
-            const response = await axios.get<UserData>('/server/getTrips.json');
-            const formattedTrips = formatTrips(response.data.trips);
-            setTrips(formattedTrips);
+            const response = await axios.get(`http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips`, {
+                headers: {
+                    Authorization:
+                        'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWRoZXJvODgzMEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzI1NTUyODEzLCJleHAiOjE3MjU1NTY0MTN9.mfOuHVakJMu8wTbx_oPKp5OxvnzxNqQ87HGc_OYKG6o',
+                    'Content-Type': 'application/json',
+                },
+            });
+            setTrips(response.data.trips);
             setUserNickName(response.data.userNickName);
+            console.log(response.data);
         } catch (error) {
-            console.error('Failed to fetch user data: ', error);
+            console.error('==> ', error);
         }
     };
-
     useEffect(() => {
-        fetchUserData();
+        fetchTrips();
     }, []);
 
     const goToTripCreatePage = () => {
-        navigator('/trips/new');
+        navigator('/trips/create-info');
     };
 
     return (
@@ -123,7 +128,7 @@ const containerStyle = css`
 const fixedHeaderStyle = css`
     position: fixed;
     width: 100%;
-    max-width: 430px;
+    max-width: 498px;
     top: 0;
     background-color: #fff;
     z-index: 1000;
@@ -135,7 +140,7 @@ const mainContentStyle = css`
     flex: 1;
     margin-bottom: 6rem;
 
-    margin-top: 130px;
+    margin-top: 150px;
     display: flex;
     flex-direction: column;
     justify-content: center;
