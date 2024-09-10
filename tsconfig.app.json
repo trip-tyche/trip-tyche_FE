@@ -2,6 +2,7 @@
     "extends": "./tsconfig.json",
     "include": ["src", "global.d.ts"],
     "compilerOptions": {
+        // 절대경로 import를 위한 설정
         "baseUrl": ".",
         "paths": {
             "@/*": ["src/*"]

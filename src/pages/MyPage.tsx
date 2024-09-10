@@ -9,12 +9,12 @@ import ColumnButtonModal from '@/components/common/Modal/ColumnButtonModal';
 import OverLay from '@/components/common/OverLay';
 import Header from '@/components/layout/Header';
 import useFirstUser from '@/stores/FirstUser';
-import useLoginState from '@/stores/LoginState';
+import useLoginStore from '@/stores/useLoginStore';
 import useUserStore from '@/stores/useUserStore';
 
 const MyPage = () => {
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-    const setIsLogin = useLoginState((state) => state.setIsLogin);
+    const setIsLogin = useLoginStore((state) => state.setIsLogin);
     const setIsFirstUser = useFirstUser((state) => state.setIsFirstUser);
     const userNickName = useUserStore((state) => state.userNickName);
 

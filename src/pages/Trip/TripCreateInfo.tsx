@@ -11,35 +11,59 @@ import Header from '@/components/layout/Header';
 import 'react-toastify/dist/ReactToastify.css';
 
 const TripCreateInfo: React.FC = () => {
-    const [title, setTitle] = useState('');
+    const [tripTitle, setTitle] = useState('');
     const [country, setCountry] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
-    const [selectedHashtag, setSelectedHashtag] = useState<string | null>(null);
+    const [selectedHashtag, setSelectedHashtag] = useState<string>();
     const navigate = useNavigate();
     const hashtags = ['가족', '친구', '연인', '즐거운', '도전', '공포', '우울한', '나홀자'];
 
     const handleSubmit = async () => {
         try {
-            const response = await axios.post('/server/getTrips.json', {
-                title,
-                country,
-                startDate,
-                endDate,
-                hashtag: selectedHashtag,
-            });
+            // console.log({
+            //     userId: 2,
+            //     tripTitle,
+            //     country,
+            //     startDate,
+            //     endDate,
+            //     hashtag: [selectedHashtag],
+            // });
 
-            if (response.status === 200 || response.status === 201) {
-                toast.success('여행 정보가 성공적으로 등록되었습니다!');
-                setTimeout(() => {
-                    navigate('/trips/new/file');
-                }, 2000);
-            }
+            if (selectedHashtag) {
+                const response = await axios.post(
+                    'http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips',
+                    {
+                        userId: 2,
+                        tripTitle,
+                        country,
+                        startDate,
+                        endDate,
+                        hashtags: [selectedHashtag] as string[],
+                    },
+                    {
+                        headers: {
+                            accept: '*/*',
+                            Authorization:
+                                'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWRoZXJvODgzMEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzI1NTU1ODk5LCJleHAiOjE3MjU1NTk0OTl9.rJhMlmf80KEHhY0XkDXhHEX5Tlq2-84ovwU_Jmj7CmE',
+                            'Content-Type': 'application/json',
+                        },
+                    },
+                );
+                if (response.status === 200 || response.status === 201) {
+                    console.log('등록!');
+                    toast.success('여행 정보가 성공적으로 등록되었습니다!');
+                    setTimeout(() => {
+                        // navigate('/trips/upload');
+                    }, 2000);
+                }
+            } else throw new Error('여행 등록에 실패했습니다. 다시 시도해주세요.');
         } catch (error) {
             toast.error('여행 등록에 실패했습니다. 다시 시도해주세요.');
             console.error('Trip registration failed:', error);
         }
     };
+
     const handleError = () => {
         toast.error('여행 등록에 실패했습니다. 다시 시도해주세요.');
     };
@@ -49,7 +73,7 @@ const TripCreateInfo: React.FC = () => {
             {/* <header css={headerStyle}>
                 <FaChevronLeft onClick={handleGoBack} css={backButtonStyle} />
                 <h1>여행 등록</h1>
-            </header> */}
+                </header> */}
             <Header title='여행관리' isBackButton={true} onClick={() => navigate('/trips')} />
 
             <main css={mainStyle}>
@@ -59,7 +83,7 @@ const TripCreateInfo: React.FC = () => {
                         id='title'
                         type='text'
                         placeholder='여행 제목을 입력하세요'
-                        value={title}
+                        value={tripTitle}
                         onChange={(e) => setTitle(e.target.value)}
                         css={inputStyle}
                     />

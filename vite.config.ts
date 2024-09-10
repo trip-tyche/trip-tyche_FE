@@ -5,6 +5,9 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    server: {
+        port: 3000, // 3000 포트로 설정
+    },
     plugins: [
         react({
             jsxImportSource: '@emotion/react',

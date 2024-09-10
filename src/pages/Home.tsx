@@ -9,7 +9,7 @@ import SingleInputModal from '@/components/common/Modal/SingleInputModal';
 import OverLay from '@/components/common/OverLay';
 import FightHeader from '@/components/layout/AirplaneHeader';
 import useFirstUser from '@/stores/FirstUser';
-import useLoginState from '@/stores/LoginState';
+import useLoginStore from '@/stores/useLoginStore';
 
 // import { getCode, getName } from 'country-list';
 interface Trip {
@@ -30,36 +30,43 @@ interface UserInfo {
 }
 
 const Home = () => {
-    const setIsLogin = useLoginState((state) => state.setIsLogin);
+    const setIsLogin = useLoginStore((state) => state.setIsLogin);
     const isFirstUser = useFirstUser((state) => state.isFirstUser);
     const setIsFirstUser = useFirstUser((state) => state.setIsFirstUser);
     const [_, setIsOpenModal] = useState<boolean>(false);
     const [userName, setUserName] = useState<string>('');
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const [tripCountries, setTripCountries] = useState<string[]>([]);
+    const [userId, setUserId] = useState();
 
     useEffect(() => {
+        const fetchUserInfo = async (): Promise<void> => {
+            try {
+                const response = await axios.get(
+                    `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/tripInfo?userId=2`,
+                    {
+                        headers: {
+                            Authorization:
+                                'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWRoZXJvODgzMEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzI1NTUyODEzLCJleHAiOjE3MjU1NTY0MTN9.mfOuHVakJMu8wTbx_oPKp5OxvnzxNqQ87HGc_OYKG6o',
+                            'Content-Type': 'application/json',
+                        },
+                    },
+                );
+
+                console.log(response.data.userName);
+                setUserId(response.data.userName);
+            } catch (error) {
+                console.error('==> ', error);
+            }
+        };
+        fetchUserInfo();
         setIsLogin(true);
         checkFirstUser();
-    }, []);
-
-    useEffect(() => {
-        fetchUserInfo();
     }, []);
 
     const formatCountryName = (trips: Trip[]): void => {
         const countries = trips.map((trip) => trip.country);
         setTripCountries(countries);
-    };
-
-    const fetchUserInfo = async (): Promise<void> => {
-        try {
-            const response = await axios.get('/src/mock/userInfo.json');
-            formatCountryName(response.data.trips);
-            setUserInfo(response.data);
-        } catch (error) {
-            console.error('==> ', error);
-        }
     };
 
     const checkFirstUser = () => {
@@ -71,7 +78,84 @@ const Home = () => {
         setIsFirstUser(false);
     };
 
+    const postUserInfo = async (): Promise<void> => {
+        try {
+            const response = await axios.post(
+                `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/updateUserNickName`,
+                {
+                    userNickName: userName,
+                },
+                {
+                    headers: {
+                        accept: '*/*',
+                        Authorization:
+                            'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWRoZXJvODgzMEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzI1NTUyODEzLCJleHAiOjE3MjU1NTY0MTN9.mfOuHVakJMu8wTbx_oPKp5OxvnzxNqQ87HGc_OYKG6o',
+                        'Content-Type': 'application/json',
+                    },
+                },
+            );
+
+            // formatCountryName(response.data.trips);
+            // setUserInfo(response.data);
+            console.log(response.data);
+        } catch (error) {
+            console.error('==> ', error);
+        }
+    };
+
+    // const deleteUserInfo = async (): Promise<void> => {
+    //     try {
+    //         const response = await axios.delete(
+    //             `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips/2`,
+    //             {
+    //                 headers: {
+    //                     accept: '*/*',
+    //                     Authorization:
+    //                         'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWRoZXJvODgzMEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzI1NTUyODEzLCJleHAiOjE3MjU1NTY0MTN9.mfOuHVakJMu8wTbx_oPKp5OxvnzxNqQ87HGc_OYKG6o',
+    //                     'Content-Type': 'application/json',
+    //                 },
+    //             },
+    //         );
+
+    //         // formatCountryName(response.data.trips);
+    //         // setUserInfo(response.data);
+    //         console.log(response.data);
+    //     } catch (error) {
+    //         console.error('==> ', error);
+    //     }
+    // };
+
+    // const putUserInfo = async (): Promise<void> => {
+    //     try {
+    //         const response = await axios.put(
+    //             `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips/1`,
+    //             {
+    //                 tripTitle: '아아아아앙',
+    //                 country: '대한민국',
+    //                 startDate: '2024-09-05',
+    //                 endDate: '2024-09-05',
+    //                 hashtags: ['야호'],
+    //             },
+    //             {
+    //                 headers: {
+    //                     accept: '*/*',
+    //                     Authorization:
+    //                         'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWRoZXJvODgzMEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzI1NTUyODEzLCJleHAiOjE3MjU1NTY0MTN9.mfOuHVakJMu8wTbx_oPKp5OxvnzxNqQ87HGc_OYKG6o',
+    //                     'Content-Type': 'application/json',
+    //                 },
+    //             },
+    //         );
+
+    //         // formatCountryName(response.data.trips);
+    //         // setUserInfo(response.data);
+    //         console.log(response.data);
+    //     } catch (error) {
+    //         console.error('==> ', error);
+    //     }
+    // };
+
     const submitUserName = () => {
+        postUserInfo();
         console.log(`${userName} 님이 가입했습니다.`);
         setUserName('');
         closeModal();

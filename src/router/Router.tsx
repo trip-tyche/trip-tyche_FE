@@ -11,30 +11,23 @@ import TripCreateInfo from '@/pages/Trip/TripCreateInfo';
 import TripEdit from '@/pages/Trip/TripEdit';
 import TripFileUpload from '@/pages/Trip/TripFileUpload';
 import TripMap from '@/pages/Trip/TripMap';
+import useLoginStore from '@/stores/useLoginStore';
 
 const AuthProtectedRoute = () => {
     // 현재 경로와 URL쿼리 문자열 가져옴
     const { pathname, search } = useLocation();
-
-    const authOK = true; // 로그인 여부 확인(임시)
-
-    // 로그인 통과? 그럼 Outlet을 렌더링
-    // 로그인 실패? 로그인 페이지로 Redirect
-    // <Outlet/>: 자식 라우트를 렌더링
-    // replace: 현재 페이지를 브라우저 히스토리에서 교체
-    // state={..} :현재 URL 정보를 로그인 페이지로 전달
-    // return authOK ? <Outlet /> : <Navigate to={`${PATH.SIGNIN}`} replace state={pathname + search} />;
-    return authOK ? <Outlet /> : <Navigate to={`${PATH.LOGIN}`} replace state={pathname + search} />;
+    const isLogin = useLoginStore((state) => state.isLogin);
+    return isLogin ? <Outlet /> : <Navigate to={`${PATH.LOGIN}`} replace state={pathname + search} />;
 };
 export const router = createBrowserRouter([
     {
         path: PATH.HOME,
-        element: <AuthProtectedRoute />,
+        element: <RootLayout />,
         errorElement: <PageNotFound />,
         children: [
             { path: PATH.LOGIN, element: <Login /> },
             {
-                element: <RootLayout />,
+                element: <AuthProtectedRoute />,
                 children: [
                     { index: true, element: <Home /> },
                     {
