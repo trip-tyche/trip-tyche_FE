@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
 
+import { fetchUserInfo, postUserNickName } from '@/api/user';
 import Card from '@/components/common/Card';
 import LogoImages from '@/components/common/LogoImages';
 import SingleInputModal from '@/components/common/Modal/SingleInputModal';
 import OverLay from '@/components/common/OverLay';
 import FightHeader from '@/components/layout/AirplaneHeader';
 import useAuthStore from '@/stores/useAuthStore';
-import useLoginStore from '@/stores/useLoginStore';
-import useUserStore from '@/stores/useUserStore';
 
 interface Trip {
     tripId: number;
@@ -19,162 +18,70 @@ interface Trip {
 
 interface PinPoint {
     tripId: number;
-    pinPointId: string;
+    pinPointId: number;
     latitude: number;
     longitude: number;
 }
-interface UserInfo {
-    userId: number;
-    userNickname: string;
-    trips: Trip[];
-    pinPoints: PinPoint[];
-}
 
 const Home = () => {
+    const navigate = useNavigate();
     const [_, setIsOpenModal] = useState<boolean>(false);
-    const [userName, setUserName] = useState<string>('');
-    const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-    const [tripCountries, setTripCountries] = useState<string[]>([]);
+    const [userNickName, setUserNickName] = useState<string>('');
+    const [trips, setTrips] = useState<Trip[]>();
+    const [tripFlags, setTripFlags] = useState<string[]>();
+    const [pinPoints, setPinPoints] = useState<PinPoint[]>();
+    const [isFirstUser, setIsFirstUser] = useState(false);
+    const [inputValue, setInputValue] = useState('');
 
-    // const setIsLogin = useLoginStore((state) => state.setIsLogin);
+    const location = useLocation();
     const setLogin = useAuthStore((state) => state.setLogin);
-    const isFirstUser = useUserStore((state) => state.isFirstUser);
-    const setIsFirstUser = useUserStore((state) => state.setIsFirstUser);
 
     // useEffect(() => {
-    //     const getToken = async (): Promise<void> => {
-    //         try {
-    //             const response = await axios.get('/src/mock/token.json');
-    //             const { token, user, expiresIn } = response.data;
-    //             console.log(token, user, expiresIn);
-    //         } catch (error) {
-    //             console.error('Login failed', error);
-    //         }
-    //     };
+    //     const params = new URLSearchParams(location.search);
+    //     const userId = params.get('userId');
+    //     const token = params.get('token');
 
-    //     getToken();
-    // }, []);
-
-    // const userId = 2;
-    // useEffect(() => {
-    //     const getUserInfo = async (): Promise<void> => {
-    //         try {
-    //             const response = await axios.get(
-    //                 `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/tripInfo?userId=${userId}`,
-    //                 {
-    //                     headers: {
-    //                         Authorization:
-    //                             'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWRoZXJvODgzMEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzI1NTUyODEzLCJleHAiOjE3MjU1NTY0MTN9.mfOuHVakJMu8wTbx_oPKp5OxvnzxNqQ87HGc_OYKG6o',
-    //                         'Content-Type': 'application/json',
-    //                     },
-    //                 },
-    //             );
-    //             console.log(response);
-    //             // setUserId(response.data.userName);
-    //         } catch (error) {
-    //             console.error('==> ', error);
-    //         }
-    //     };
-
-    //     // setIsLogin(true);
-
-    //     if (isFirstUser) {
-    //         setIsOpenModal(true);
+    //     if (userId && token) {
+    //         // 로그인 정보 저장
+    //         setLogin(userId, token);
+    //         console.log('Login success');
+    //         // 홈페이지로 리다이렉트
+    //         navigate('/', { replace: true });
+    //     } else {
+    //         console.error('Login failed: Missing userId or token');
+    //         navigate('/login', { replace: true });
     //     }
+    // }, [location, setLogin, navigate]);
 
-    //     getUserInfo();
-    // }, []);
+    useEffect(() => {
+        const initializeUserData = async () => {
+            const { userNickName, trips, pinPoints } = await fetchUserInfo();
+            if (!userNickName) {
+                // 첫 사용자의 경우
+                setIsFirstUser(true);
+                console.log('처음이네~');
+                return;
+            }
 
-    const formatCountryName = (trips: Trip[]): void => {
-        const countries = trips.map((trip) => trip.country);
-        setTripCountries(countries);
-    };
+            const tripFlags = trips?.map((trip) => trip.country.slice(0, 4));
+            setUserNickName(userNickName);
+            setTripFlags(tripFlags);
+            setTrips(trips);
+            setPinPoints(pinPoints);
+        };
+
+        initializeUserData();
+    }, []);
 
     const closeModal = () => {
         setIsOpenModal(false);
         setIsFirstUser(false);
     };
 
-    const postUserInfo = async (): Promise<void> => {
-        try {
-            const response = await axios.post(
-                `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/updateUserNickName`,
-                {
-                    userNickName: userName,
-                },
-                {
-                    headers: {
-                        accept: '*/*',
-                        Authorization:
-                            'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWRoZXJvODgzMEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzI1NTUyODEzLCJleHAiOjE3MjU1NTY0MTN9.mfOuHVakJMu8wTbx_oPKp5OxvnzxNqQ87HGc_OYKG6o',
-                        'Content-Type': 'application/json',
-                    },
-                },
-            );
-
-            // formatCountryName(response.data.trips);
-            // setUserInfo(response.data);
-            console.log(response.data);
-        } catch (error) {
-            console.error('==> ', error);
-        }
-    };
-
-    // const deleteUserInfo = async (): Promise<void> => {
-    //     try {
-    //         const response = await axios.delete(
-    //             `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips/2`,
-    //             {
-    //                 headers: {
-    //                     accept: '*/*',
-    //                     Authorization:
-    //                         'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWRoZXJvODgzMEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzI1NTUyODEzLCJleHAiOjE3MjU1NTY0MTN9.mfOuHVakJMu8wTbx_oPKp5OxvnzxNqQ87HGc_OYKG6o',
-    //                     'Content-Type': 'application/json',
-    //                 },
-    //             },
-    //         );
-
-    //         // formatCountryName(response.data.trips);
-    //         // setUserInfo(response.data);
-    //         console.log(response.data);
-    //     } catch (error) {
-    //         console.error('==> ', error);
-    //     }
-    // };
-
-    // const putUserInfo = async (): Promise<void> => {
-    //     try {
-    //         const response = await axios.put(
-    //             `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips/1`,
-    //             {
-    //                 tripTitle: '아아아아앙',
-    //                 country: '대한민국',
-    //                 startDate: '2024-09-05',
-    //                 endDate: '2024-09-05',
-    //                 hashtags: ['야호'],
-    //             },
-    //             {
-    //                 headers: {
-    //                     accept: '*/*',
-    //                     Authorization:
-    //                         'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWRoZXJvODgzMEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzI1NTUyODEzLCJleHAiOjE3MjU1NTY0MTN9.mfOuHVakJMu8wTbx_oPKp5OxvnzxNqQ87HGc_OYKG6o',
-    //                     'Content-Type': 'application/json',
-    //                 },
-    //             },
-    //         );
-
-    //         // formatCountryName(response.data.trips);
-    //         // setUserInfo(response.data);
-    //         console.log(response.data);
-    //     } catch (error) {
-    //         console.error('==> ', error);
-    //     }
-    // };
-
-    const submitUserName = () => {
-        // postUserInfo();
-        console.log(`${userName} 님이 가입했습니다.`);
-        setUserName('');
+    const submitUserNickName = () => {
+        postUserNickName(inputValue);
+        setUserNickName(inputValue);
+        setInputValue('');
         closeModal();
     };
 
@@ -183,12 +90,12 @@ const Home = () => {
             <main css={mainContentStyle}>
                 <FightHeader />
                 <div css={cardContainerStyle}>
-                    {userInfo && <Card trips={userInfo?.trips.length} tripCountries={tripCountries} />}
+                    <Card trips={trips?.length} tripFlags={tripFlags} />
                 </div>
 
                 <LogoImages />
 
-                <p css={description}> {userInfo?.userNickname} 님의 여행을 기억해주세요 😀</p>
+                <p css={description}> {userNickName} 님의 여행을 기억해주세요 😀</p>
             </main>
 
             {isFirstUser && (
@@ -198,9 +105,9 @@ const Home = () => {
                         titleText='당신의 이름을 알려주세요'
                         descriptionText='한국어, 영어, 숫자 등 최소 4자리를 입력해주세요.'
                         exampleText='(예. 동남아킬러24)'
-                        submitModal={submitUserName}
-                        setInputValue={setUserName}
-                        value={userName}
+                        submitModal={submitUserNickName}
+                        setInputValue={setInputValue}
+                        value={inputValue}
                     />
                 </>
             )}

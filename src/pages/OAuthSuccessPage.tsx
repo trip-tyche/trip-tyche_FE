@@ -4,8 +4,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 import useAuthStore from '@/stores/useAuthStore';
 
-const userId = 1234;
-const token = 'tokentokentokentokentokentokentokentokentokentokentoken';
+// const userId = 1;
+// const token = 'tokentokentokentokentokentokentokentokentokentokentoken';
 
 const OAuthSuccessPage = () => {
     const navigate = useNavigate();
@@ -13,10 +13,10 @@ const OAuthSuccessPage = () => {
     const setLogin = useAuthStore((state) => state.setLogin);
 
     useEffect(() => {
-        // const params = new URLSearchParams(location.search);
-        // const userId = params.get('userId');
-        // const token = params.get('token');
-        // console.log(userId, token);
+        const params = new URLSearchParams(location.search);
+        const userId = params.get('userId');
+        const token = params.get('token');
+
         if (userId && token) {
             // 로그인 정보 저장
             setLogin(userId, token);

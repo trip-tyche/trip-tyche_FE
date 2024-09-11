@@ -2,14 +2,14 @@ import { create } from 'zustand';
 
 interface AuthState {
     isLogIn: boolean;
-    userId: number | null;
+    userId: string | null;
     token: string | null;
-    setLogin: (userId: number, token: string) => void;
+    setLogin: (userId: string, token: string) => void;
     logout: () => void;
     // checkAuthStatus: () => boolean;
 }
 
-const useAuthStore = create<AuthState>()((set, get) => ({
+const useAuthStore = create<AuthState>()((set) => ({
     isLogIn: false,
     userId: null,
     token: null,
