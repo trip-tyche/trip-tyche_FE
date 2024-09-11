@@ -8,14 +8,15 @@ import LogoImages from '@/components/common/LogoImages';
 import SingleInputModal from '@/components/common/Modal/SingleInputModal';
 import OverLay from '@/components/common/OverLay';
 import FightHeader from '@/components/layout/AirplaneHeader';
-import useFirstUser from '@/stores/FirstUser';
+import useAuthStore from '@/stores/useAuthStore';
 import useLoginStore from '@/stores/useLoginStore';
+import useUserStore from '@/stores/useUserStore';
 
-// import { getCode, getName } from 'country-list';
 interface Trip {
     tripId: number;
     country: string;
 }
+
 interface PinPoint {
     tripId: number;
     pinPointId: string;
@@ -30,47 +31,63 @@ interface UserInfo {
 }
 
 const Home = () => {
-    const setIsLogin = useLoginStore((state) => state.setIsLogin);
-    const isFirstUser = useFirstUser((state) => state.isFirstUser);
-    const setIsFirstUser = useFirstUser((state) => state.setIsFirstUser);
     const [_, setIsOpenModal] = useState<boolean>(false);
     const [userName, setUserName] = useState<string>('');
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const [tripCountries, setTripCountries] = useState<string[]>([]);
-    const [userId, setUserId] = useState();
 
-    useEffect(() => {
-        const fetchUserInfo = async (): Promise<void> => {
-            try {
-                const response = await axios.get(
-                    `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/tripInfo?userId=2`,
-                    {
-                        headers: {
-                            Authorization:
-                                'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWRoZXJvODgzMEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzI1NTUyODEzLCJleHAiOjE3MjU1NTY0MTN9.mfOuHVakJMu8wTbx_oPKp5OxvnzxNqQ87HGc_OYKG6o',
-                            'Content-Type': 'application/json',
-                        },
-                    },
-                );
+    // const setIsLogin = useLoginStore((state) => state.setIsLogin);
+    const setLogin = useAuthStore((state) => state.setLogin);
+    const isFirstUser = useUserStore((state) => state.isFirstUser);
+    const setIsFirstUser = useUserStore((state) => state.setIsFirstUser);
 
-                console.log(response.data.userName);
-                setUserId(response.data.userName);
-            } catch (error) {
-                console.error('==> ', error);
-            }
-        };
-        fetchUserInfo();
-        setIsLogin(true);
-        checkFirstUser();
-    }, []);
+    // useEffect(() => {
+    //     const getToken = async (): Promise<void> => {
+    //         try {
+    //             const response = await axios.get('/src/mock/token.json');
+    //             const { token, user, expiresIn } = response.data;
+    //             console.log(token, user, expiresIn);
+    //         } catch (error) {
+    //             console.error('Login failed', error);
+    //         }
+    //     };
+
+    //     getToken();
+    // }, []);
+
+    // const userId = 2;
+    // useEffect(() => {
+    //     const getUserInfo = async (): Promise<void> => {
+    //         try {
+    //             const response = await axios.get(
+    //                 `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/tripInfo?userId=${userId}`,
+    //                 {
+    //                     headers: {
+    //                         Authorization:
+    //                             'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWRoZXJvODgzMEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzI1NTUyODEzLCJleHAiOjE3MjU1NTY0MTN9.mfOuHVakJMu8wTbx_oPKp5OxvnzxNqQ87HGc_OYKG6o',
+    //                         'Content-Type': 'application/json',
+    //                     },
+    //                 },
+    //             );
+    //             console.log(response);
+    //             // setUserId(response.data.userName);
+    //         } catch (error) {
+    //             console.error('==> ', error);
+    //         }
+    //     };
+
+    //     // setIsLogin(true);
+
+    //     if (isFirstUser) {
+    //         setIsOpenModal(true);
+    //     }
+
+    //     getUserInfo();
+    // }, []);
 
     const formatCountryName = (trips: Trip[]): void => {
         const countries = trips.map((trip) => trip.country);
         setTripCountries(countries);
-    };
-
-    const checkFirstUser = () => {
-        if (isFirstUser) setIsOpenModal(true);
     };
 
     const closeModal = () => {
@@ -155,7 +172,7 @@ const Home = () => {
     // };
 
     const submitUserName = () => {
-        postUserInfo();
+        // postUserInfo();
         console.log(`${userName} 님이 가입했습니다.`);
         setUserName('');
         closeModal();

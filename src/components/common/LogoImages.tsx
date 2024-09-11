@@ -15,8 +15,8 @@ export default LogoImages;
 const LogoImagesStyle = css`
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
 
     .characterImg {
         width: 55px;
@@ -24,7 +24,7 @@ const LogoImagesStyle = css`
     }
 
     .earthImg {
-        width: 320px;
+        width: 300px;
         margin-top: -45px;
     }
 `;

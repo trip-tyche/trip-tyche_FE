@@ -7,6 +7,13 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig({
     server: {
         port: 3000, // 3000 포트로 설정
+        // proxy: {
+        //     '/http': {
+        //         target: 'http://localhost:8080',
+        //         changeOrigin: true,
+        //         secure: false,
+        //     },
+        // },
     },
     plugins: [
         react({

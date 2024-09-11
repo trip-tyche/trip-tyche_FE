@@ -1,12 +1,13 @@
 import { css } from '@emotion/react';
+import { Plane } from 'lucide-react';
 
-import AirplaneSvg from '@/components/svg-component/AirplaneSvg';
+import theme from '@/styles/theme';
 
 const AirplaneHeader = (): JSX.Element => (
     <>
         <div css={AirplaneHeaderStyle}>
             <div css={AirplaneSvgContainerStyle}>
-                <AirplaneSvg />
+                <Plane size={32} />
             </div>
         </div>
     </>
@@ -15,7 +16,7 @@ const AirplaneHeader = (): JSX.Element => (
 export default AirplaneHeader;
 
 const AirplaneHeaderStyle = css`
-    height: 44px;
+    height: ${theme.heights.medium_44};
     display: flex;
     justify-content: center;
     align-items: center;
@@ -23,7 +24,7 @@ const AirplaneHeaderStyle = css`
 `;
 
 const AirplaneSvgContainerStyle = css`
-    margin-top: 48px;
+    margin-top: ${theme.heights.medium_44};
     padding: 0 6px;
-    background-color: #fff;
+    background-color: ${theme.colors.white};
 `;

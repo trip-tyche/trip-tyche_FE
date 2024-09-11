@@ -12,9 +12,7 @@ const useLoginStore = create<LoginState>()(
             isLogin: false,
             setIsLogin: (isLogin) => set({ isLogin }),
         }),
-        {
-            name: 'LoginStore',
-        },
+        { name: 'Login Store' },
     ),
 );
 

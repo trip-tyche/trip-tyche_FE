@@ -15,7 +15,6 @@ const KakaoButton = ({ text, handleLogin }: KakaoButtonProps): JSX.Element => (
 export default KakaoButton;
 
 const KakaoButtonStyle = css`
-    /* background-color: rgb(254, 229, 0); */
     background-color: rgb(255 227 78);
     color: #333;
     border: none;
@@ -33,6 +32,7 @@ const KakaoButtonStyle = css`
     align-items: center;
     justify-content: center;
     transition: background-color 0.2s ease-in-out;
+    transition: transform 0.1s ease;
 
     &:hover {
         background-color: #fdd835;
@@ -40,8 +40,7 @@ const KakaoButtonStyle = css`
 
     &:active {
         background-color: #fdd835;
-        /* background-color: #f9a825; */
-        /* 모바일의 경우, hover가 적용되지 않으므로 active로 */
+        transform: scale(0.99);
     }
 `;
 

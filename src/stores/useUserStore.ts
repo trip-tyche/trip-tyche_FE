@@ -4,6 +4,8 @@ import { devtools } from 'zustand/middleware';
 interface UserState {
     userNickName: string;
     setUserNickName: (userNickName: string) => void;
+    isFirstUser: boolean;
+    setIsFirstUser: (isFirstUser: boolean) => void;
 }
 
 const useUserStore = create<UserState>()(
@@ -11,6 +13,9 @@ const useUserStore = create<UserState>()(
         (set) => ({
             userNickName: '',
             setUserNickName: (userNickName) => set({ userNickName }),
+
+            isFirstUser: true,
+            setIsFirstUser: (isFirstUser) => set({ isFirstUser }),
         }),
         { name: 'User Store' },
     ),

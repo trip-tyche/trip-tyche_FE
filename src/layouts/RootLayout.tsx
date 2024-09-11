@@ -17,7 +17,7 @@ const RootLayout = () => {
     return (
         <div css={containerStyle}>
             {showNavbar() && <Navbar />}
-            <main css={mainStyle}>
+            <main>
                 <Outlet />
             </main>
         </div>
@@ -28,12 +28,6 @@ const containerStyle = css`
     min-height: 100vh;
     margin: 0 auto;
     background-color: ${theme.colors.white};
-`;
-
-const mainStyle = css`
-    width: 100%;
-    padding-bottom: 80px;
-    /* height: calc(100vh - 80px); */
 `;
 
 export default RootLayout;

@@ -98,7 +98,7 @@ const baseStyles = css`
         font-family: 'Pretendard', sans-serif;
         font-weight: 400;
         line-height: 1;
-        font-size: ${theme.fontSizes.large}; /* 16px */
+        font-size: ${theme.fontSizes.large_16}; /* 16px */
         color: ${theme.colors.black};
         background-color: ${theme.colors.black};
         letter-spacing: -0.14px;
@@ -122,12 +122,12 @@ const baseStyles = css`
         padding: 0 16px; /* 1rem */
     }
     /* 공통 페이지 타이틀 */
-    .page-title {
+    /* .page-title {
         padding: 32px 0 20px 16px;
         font-weight: bold;
-        font-size: ${theme.fontSizes.xxlarge};
+        font-size: ${theme.fontSizes.xxlarge_20};
         background-color: ${theme.colors.white};
-    }
+    } */
 `;
 
 const GlobalStyle = () => <Global styles={baseStyles} />;

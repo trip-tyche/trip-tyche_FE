@@ -1,14 +1,14 @@
 {
-    "userId": 1,
-    "userNickName": "TestUser1",
+    "userId": 1234,
+    "userNickName": "살벌한 탐험가",
     "trips": [
         {
             "tripId": 1,
-            "country": "South Korea"
+            "country": "🇰🇷 대한민국"
         },
         {
             "tripId": 2,
-            "country": "Japan"
+            "country": "🇯🇵 일본"
         }
     ],
     "pinPoints": [
