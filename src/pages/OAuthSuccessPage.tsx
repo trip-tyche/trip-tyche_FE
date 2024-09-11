@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useNavigate, useLocation } from 'react-router-dom';
+import { HashLoader } from 'react-spinners';
 
 import useAuthStore from '@/stores/useAuthStore';
 
@@ -29,7 +30,19 @@ const OAuthSuccessPage = () => {
         }
     }, [location, setLogin, navigate]);
 
-    return <div>로그인 처리 중...</div>;
+    return (
+        <div
+            style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+                width: '100vw',
+            }}
+        >
+            <HashLoader color='#85a878' size={50} speedMultiplier={0} />
+        </div>
+    );
 };
 
 export default OAuthSuccessPage;

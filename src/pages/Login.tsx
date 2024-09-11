@@ -1,7 +1,4 @@
-import { useEffect, useState } from 'react';
-
 import { css } from '@emotion/react';
-import { useNavigate } from 'react-router-dom';
 
 import KakaoButton from '@/components/common/Button/KakaoButton';
 import LogoImages from '@/components/common/LogoImages';
@@ -10,10 +7,6 @@ import FightHeader from '@/components/layout/AirplaneHeader';
 import theme from '@/styles/theme';
 
 const Login = () => {
-    const navigate = useNavigate();
-
-    // const REDIRECT_URI = '/kakao/callback';
-    // const LINK: string = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
     const LINK: string = `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/oauth2/authorization/kakao`;
 
     const handleLogin = () => {
@@ -42,7 +35,7 @@ const Login = () => {
 };
 
 const containerStyle = css`
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
 `;

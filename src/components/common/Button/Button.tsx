@@ -29,12 +29,7 @@ const ButtonStyle = (theme: 'pri' | 'sec', size: 'lg' | 'sm') => css`
     color: ${theme === 'pri' ? '#333' : '#fff'};
     background-color: ${theme === 'pri' ? '#fff' : '#333'};
 
-    &:hover {
-        color: ${theme === 'pri' ? '#fff' : '#333'};
-        background-color: ${theme === 'pri' ? '#333' : '#fff'};
-    }
-
     &:active {
-        opacity: 0.8;
+        transform: scale(0.99);
     }
 `;

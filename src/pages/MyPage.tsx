@@ -8,13 +8,15 @@ import Button from '@/components/common/Button/Button';
 import ColumnButtonModal from '@/components/common/Modal/ColumnButtonModal';
 import OverLay from '@/components/common/OverLay';
 import Header from '@/components/layout/Header';
-import useFirstUser from '@/stores/FirstUser';
+import { PATH } from '@/constants/path';
+import useAuthStore from '@/stores/useAuthStore';
 import useUserStore from '@/stores/useUserStore';
+import theme from '@/styles/theme';
 
 const MyPage = () => {
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-    const setIsFirstUser = useFirstUser((state) => state.setIsFirstUser);
     const userNickName = useUserStore((state) => state.userNickName);
+    const logout = useAuthStore((state) => state.logout);
 
     const navigator = useNavigate();
 
@@ -27,25 +29,22 @@ const MyPage = () => {
 
     const confirmModal = () => {
         setIsLogoutModalOpen(false);
-        setIsFirstUser(true);
-        navigator('/');
+        logout();
+        navigator(PATH.LOGIN);
     };
 
     return (
         <div css={containerStyle}>
             <Header title='마이페이지' />
+            <div css={imgContainerStyle}>
+                <img src={characterImg} className='characterImg' alt='character' />
+            </div>
 
-            <main css={mainContentStyle}>
-                <div css={imgContainerStyle}>
-                    <img src={characterImg} className='characterImg' alt='character' />
-                </div>
+            <p css={textWrapper}>안녕하세요, {userNickName} 님</p>
 
-                <p css={textWrapper}>안녕하세요, {userNickName} 님</p>
-
-                <div css={buttonWrapper}>
-                    <Button text='로그아웃' theme='sec' size='sm' onClick={openModal} />
-                </div>
-            </main>
+            <div css={buttonWrapper}>
+                <Button text='로그아웃' theme='sec' size='sm' onClick={openModal} />
+            </div>
 
             {isLogoutModalOpen && (
                 <>
@@ -68,15 +67,7 @@ const containerStyle = css`
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-`;
-
-const mainContentStyle = css`
-    flex: 1;
-    margin-bottom: 6rem;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    padding-bottom: 80px;
 `;
 
 const imgContainerStyle = css`
@@ -87,12 +78,12 @@ const imgContainerStyle = css`
     align-items: center;
 
     .characterImg {
-        width: 160px;
+        width: 120px;
     }
 `;
 
 const textWrapper = css`
-    font-size: 24px;
+    font-size: ${theme.fontSizes.xxlarge_20};
     font-weight: 600;
     text-align: center;
 `;
