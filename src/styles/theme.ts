@@ -20,6 +20,7 @@ const colors = {
     darkGray: '#8B95A1', // placeholder
     bgMypage: '#353535', // 마이페이지 프로필 배경색
     goldStar: '#FFC700', // 별점 색상
+    // borderColor: #DDDDDD,
 };
 
 const fontSizes = {
@@ -36,7 +37,7 @@ const fontSizes = {
 const heights = {
     short_32: '32px',
     medium_44: '44px',
-    tall_50: '50px',
+    tall_54: '54px',
     xtall_60: '60px',
 };
 

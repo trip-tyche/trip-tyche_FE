@@ -37,10 +37,12 @@ import { css } from '@emotion/react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+import { fetchTripsList } from '@/api/trips';
 import Button from '@/components/common/Button/Button';
 import Header from '@/components/layout/Header';
 import Navbar from '@/components/layout/Navbar';
 import BorderPass from '@/components/pages/BorderPass';
+import theme from '@/styles/theme';
 
 // 인터페이스 정의
 interface Trip {
@@ -52,7 +54,7 @@ interface Trip {
     hashtags: string[];
 }
 
-interface UserData {
+interface TripList {
     userNickName: string;
     trips: Trip[];
 }
@@ -63,40 +65,30 @@ interface FormattedTrip extends Omit<Trip, 'startDate' | 'endDate'> {
 }
 
 const Trips = () => {
-    const navigator = useNavigate();
-    const [trips, setTrips] = useState<FormattedTrip[]>([]);
+    const navigate = useNavigate();
+    const [trips, setTrips] = useState<Trip[]>([]);
     const [userNickName, setUserNickName] = useState<string>('');
 
-    // const formatTrips = (tripsData: Trip[]): FormattedTrip[] =>
-    //     tripsData.map((trip) => ({
-    //         ...trip,
-    //         country: trip.country.toUpperCase(),
-    //         startDate: new Date(trip.startDate).toLocaleDateString('ko-KR'),
-    //         endDate: new Date(trip.endDate).toLocaleDateString('ko-KR'),
-    //     }));
+    const formatTrips = (tripsData: Trip[]): FormattedTrip[] =>
+        tripsData.map((trip) => ({
+            ...trip,
+            country: trip.country.toUpperCase(),
+            startDate: new Date(trip.startDate).toLocaleDateString('ko-KR'),
+            endDate: new Date(trip.endDate).toLocaleDateString('ko-KR'),
+        }));
 
-    const fetchTrips = async (): Promise<void> => {
-        try {
-            const response = await axios.get(`http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips`, {
-                headers: {
-                    Authorization:
-                        'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWRoZXJvODgzMEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzI1NTUyODEzLCJleHAiOjE3MjU1NTY0MTN9.mfOuHVakJMu8wTbx_oPKp5OxvnzxNqQ87HGc_OYKG6o',
-                    'Content-Type': 'application/json',
-                },
-            });
-            setTrips(response.data.trips);
-            setUserNickName(response.data.userNickName);
-            console.log(response.data);
-        } catch (error) {
-            console.error('==> ', error);
-        }
-    };
     useEffect(() => {
-        fetchTrips();
+        const getTripsList = async () => {
+            const tripList = await fetchTripsList();
+            setTrips(tripList.trips);
+            setUserNickName(tripList.userNickName);
+        };
+
+        getTripsList();
     }, []);
 
     const goToTripCreatePage = () => {
-        navigator('/trips/create-info');
+        navigate('/trips/create-info');
     };
 
     return (
@@ -109,7 +101,7 @@ const Trips = () => {
             </div>
             <main css={mainContentStyle}>
                 <div css={tripListStyle}>
-                    {trips.map((trip) => (
+                    {formatTrips(trips).map((trip) => (
                         <BorderPass key={trip.tripId} trip={trip} userNickName={userNickName} />
                     ))}
                 </div>
@@ -129,37 +121,30 @@ const fixedHeaderStyle = css`
     position: fixed;
     width: 100%;
     max-width: 498px;
-    top: 0;
-    background-color: #fff;
+    background-color: ${theme.colors.white};
     z-index: 1000;
-    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
-    /* background-color: transparent; */
-`;
-
-const mainContentStyle = css`
-    flex: 1;
-    margin-bottom: 6rem;
-
-    margin-top: 150px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
 `;
 
 const buttonStyle = css`
     display: flex;
     justify-content: end;
-    background-color: transparent;
-    padding: 1.5rem;
+    padding: 0.5rem;
+    padding-right: 1rem;
+`;
+
+const mainContentStyle = css`
+    flex: 1;
+    padding-bottom: 90px;
+
+    margin-top: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 `;
 
 const tripListStyle = css`
-    flex: 1;
-
     display: flex;
     flex-direction: column;
-    justify-content: start;
-    align-items: center;
     gap: 18px;
     padding: 10px;
 `;

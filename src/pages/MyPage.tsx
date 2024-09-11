@@ -35,7 +35,7 @@ const MyPage = () => {
 
     return (
         <div css={containerStyle}>
-            <Header title='마이페이지' />
+            <Header title='마이페이지' isBackButton />
             <div css={imgContainerStyle}>
                 <img src={characterImg} className='characterImg' alt='character' />
             </div>

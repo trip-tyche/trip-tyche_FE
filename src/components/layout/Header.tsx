@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
+import { ChevronLeft } from 'lucide-react';
 
-import BackButtonSvg from '@/components/svg-component/BackButtonSvg';
+import theme from '@/styles/theme';
 
 interface HeaderProps {
     title: string;
@@ -13,7 +14,7 @@ const Header = ({ title, isBackButton, onClick }: HeaderProps): JSX.Element => (
         <div css={HeaderStyle}>
             {isBackButton && (
                 <div css={backButtonContainerStyle} onClick={onClick}>
-                    <BackButtonSvg />
+                    <ChevronLeft size={28} />
                 </div>
             )}
             <h1>{title}</h1>
@@ -30,15 +31,16 @@ const backButtonContainerStyle = css`
 `;
 
 const HeaderStyle = css`
-    height: 54px;
+    height: ${theme.heights.tall_54};
     display: flex;
     justify-content: center;
     align-items: center;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #dddddd;
     position: relative;
+    background-color: ${theme.colors.white};
 
     h1 {
-        font-size: 18px;
+        font-size: ${theme.fontSizes.xlarge_18};
         font-weight: 600;
     }
 `;

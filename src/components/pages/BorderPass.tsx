@@ -85,7 +85,12 @@ const borderPassContainer = css`
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    /* margin-bottom: 20px; */
+    transition: all 0.5s ease;
+    cursor: pointer;
+
+    &:hover {
+        transform: translateY(-2px);
+    }
 `;
 
 const borderPassLeft = css`
