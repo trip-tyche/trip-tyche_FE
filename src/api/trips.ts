@@ -97,3 +97,51 @@ export const postTripImages = async (tripId: string, files: File[]) => {
         throw error;
     }
 };
+
+export const updateTripInfo = async (
+    tripId: string,
+    { tripTitle, country, startDate, endDate, hashtags }: TripInfo,
+) => {
+    try {
+        const response = await axios.put(
+            `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips/${tripId}`,
+            {
+                tripTitle,
+                country,
+                startDate,
+                endDate,
+                hashtags,
+            },
+            {
+                headers: {
+                    accept: '*/*',
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        );
+        console.log('Update Success');
+        return response.data;
+    } catch (error) {
+        console.error('==> ', error);
+        throw error;
+    }
+};
+
+export const deleteTripInfo = async (tripId: string) => {
+    try {
+        const response = await axios.delete(
+            `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips/${tripId}`,
+            {
+                headers: {
+                    accept: '*/*',
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        );
+        console.log('Delete Success');
+        return response.data;
+    } catch (error) {
+        console.error('==> ', error);
+        throw error;
+    }
+};

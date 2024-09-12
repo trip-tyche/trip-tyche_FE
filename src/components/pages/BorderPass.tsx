@@ -1,6 +1,10 @@
+import { Dispatch, SetStateAction } from 'react';
+
 import { css } from '@emotion/react';
 import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
+import { deleteTripInfo } from '@/api/trips';
 import characterImg from '@/assets/images/character.png';
 
 interface Trip {
@@ -19,53 +23,66 @@ interface FormattedTrip extends Omit<Trip, 'startDate' | 'endDate'> {
 interface BorderPassProps {
     trip: FormattedTrip;
     userNickname: string;
-    onEdit?: () => void;
-    onDelete?: () => void;
+    setTripCount: Dispatch<SetStateAction<number>>;
 }
 
-const BorderPass: React.FC<BorderPassProps> = ({ trip, userNickname, onEdit, onDelete }) => (
-    <div css={borderPassContainer}>
-        <div css={borderPassContent}>
-            <div css={borderPassLeft}>
-                <div css={countryName}>{trip.country}</div>
-                <img src={characterImg} alt='character' css={characterImage} />
-                <div css={borderPassText}>BORDER PASS</div>
+const BorderPass: React.FC<BorderPassProps> = ({ trip, userNickname, setTripCount }) => {
+    const navigate = useNavigate();
+
+    const { tripId, tripTitle, country, startDate, endDate, hashtags } = trip;
+
+    const handleEdit = () => {
+        navigate(`/trips/${tripId}/edit`);
+    };
+
+    const handleDelete = async () => {
+        await deleteTripInfo(tripId);
+        setTripCount((prev: number) => prev - 1);
+    };
+    return (
+        <div css={borderPassContainer}>
+            <div css={borderPassContent}>
+                <div css={borderPassLeft}>
+                    <div css={countryName}>{country}</div>
+                    <img src={characterImg} alt='character' css={characterImage} />
+                    <div css={borderPassText}>BORDER PASS</div>
+                </div>
+                <div css={borderPassRight}>
+                    <h3 css={tripTitleStyle}>{tripTitle}</h3>
+                    <div css={tripInfo}>
+                        <p>
+                            <strong>PASSENGER:</strong> {userNickname}
+                        </p>
+                        <p>
+                            <strong>FROM:</strong> 인천
+                        </p>
+                        <p>
+                            <strong>TO:</strong> {country.substring(4)}
+                        </p>
+                        <p>
+                            <strong>DATE:</strong> {startDate} ~ {endDate}
+                        </p>
+                    </div>
+                    <div css={hashtagContainer}>
+                        {hashtags.map((tag, index) => (
+                            <span key={index} css={hashtag}>
+                                #{tag}
+                            </span>
+                        ))}
+                    </div>
+                </div>
             </div>
-            <div css={borderPassRight}>
-                <h3 css={tripTitle}>{trip.tripTitle}</h3>
-                <div css={tripInfo}>
-                    <p>
-                        <strong>PASSENGER:</strong> {userNickname}
-                    </p>
-                    <p>
-                        <strong>FROM:</strong> 인천
-                    </p>
-                    <p>
-                        <strong>TO:</strong> {trip.country.substring(4)}
-                    </p>
-                    <p>
-                        <strong>DATE:</strong> {trip.startDate} ~ {trip.endDate}
-                    </p>
-                </div>
-                <div css={hashtagContainer}>
-                    {trip.hashtags.map((tag, index) => (
-                        <span key={index} css={hashtag}>
-                            #{tag}
-                        </span>
-                    ))}
-                </div>
+            <div css={buttonContainer}>
+                <button css={editButton} onClick={handleEdit}>
+                    <FaPencilAlt /> Edit
+                </button>
+                <button css={deleteButton} onClick={handleDelete}>
+                    <FaTrashAlt /> Delete
+                </button>
             </div>
         </div>
-        <div css={buttonContainer}>
-            <button css={editButton} onClick={onEdit}>
-                <FaPencilAlt /> Edit
-            </button>
-            <button css={deleteButton} onClick={onDelete}>
-                <FaTrashAlt /> Delete
-            </button>
-        </div>
-    </div>
-);
+    );
+};
 
 const borderPassContainer = css`
     width: 100%;
@@ -78,7 +95,12 @@ const borderPassContainer = css`
     margin: 10px auto;
     position: relative;
 
-    &:before {
+    &:hover {
+        /* transform: translateY(-2px); */
+        /* cursor: pointer; */
+    }
+
+    /* &:before {
         content: '';
         position: absolute;
         top: 0;
@@ -88,7 +110,7 @@ const borderPassContainer = css`
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="25" fill="%23c4a671" opacity="0.1"/></svg>');
         background-size: 50px 50px;
         opacity: 0.5;
-    }
+    } */
 `;
 
 const borderPassContent = css`
@@ -152,7 +174,7 @@ const borderPassText = css`
     font-family: 'Futura', sans-serif;
 `;
 
-const tripTitle = css`
+const tripTitleStyle = css`
     font-size: 18px;
     color: #453525;
     margin-bottom: 10px;
@@ -197,12 +219,6 @@ const buttonContainer = css`
     justify-content: flex-end;
     padding: 10px 15px;
     background-color: rgba(69, 53, 37, 0.1);
-
-    button {
-        &:hover {
-            cursor: pointer;
-        }
-    }
 `;
 
 const buttonBase = css`
@@ -220,6 +236,7 @@ const buttonBase = css`
 
     &:hover {
         transform: translateY(-2px);
+        cursor: pointer;
     }
 `;
 

@@ -35,6 +35,7 @@ const Trips = () => {
     const navigate = useNavigate();
     const [trips, setTrips] = useState<Trip[]>([]);
     const [userNickname, setUserNickname] = useState<string>('');
+    const [tripCount, setTripCount] = useState(0);
 
     const formatTrips = (tripsData: Trip[]): FormattedTrip[] =>
         tripsData?.map((trip) => ({
@@ -55,10 +56,11 @@ const Trips = () => {
 
             setTrips(tripList.trips);
             setUserNickname(tripList.userNickName);
+            setTripCount(tripList.trips?.length);
         };
 
         getTripsList();
-    }, []);
+    }, [tripCount]);
 
     const goToTripCreatePage = () => {
         navigate(PATH.TRIP_CREATE_INFO);
@@ -75,7 +77,12 @@ const Trips = () => {
             <main css={mainContentStyle}>
                 <div css={tripListStyle}>
                     {formatTrips(trips)?.map((trip) => (
-                        <BorderPass key={trip.tripId} trip={trip} userNickname={userNickname} />
+                        <BorderPass
+                            key={trip.tripId}
+                            trip={trip}
+                            userNickname={userNickname}
+                            setTripCount={setTripCount}
+                        />
                     ))}
                 </div>
             </main>
