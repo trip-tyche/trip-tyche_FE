@@ -7,10 +7,12 @@ import FightHeader from '@/components/layout/AirplaneHeader';
 import theme from '@/styles/theme';
 
 const Login = () => {
-    const LINK: string = `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/oauth2/authorization/kakao`;
+    const KAKAO_LINK: string = `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/oauth2/authorization/kakao`;
+    const GOOGLE_LINK: string = `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/oauth2/authorization/google`;
 
     const handleLogin = () => {
-        window.location.href = LINK;
+        // window.location.href = KAKAO_LINK;
+        window.location.href = GOOGLE_LINK;
         // navigate('/oauth2/success');
     };
 

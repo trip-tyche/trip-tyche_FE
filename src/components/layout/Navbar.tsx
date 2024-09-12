@@ -47,6 +47,7 @@ const navStyle = css`
     height: 80px;
     border-top: 1px solid ${theme.colors.disabled};
     background-color: ${theme.colors.white};
+    border-radius: 10px 10px 0 0;
 `;
 const ulStyle = css`
     display: flex;
@@ -54,6 +55,7 @@ const ulStyle = css`
 const liStyle = css`
     flex-grow: 1;
     flex-basis: 0;
+    list-style: none;
 `;
 const linkStyle = css`
     display: flex;
@@ -75,7 +77,7 @@ const linkStyle = css`
     span {
         width: 100%;
         text-align: center;
-        font-size: ${theme.fontSizes.small};
+        font-size: ${theme.fontSizes.small_12};
     }
 `;
 const iconStyle = css`

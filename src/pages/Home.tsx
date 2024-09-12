@@ -11,6 +11,7 @@ import OverLay from '@/components/common/OverLay';
 import FightHeader from '@/components/layout/AirplaneHeader';
 import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
+import { getUserId } from '@/utils/auth';
 
 interface Trip {
     tripId: number;
@@ -26,43 +27,38 @@ interface PinPoint {
 
 const Home = () => {
     const [_, setIsOpenModal] = useState<boolean>(false);
-    const [userNickName, setUserNickName] = useState<string>('');
+    const [userNickName, setUserNickName] = useState<string>();
     const [trips, setTrips] = useState<Trip[]>();
     const [pinPoints, setPinPoints] = useState<PinPoint[]>();
-    const [isFirstUser, setIsFirstUser] = useState(false);
     const [inputValue, setInputValue] = useState('');
-
-    const saveUserNickName = useUserStore((state) => state.saveUserNickName);
 
     useEffect(() => {
         const initializeUserData = async () => {
-            const { userNickName, trips, pinPoints } = await fetchUserInfo();
-            if (!userNickName) {
-                // 첫 사용자의 경우
-                setIsFirstUser(true);
-                console.log('처음이네~');
+            const { userNickname, trips, pinPoints } = await fetchUserInfo();
+            if (!userNickname) {
                 return;
             }
-
-            setUserNickName(userNickName);
-            saveUserNickName(userNickName); // userNickName 전역 상태관리
+            console.log(userNickname, trips, pinPoints);
+            setUserNickName(userNickname);
             setTrips(trips);
             setPinPoints(pinPoints);
         };
 
         initializeUserData();
-    }, []);
+    }, [userNickName]);
 
     const closeModal = () => {
         setIsOpenModal(false);
-        setIsFirstUser(false);
     };
-
-    const submitUserNickName = () => {
-        postUserNickName(inputValue);
-        setUserNickName(inputValue);
-        setInputValue('');
-        closeModal();
+    const submitUserNickName = async () => {
+        try {
+            await postUserNickName(inputValue);
+            setUserNickName(inputValue);
+            setInputValue('');
+            closeModal();
+        } catch (error) {
+            console.error('닉네임 설정 중 오류 발생:', error);
+        }
     };
 
     return (
@@ -71,14 +67,12 @@ const Home = () => {
             <div css={cardContainerStyle}>
                 <Card trips={trips} />
             </div>
-
             <div css={imageStyle}>
                 <LogoImages />
             </div>
 
-            <p css={descriptionStyle}> {userNickName} 님의 여행을 기억해주세요 😀</p>
-
-            {isFirstUser && (
+            {userNickName && <p css={descriptionStyle}> {userNickName} 님의 여행을 기억해주세요 😀</p>}
+            {!userNickName && (
                 <>
                     <OverLay closeModal={closeModal} />
                     <SingleInputModal

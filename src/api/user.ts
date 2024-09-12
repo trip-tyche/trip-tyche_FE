@@ -16,28 +16,30 @@ interface PinPoint {
 
 interface UserInfo {
     userId: number;
-    userNickName: string;
+    userNickname: string;
     trips: Trip[];
     pinPoints: PinPoint[];
 }
 
-const TOKEN = getToken();
-const USER_ID = getUserId();
+const token = getToken();
+const userId = getUserId();
 
 export const fetchUserInfo = async (): Promise<UserInfo> => {
     try {
-        const response = await axios.get(`/src/mock/userInfo.json`, {
-            // const response = await axios.get(`/http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/tripInfo`, {
-            // headers: {
-            // Authorization: `Bearer ${TOKEN}`,
-            // 'Content-Type': 'application/json',
-            // },
-        });
+        const response = await axios.get<UserInfo>(
+            `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/tripInfo?userId=${userId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            },
+        );
         const { data } = response;
 
         return {
             userId: data.userId,
-            userNickName: data.userNickName,
+            userNickname: data.userNickname,
             trips: data.trips,
             pinPoints: data.pinPoints,
         };
@@ -47,22 +49,18 @@ export const fetchUserInfo = async (): Promise<UserInfo> => {
     }
 };
 
-export const postUserNickName = async (userNickName: string) => {
+export const postUserNickName = async (userNickname: string) => {
     try {
-        console.log(`${userNickName} 저장 완료!`);
         const response = await axios.post(
-            `/src/mock/userInfo.json`,
-            // const response = await axios.post(`/http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/tripInfo`, {
+            `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/updateUserNickName`,
+            userNickname,
             {
-                userNickName,
+                headers: {
+                    accept: '*/*',
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'text/plain',
+                },
             },
-            // {
-            //     headers: {
-            //         accept: '*/*',
-            //         Authorization: `Bearer ${TOKEN}`,
-            //         'Content-Type': 'application/json',
-            //     },
-            // },
         );
         return response.data;
     } catch (error) {

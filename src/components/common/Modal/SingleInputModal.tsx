@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction, useEffect } from 'react';
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/Button/Button';
+import theme from '@/styles/theme';
 
 export interface SingleInputModalProps {
     titleText: string;
@@ -38,7 +39,7 @@ export default SingleInputModal;
 
 const modalStyle = css`
     h2 {
-        font-size: 22px;
+        font-size: ${theme.fontSizes.xxlarge_20};
         font-weight: 600;
         text-align: center;
         margin-bottom: 24px;
@@ -48,18 +49,17 @@ const modalStyle = css`
         border-radius: 10px;
         border: 1px solid #ccc;
         padding: 1rem;
-        font-size: 18px;
-        width: 280px;
+        font-size: ${theme.fontSizes.large_16};
         height: 44px;
     }
 
     .description {
-        margin-top: 10px;
+        margin-top: 14px;
         margin-left: 4px;
         color: #9fa1ab;
         display: flex;
         flex-direction: column;
-        font-size: 12px;
+        font-size: ${theme.fontSizes.small_12};
     }
 
     .buttonWrapper {
@@ -75,9 +75,9 @@ const modalStyle = css`
     transform: translate(-50%, -50%);
 
     background-color: #fff;
-    width: 330px;
+    width: 320px;
     height: 240px;
-    padding: 2rem;
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
     border-radius: 20px;

@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
+import { fetchUserInfo } from '@/api/user';
 import characterImg from '@/assets/images/character.png';
 import Button from '@/components/common/Button/Button';
 import ColumnButtonModal from '@/components/common/Modal/ColumnButtonModal';
@@ -10,15 +11,24 @@ import OverLay from '@/components/common/OverLay';
 import Header from '@/components/layout/Header';
 import { PATH } from '@/constants/path';
 import useAuthStore from '@/stores/useAuthStore';
-import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
 
 const MyPage = () => {
+    const navigator = useNavigate();
+
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-    const userNickName = useUserStore((state) => state.userNickName);
+    const [userNickName, setUserNickName] = useState('');
     const logout = useAuthStore((state) => state.logout);
 
-    const navigator = useNavigate();
+    useEffect(() => {
+        const getUserNickName = async () => {
+            const { userNickName } = await fetchUserInfo();
+            console.log(userNickName);
+            setUserNickName(userNickName);
+        };
+
+        getUserNickName();
+    }, []);
 
     const openModal = () => {
         setIsLogoutModalOpen(true);
