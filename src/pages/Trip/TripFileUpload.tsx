@@ -1,71 +1,43 @@
 import React, { useState } from 'react';
 
 import { css } from '@emotion/react';
-import axios from 'axios';
 import { FaCloudUploadAlt } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
+import { postTripImages } from '@/api/trips';
 import Button from '@/components/common/Button/Button';
 import Header from '@/components/layout/Header';
 
 const TripFileUpload: React.FC = () => {
-    const [images, setImages] = useState<File[]>([]);
-    const [voices, setVoices] = useState<File[]>([]);
-    const [memos, setMemos] = useState<File[]>([]);
-    const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
     const navigate = useNavigate();
+    const location = useLocation();
 
-    const handleFileUpload = async (files: FileList, type: 'images' | 'voices' | 'memos') => {
-        const formData = new FormData();
-        Array.from(files).forEach((file) => {
-            formData.append(type, file);
-        });
+    const [images, setImages] = useState<File[]>([]);
 
-        try {
-            const response = await axios.post(`/server/postTripsFile.json`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+    const { tripId, tripTitle } = location.state;
 
-            if (response.status === 200) {
-                setToast({ message: '파일이 성공적으로 업로드되었습니다.', type: 'success' });
-                switch (type) {
-                    case 'images':
-                        setImages((prev) => [...prev, ...Array.from(files)]);
-                        break;
-                    case 'voices':
-                        setVoices((prev) => [...prev, ...Array.from(files)]);
-                        break;
-                    case 'memos':
-                        setMemos((prev) => [...prev, ...Array.from(files)]);
-                        break;
-                }
-            }
-        } catch (error) {
-            console.error('File upload failed:', error);
-            setToast({ message: '파일 업로드에 실패했습니다.', type: 'error' });
-        }
+    const handleFileUpload = (files: FileList | null) => {
+        if (files) setImages(Array.from(files));
     };
 
-    const handleComplete = () => {
-        // 완료 로직 구현
+    const uploadTripImages = async () => {
+        await postTripImages(tripId, images);
         navigate('/trips');
     };
 
     return (
         <div css={containerStyle}>
-            <Header title='여행 등록' isBackButton={true} onClick={() => navigate(-1)} />
+            <Header title='이미지 등록' isBackButton={true} onClick={() => navigate(-1)} />
 
             <main css={mainStyle}>
                 <section css={sectionStyle}>
-                    <h2>Images</h2>
+                    <h2>{`'${tripTitle}' 여행 이미지를 등록해주세요!`}</h2>
                     <div css={uploadAreaStyle}>
                         <input
                             type='file'
                             accept='image/*'
                             multiple
-                            onChange={(e) => handleFileUpload(e.target.files!, 'images')}
+                            onChange={(e) => handleFileUpload(e.target.files)}
                             css={fileInputStyle}
                             id='imageUpload'
                         />
@@ -76,55 +48,11 @@ const TripFileUpload: React.FC = () => {
                         {images.length > 0 && <div css={countStyle}>+ {images.length}</div>}
                     </div>
                 </section>
-
-                <section css={sectionStyle}>
-                    <h2>Voices</h2>
-                    <div css={uploadAreaStyle}>
-                        <input
-                            type='file'
-                            accept='audio/*'
-                            multiple
-                            onChange={(e) => handleFileUpload(e.target.files!, 'voices')}
-                            css={fileInputStyle}
-                            id='voiceUpload'
-                        />
-                        <label htmlFor='voiceUpload' css={uploadLabelStyle}>
-                            <FaCloudUploadAlt size={40} />
-                            <span>Drag and drop files or click to upload</span>
-                        </label>
-                        {voices.length > 0 && <div css={countStyle}>+ {voices.length}</div>}
-                    </div>
-                </section>
-
-                <section css={sectionStyle}>
-                    <h2>Memos</h2>
-                    <div css={uploadAreaStyle}>
-                        <input
-                            type='file'
-                            accept='.txt'
-                            multiple
-                            onChange={(e) => handleFileUpload(e.target.files!, 'memos')}
-                            css={fileInputStyle}
-                            id='memoUpload'
-                        />
-                        <label htmlFor='memoUpload' css={uploadLabelStyle}>
-                            <FaCloudUploadAlt size={40} />
-                            <span>Drag and drop files or click to upload</span>
-                        </label>
-                        {memos.length > 0 && <div css={countStyle}>+ {memos.length}</div>}
-                    </div>
-                </section>
             </main>
 
             <div css={submitButtonStyle}>
-                <Button text='완료' theme='sec' size='sm' onClick={handleComplete} />
+                <Button text='완료' theme='sec' size='sm' onClick={uploadTripImages} />
             </div>
-
-            {toast && (
-                <div css={[toastStyle, toast.type === 'error' ? errorToastStyle : successToastStyle]}>
-                    {toast.message}
-                </div>
-            )}
         </div>
     );
 };

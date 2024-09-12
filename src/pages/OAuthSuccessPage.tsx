@@ -1,34 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { HashLoader } from 'react-spinners';
 
 import useAuthStore from '@/stores/useAuthStore';
 
-// const userId = 1;
-// const token = 'tokentokentokentokentokentokentokentokentokentokentoken';
-
 const OAuthSuccessPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const setLogin = useAuthStore((state) => state.setLogin);
 
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const userId = params.get('userId');
-        const token = params.get('token');
+    const params = new URLSearchParams(location.search);
+    const userId = params.get('userId') as string;
+    const token = params.get('token') as string;
 
+    useEffect(() => {
         if (userId && token) {
-            // 로그인 정보 저장
-            setLogin(userId, token);
-            console.log('Login success');
-            // 홈페이지로 리다이렉트
-            navigate('/', { replace: true });
+            setUserIdAndToken();
         } else {
-            console.error('Login failed: Missing userId or token');
             navigate('/login', { replace: true });
         }
-    }, [location, setLogin, navigate]);
+    }, [location]);
+
+    const setUserIdAndToken = async () => {
+        await setLogin(JSON.parse(userId), token);
+        // 로컬 스토리지 저장 확인을 위해 비동기 처리
+        navigate('/', { replace: true });
+    };
 
     return (
         <div

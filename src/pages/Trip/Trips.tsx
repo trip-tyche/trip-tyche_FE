@@ -1,40 +1,6 @@
-// import { css } from '@emotion/react';
-// import Navbar from '@/components/common/Navbar';
-// import Header from '@/components/layout/Header/Header';
-// import Button from '@/components/common/Button/Button';
-// import { useNavigate } from 'react-router-dom';
-// import BorderPass from '@/components/BorderPass';
-
-// export default function TripList() {
-//     const navigator = useNavigate();
-
-//     const goToTripCreatePage = () => {
-//         navigator('/trips/new');
-//     };
-
-//     return (
-//         <div css={containerStyle}>
-//             <main css={mainContentStyle}>
-//                 <Header title='여행관리' />
-//                 <div css={buttonStyle}>
-//                     <Button text='여행 등록' theme='sec' size='sm' onClick={goToTripCreatePage} />
-//                 </div>
-//                 <div css={tripListStyle}>
-//                     <BorderPass />
-//                     <BorderPass />
-//                     <BorderPass />
-//                     <BorderPass />
-//                 </div>
-//             </main>
-
-//             <Navbar />
-//         </div>
-//     );
-// }
 import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 import { fetchTripsList } from '@/api/trips';
@@ -42,9 +8,9 @@ import Button from '@/components/common/Button/Button';
 import Header from '@/components/layout/Header';
 import Navbar from '@/components/layout/Navbar';
 import BorderPass from '@/components/pages/BorderPass';
+import { PATH } from '@/constants/path';
 import theme from '@/styles/theme';
 
-// 인터페이스 정의
 interface Trip {
     tripId: string;
     tripTitle: string;
@@ -59,6 +25,7 @@ interface TripList {
     trips: Trip[];
 }
 
+// startDate, endDate 타입 재정의를 위한 Omit 유틸리티 타입 사용
 interface FormattedTrip extends Omit<Trip, 'startDate' | 'endDate'> {
     startDate: string;
     endDate: string;
@@ -67,10 +34,10 @@ interface FormattedTrip extends Omit<Trip, 'startDate' | 'endDate'> {
 const Trips = () => {
     const navigate = useNavigate();
     const [trips, setTrips] = useState<Trip[]>([]);
-    const [userNickName, setUserNickName] = useState<string>('');
+    const [userNickname, setUserNickname] = useState<string>('');
 
     const formatTrips = (tripsData: Trip[]): FormattedTrip[] =>
-        tripsData.map((trip) => ({
+        tripsData?.map((trip) => ({
             ...trip,
             country: trip.country.toUpperCase(),
             startDate: new Date(trip.startDate).toLocaleDateString('ko-KR'),
@@ -80,15 +47,21 @@ const Trips = () => {
     useEffect(() => {
         const getTripsList = async () => {
             const tripList = await fetchTripsList();
+            if (!tripList) {
+                console.log('없네');
+                return;
+            }
+            console.log(tripList);
+
             setTrips(tripList.trips);
-            setUserNickName(tripList.userNickName);
+            setUserNickname(tripList.userNickName);
         };
 
         getTripsList();
     }, []);
 
     const goToTripCreatePage = () => {
-        navigate('/trips/create-info');
+        navigate(PATH.TRIP_CREATE_INFO);
     };
 
     return (
@@ -101,8 +74,8 @@ const Trips = () => {
             </div>
             <main css={mainContentStyle}>
                 <div css={tripListStyle}>
-                    {formatTrips(trips).map((trip) => (
-                        <BorderPass key={trip.tripId} trip={trip} userNickName={userNickName} />
+                    {formatTrips(trips)?.map((trip) => (
+                        <BorderPass key={trip.tripId} trip={trip} userNickname={userNickname} />
                     ))}
                 </div>
             </main>

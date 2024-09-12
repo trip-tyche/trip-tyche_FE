@@ -11,7 +11,7 @@ import OverLay from '@/components/common/OverLay';
 import FightHeader from '@/components/layout/AirplaneHeader';
 import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
-import { getUserId } from '@/utils/auth';
+import { getToken, getUserId } from '@/utils/auth';
 
 interface Trip {
     tripId: number;
@@ -27,21 +27,35 @@ interface PinPoint {
 
 const Home = () => {
     const [_, setIsOpenModal] = useState<boolean>(false);
-    const [userNickName, setUserNickName] = useState<string>();
+    const [userNickName, setUserNickName] = useState<string>('베가본드');
     const [trips, setTrips] = useState<Trip[]>();
     const [pinPoints, setPinPoints] = useState<PinPoint[]>();
     const [inputValue, setInputValue] = useState('');
 
     useEffect(() => {
         const initializeUserData = async () => {
-            const { userNickname, trips, pinPoints } = await fetchUserInfo();
-            if (!userNickname) {
+            const token = getToken();
+            const userId = getUserId();
+
+            if (!token || !userId) {
+                console.error('Token or userId not found');
+                // 로그인 페이지로 리다이렉트 또는 다른 처리
                 return;
             }
-            console.log(userNickname, trips, pinPoints);
-            setUserNickName(userNickname);
-            setTrips(trips);
-            setPinPoints(pinPoints);
+
+            try {
+                const { userNickname, trips, pinPoints } = await fetchUserInfo();
+
+                if (!userNickname) {
+                    return;
+                }
+                console.log(userNickname, trips, pinPoints);
+                setUserNickName(userNickname);
+                setTrips(trips);
+                setPinPoints(pinPoints);
+            } catch (error) {
+                console.error('Error fetching user info:', error);
+            }
         };
 
         initializeUserData();

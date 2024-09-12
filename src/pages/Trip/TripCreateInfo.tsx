@@ -1,80 +1,50 @@
 import React, { useState } from 'react';
 
-// import { FaChevronLeft, FaCalendarAlt } from 'react-icons/fa';
 import { css } from '@emotion/react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
 
+import { postTripInfo } from '@/api/trips';
 import Button from '@/components/common/Button/Button';
 import Header from '@/components/layout/Header';
 import 'react-toastify/dist/ReactToastify.css';
+import theme from '@/styles/theme';
 
 const TripCreateInfo: React.FC = () => {
     const [tripTitle, setTitle] = useState('');
     const [country, setCountry] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
-    const [selectedHashtag, setSelectedHashtag] = useState<string>();
+    const [hashtags, setHashtags] = useState<string[]>([]);
     const navigate = useNavigate();
-    const hashtags = ['가족', '친구', '연인', '즐거운', '도전', '공포', '우울한', '나홀자'];
+    const hashtagsMenus = [
+        '가족과함께',
+        '베스트프렌즈',
+        '연인과의시간',
+        '즐거운순간',
+        '도전',
+        '소소한두려움',
+        '우울탈출',
+        '혼자서도괜찮아',
+        '행복한시간',
+        '용기있는도전',
+        '특별한순간',
+        '감정여행',
+        '나를위한여행',
+    ];
 
-    const handleSubmit = async () => {
+    const submitTripInfo = async () => {
         try {
-            // console.log({
-            //     userId: 2,
-            //     tripTitle,
-            //     country,
-            //     startDate,
-            //     endDate,
-            //     hashtag: [selectedHashtag],
-            // });
-
-            if (selectedHashtag) {
-                const response = await axios.post(
-                    'http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips',
-                    {
-                        userId: 2,
-                        tripTitle,
-                        country,
-                        startDate,
-                        endDate,
-                        hashtags: [selectedHashtag] as string[],
-                    },
-                    {
-                        headers: {
-                            accept: '*/*',
-                            Authorization:
-                                'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWRoZXJvODgzMEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzI1NTU1ODk5LCJleHAiOjE3MjU1NTk0OTl9.rJhMlmf80KEHhY0XkDXhHEX5Tlq2-84ovwU_Jmj7CmE',
-                            'Content-Type': 'application/json',
-                        },
-                    },
-                );
-                if (response.status === 200 || response.status === 201) {
-                    console.log('등록!');
-                    toast.success('여행 정보가 성공적으로 등록되었습니다!');
-                    setTimeout(() => {
-                        // navigate('/trips/upload');
-                    }, 2000);
-                }
-            } else throw new Error('여행 등록에 실패했습니다. 다시 시도해주세요.');
+            const response = await postTripInfo({ tripTitle, country, startDate, endDate, hashtags });
+            const tripId = response.id;
+            navigate('/trips/upload', { state: { tripId, tripTitle } });
         } catch (error) {
-            toast.error('여행 등록에 실패했습니다. 다시 시도해주세요.');
-            console.error('Trip registration failed:', error);
+            console.error('닉네임 설정 중 오류 발생:', error);
         }
-    };
-
-    const handleError = () => {
-        toast.error('여행 등록에 실패했습니다. 다시 시도해주세요.');
     };
 
     return (
         <div css={containerStyle}>
-            {/* <header css={headerStyle}>
-                <FaChevronLeft onClick={handleGoBack} css={backButtonStyle} />
-                <h1>여행 등록</h1>
-                </header> */}
-            <Header title='여행관리' isBackButton={true} onClick={() => navigate('/trips')} />
+            <Header title='여행관리' isBackButton={true} onClick={() => navigate(-1)} />
 
             <main css={mainStyle}>
                 <section css={sectionStyle}>
@@ -93,9 +63,37 @@ const TripCreateInfo: React.FC = () => {
                     <label htmlFor='country'>여행 국가</label>
                     <select id='country' value={country} onChange={(e) => setCountry(e.target.value)} css={inputStyle}>
                         <option value=''>국가를 선택하세요</option>
-                        <option value='KR'>🇰🇷 한국</option>
-                        <option value='JP'>🇯🇵 일본</option>
-                        <option value='US'>🇺🇸 미국</option>
+                        <option value='🇰🇷 한국'>🇰🇷 한국</option>
+                        <option value='🇯🇵 일본'>🇯🇵 일본</option>
+                        <option value='🇺🇸 미국'>🇺🇸 미국</option>
+                        <option value='🇨🇳 중국'>🇨🇳 중국</option>
+                        <option value='🇮🇳 인도'>🇮🇳 인도</option>
+                        <option value='🇬🇧 영국'>🇬🇧 영국</option>
+                        <option value='🇩🇪 독일'>🇩🇪 독일</option>
+                        <option value='🇫🇷 프랑스'>🇫🇷 프랑스</option>
+                        <option value='🇮🇹 이탈리아'>🇮🇹 이탈리아</option>
+                        <option value='🇧🇷 브라질'>🇧🇷 브라질</option>
+                        <option value='🇷🇺 러시아'>🇷🇺 러시아</option>
+                        <option value='🇨🇦 캐나다'>🇨🇦 캐나다</option>
+                        <option value='🇦🇺 호주'>🇦🇺 호주</option>
+                        <option value='🇲🇽 멕시코'>🇲🇽 멕시코</option>
+                        <option value='🇪🇸 스페인'>🇪🇸 스페인</option>
+                        <option value='🇦🇷 아르헨티나'>🇦🇷 아르헨티나</option>
+                        <option value='🇿🇦 남아프리카 공화국'>🇿🇦 남아프리카 공화국</option>
+                        <option value='🇳🇬 나이지리아'>🇳🇬 나이지리아</option>
+                        <option value='🇸🇦 사우디아라비아'>🇸🇦 사우디아라비아</option>
+                        <option value='🇹🇷 터키'>🇹🇷 터키</option>
+                        <option value='🇮🇩 인도네시아'>🇮🇩 인도네시아</option>
+                        <option value='🇹🇭 태국'>🇹🇭 태국</option>
+                        <option value='🇻🇳 베트남'>🇻🇳 베트남</option>
+                        <option value='🇪🇬 이집트'>🇪🇬 이집트</option>
+                        <option value='🇵🇭 필리핀'>🇵🇭 필리핀</option>
+                        <option value='🇵🇰 파키스탄'>🇵🇰 파키스탄</option>
+                        <option value='🇧🇩 방글라데시'>🇧🇩 방글라데시</option>
+                        <option value='🇵🇱 폴란드'>🇵🇱 폴란드</option>
+                        <option value='🇳🇱 네덜란드'>🇳🇱 네덜란드</option>
+                        <option value='🇸🇪 스웨덴'>🇸🇪 스웨덴</option>
+                        <option value='🇨🇭 스위스'>🇨🇭 스위스</option>
                     </select>
                 </section>
 
@@ -103,7 +101,6 @@ const TripCreateInfo: React.FC = () => {
                     <div css={dateFieldStyle}>
                         <label htmlFor='startDate'>시작 날짜</label>
                         <div css={dateInputContainerStyle}>
-                            {/* <FaCalendarAlt css={calendarIconStyle} /> */}
                             <input
                                 id='startDate'
                                 type='date'
@@ -116,7 +113,6 @@ const TripCreateInfo: React.FC = () => {
                     <div css={dateFieldStyle}>
                         <label htmlFor='endDate'>종료 날짜</label>
                         <div css={dateInputContainerStyle}>
-                            {/* <FaCalendarAlt css={calendarIconStyle} /> */}
                             <input
                                 id='endDate'
                                 type='date'
@@ -131,11 +127,11 @@ const TripCreateInfo: React.FC = () => {
                 <section css={sectionStyle}>
                     <label>해시태그</label>
                     <div css={hashtagContainerStyle}>
-                        {hashtags.map((tag) => (
+                        {hashtagsMenus.map((tag) => (
                             <button
                                 key={tag}
-                                onClick={() => setSelectedHashtag(tag)}
-                                css={[hashtagStyle, selectedHashtag === tag && selectedHashtagStyle]}
+                                onClick={() => setHashtags([...hashtags, tag])}
+                                css={[hashtagStyle, hashtags.includes(tag) && selectedHashtagStyle]}
                             >
                                 {tag}
                             </button>
@@ -144,22 +140,15 @@ const TripCreateInfo: React.FC = () => {
                 </section>
             </main>
 
-            {/* <button onClick={handleSubmit} css={submitButtonStyle}>
-                다음
-                </button> */}
             <div css={submitButtonStyle}>
-                <Button text='다음' theme='sec' size='sm' onClick={handleSubmit} />
+                <Button text='다음' theme='sec' size='sm' onClick={submitTripInfo} />
             </div>
-            <div css={submitButtonStyle}>
-                <Button text='실패' theme='sec' size='sm' onClick={handleError} />
-            </div>
-            <ToastContainer position='top-center' autoClose={2000} />
         </div>
     );
 };
 
 const containerStyle = css`
-    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100vh;
 `;
 
 const mainStyle = css`
@@ -174,8 +163,8 @@ const sectionStyle = css`
     flex-direction: column;
     gap: 14px;
     label {
-        font-weight: bold;
-        font-size: 14px;
+        font-weight: 600;
+        font-size: ${theme.fontSizes.normal_14};
     }
 `;
 
@@ -199,9 +188,8 @@ const dateFieldStyle = css`
     gap: 12px;
 
     label {
-        font-size: 12px;
-        font-size: 14px;
-        font-weight: bold;
+        font-size: ${theme.fontSizes.normal_14};
+        font-weight: 600;
     }
 `;
 

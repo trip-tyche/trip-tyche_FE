@@ -58,7 +58,7 @@ export const router = createBrowserRouter([
                     //   { path: PATH.ONBOARDING, element: <Onboarding /> },
                     //   { path: '/test', element: <Test /> },
                     {
-                        path: '/oauth2/success',
+                        path: PATH.OAUTH_SUCCESS,
                         element: <OAuthSuccessPage />,
                     },
                 ],

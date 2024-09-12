@@ -36,6 +36,7 @@ export const fetchUserInfo = async (): Promise<UserInfo> => {
             },
         );
         const { data } = response;
+        const message = response.data;
 
         return {
             userId: data.userId,

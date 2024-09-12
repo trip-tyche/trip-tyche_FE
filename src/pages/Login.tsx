@@ -3,17 +3,18 @@ import { css } from '@emotion/react';
 import KakaoButton from '@/components/common/Button/KakaoButton';
 import LogoImages from '@/components/common/LogoImages';
 import FightHeader from '@/components/layout/AirplaneHeader';
-// import { PATH } from '@/constants/path';
 import theme from '@/styles/theme';
 
 const Login = () => {
     const KAKAO_LINK: string = `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/oauth2/authorization/kakao`;
     const GOOGLE_LINK: string = `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/oauth2/authorization/google`;
 
-    const handleLogin = () => {
-        // window.location.href = KAKAO_LINK;
+    const handleKaKaoLogin = () => {
+        window.location.href = KAKAO_LINK;
+    };
+
+    const handleGoogleLogin = () => {
         window.location.href = GOOGLE_LINK;
-        // navigate('/oauth2/success');
     };
 
     return (
@@ -30,7 +31,10 @@ const Login = () => {
             </div>
 
             <div css={buttonContainerStyle}>
-                <KakaoButton handleLogin={handleLogin} />
+                <KakaoButton handleLogin={handleKaKaoLogin} />
+            </div>
+            <div css={buttonContainerStyle}>
+                <KakaoButton handleLogin={handleGoogleLogin} />
             </div>
         </div>
     );
@@ -76,7 +80,7 @@ const buttonContainerStyle = css`
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
 `;
 
 export default Login;

@@ -2,6 +2,7 @@ export const PATH = {
     ONBOARDING: '/onboarding',
     HOME: '/',
     LOGIN: '/login',
+    OAUTH_SUCCESS: '/oauth2/success',
     MYPAGE: '/my-page',
     SETTINGS: '/my-page/settings',
     TRIPS: '/trips',
