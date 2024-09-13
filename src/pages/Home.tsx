@@ -26,49 +26,50 @@ interface PinPoint {
 }
 
 const Home = () => {
-    const [_, setIsOpenModal] = useState<boolean>(false);
-    const [userNickName, setUserNickName] = useState<string>('베가본드');
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [userNickName, setUserNickName] = useState<string>('');
     const [trips, setTrips] = useState<Trip[]>();
     const [pinPoints, setPinPoints] = useState<PinPoint[]>();
     const [inputValue, setInputValue] = useState('');
 
-    useEffect(() => {
-        const initializeUserData = async () => {
-            const token = getToken();
-            const userId = getUserId();
+    const fetchUserData = async () => {
+        const token = getToken();
+        const userId = getUserId();
 
-            if (!token || !userId) {
-                console.error('Token or userId not found');
-                // 로그인 페이지로 리다이렉트 또는 다른 처리
-                return;
-            }
+        if (!token || !userId) {
+            console.error('Token or userId not found');
+            // 로그인 페이지로 리다이렉트 또는 다른 처리
+            return;
+        }
 
-            try {
-                const { userNickname, trips, pinPoints } = await fetchUserInfo();
+        try {
+            const { userNickName, trips, pinPoints } = await fetchUserInfo();
 
-                if (!userNickname) {
-                    return;
-                }
-                console.log(userNickname, trips, pinPoints);
-                setUserNickName(userNickname);
+            if (!userNickName) {
+                setIsModalOpen(true);
+            } else {
+                console.log(userNickName, trips, pinPoints);
+                setUserNickName(userNickName);
                 setTrips(trips);
                 setPinPoints(pinPoints);
-            } catch (error) {
-                console.error('Error fetching user info:', error);
             }
-        };
+        } catch (error) {
+            console.error('Error fetching user info:', error);
+        }
+    };
 
-        initializeUserData();
-    }, [userNickName]);
+    useEffect(() => {
+        fetchUserData();
+    }, []);
 
     const closeModal = () => {
-        setIsOpenModal(false);
+        setIsModalOpen(false);
     };
+
     const submitUserNickName = async () => {
         try {
             await postUserNickName(inputValue);
-            setUserNickName(inputValue);
-            setInputValue('');
+            fetchUserData();
             closeModal();
         } catch (error) {
             console.error('닉네임 설정 중 오류 발생:', error);
@@ -86,7 +87,7 @@ const Home = () => {
             </div>
 
             {userNickName && <p css={descriptionStyle}> {userNickName} 님의 여행을 기억해주세요 😀</p>}
-            {!userNickName && (
+            {isModalOpen && (
                 <>
                     <OverLay closeModal={closeModal} />
                     <SingleInputModal

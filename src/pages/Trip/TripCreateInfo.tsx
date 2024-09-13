@@ -35,7 +35,7 @@ const TripCreateInfo: React.FC = () => {
     const submitTripInfo = async () => {
         try {
             const response = await postTripInfo({ tripTitle, country, startDate, endDate, hashtags });
-            const tripId = response.id;
+            const { tripId } = response;
             navigate('/trips/upload', { state: { tripId, tripTitle } });
         } catch (error) {
             console.error('닉네임 설정 중 오류 발생:', error);
@@ -44,7 +44,7 @@ const TripCreateInfo: React.FC = () => {
 
     return (
         <div css={containerStyle}>
-            <Header title='여행관리' isBackButton={true} onClick={() => navigate(-1)} />
+            <Header title='여행 등록' isBackButton={true} onClick={() => navigate(-1)} />
 
             <main css={mainStyle}>
                 <section css={sectionStyle}>

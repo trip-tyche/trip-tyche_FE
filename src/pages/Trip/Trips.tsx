@@ -69,7 +69,7 @@ const Trips = () => {
     return (
         <div css={containerStyle}>
             <div css={fixedHeaderStyle}>
-                <Header title='여행관리' />
+                <Header title='보더 패스' />
                 <div css={buttonStyle}>
                     <Button text='여행 등록' theme='sec' size='sm' onClick={goToTripCreatePage} />
                 </div>

@@ -15,28 +15,6 @@ interface Trips {
     trips: Trip[];
 }
 
-const token = getToken();
-const userId = getUserId();
-
-export const fetchTripsList = async (): Promise<Trips> => {
-    try {
-        const response = await axios.get<Trips>(
-            `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            },
-        );
-
-        return response.data;
-    } catch (error) {
-        console.error('==> ', error);
-        throw error;
-    }
-};
-
 interface TripInfo {
     tripTitle: string;
     country: string;
@@ -44,6 +22,27 @@ interface TripInfo {
     endDate: string;
     hashtags: string[];
 }
+
+const token = getToken();
+const userId = getUserId();
+
+export const fetchTripsList = async (): Promise<Trips> => {
+    try {
+        const response = await axios.get<Trips>(
+            'http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips',
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            },
+        );
+        return response.data;
+    } catch (error) {
+        console.error('==> ', error);
+        throw error;
+    }
+};
 
 export const postTripInfo = async ({ tripTitle, country, startDate, endDate, hashtags }: TripInfo) => {
     try {
@@ -90,7 +89,7 @@ export const postTripImages = async (tripId: string, files: File[]) => {
                 },
             },
         );
-        console.log(response.data);
+        // console.log(response.data);
         return response.data;
     } catch (error) {
         console.error('==> ', error);
@@ -139,6 +138,24 @@ export const deleteTripInfo = async (tripId: string) => {
             },
         );
         console.log('Delete Success');
+        return response.data;
+    } catch (error) {
+        console.error('==> ', error);
+        throw error;
+    }
+};
+
+export const fetchTripMapData = async (tripId: string): Promise<Trips> => {
+    try {
+        const response = await axios.get<Trips>(
+            `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips/${tripId}/info`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            },
+        );
         return response.data;
     } catch (error) {
         console.error('==> ', error);

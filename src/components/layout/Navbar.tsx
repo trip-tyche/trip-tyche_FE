@@ -56,6 +56,9 @@ const liStyle = css`
     flex-grow: 1;
     flex-basis: 0;
     list-style: none;
+    &:hover {
+        cursor: pointer;
+    }
 `;
 const linkStyle = css`
     display: flex;

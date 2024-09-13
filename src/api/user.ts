@@ -16,7 +16,7 @@ interface PinPoint {
 
 interface UserInfo {
     userId: number;
-    userNickname: string;
+    userNickName: string;
     trips: Trip[];
     pinPoints: PinPoint[];
 }
@@ -27,7 +27,8 @@ const userId = getUserId();
 export const fetchUserInfo = async (): Promise<UserInfo> => {
     try {
         const response = await axios.get<UserInfo>(
-            `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/tripInfo?userId=${userId}`,
+            // `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/tripInfo?userId=${userId}`,
+            `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/tripInfo?userId=2`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -36,11 +37,9 @@ export const fetchUserInfo = async (): Promise<UserInfo> => {
             },
         );
         const { data } = response;
-        const message = response.data;
-
         return {
             userId: data.userId,
-            userNickname: data.userNickname,
+            userNickName: data.userNickName,
             trips: data.trips,
             pinPoints: data.pinPoints,
         };
@@ -50,11 +49,11 @@ export const fetchUserInfo = async (): Promise<UserInfo> => {
     }
 };
 
-export const postUserNickName = async (userNickname: string) => {
+export const postUserNickName = async (userNickName: string) => {
     try {
         const response = await axios.post(
             `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/updateUserNickName`,
-            userNickname,
+            userNickName,
             {
                 headers: {
                     accept: '*/*',

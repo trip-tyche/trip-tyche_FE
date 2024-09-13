@@ -40,7 +40,7 @@ const BorderPass: React.FC<BorderPassProps> = ({ trip, userNickname, setTripCoun
         setTripCount((prev: number) => prev - 1);
     };
     return (
-        <div css={borderPassContainer}>
+        <div css={borderPassContainer} onClick={() => navigate(`/trips/${tripId}/map`, { state: trip })}>
             <div css={borderPassContent}>
                 <div css={borderPassLeft}>
                     <div css={countryName}>{country}</div>
@@ -96,8 +96,8 @@ const borderPassContainer = css`
     position: relative;
 
     &:hover {
-        /* transform: translateY(-2px); */
-        /* cursor: pointer; */
+        transform: translateY(-2px);
+        cursor: pointer;
     }
 
     /* &:before {

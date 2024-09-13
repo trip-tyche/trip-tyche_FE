@@ -17,14 +17,14 @@ const MyPage = () => {
     const navigator = useNavigate();
 
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-    const [userNickname, setUserNickname] = useState('');
+    const [userNickName, setUserNickname] = useState('');
     const logout = useAuthStore((state) => state.logout);
 
     useEffect(() => {
         const getUserNickName = async () => {
-            const { userNickname } = await fetchUserInfo();
-            console.log(userNickname);
-            setUserNickname(userNickname);
+            const { userNickName } = await fetchUserInfo();
+            console.log(userNickName);
+            setUserNickname(userNickName);
         };
 
         getUserNickName();
@@ -50,7 +50,7 @@ const MyPage = () => {
                 <img src={characterImg} className='characterImg' alt='character' />
             </div>
 
-            <p css={textWrapper}>안녕하세요, {userNickname} 님</p>
+            <p css={textWrapper}>안녕하세요, {userNickName} 님</p>
 
             <div css={buttonWrapper}>
                 <Button text='로그아웃' theme='sec' size='sm' onClick={openModal} />
