@@ -12,7 +12,6 @@ import TripCreateInfo from '@/pages/Trip/TripCreateInfo';
 import TripEdit from '@/pages/Trip/TripEdit';
 import TripFileUpload from '@/pages/Trip/TripFileUpload';
 import TripMap from '@/pages/Trip/TripMap';
-import useAuthStore from '@/stores/useAuthStore';
 
 // const AuthProtectedRoute = () => {
 //     // 현재 경로와 URL쿼리 문자열 가져옴

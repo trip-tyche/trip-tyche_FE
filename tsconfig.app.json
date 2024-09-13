@@ -23,6 +23,9 @@
         "jsx": "react-jsx",
         "jsxImportSource": "@emotion/react",
         "strictNullChecks": true, //null 및 undefined를 보다 명확하게 체크
-        "noImplicitAny": true //
+        "noImplicitAny": true, //
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true
+        // "composite": true
     }
 }

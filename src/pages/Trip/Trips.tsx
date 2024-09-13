@@ -52,7 +52,7 @@ const Trips = () => {
                 console.log('없네');
                 return;
             }
-            console.log(tripList);
+            // console.log(tripList);
 
             setTrips(tripList.trips);
             setUserNickname(tripList.userNickName);

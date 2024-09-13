@@ -89,7 +89,7 @@ export const postTripImages = async (tripId: string, files: File[]) => {
                 },
             },
         );
-        // console.log(response.data);
+        console.log(response.data);
         return response.data;
     } catch (error) {
         console.error('==> ', error);
@@ -145,9 +145,9 @@ export const deleteTripInfo = async (tripId: string) => {
     }
 };
 
-export const fetchTripMapData = async (tripId: string): Promise<Trips> => {
+export const fetchTripMapData = async (tripId: string) => {
     try {
-        const response = await axios.get<Trips>(
+        const response = await axios.get(
             `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips/${tripId}/info`,
             {
                 headers: {

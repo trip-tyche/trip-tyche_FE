@@ -40,8 +40,8 @@ const BorderPass: React.FC<BorderPassProps> = ({ trip, userNickname, setTripCoun
         setTripCount((prev: number) => prev - 1);
     };
     return (
-        <div css={borderPassContainer} onClick={() => navigate(`/trips/${tripId}/map`, { state: trip })}>
-            <div css={borderPassContent}>
+        <div css={borderPassContainer}>
+            <div css={borderPassContent} onClick={() => navigate(`/trips/${tripId}/map`, { state: trip })}>
                 <div css={borderPassLeft}>
                     <div css={countryName}>{country}</div>
                     <img src={characterImg} alt='character' css={characterImage} />

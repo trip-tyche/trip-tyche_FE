@@ -94,6 +94,7 @@ const TripCreateInfo: React.FC = () => {
                         <option value='🇳🇱 네덜란드'>🇳🇱 네덜란드</option>
                         <option value='🇸🇪 스웨덴'>🇸🇪 스웨덴</option>
                         <option value='🇨🇭 스위스'>🇨🇭 스위스</option>
+                        <option value='🇵🇹 포르투갈'>🇵🇹 포르투갈</option>
                     </select>
                 </section>
 

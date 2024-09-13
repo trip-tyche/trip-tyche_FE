@@ -53,7 +53,7 @@ const TripEdit: React.FC = () => {
             setIsLoading(true);
             try {
                 const data = await fetchTripsList();
-                const tripData = data.trips?.filter((trip) => trip.tripId === +tripId);
+                const tripData = data.trips?.filter((trip) => trip.tripId.toString() === tripId);
                 setTripData(tripData[0]);
             } catch (err) {
                 setError('여행 정보를 불러오는 데 실패했습니다.');
@@ -149,6 +149,7 @@ const TripEdit: React.FC = () => {
                         <option value='🇳🇱 네덜란드'>🇳🇱 네덜란드</option>
                         <option value='🇸🇪 스웨덴'>🇸🇪 스웨덴</option>
                         <option value='🇨🇭 스위스'>🇨🇭 스위스</option>
+                        <option value='🇵🇹 포르투갈'>🇵🇹 포르투갈</option>
                     </select>
                 </section>
 
