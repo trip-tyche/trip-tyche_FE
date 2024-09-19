@@ -115,24 +115,4 @@ const submitButtonStyle = css`
     justify-content: flex-end;
 `;
 
-const toastStyle = css`
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px 20px;
-    border-radius: 4px;
-    color: white;
-    font-weight: bold;
-    z-index: 1000;
-`;
-
-const successToastStyle = css`
-    background-color: #4caf50;
-`;
-
-const errorToastStyle = css`
-    background-color: #f44336;
-`;
-
 export default TripFileUpload;

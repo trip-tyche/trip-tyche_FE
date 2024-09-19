@@ -65,7 +65,7 @@ const Home = () => {
 
     const submitUserNickName = async () => {
         try {
-            console.log(inputValue);
+            console.log(inputValue, pinPoints);
             await postUserNickName(inputValue);
             closeModal();
             fetchUserData();

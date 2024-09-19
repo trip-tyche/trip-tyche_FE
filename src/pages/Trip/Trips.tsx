@@ -21,11 +21,6 @@ interface Trip {
     hashtags: string[];
 }
 
-interface TripList {
-    userNickName: string;
-    trips: Trip[];
-}
-
 // startDate, endDate 타입 재정의를 위한 Omit 유틸리티 타입 사용
 interface FormattedTrip extends Omit<Trip, 'startDate' | 'endDate'> {
     startDate: string;

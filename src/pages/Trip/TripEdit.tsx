@@ -3,21 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { fetchTripsList, postTripInfo, updateTripInfo } from '@/api/trips';
+import { fetchTripsList, updateTripInfo } from '@/api/trips';
 import Button from '@/components/common/Button/Button';
 import Header from '@/components/layout/Header';
 import 'react-toastify/dist/ReactToastify.css';
 import theme from '@/styles/theme';
 import { getToken } from '@/utils/auth';
-
-interface Trip {
-    tripId: string;
-    tripTitle: string;
-    country: string;
-    startDate: string;
-    endDate: string;
-    hashtags: string[];
-}
 
 const TripEdit: React.FC = () => {
     const [tripData, setTripData] = useState({
@@ -248,11 +239,6 @@ const dateFieldStyle = css`
         font-size: ${theme.fontSizes.normal_14};
         font-weight: 600;
     }
-`;
-
-const dateInputContainerStyle = css`
-    position: relative;
-    flex: 1;
 `;
 
 const dateInputStyle = css`

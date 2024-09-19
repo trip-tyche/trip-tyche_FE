@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { getToken, getUserId } from '@/utils/auth';
+import { getToken } from '@/utils/auth';
 
 interface Trip {
     tripId: string;
