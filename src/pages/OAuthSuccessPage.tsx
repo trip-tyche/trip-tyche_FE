@@ -22,8 +22,8 @@ const OAuthSuccessPage = () => {
         }
     }, [location]);
 
-    const setUserIdAndToken = async () => {
-        await setLogin(JSON.parse(userId), token);
+    const setUserIdAndToken = () => {
+        setLogin(JSON.parse(userId), token);
         // 로컬 스토리지 저장 확인을 위해 비동기 처리
         navigate('/', { replace: true });
     };

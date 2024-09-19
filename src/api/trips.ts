@@ -23,10 +23,9 @@ interface TripInfo {
     hashtags: string[];
 }
 
-const token = getToken();
-const userId = getUserId();
+const token2 = getToken();
 
-export const fetchTripsList = async (): Promise<Trips> => {
+export const fetchTripsList = async (token: string | null): Promise<Trips> => {
     try {
         const response = await axios.get<Trips>(
             'http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips',
@@ -44,7 +43,10 @@ export const fetchTripsList = async (): Promise<Trips> => {
     }
 };
 
-export const postTripInfo = async ({ tripTitle, country, startDate, endDate, hashtags }: TripInfo) => {
+export const postTripInfo = async (
+    token: string | null,
+    { tripTitle, country, startDate, endDate, hashtags }: TripInfo,
+) => {
     try {
         const response = await axios.post(
             'http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips',
@@ -71,7 +73,7 @@ export const postTripInfo = async ({ tripTitle, country, startDate, endDate, has
     }
 };
 
-export const postTripImages = async (tripId: string, files: File[]) => {
+export const postTripImages = async (token: string | null, tripId: string, files: File[]) => {
     const formData = new FormData();
     files.forEach((file) => {
         formData.append('files', file);
@@ -98,6 +100,7 @@ export const postTripImages = async (tripId: string, files: File[]) => {
 };
 
 export const updateTripInfo = async (
+    token: string | null,
     tripId: string,
     { tripTitle, country, startDate, endDate, hashtags }: TripInfo,
 ) => {
@@ -126,7 +129,7 @@ export const updateTripInfo = async (
     }
 };
 
-export const deleteTripInfo = async (tripId: string) => {
+export const deleteTripInfo = async (token: string | null, tripId: string) => {
     try {
         const response = await axios.delete(
             `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips/${tripId}`,
@@ -151,7 +154,7 @@ export const fetchTripMapData = async (tripId: string) => {
             `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips/${tripId}/info`,
             {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${token2}`,
                     'Content-Type': 'application/json',
                 },
             },

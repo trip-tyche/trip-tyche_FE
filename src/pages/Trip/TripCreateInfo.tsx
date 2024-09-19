@@ -8,6 +8,7 @@ import Button from '@/components/common/Button/Button';
 import Header from '@/components/layout/Header';
 import 'react-toastify/dist/ReactToastify.css';
 import theme from '@/styles/theme';
+import { getToken } from '@/utils/auth';
 
 const TripCreateInfo: React.FC = () => {
     const [tripTitle, setTitle] = useState('');
@@ -33,8 +34,9 @@ const TripCreateInfo: React.FC = () => {
     ];
 
     const submitTripInfo = async () => {
+        const token = getToken();
         try {
-            const response = await postTripInfo({ tripTitle, country, startDate, endDate, hashtags });
+            const response = await postTripInfo(token, { tripTitle, country, startDate, endDate, hashtags });
             const { tripId } = response;
             navigate('/trips/upload', { state: { tripId, tripTitle } });
         } catch (error) {

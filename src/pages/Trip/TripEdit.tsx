@@ -8,6 +8,7 @@ import Button from '@/components/common/Button/Button';
 import Header from '@/components/layout/Header';
 import 'react-toastify/dist/ReactToastify.css';
 import theme from '@/styles/theme';
+import { getToken } from '@/utils/auth';
 
 interface Trip {
     tripId: string;
@@ -32,6 +33,8 @@ const TripEdit: React.FC = () => {
     const navigate = useNavigate();
     const { tripId } = useParams<{ tripId: string }>();
 
+    const token = getToken();
+
     const hashtagsMenus = [
         '가족과함께',
         '베스트프렌즈',
@@ -52,7 +55,7 @@ const TripEdit: React.FC = () => {
         const getTripInfo = async () => {
             setIsLoading(true);
             try {
-                const data = await fetchTripsList();
+                const data = await fetchTripsList(token);
                 const tripData = data.trips?.filter((trip) => trip.tripId.toString() === tripId);
                 setTripData(tripData[0]);
             } catch (err) {
@@ -80,7 +83,7 @@ const TripEdit: React.FC = () => {
 
     const handleSubmit = async () => {
         try {
-            await updateTripInfo(tripId!, tripData);
+            await updateTripInfo(token, tripId!, tripData);
             navigate('/trips'); // 수정 후 여행 목록 페이지로 이동
         } catch (err) {
             setError('여행 정보 수정에 실패했습니다.');

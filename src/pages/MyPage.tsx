@@ -12,6 +12,7 @@ import Header from '@/components/layout/Header';
 import { PATH } from '@/constants/path';
 import useAuthStore from '@/stores/useAuthStore';
 import theme from '@/styles/theme';
+import { getUserId } from '@/utils/auth';
 
 const MyPage = () => {
     const navigator = useNavigate();
@@ -22,7 +23,14 @@ const MyPage = () => {
 
     useEffect(() => {
         const getUserNickName = async () => {
-            const { userNickName } = await fetchUserInfo();
+            const userId = getUserId();
+            if (!userId) {
+                console.error('Token or userId not found');
+                // 로그인 페이지로 리다이렉트 또는 다른 처리
+                return;
+            }
+
+            const { userNickName } = await fetchUserInfo(userId);
             console.log(userNickName);
             setUserNickname(userNickName);
         };

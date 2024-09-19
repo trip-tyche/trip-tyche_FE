@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { useLocation, useNavigate } from 'react-router-dom';
 
 import { fetchUserInfo, postUserNickName } from '@/api/user';
 import Card from '@/components/common/Card';
@@ -9,7 +8,6 @@ import LogoImages from '@/components/common/LogoImages';
 import SingleInputModal from '@/components/common/Modal/SingleInputModal';
 import OverLay from '@/components/common/OverLay';
 import FightHeader from '@/components/layout/AirplaneHeader';
-import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
 import { getToken, getUserId } from '@/utils/auth';
 
@@ -35,15 +33,14 @@ const Home = () => {
     const fetchUserData = async () => {
         const token = getToken();
         const userId = getUserId();
-
+        // console.log(userId);
         if (!token || !userId) {
             console.error('Token or userId not found');
             // 로그인 페이지로 리다이렉트 또는 다른 처리
             return;
         }
-
         try {
-            const { userNickName, trips, pinPoints } = await fetchUserInfo();
+            const { userNickName, trips, pinPoints } = await fetchUserInfo(userId);
 
             if (!userNickName) {
                 setIsModalOpen(true);
@@ -68,14 +65,14 @@ const Home = () => {
 
     const submitUserNickName = async () => {
         try {
+            console.log(inputValue);
             await postUserNickName(inputValue);
-            fetchUserData();
             closeModal();
+            fetchUserData();
         } catch (error) {
             console.error('닉네임 설정 중 오류 발생:', error);
         }
     };
-
     return (
         <div css={containerStyle}>
             <FightHeader />

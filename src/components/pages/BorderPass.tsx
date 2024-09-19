@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { deleteTripInfo } from '@/api/trips';
 import characterImg from '@/assets/images/character.png';
+import { getToken } from '@/utils/auth';
 
 interface Trip {
     tripId: string;
@@ -30,13 +31,14 @@ const BorderPass: React.FC<BorderPassProps> = ({ trip, userNickname, setTripCoun
     const navigate = useNavigate();
 
     const { tripId, tripTitle, country, startDate, endDate, hashtags } = trip;
+    const token = getToken();
 
     const handleEdit = () => {
         navigate(`/trips/${tripId}/edit`);
     };
 
     const handleDelete = async () => {
-        await deleteTripInfo(tripId);
+        await deleteTripInfo(token, tripId);
         setTripCount((prev: number) => prev - 1);
     };
     return (

@@ -10,6 +10,7 @@ import Navbar from '@/components/layout/Navbar';
 import BorderPass from '@/components/pages/BorderPass';
 import { PATH } from '@/constants/path';
 import theme from '@/styles/theme';
+import { getToken } from '@/utils/auth';
 
 interface Trip {
     tripId: string;
@@ -36,6 +37,7 @@ const Trips = () => {
     const [trips, setTrips] = useState<Trip[]>([]);
     const [userNickname, setUserNickname] = useState<string>('');
     const [tripCount, setTripCount] = useState(0);
+    const token = getToken();
 
     const formatTrips = (tripsData: Trip[]): FormattedTrip[] =>
         tripsData?.map((trip) => ({
@@ -47,7 +49,8 @@ const Trips = () => {
 
     useEffect(() => {
         const getTripsList = async () => {
-            const tripList = await fetchTripsList();
+            // console.log(token);
+            const tripList = await fetchTripsList(token);
             if (!tripList) {
                 console.log('없네');
                 return;

@@ -21,14 +21,11 @@ interface UserInfo {
     pinPoints: PinPoint[];
 }
 
-const token = getToken();
-const userId = getUserId();
-
-export const fetchUserInfo = async (): Promise<UserInfo> => {
+export const fetchUserInfo = async (userId: number): Promise<UserInfo> => {
     try {
+        const token = getToken();
         const response = await axios.get<UserInfo>(
-            // `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/tripInfo?userId=${userId}`,
-            `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/tripInfo?userId=2`,
+            `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/tripInfo?userId=${userId}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -51,6 +48,7 @@ export const fetchUserInfo = async (): Promise<UserInfo> => {
 
 export const postUserNickName = async (userNickName: string) => {
     try {
+        const token = getToken();
         const response = await axios.post(
             `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/updateUserNickName`,
             userNickName,
