@@ -24,8 +24,10 @@
         "strictNullChecks": true, //null 및 undefined를 보다 명확하게 체크
         "noImplicitAny": true, //
         "esModuleInterop": true,
-        "lib": ["dom", "dom.iterable", "esnext"],
-        "allowSyntheticDefaultImports": true
+        "lib": ["dom", "dom.iterable", "esnext", "webworker"],
+        "types": ["node", "vite/client", "svgo"],
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true
         // "composite": true
     }
 }
