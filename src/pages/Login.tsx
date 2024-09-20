@@ -6,15 +6,18 @@ import FightHeader from '@/components/layout/AirplaneHeader';
 import theme from '@/styles/theme';
 
 const Login = () => {
-    const KAKAO_LINK: string = `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/oauth2/authorization/kakao`;
-    const GOOGLE_LINK: string = `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/oauth2/authorization/google`;
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+    const oauthUrl = 'oauth2/authorization';
+
+    const KAKAO_OAUTH_LINK: string = `${apiBaseUrl}/${oauthUrl}/kakao`;
+    const GOOGLE_OAUTH_LINK: string = `${apiBaseUrl}/${oauthUrl}/google`;
 
     const handleKaKaoLogin = () => {
-        window.location.href = KAKAO_LINK;
+        window.location.href = KAKAO_OAUTH_LINK;
     };
 
     const handleGoogleLogin = () => {
-        window.location.href = GOOGLE_LINK;
+        window.location.href = GOOGLE_OAUTH_LINK;
     };
 
     return (

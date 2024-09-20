@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { fetchTripsList, updateTripInfo } from '@/api/trips';
+import { fetchTripsList, updateTripInfo } from '@/api/trip';
 import Button from '@/components/common/Button/Button';
 import Header from '@/components/layout/Header';
 import 'react-toastify/dist/ReactToastify.css';

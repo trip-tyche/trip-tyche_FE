@@ -3,29 +3,15 @@ import { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
-import { fetchTripsList } from '@/api/trips';
+import { fetchTripsList } from '@/api/trip';
 import Button from '@/components/common/Button/Button';
 import Header from '@/components/layout/Header';
 import Navbar from '@/components/layout/Navbar';
 import BorderPass from '@/components/pages/BorderPass';
 import { PATH } from '@/constants/path';
 import theme from '@/styles/theme';
+import { FormattedTrip, Trip } from '@/types/trip';
 import { getToken } from '@/utils/auth';
-
-interface Trip {
-    tripId: string;
-    tripTitle: string;
-    country: string;
-    startDate: string;
-    endDate: string;
-    hashtags: string[];
-}
-
-// startDate, endDate 타입 재정의를 위한 Omit 유틸리티 타입 사용
-interface FormattedTrip extends Omit<Trip, 'startDate' | 'endDate'> {
-    startDate: string;
-    endDate: string;
-}
 
 const Trips = () => {
     const navigate = useNavigate();
@@ -44,7 +30,6 @@ const Trips = () => {
 
     useEffect(() => {
         const getTripsList = async () => {
-            // console.log(token);
             const tripList = await fetchTripsList(token);
             if (!tripList) {
                 return;

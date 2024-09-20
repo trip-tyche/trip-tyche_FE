@@ -7,7 +7,7 @@ import L, { LatLngExpression } from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { fetchTripMapData } from '@/api/trips';
+import { fetchTripMapData } from '@/api/trip';
 import Header from '@/components/layout/Header';
 
 interface TripMapData {

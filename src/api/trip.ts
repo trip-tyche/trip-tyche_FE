@@ -1,27 +1,7 @@
 import axios from 'axios';
 
+import { TripInfo, Trips } from '@/types/trip';
 import { getToken } from '@/utils/auth';
-
-interface Trip {
-    tripId: string;
-    tripTitle: string;
-    country: string;
-    startDate: string;
-    endDate: string;
-    hashtags: string[];
-}
-interface Trips {
-    userNickName: string;
-    trips: Trip[];
-}
-
-interface TripInfo {
-    tripTitle: string;
-    country: string;
-    startDate: string;
-    endDate: string;
-    hashtags: string[];
-}
 
 const token2 = getToken();
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;

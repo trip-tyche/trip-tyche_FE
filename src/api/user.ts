@@ -1,29 +1,11 @@
 import axios from 'axios';
 
+import { UserInfo } from '@/types/user';
 import { getToken } from '@/utils/auth';
-
-interface Trip {
-    tripId: number;
-    country: string;
-}
-
-interface PinPoint {
-    tripId: number;
-    pinPointId: number;
-    latitude: number;
-    longitude: number;
-}
-
-interface UserInfo {
-    userId: number;
-    userNickName: string;
-    trips: Trip[];
-    pinPoints: PinPoint[];
-}
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-export const fetchUserInfo = async (userId: number): Promise<UserInfo> => {
+export const fetchUserInfo = async (userId: string): Promise<UserInfo> => {
     try {
         const token = getToken();
         const response = await axios.get<UserInfo>(`${apiBaseUrl}/api/user/tripInfo?userId=${userId}`, {

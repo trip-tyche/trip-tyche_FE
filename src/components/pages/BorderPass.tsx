@@ -4,22 +4,10 @@ import { css } from '@emotion/react';
 import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
-import { deleteTripInfo } from '@/api/trips';
+import { deleteTripInfo } from '@/api/trip';
 import characterImg from '@/assets/images/character.png';
+import { FormattedTrip } from '@/types/trip';
 import { getToken } from '@/utils/auth';
-
-interface Trip {
-    tripId: string;
-    tripTitle: string;
-    country: string;
-    startDate: string;
-    endDate: string;
-    hashtags: string[];
-}
-interface FormattedTrip extends Omit<Trip, 'startDate' | 'endDate'> {
-    startDate: string;
-    endDate: string;
-}
 
 interface BorderPassProps {
     trip: FormattedTrip;

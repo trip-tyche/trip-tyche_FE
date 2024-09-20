@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { FaCloudUploadAlt } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { postTripImages } from '@/api/trips';
+import { postTripImages } from '@/api/trip';
 import Button from '@/components/common/Button/Button';
 import Header from '@/components/layout/Header';
 import { getToken } from '@/utils/auth';

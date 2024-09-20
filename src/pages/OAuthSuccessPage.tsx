@@ -3,29 +3,30 @@ import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { HashLoader } from 'react-spinners';
 
+import { PATH } from '@/constants/path';
 import useAuthStore from '@/stores/useAuthStore';
 
 const OAuthSuccessPage = () => {
+    const setLogin = useAuthStore((state) => state.setLogin);
+
     const navigate = useNavigate();
     const location = useLocation();
-    const setLogin = useAuthStore((state) => state.setLogin);
 
     const params = new URLSearchParams(location.search);
     const userId = params.get('userId') as string;
     const token = params.get('token') as string;
-
+    console.log(typeof userId, typeof token);
     useEffect(() => {
         if (userId && token) {
             setUserIdAndToken();
         } else {
-            navigate('/login', { replace: true });
+            navigate(PATH.LOGIN, { replace: true });
         }
     }, [location]);
 
     const setUserIdAndToken = () => {
         setLogin(JSON.parse(userId), token);
-        // 로컬 스토리지 저장 확인을 위해 비동기 처리
-        navigate('/', { replace: true });
+        navigate(PATH.HOME, { replace: true });
     };
 
     return (

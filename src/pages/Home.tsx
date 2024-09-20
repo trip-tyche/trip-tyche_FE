@@ -9,19 +9,8 @@ import SingleInputModal from '@/components/common/Modal/SingleInputModal';
 import OverLay from '@/components/common/OverLay';
 import FightHeader from '@/components/layout/AirplaneHeader';
 import theme from '@/styles/theme';
+import { PinPoint, Trip } from '@/types/trip';
 import { getToken, getUserId } from '@/utils/auth';
-
-interface Trip {
-    tripId: number;
-    country: string;
-}
-
-interface PinPoint {
-    tripId: number;
-    pinPointId: number;
-    latitude: number;
-    longitude: number;
-}
 
 const Home = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -33,7 +22,6 @@ const Home = () => {
     const fetchUserData = async () => {
         const token = getToken();
         const userId = getUserId();
-        // console.log(userId);
         if (!token || !userId) {
             console.error('Token or userId not found');
             // 로그인 페이지로 리다이렉트 또는 다른 처리
@@ -41,7 +29,6 @@ const Home = () => {
         }
         try {
             const { userNickName, trips, pinPoints } = await fetchUserInfo(userId);
-
             if (!userNickName) {
                 setIsModalOpen(true);
             } else {
@@ -65,7 +52,6 @@ const Home = () => {
 
     const submitUserNickName = async () => {
         try {
-            console.log(inputValue, pinPoints);
             await postUserNickName(inputValue);
             closeModal();
             fetchUserData();
