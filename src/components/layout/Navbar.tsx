@@ -39,12 +39,10 @@ const Navbar = () => {
 const navStyle = css`
     z-index: 10;
     position: fixed;
-    left: 50%;
     bottom: 0;
-    transform: translateX(-50%);
-    max-width: 498px;
+    max-width: 428px;
     width: 100vw;
-    height: 80px;
+    height: 70px;
     border-top: 1px solid ${theme.colors.disabled};
     background-color: ${theme.colors.white};
     border-radius: 10px 10px 0 0;
@@ -65,7 +63,7 @@ const linkStyle = css`
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    height: 80px;
+    height: 55px;
     gap: 8px;
     padding-top: 14px;
     text-decoration: none;

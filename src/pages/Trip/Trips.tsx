@@ -47,10 +47,9 @@ const Trips = () => {
             // console.log(token);
             const tripList = await fetchTripsList(token);
             if (!tripList) {
-                console.log('없네');
                 return;
             }
-            // console.log(tripList);
+            console.log(tripList);
 
             setTrips(tripList.trips);
             setUserNickname(tripList.userNickName);
@@ -98,7 +97,7 @@ const containerStyle = css`
 const fixedHeaderStyle = css`
     position: fixed;
     width: 100%;
-    max-width: 498px;
+    max-width: 428px;
     background-color: ${theme.colors.white};
     z-index: 1000;
 `;

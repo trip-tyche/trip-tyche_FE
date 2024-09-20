@@ -24,7 +24,7 @@ const RootLayout = () => {
     );
 };
 const containerStyle = css`
-    max-width: 498px;
+    max-width: 428px;
     min-height: 100vh;
     margin: 0 auto;
     background-color: ${theme.colors.white};

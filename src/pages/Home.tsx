@@ -86,7 +86,7 @@ const Home = () => {
             {userNickName && <p css={descriptionStyle}> {userNickName} 님의 여행을 기억해주세요 😀</p>}
             {isModalOpen && (
                 <>
-                    <OverLay closeModal={closeModal} />
+                    <OverLay />
                     <SingleInputModal
                         titleText='당신의 이름을 알려주세요'
                         descriptionText='한국어, 영어, 숫자 등 최소 4자리를 입력해주세요.'
