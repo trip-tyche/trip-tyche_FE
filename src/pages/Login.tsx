@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import KakaoButton from '@/components/common/Button/KakaoButton';
+import KakaoButton from '@/components/common/Button/oauthButton';
 import LogoImages from '@/components/common/LogoImages';
 import FightHeader from '@/components/layout/AirplaneHeader';
 import theme from '@/styles/theme';
@@ -9,15 +9,13 @@ const Login = () => {
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
     const oauthUrl = 'oauth2/authorization';
 
-    const KAKAO_OAUTH_LINK: string = `${apiBaseUrl}/${oauthUrl}/kakao`;
-    const GOOGLE_OAUTH_LINK: string = `${apiBaseUrl}/${oauthUrl}/google`;
-
-    const handleKaKaoLogin = () => {
-        window.location.href = KAKAO_OAUTH_LINK;
+    const oauthLinks = {
+        kakao: `${apiBaseUrl}/${oauthUrl}/kakao`,
+        google: `${apiBaseUrl}/${oauthUrl}/google`,
     };
 
-    const handleGoogleLogin = () => {
-        window.location.href = GOOGLE_OAUTH_LINK;
+    const handleLogin = (provider: keyof typeof oauthLinks) => () => {
+        window.location.href = oauthLinks[provider];
     };
 
     return (
@@ -34,10 +32,8 @@ const Login = () => {
             </div>
 
             <div css={buttonContainerStyle}>
-                <KakaoButton handleLogin={handleKaKaoLogin} />
-            </div>
-            <div css={buttonContainerStyle}>
-                <KakaoButton handleLogin={handleGoogleLogin} />
+                <KakaoButton provider='kakao' handleLogin={handleLogin('kakao')} />
+                <KakaoButton provider='google' handleLogin={handleLogin('google')} />
             </div>
         </div>
     );
@@ -81,8 +77,10 @@ const buttonContainerStyle = css`
     flex: 1;
 
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 14px;
     margin-bottom: 1rem;
 `;
 
