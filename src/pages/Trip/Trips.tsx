@@ -57,16 +57,20 @@ const Trips = () => {
                 </div>
             </div>
             <main css={mainContentStyle}>
-                <div css={tripListStyle}>
-                    {formatTrips(trips)?.map((trip) => (
-                        <BorderPass
-                            key={trip.tripId}
-                            trip={trip}
-                            userNickname={userNickname}
-                            setTripCount={setTripCount}
-                        />
-                    ))}
-                </div>
+                {trips.length > 0 ? (
+                    <div css={tripListStyle}>
+                        {formatTrips(trips)?.map((trip) => (
+                            <BorderPass
+                                key={trip.tripId}
+                                trip={trip}
+                                userNickname={userNickname}
+                                setTripCount={setTripCount}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div css={noTripListStyle}>새로운 여행을 등록해주세요:)</div>
+                )}
             </main>
             <Navbar />
         </div>
@@ -102,6 +106,7 @@ const mainContentStyle = css`
     display: flex;
     flex-direction: column;
     justify-content: center;
+    position: relative;
 `;
 
 const tripListStyle = css`
@@ -110,5 +115,8 @@ const tripListStyle = css`
     gap: 18px;
     padding: 10px;
 `;
-
+const noTripListStyle = css`
+    display: flex;
+    justify-content: center;
+`;
 export default Trips;
