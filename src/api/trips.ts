@@ -24,18 +24,16 @@ interface TripInfo {
 }
 
 const token2 = getToken();
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const fetchTripsList = async (token: string | null): Promise<Trips> => {
     try {
-        const response = await axios.get<Trips>(
-            'http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips',
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
+        const response = await axios.get<Trips>(`${apiBaseUrl}/api/trips`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
             },
-        );
+        });
         return response.data;
     } catch (error) {
         console.error('==> ', error);
@@ -49,7 +47,7 @@ export const postTripInfo = async (
 ) => {
     try {
         const response = await axios.post(
-            'http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips',
+            `${apiBaseUrl}/api/trips`,
             {
                 tripTitle,
                 country,
@@ -80,17 +78,13 @@ export const postTripImages = async (token: string | null, tripId: string, files
     });
 
     try {
-        const response = await axios.post(
-            `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips/${tripId}/upload`,
-            formData,
-            {
-                headers: {
-                    accept: '*/*',
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data',
-                },
+        const response = await axios.post(`${apiBaseUrl}/api/trips/${tripId}/upload`, formData, {
+            headers: {
+                accept: '*/*',
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
             },
-        );
+        });
         console.log(response.data);
         return response.data;
     } catch (error) {
@@ -106,7 +100,7 @@ export const updateTripInfo = async (
 ) => {
     try {
         const response = await axios.put(
-            `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips/${tripId}`,
+            `${apiBaseUrl}/api/trips/${tripId}`,
             {
                 tripTitle,
                 country,
@@ -131,15 +125,12 @@ export const updateTripInfo = async (
 
 export const deleteTripInfo = async (token: string | null, tripId: string) => {
     try {
-        const response = await axios.delete(
-            `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips/${tripId}`,
-            {
-                headers: {
-                    accept: '*/*',
-                    Authorization: `Bearer ${token}`,
-                },
+        const response = await axios.delete(`${apiBaseUrl}/api/trips/${tripId}`, {
+            headers: {
+                accept: '*/*',
+                Authorization: `Bearer ${token}`,
             },
-        );
+        });
         console.log('Delete Success');
         return response.data;
     } catch (error) {
@@ -150,15 +141,12 @@ export const deleteTripInfo = async (token: string | null, tripId: string) => {
 
 export const fetchTripMapData = async (tripId: string) => {
     try {
-        const response = await axios.get(
-            `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/trips/${tripId}/info`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token2}`,
-                    'Content-Type': 'application/json',
-                },
+        const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/info`, {
+            headers: {
+                Authorization: `Bearer ${token2}`,
+                'Content-Type': 'application/json',
             },
-        );
+        });
         return response.data;
     } catch (error) {
         console.error('==> ', error);

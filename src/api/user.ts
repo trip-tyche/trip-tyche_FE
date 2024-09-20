@@ -21,18 +21,17 @@ interface UserInfo {
     pinPoints: PinPoint[];
 }
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 export const fetchUserInfo = async (userId: number): Promise<UserInfo> => {
     try {
         const token = getToken();
-        const response = await axios.get<UserInfo>(
-            `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/tripInfo?userId=${userId}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
+        const response = await axios.get<UserInfo>(`${apiBaseUrl}/api/user/tripInfo?userId=${userId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
             },
-        );
+        });
         const { data } = response;
         return {
             userId: data.userId,
@@ -49,17 +48,13 @@ export const fetchUserInfo = async (userId: number): Promise<UserInfo> => {
 export const postUserNickName = async (userNickName: string) => {
     try {
         const token = getToken();
-        const response = await axios.post(
-            `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/api/user/updateUserNickName`,
-            userNickName,
-            {
-                headers: {
-                    accept: '*/*',
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'text/plain',
-                },
+        const response = await axios.post(`${apiBaseUrl}/api/user/updateUserNickName`, userNickName, {
+            headers: {
+                accept: '*/*',
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'text/plain',
             },
-        );
+        });
         return response.data;
     } catch (error) {
         console.error('==> ', error);
