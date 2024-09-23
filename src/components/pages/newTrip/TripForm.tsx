@@ -27,7 +27,7 @@ const TripForm = ({
     setHashtags,
 }: TripFormProps): JSX.Element => (
     <>
-        <div css={tripFormWrapperStyle}>
+        <div css={containerStyle}>
             <section css={sectionStyle}>
                 <label htmlFor='title'>{NEW_COUNTRY.TITLE}</label>
                 <input
@@ -96,7 +96,7 @@ const TripForm = ({
         </div>
     </>
 );
-const tripFormWrapperStyle = css`
+const containerStyle = css`
     padding: 20px;
     display: flex;
     flex-direction: column;

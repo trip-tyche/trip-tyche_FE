@@ -9,9 +9,9 @@ import TripList from '../pages/Trip/TripList';
 import { PATH } from '@/constants/path';
 import LoginRedirectPage from '@/pages/LoginRedirectPage';
 import NewTrip from '@/pages/Trip/NewTrip';
+import TimelineMap from '@/pages/Trip/TimelineMap';
 import TripEdit from '@/pages/Trip/TripEdit';
 import TripFileUpload from '@/pages/Trip/TripFileUpload';
-import TripMap from '@/pages/Trip/TripMap';
 
 // const AuthProtectedRoute = () => {
 //     // 현재 경로와 URL쿼리 문자열 가져옴
@@ -53,7 +53,7 @@ export const router = createBrowserRouter([
                     { path: PATH.TRIP_UPLOAD, element: <TripFileUpload /> },
 
                     { path: PATH.TRIPS_EDIT, element: <TripEdit /> },
-                    { path: `${PATH.TIMELINE_MAP}:tripId`, element: <TripMap /> },
+                    { path: `${PATH.TIMELINE_MAP}:tripId`, element: <TimelineMap /> },
                     //   { path: PATH.ONBOARDING, element: <Onboarding /> },
                     //   { path: '/test', element: <Test /> },
                     {

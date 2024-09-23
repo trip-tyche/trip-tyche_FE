@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { deleteTripInfo } from '@/api/trip';
 import characterImg from '@/assets/images/character.png';
+import { PATH } from '@/constants/path';
 import { FormattedTripDate } from '@/types/trip';
 import { getToken } from '@/utils/auth';
 
@@ -15,28 +16,33 @@ interface BorderPassProps {
     setTripCount: Dispatch<SetStateAction<number>>;
 }
 
-const BorderPass: React.FC<BorderPassProps> = ({ trip, userNickname, setTripCount }) => {
+const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.Element => {
     const navigate = useNavigate();
 
     const { tripId, tripTitle, country, startDate, endDate, hashtags } = trip;
-    const token = getToken();
 
     const handleEdit = () => {
         navigate(`/trips/${tripId}/edit`);
     };
 
     const handleDelete = async () => {
-        await deleteTripInfo(tripId, token);
+        try {
+            const token = getToken();
+            await deleteTripInfo(tripId, token);
+        } catch (error) {
+            console.error('Error delete trip:', error);
+        }
         setTripCount((prev: number) => prev - 1);
     };
     return (
         <div css={borderPassContainer}>
-            <div css={borderPassContent} onClick={() => navigate(`/trips/${tripId}/map`, { state: trip })}>
+            <div css={borderPassContent} onClick={() => navigate(`${PATH.TIMELINE_MAP}/${tripId}`, { state: trip })}>
                 <div css={borderPassLeft}>
                     <div css={countryName}>{country}</div>
                     <img src={characterImg} alt='character' css={characterImage} />
                     <div css={borderPassText}>BORDER PASS</div>
                 </div>
+
                 <div css={borderPassRight}>
                     <h3 css={tripTitleStyle}>{tripTitle}</h3>
                     <div css={tripInfo}>
@@ -62,6 +68,7 @@ const BorderPass: React.FC<BorderPassProps> = ({ trip, userNickname, setTripCoun
                     </div>
                 </div>
             </div>
+
             <div css={buttonContainer}>
                 <button css={editButton} onClick={handleEdit}>
                     <FaPencilAlt /> Edit
@@ -89,18 +96,6 @@ const borderPassContainer = css`
         transform: translateY(-2px);
         cursor: pointer;
     }
-
-    /* &:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="25" fill="%23c4a671" opacity="0.1"/></svg>');
-        background-size: 50px 50px;
-        opacity: 0.5;
-    } */
 `;
 
 const borderPassContent = css`

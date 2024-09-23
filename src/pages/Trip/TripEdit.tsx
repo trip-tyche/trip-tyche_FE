@@ -6,6 +6,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getTripList, updateTripInfo } from '@/api/trip';
 import Button from '@/components/common/Button/Button';
 import Header from '@/components/layout/Header';
+import { PATH } from '@/constants/path';
+import { BUTTON, PAGE } from '@/constants/title';
 import { HASHTAG_MENU } from '@/constants/trip';
 import theme from '@/styles/theme';
 import { getToken } from '@/utils/auth';
@@ -20,7 +22,6 @@ const TripEdit = (): JSX.Element => {
     });
 
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
     const navigate = useNavigate();
     const { tripId } = useParams<{ tripId: string }>();
@@ -28,26 +29,26 @@ const TripEdit = (): JSX.Element => {
     const token = getToken();
 
     useEffect(() => {
-        const getTripInfo = async () => {
+        const fetchTripInfo = async () => {
             setIsLoading(true);
             try {
                 const data = await getTripList(token);
                 const tripData = data.trips?.filter((trip) => trip.tripId.toString() === tripId);
                 setTripData(tripData[0]);
-            } catch (err) {
-                setError('여행 정보를 불러오는 데 실패했습니다.');
-                console.error(err);
+            } catch (error) {
+                console.error('Error fetching trip data:', error);
             } finally {
                 setIsLoading(false);
             }
         };
 
-        getTripInfo();
-    }, [tripId]);
+        fetchTripInfo();
+    }, []);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setTripData((prev) => ({ ...prev, [name]: value }));
+        // setTripData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleHashtagToggle = (tag: string) => {
@@ -59,20 +60,18 @@ const TripEdit = (): JSX.Element => {
 
     const handleSubmit = async () => {
         try {
-            await updateTripInfo(token, tripId!, tripData);
-            navigate('/trips'); // 수정 후 여행 목록 페이지로 이동
-        } catch (err) {
-            setError('여행 정보 수정에 실패했습니다.');
-            console.error(err);
+            await updateTripInfo(tripId!, tripData, token);
+            navigate(PATH.TRIP_LIST);
+        } catch (error) {
+            console.error('Error update trip data:', error);
         }
     };
 
     if (isLoading) return <div>로딩 중...</div>;
-    if (error) return <div>{error}</div>;
 
     return (
         <div css={containerStyle}>
-            <Header title='여행 수정' isBackButton={true} onClick={() => navigate(-1)} />
+            <Header title={PAGE.TRIP_EDIT} isBackButton />
 
             <main css={mainStyle}>
                 <section css={sectionStyle}>
@@ -174,7 +173,7 @@ const TripEdit = (): JSX.Element => {
             </main>
 
             <div css={submitButtonStyle}>
-                <Button text='수정 완료' theme='sec' size='sm' onClick={handleSubmit} />
+                <Button text={BUTTON.UPDATE_TRIP} theme='sec' size='sm' onClick={handleSubmit} />
             </div>
         </div>
     );

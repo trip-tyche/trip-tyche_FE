@@ -18,7 +18,7 @@ const NewTrip = (): JSX.Element => {
         setEndDate,
         hashtags,
         setHashtags,
-        submitTripInfo,
+        handleSubmit,
     } = useTripForm();
 
     return (
@@ -37,7 +37,7 @@ const NewTrip = (): JSX.Element => {
                 setHashtags={setHashtags}
             />
             <div css={buttonWrapperStyle}>
-                <Button text={BUTTON.NEXT} theme='sec' size='sm' onClick={submitTripInfo} />
+                <Button text={BUTTON.NEXT} theme='sec' size='sm' onClick={handleSubmit} />
             </div>
         </div>
     );

@@ -15,7 +15,7 @@ export const useTripForm = () => {
 
     const navigate = useNavigate();
 
-    const submitTripInfo = async () => {
+    const handleSubmit = async () => {
         try {
             const token = getToken();
             const response = await postTripInfo({ tripTitle, country, startDate, endDate, hashtags }, token);
@@ -38,6 +38,6 @@ export const useTripForm = () => {
         setEndDate,
         hashtags,
         setHashtags,
-        submitTripInfo,
+        handleSubmit,
     };
 };
