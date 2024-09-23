@@ -9,7 +9,7 @@ import LogoImages from '@/components/common/LogoImages';
 import ModalOverlay from '@/components/common/Modal/ModalOverlay';
 import SingleInputModal from '@/components/common/Modal/SingleInputModal';
 import FightHeader from '@/components/layout/AirplaneHeader';
-import { GREETING_MESSAGE, NICKNAME } from '@/constants/home';
+import { GREETING_MESSAGE, NICKNAME_MODAL } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { useModalStore } from '@/stores/useModalStore';
 import theme from '@/styles/theme';
@@ -77,9 +77,9 @@ const Home = (): JSX.Element => {
                 <>
                     <ModalOverlay />
                     <SingleInputModal
-                        title={NICKNAME.TITLE}
-                        infoMessage={NICKNAME.INFO_MESSAGE}
-                        exampleText={NICKNAME.EXAMPLE_TEXT}
+                        title={NICKNAME_MODAL.TITLE}
+                        infoMessage={NICKNAME_MODAL.INFO_MESSAGE}
+                        exampleText={NICKNAME_MODAL.EXAMPLE_TEXT}
                         submitModal={submitUserNickName}
                         value={inputValue}
                         setInputValue={setInputValue}
@@ -91,10 +91,10 @@ const Home = (): JSX.Element => {
 };
 
 const containerStyle = css`
-    min-height: 100vh;
+    /* min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-bottom: 80px;
+    padding-bottom: 80px; */
 `;
 
 const cardWrapperStyle = css`

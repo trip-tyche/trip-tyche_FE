@@ -9,7 +9,7 @@ const RootLayout = () => {
     const location = useLocation();
 
     const showNavbar = () => {
-        const navbarPaths = [PATH.HOME, PATH.TRIPS, PATH.MYPAGE];
+        const navbarPaths = [PATH.HOME, PATH.TRIP_LIST, PATH.MYPAGE];
 
         return navbarPaths.some((path) => location.pathname === path);
     };

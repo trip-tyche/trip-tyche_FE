@@ -6,11 +6,11 @@ import { useNavigate } from 'react-router-dom';
 
 import { deleteTripInfo } from '@/api/trip';
 import characterImg from '@/assets/images/character.png';
-import { FormattedTrip } from '@/types/trip';
+import { FormattedTripDate } from '@/types/trip';
 import { getToken } from '@/utils/auth';
 
 interface BorderPassProps {
-    trip: FormattedTrip;
+    trip: FormattedTripDate;
     userNickname: string;
     setTripCount: Dispatch<SetStateAction<number>>;
 }

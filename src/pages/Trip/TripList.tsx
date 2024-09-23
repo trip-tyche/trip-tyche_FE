@@ -3,63 +3,61 @@ import { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
-import { fetchTripsList } from '@/api/trip';
+import { getTripList } from '@/api/trip';
 import Button from '@/components/common/Button/Button';
 import Header from '@/components/layout/Header';
 import Navbar from '@/components/layout/Navbar';
 import BorderPass from '@/components/pages/BorderPass';
+import { TRIP } from '@/constants/message';
 import { PATH } from '@/constants/path';
+import { BUTTON, PAGE } from '@/constants/title';
 import theme from '@/styles/theme';
-import { FormattedTrip, Trip } from '@/types/trip';
+import { Trip } from '@/types/trip';
 import { getToken } from '@/utils/auth';
+import { formatTripDate } from '@/utils/date';
 
-const Trips = () => {
-    const navigate = useNavigate();
-    const [trips, setTrips] = useState<Trip[]>([]);
+const TripList = (): JSX.Element => {
     const [userNickname, setUserNickname] = useState<string>('');
+    const [tripList, setTripList] = useState<Trip[]>([]);
     const [tripCount, setTripCount] = useState(0);
-    const token = getToken();
 
-    const formatTrips = (tripsData: Trip[]): FormattedTrip[] =>
-        tripsData?.map((trip) => ({
-            ...trip,
-            country: trip.country.toUpperCase(),
-            startDate: new Date(trip.startDate).toLocaleDateString('ko-KR'),
-            endDate: new Date(trip.endDate).toLocaleDateString('ko-KR'),
-        }));
+    const navigate = useNavigate();
+
+    console.log(tripList);
 
     useEffect(() => {
-        const getTripsList = async () => {
-            const tripList = await fetchTripsList(token);
-            if (!tripList) {
-                return;
-            }
-            console.log(tripList);
+        const fetchTripList = async () => {
+            try {
+                const token = getToken();
+                const tripList = await getTripList(token);
+                if (!tripList) {
+                    return;
+                }
 
-            setTrips(tripList.trips);
-            setUserNickname(tripList.userNickName);
-            setTripCount(tripList.trips?.length);
+                setUserNickname(tripList.userNickName);
+                setTripList(tripList.trips);
+                setTripCount(tripList.trips?.length);
+            } catch (error) {
+                console.error('Error fetching trip-list data:', error);
+            }
         };
 
-        getTripsList();
-    }, [tripCount]);
-
-    const goToTripCreatePage = () => {
-        navigate(PATH.TRIP_CREATE_INFO);
-    };
+        fetchTripList();
+    }, []);
 
     return (
         <div css={containerStyle}>
-            <div css={fixedHeaderStyle}>
-                <Header title='보더 패스' />
-                <div css={buttonStyle}>
-                    <Button text='여행 등록' theme='sec' size='sm' onClick={goToTripCreatePage} />
+            <div css={fixedStyle}>
+                <Header title={PAGE.TRIP_LIST} />
+                <div css={buttonWrapperStyle}>
+                    <Button text={BUTTON.NEW_TRIP} theme='sec' size='sm' onClick={() => navigate(PATH.TRIP_NEW)} />
                 </div>
             </div>
-            <main css={mainContentStyle}>
-                {trips.length > 0 ? (
+
+            <main css={mainStyle}>
+                {tripCount > 0 ? (
                     <div css={tripListStyle}>
-                        {formatTrips(trips)?.map((trip) => (
+                        {formatTripDate(tripList)?.map((trip) => (
                             <BorderPass
                                 key={trip.tripId}
                                 trip={trip}
@@ -69,7 +67,7 @@ const Trips = () => {
                         ))}
                     </div>
                 ) : (
-                    <div css={noTripListStyle}>새로운 여행을 등록해주세요:)</div>
+                    <p css={pStyle}>{TRIP.NO_TRIP}</p>
                 )}
             </main>
             <Navbar />
@@ -83,7 +81,7 @@ const containerStyle = css`
     min-height: 100vh;
 `;
 
-const fixedHeaderStyle = css`
+const fixedStyle = css`
     position: fixed;
     width: 100%;
     max-width: 428px;
@@ -91,14 +89,14 @@ const fixedHeaderStyle = css`
     z-index: 1000;
 `;
 
-const buttonStyle = css`
+const buttonWrapperStyle = css`
     display: flex;
     justify-content: end;
     padding: 0.5rem;
     padding-right: 1rem;
 `;
 
-const mainContentStyle = css`
+const mainStyle = css`
     flex: 1;
     padding-bottom: 90px;
 
@@ -115,8 +113,10 @@ const tripListStyle = css`
     gap: 18px;
     padding: 10px;
 `;
-const noTripListStyle = css`
+
+const pStyle = css`
     display: flex;
     justify-content: center;
 `;
-export default Trips;
+
+export default TripList;

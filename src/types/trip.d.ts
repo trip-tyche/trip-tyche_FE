@@ -13,7 +13,7 @@ export interface Trip extends TripInfo {
 }
 
 // startDate, endDate 타입 재정의를 위한 Omit 유틸리티 타입 사용 (기존 Date 타입)
-export interface FormattedTrip extends Omit<Trip, 'startDate' | 'endDate'> {
+export interface FormattedTripDate extends Omit<Trip, 'startDate' | 'endDate'> {
     startDate: string;
     endDate: string;
 }

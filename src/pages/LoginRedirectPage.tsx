@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 
 import { useNavigate, useLocation } from 'react-router-dom';
-import { HashLoader } from 'react-spinners';
 
 import Loading from '@/components/Loading';
 import { PATH } from '@/constants/path';

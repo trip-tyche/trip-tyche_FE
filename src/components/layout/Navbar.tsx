@@ -8,7 +8,7 @@ import theme from '@/styles/theme';
 const Navbar = () => {
     const menus = [
         { path: PATH.HOME, title: PATH_TITLE.HOME, Icon: Earth },
-        { path: PATH.TRIPS, title: PATH_TITLE.TRIPS, Icon: TicketsPlane },
+        { path: PATH.TRIP_LIST, title: PATH_TITLE.TRIP_LIST, Icon: TicketsPlane },
         { path: PATH.MYPAGE, title: PATH_TITLE.MYPAGE, Icon: UserRound },
     ];
 

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { fetchTripsList, updateTripInfo } from '@/api/trip';
+import { getTripList, updateTripInfo } from '@/api/trip';
 import Button from '@/components/common/Button/Button';
 import Header from '@/components/layout/Header';
 import 'react-toastify/dist/ReactToastify.css';
@@ -46,7 +46,7 @@ const TripEdit: React.FC = () => {
         const getTripInfo = async () => {
             setIsLoading(true);
             try {
-                const data = await fetchTripsList(token);
+                const data = await getTripList(token);
                 const tripData = data.trips?.filter((trip) => trip.tripId.toString() === tripId);
                 setTripData(tripData[0]);
             } catch (err) {

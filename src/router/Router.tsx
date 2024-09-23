@@ -5,7 +5,7 @@ import Home from '../pages/Home';
 import Login from '../pages/Login';
 import MyPage from '../pages/MyPage';
 import PageNotFound from '../pages/PageNotFound';
-import Trips from '../pages/Trip/Trips';
+import TripList from '../pages/Trip/TripList';
 import { PATH } from '@/constants/path';
 import LoginRedirectPage from '@/pages/LoginRedirectPage';
 import TripCreateInfo from '@/pages/Trip/TripCreateInfo';
@@ -45,19 +45,19 @@ export const router = createBrowserRouter([
                             //   { path: PATH.SETTINGS, element: <Settings /> },
                         ],
                     },
-                    { path: PATH.TRIPS, element: <Trips /> },
+                    { path: PATH.TRIP_LIST, element: <TripList /> },
                     {
-                        path: PATH.TRIP_CREATE_INFO,
+                        path: PATH.TRIP_NEW,
                         element: <TripCreateInfo />,
                     },
                     { path: PATH.TRIP_UPLOAD, element: <TripFileUpload /> },
 
                     { path: PATH.TRIPS_EDIT, element: <TripEdit /> },
-                    { path: PATH.TRIP_MAP, element: <TripMap /> },
+                    { path: `${PATH.TIMELINE_MAP}:tripId`, element: <TripMap /> },
                     //   { path: PATH.ONBOARDING, element: <Onboarding /> },
                     //   { path: '/test', element: <Test /> },
                     {
-                        path: PATH.OAUTH_SUCCESS,
+                        path: PATH.LOGIN_REDIRECT,
                         element: <LoginRedirectPage />,
                     },
                 ],

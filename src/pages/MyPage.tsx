@@ -77,7 +77,6 @@ const containerStyle = css`
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    padding-bottom: 80px;
 `;
 
 const imgContainerStyle = css`

@@ -6,7 +6,7 @@ import { getToken } from '@/utils/auth';
 const token2 = getToken();
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-export const fetchTripsList = async (token: string | null): Promise<Trips> => {
+export const getTripList = async (token: string | null): Promise<Trips> => {
     try {
         const response = await axios.get<Trips>(`${apiBaseUrl}/api/trips`, {
             headers: {
