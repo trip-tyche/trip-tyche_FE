@@ -8,16 +8,17 @@ import characterImg from '@/assets/images/character.png';
 import Button from '@/components/common/Button/Button';
 import ColumnButtonModal from '@/components/common/Modal/ColumnButtonModal';
 import OverLay from '@/components/common/OverLay';
-import Header from '@/components/layout/Header';
 import { PATH } from '@/constants/path';
 import useAuthStore from '@/stores/useAuthStore';
+import { useModalStore } from '@/stores/useModalStore';
 import theme from '@/styles/theme';
 import { getUserId } from '@/utils/auth';
 
 const MyPage = () => {
     const navigator = useNavigate();
 
-    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+    const { isModalOpen, openModal, closeModal } = useModalStore();
+    // const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
     const [userNickName, setUserNickname] = useState('');
     const logout = useAuthStore((state) => state.logout);
 
@@ -37,15 +38,8 @@ const MyPage = () => {
         getUserNickName();
     }, []);
 
-    const openModal = () => {
-        setIsLogoutModalOpen(true);
-    };
-    const closeModal = () => {
-        setIsLogoutModalOpen(false);
-    };
-
     const confirmModal = () => {
-        setIsLogoutModalOpen(false);
+        closeModal();
         logout();
         navigator(PATH.LOGIN);
     };
@@ -62,7 +56,7 @@ const MyPage = () => {
                 <Button text='로그아웃' theme='sec' size='sm' onClick={openModal} />
             </div>
 
-            {isLogoutModalOpen && (
+            {isModalOpen && (
                 <>
                     <OverLay closeModal={closeModal} />
                     <ColumnButtonModal

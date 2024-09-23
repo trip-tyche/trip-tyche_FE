@@ -8,12 +8,13 @@ import LogoImages from '@/components/common/LogoImages';
 import SingleInputModal from '@/components/common/Modal/SingleInputModal';
 import OverLay from '@/components/common/OverLay';
 import FightHeader from '@/components/layout/AirplaneHeader';
+import { useModalStore } from '@/stores/useModalStore';
 import theme from '@/styles/theme';
 import { PinPoint, Trip } from '@/types/trip';
 import { getToken, getUserId } from '@/utils/auth';
 
 const Home = () => {
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const { isModalOpen, openModal, closeModal } = useModalStore();
     const [userNickName, setUserNickName] = useState<string>('');
     const [trips, setTrips] = useState<Trip[]>();
     const [pinPoints, setPinPoints] = useState<PinPoint[]>();
@@ -30,7 +31,7 @@ const Home = () => {
         try {
             const { userNickName, trips, pinPoints } = await fetchUserInfo(userId);
             if (!userNickName) {
-                setIsModalOpen(true);
+                openModal();
             } else {
                 console.log(userNickName, trips, pinPoints);
                 setUserNickName(userNickName);
@@ -46,15 +47,11 @@ const Home = () => {
         fetchUserData();
     }, []);
 
-    const closeModal = () => {
-        setIsModalOpen(false);
-    };
-
     const submitUserNickName = async () => {
         try {
             await postUserNickName(inputValue);
-            closeModal();
             fetchUserData();
+            closeModal();
         } catch (error) {
             console.error('닉네임 설정 중 오류 발생:', error);
         }
