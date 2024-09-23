@@ -1,20 +1,19 @@
 import { css } from '@emotion/react';
 
-import KakaoButton from '@/components/common/Button/oauthButton';
+import SocialLoginButtons from '@/components/common/Button/SocialLoginButtons';
 import LogoImages from '@/components/common/LogoImages';
 import FightHeader from '@/components/layout/AirplaneHeader';
+import { OAUTH_URL } from '@/constants/auth';
 import theme from '@/styles/theme';
 
-const Login = () => {
+const Login = (): JSX.Element => {
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-    const oauthUrl = 'oauth2/authorization';
-
     const oauthLinks = {
-        kakao: `${apiBaseUrl}/${oauthUrl}/kakao`,
-        google: `${apiBaseUrl}/${oauthUrl}/google`,
+        kakao: `${apiBaseUrl}/${OAUTH_URL}/kakao`,
+        google: `${apiBaseUrl}/${OAUTH_URL}/google`,
     };
 
-    const handleLogin = (provider: keyof typeof oauthLinks) => () => {
+    const handleSocialLogin = (provider: keyof typeof oauthLinks) => () => {
         window.location.href = oauthLinks[provider];
     };
 
@@ -27,13 +26,13 @@ const Login = () => {
                 <p>오감 저리게 시작해보세요</p>
             </div>
 
-            <div css={imageStyle}>
+            <div css={imageWrapperStyle}>
                 <LogoImages />
             </div>
 
             <div css={buttonContainerStyle}>
-                <KakaoButton provider='kakao' handleLogin={handleLogin('kakao')} />
-                <KakaoButton provider='google' handleLogin={handleLogin('google')} />
+                <SocialLoginButtons provider='kakao' handleSocialLogin={handleSocialLogin('kakao')} />
+                <SocialLoginButtons provider='google' handleSocialLogin={handleSocialLogin('google')} />
             </div>
         </div>
     );
@@ -65,7 +64,7 @@ const textStyle = css`
     }
 `;
 
-const imageStyle = css`
+const imageWrapperStyle = css`
     flex: 3;
 
     display: flex;

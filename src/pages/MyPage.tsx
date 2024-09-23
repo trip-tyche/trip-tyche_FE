@@ -7,7 +7,7 @@ import { fetchUserInfo } from '@/api/user';
 import characterImg from '@/assets/images/character.png';
 import Button from '@/components/common/Button/Button';
 import ColumnButtonModal from '@/components/common/Modal/ColumnButtonModal';
-import OverLay from '@/components/common/OverLay';
+import ModalOverlay from '@/components/common/Modal/ModalOverlay';
 import { PATH } from '@/constants/path';
 import useAuthStore from '@/stores/useAuthStore';
 import { useModalStore } from '@/stores/useModalStore';
@@ -20,7 +20,7 @@ const MyPage = () => {
     const { isModalOpen, openModal, closeModal } = useModalStore();
     // const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
     const [userNickName, setUserNickname] = useState('');
-    const logout = useAuthStore((state) => state.logout);
+    const setLogout = useAuthStore((state) => state.setLogout);
 
     useEffect(() => {
         const getUserNickName = async () => {
@@ -40,7 +40,7 @@ const MyPage = () => {
 
     const confirmModal = () => {
         closeModal();
-        logout();
+        setLogout();
         navigator(PATH.LOGIN);
     };
 
@@ -58,7 +58,7 @@ const MyPage = () => {
 
             {isModalOpen && (
                 <>
-                    <OverLay closeModal={closeModal} />
+                    <ModalOverlay closeModal={closeModal} />
                     <ColumnButtonModal
                         titleText='로그아웃'
                         descriptionText='정말 로그아웃할까요?'

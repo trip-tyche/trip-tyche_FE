@@ -2,25 +2,27 @@ import { css, SerializedStyles } from '@emotion/react';
 import { FcGoogle } from 'react-icons/fc';
 import { RiKakaoTalkFill } from 'react-icons/ri';
 
+import { SOCIAL_LOGIN } from '@/constants/auth';
 import theme from '@/styles/theme';
 
-interface oauthButtonProps {
+interface SocialLoginButtonsProps {
     provider: 'kakao' | 'google';
-    handleLogin: () => void;
+    handleSocialLogin: () => void;
 }
 
-const oauthButton = ({ provider, handleLogin }: oauthButtonProps): JSX.Element =>
-    provider === 'kakao' ? (
-        <button css={buttonStyle(provider)} onClick={handleLogin}>
-            <RiKakaoTalkFill css={iconStyle} />
-            카카오 계정으로 로그인
-        </button>
-    ) : (
-        <button css={buttonStyle(provider)} onClick={handleLogin}>
-            <FcGoogle css={iconStyle} />
-            Google 계정으로 로그인
-        </button>
-    );
+const SocialLoginButtons = ({ provider, handleSocialLogin }: SocialLoginButtonsProps): JSX.Element => (
+    <button css={buttonStyle(provider)} onClick={handleSocialLogin}>
+        {provider === 'kakao' ? (
+            <>
+                <RiKakaoTalkFill css={iconStyle} /> {SOCIAL_LOGIN.KAKAO}
+            </>
+        ) : (
+            <>
+                <FcGoogle css={iconStyle} /> {SOCIAL_LOGIN.GOOGLE}
+            </>
+        )}
+    </button>
+);
 
 const buttonStyle = (provider: 'kakao' | 'google') => css`
     background-color: ${provider === 'kakao' ? '#fee500' : '#fdfdfd'};
@@ -57,4 +59,4 @@ const iconStyle: SerializedStyles = css`
     left: 1.5rem;
 `;
 
-export default oauthButton;
+export default SocialLoginButtons;

@@ -6,8 +6,8 @@ import Button from '@/components/common/Button/Button';
 import theme from '@/styles/theme';
 
 export interface SingleInputModalProps {
-    titleText: string;
-    descriptionText: string;
+    title: string;
+    infoMessage: string;
     exampleText: string;
     submitModal: () => void;
     setInputValue: Dispatch<SetStateAction<string>>;
@@ -15,18 +15,18 @@ export interface SingleInputModalProps {
 }
 
 const SingleInputModal = ({
-    titleText,
-    descriptionText,
+    title,
+    infoMessage,
     exampleText,
     submitModal,
     setInputValue,
     value,
 }: SingleInputModalProps): JSX.Element => (
     <div css={modalStyle}>
-        <h2>{titleText}</h2>
+        <h2>{title}</h2>
         <input type='text' value={value} onChange={(e) => setInputValue(e.target.value)} />
         <div className='description'>
-            <p>{descriptionText}</p>
+            <p>{infoMessage}</p>
             <p>{exampleText}</p>
         </div>
         <div className='buttonWrapper'>
@@ -34,8 +34,6 @@ const SingleInputModal = ({
         </div>
     </div>
 );
-
-export default SingleInputModal;
 
 const modalStyle = css`
     h2 {
@@ -84,3 +82,5 @@ const modalStyle = css`
     z-index: 10;
     border: 1px solid #ccc;
 `;
+
+export default SingleInputModal;

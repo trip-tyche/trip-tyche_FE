@@ -7,7 +7,7 @@ import MyPage from '../pages/MyPage';
 import PageNotFound from '../pages/PageNotFound';
 import Trips from '../pages/Trip/Trips';
 import { PATH } from '@/constants/path';
-import OAuthSuccessPage from '@/pages/OAuthSuccessPage';
+import LoginRedirectPage from '@/pages/LoginRedirectPage';
 import TripCreateInfo from '@/pages/Trip/TripCreateInfo';
 import TripEdit from '@/pages/Trip/TripEdit';
 import TripFileUpload from '@/pages/Trip/TripFileUpload';
@@ -58,7 +58,7 @@ export const router = createBrowserRouter([
                     //   { path: '/test', element: <Test /> },
                     {
                         path: PATH.OAUTH_SUCCESS,
-                        element: <OAuthSuccessPage />,
+                        element: <LoginRedirectPage />,
                     },
                 ],
             },
