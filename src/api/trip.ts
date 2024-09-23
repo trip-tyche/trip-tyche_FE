@@ -22,8 +22,8 @@ export const getTripList = async (token: string | null): Promise<Trips> => {
 };
 
 export const postTripInfo = async (
-    token: string | null,
     { tripTitle, country, startDate, endDate, hashtags }: TripInfo,
+    token: string | null,
 ) => {
     try {
         const response = await axios.post(
@@ -51,7 +51,7 @@ export const postTripInfo = async (
     }
 };
 
-export const postTripImages = async (token: string | null, tripId: string, files: File[]) => {
+export const postTripImages = async (tripId: string, files: File[], token: string | null) => {
     const formData = new FormData();
     files.forEach((file) => {
         formData.append('files', file);
@@ -74,9 +74,9 @@ export const postTripImages = async (token: string | null, tripId: string, files
 };
 
 export const updateTripInfo = async (
-    token: string | null,
     tripId: string,
     { tripTitle, country, startDate, endDate, hashtags }: TripInfo,
+    token: string | null,
 ) => {
     try {
         const response = await axios.put(
@@ -103,7 +103,7 @@ export const updateTripInfo = async (
     }
 };
 
-export const deleteTripInfo = async (token: string | null, tripId: string) => {
+export const deleteTripInfo = async (tripId: string, token: string | null) => {
     try {
         const response = await axios.delete(`${apiBaseUrl}/api/trips/${tripId}`, {
             headers: {

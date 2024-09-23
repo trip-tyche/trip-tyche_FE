@@ -1,36 +1,34 @@
 import { css } from '@emotion/react';
 import { ChevronLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import theme from '@/styles/theme';
 
 interface HeaderProps {
     title: string;
     isBackButton?: boolean;
-    onClick?: () => void;
+    onBack?: () => void;
 }
+const Header = ({ title, isBackButton, onBack }: HeaderProps): JSX.Element => {
+    const navigate = useNavigate();
 
-const Header = ({ title, isBackButton, onClick }: HeaderProps): JSX.Element => (
-    <>
-        <div css={HeaderStyle}>
+    const handleBack = () => {
+        onBack ? onBack() : navigate(-1);
+    };
+
+    return (
+        <div css={headerStyle}>
             {isBackButton && (
-                <div css={backButtonContainerStyle} onClick={onClick}>
-                    <ChevronLeft size={28} />
+                <div css={backButtonStyle} onClick={handleBack}>
+                    <ChevronLeft size={24} />
                 </div>
             )}
             <h1>{title}</h1>
         </div>
-    </>
-);
+    );
+};
 
-export default Header;
-
-const backButtonContainerStyle = css`
-    position: absolute;
-    left: 10px;
-    cursor: pointer;
-`;
-
-const HeaderStyle = css`
+const headerStyle = css`
     height: ${theme.heights.tall_54};
     display: flex;
     justify-content: center;
@@ -44,3 +42,11 @@ const HeaderStyle = css`
         font-weight: 600;
     }
 `;
+
+const backButtonStyle = css`
+    position: absolute;
+    left: 10px;
+    cursor: pointer;
+`;
+
+export default Header;

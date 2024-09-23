@@ -6,11 +6,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getTripList, updateTripInfo } from '@/api/trip';
 import Button from '@/components/common/Button/Button';
 import Header from '@/components/layout/Header';
-import 'react-toastify/dist/ReactToastify.css';
+import { HASHTAG_MENU } from '@/constants/trip';
 import theme from '@/styles/theme';
 import { getToken } from '@/utils/auth';
 
-const TripEdit: React.FC = () => {
+const TripEdit = (): JSX.Element => {
     const [tripData, setTripData] = useState({
         tripTitle: '',
         country: '',
@@ -18,6 +18,7 @@ const TripEdit: React.FC = () => {
         endDate: '',
         hashtags: [] as string[],
     });
+
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -25,22 +26,6 @@ const TripEdit: React.FC = () => {
     const { tripId } = useParams<{ tripId: string }>();
 
     const token = getToken();
-
-    const hashtagsMenus = [
-        '가족과함께',
-        '베스트프렌즈',
-        '연인과의시간',
-        '즐거운순간',
-        '도전',
-        '소소한두려움',
-        '우울탈출',
-        '혼자서도괜찮아',
-        '행복한시간',
-        '용기있는도전',
-        '특별한순간',
-        '감정여행',
-        '나를위한여행',
-    ];
 
     useEffect(() => {
         const getTripInfo = async () => {
@@ -175,7 +160,7 @@ const TripEdit: React.FC = () => {
                 <section css={sectionStyle}>
                     <label>해시태그</label>
                     <div css={hashtagContainerStyle}>
-                        {hashtagsMenus.map((tag) => (
+                        {HASHTAG_MENU.map((tag) => (
                             <button
                                 key={tag}
                                 onClick={() => handleHashtagToggle(tag)}

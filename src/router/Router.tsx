@@ -8,7 +8,7 @@ import PageNotFound from '../pages/PageNotFound';
 import TripList from '../pages/Trip/TripList';
 import { PATH } from '@/constants/path';
 import LoginRedirectPage from '@/pages/LoginRedirectPage';
-import TripCreateInfo from '@/pages/Trip/TripCreateInfo';
+import NewTrip from '@/pages/Trip/NewTrip';
 import TripEdit from '@/pages/Trip/TripEdit';
 import TripFileUpload from '@/pages/Trip/TripFileUpload';
 import TripMap from '@/pages/Trip/TripMap';
@@ -48,7 +48,7 @@ export const router = createBrowserRouter([
                     { path: PATH.TRIP_LIST, element: <TripList /> },
                     {
                         path: PATH.TRIP_NEW,
-                        element: <TripCreateInfo />,
+                        element: <NewTrip />,
                     },
                     { path: PATH.TRIP_UPLOAD, element: <TripFileUpload /> },
 

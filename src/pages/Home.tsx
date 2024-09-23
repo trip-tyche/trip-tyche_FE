@@ -58,7 +58,7 @@ const Home = (): JSX.Element => {
             closeModal();
             fetchUserData();
         } catch (error) {
-            console.error('Error post userNickName:', error);
+            console.error('Error post user-nickname:', error);
         }
     };
 

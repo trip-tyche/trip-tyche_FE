@@ -26,7 +26,7 @@ const BorderPass: React.FC<BorderPassProps> = ({ trip, userNickname, setTripCoun
     };
 
     const handleDelete = async () => {
-        await deleteTripInfo(token, tripId);
+        await deleteTripInfo(tripId, token);
         setTripCount((prev: number) => prev - 1);
     };
     return (
