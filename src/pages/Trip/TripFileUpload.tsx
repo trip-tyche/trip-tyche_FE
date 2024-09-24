@@ -1,59 +1,13 @@
-import { useState } from 'react';
-
 import { css } from '@emotion/react';
 import { FaCloudUploadAlt } from 'react-icons/fa';
-import { useLocation, useNavigate } from 'react-router-dom';
 
-import { postTripImages } from '@/api/trip';
 import Button from '@/components/common/button/Button';
 import Header from '@/components/layout/Header';
-import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
-import { ImageWithLocation } from '@/types/image';
-import { getImageLocation } from '@/utils/piexif';
+import { useFileUpload } from '@/hooks/useFileUpload';
 
 const TripFileUpload = () => {
-    const [imagesWithLocation, setImagesWithLocation] = useState<ImageWithLocation[]>([]);
-
-    const navigate = useNavigate();
-    const location = useLocation();
-
-    const { tripId, tripTitle } = location.state;
-
-    console.log(tripId, tripTitle);
-
-    const handleFileUpload = async (files: FileList | null) => {
-        if (!files) {
-            return;
-        }
-
-        try {
-            const processedImages = await Promise.all(
-                Array.from(files).map(async (file) => {
-                    const location = await getImageLocation(file);
-                    console.log(`Location for ${file.name}:`, location);
-                    return { file, location };
-                }),
-            );
-
-            const filteredImages = processedImages.filter((image) => image.location);
-
-            console.log('Filtered images:', filteredImages);
-            setImagesWithLocation(filteredImages);
-        } catch (error) {
-            console.error('Error processing files:', error);
-        }
-    };
-
-    const uploadTripImages = async () => {
-        try {
-            const images = imagesWithLocation.map((image) => image.file);
-            await postTripImages(tripId, images);
-            navigate(PATH.TRIP_LIST);
-        } catch (error) {
-            console.error('Error post trip-images:', error);
-        }
-    };
+    const { imagesWithLocation, imagesNoLocation, handleFileUpload, uploadTripImages } = useFileUpload();
 
     return (
         <div>

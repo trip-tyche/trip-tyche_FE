@@ -35,7 +35,7 @@ const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.
     };
 
     const goToUpload = () => {
-        navigate(PATH.TRIP_UPLOAD, { state: { tripId, tripTitle } });
+        navigate(PATH.TRIP_UPLOAD, { state: { tripId } });
     };
 
     return (
