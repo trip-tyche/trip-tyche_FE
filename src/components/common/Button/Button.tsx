@@ -5,10 +5,11 @@ export interface ButtonProps {
     theme: 'pri' | 'sec';
     size: 'lg' | 'sm';
     onClick?: () => void;
+    disabled?: boolean;
 }
 
-const Button = ({ text, theme, size, onClick }: ButtonProps): JSX.Element => (
-    <button css={ButtonStyle(theme, size)} onClick={onClick}>
+const Button = ({ text, theme, size, onClick, disabled }: ButtonProps): JSX.Element => (
+    <button css={ButtonStyle(theme, size)} onClick={onClick} disabled={disabled}>
         {text}
     </button>
 );
@@ -32,5 +33,10 @@ const ButtonStyle = (theme: 'pri' | 'sec', size: 'lg' | 'sm') => css`
 
     &:active {
         transform: scale(0.99);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 `;

@@ -81,7 +81,7 @@ const Home = (): JSX.Element => {
                         infoMessage={NICKNAME_MODAL.INFO_MESSAGE}
                         exampleText={NICKNAME_MODAL.EXAMPLE_TEXT}
                         submitModal={submitUserNickName}
-                        value={inputValue}
+                        inputValue={inputValue}
                         setInputValue={setInputValue}
                     />
                 </>
@@ -91,10 +91,7 @@ const Home = (): JSX.Element => {
 };
 
 const containerStyle = css`
-    /* min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 80px; */
+    padding-bottom: 80px;
 `;
 
 const cardWrapperStyle = css`

@@ -11,7 +11,7 @@ export interface SingleInputModalProps {
     exampleText: string;
     submitModal: () => void;
     setInputValue: Dispatch<SetStateAction<string>>;
-    value: string;
+    inputValue: string;
 }
 
 const SingleInputModal = ({
@@ -20,17 +20,17 @@ const SingleInputModal = ({
     exampleText,
     submitModal,
     setInputValue,
-    value,
+    inputValue,
 }: SingleInputModalProps): JSX.Element => (
     <div css={modalStyle}>
         <h2>{title}</h2>
-        <input type='text' value={value} onChange={(e) => setInputValue(e.target.value)} />
+        <input type='text' value={inputValue} onChange={(e) => setInputValue(e.target.value)} maxLength={10} />
         <div className='description'>
             <p>{infoMessage}</p>
             <p>{exampleText}</p>
         </div>
         <div className='buttonWrapper'>
-            <Button text='완료' theme='sec' size='sm' onClick={submitModal} />
+            <Button text='완료' theme='sec' size='sm' onClick={submitModal} disabled={inputValue.length === 0} />
         </div>
     </div>
 );
@@ -61,10 +61,9 @@ const modalStyle = css`
     }
 
     .buttonWrapper {
-        flex: 1;
         display: flex;
         justify-content: end;
-        align-items: end;
+        margin-top: 14px;
     }
 
     position: fixed;
@@ -73,9 +72,9 @@ const modalStyle = css`
     transform: translate(-50%, -50%);
 
     background-color: #fff;
-    width: 320px;
-    height: 240px;
-    padding: 1.5rem;
+    width: 280px;
+    height: auto;
+    padding: 18px;
     display: flex;
     flex-direction: column;
     border-radius: 20px;
