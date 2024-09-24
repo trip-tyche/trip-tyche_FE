@@ -3,67 +3,68 @@ import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
-import { fetchUserInfo } from '@/api/user';
+import { getUserData } from '@/api/user';
 import characterImg from '@/assets/images/character.png';
-import Button from '@/components/common/Button/Button';
-import ColumnButtonModal from '@/components/common/Modal/ColumnButtonModal';
-import ModalOverlay from '@/components/common/Modal/ModalOverlay';
+import Button from '@/components/common/button/Button';
+import ColumnButtonModal from '@/components/common/modal/ColumnButtonModal';
+import ModalOverlay from '@/components/common/modal/ModalOverlay';
+import { LOGOUT_MODAL } from '@/constants/message';
 import { PATH } from '@/constants/path';
+import { BUTTON } from '@/constants/title';
 import useAuthStore from '@/stores/useAuthStore';
 import { useModalStore } from '@/stores/useModalStore';
 import theme from '@/styles/theme';
 import { getUserId } from '@/utils/auth';
 
-const MyPage = () => {
-    const navigator = useNavigate();
+const MyPage = (): JSX.Element => {
+    const [userNickName, setUserNickname] = useState('');
 
     const { isModalOpen, openModal, closeModal } = useModalStore();
-    // const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-    const [userNickName, setUserNickname] = useState('');
     const setLogout = useAuthStore((state) => state.setLogout);
 
+    const navigate = useNavigate();
+
     useEffect(() => {
-        const getUserNickName = async () => {
+        const fetchUserNickName = async () => {
             const userId = getUserId();
             if (!userId) {
-                console.error('Token or userId not found');
-                // 로그인 페이지로 리다이렉트 또는 다른 처리
+                navigate(PATH.LOGIN);
                 return;
             }
 
-            const { userNickName } = await fetchUserInfo(userId);
+            const { userNickName } = await getUserData(userId);
             setUserNickname(userNickName);
         };
 
-        getUserNickName();
+        fetchUserNickName();
     }, []);
 
     const confirmModal = () => {
         closeModal();
         setLogout();
-        navigator(PATH.LOGIN);
+        navigate(PATH.LOGIN);
     };
 
     return (
         <div css={containerStyle}>
-            <div css={imgContainerStyle}>
+            <div css={imgWrapperStyle}>
                 <img src={characterImg} className='characterImg' alt='character' />
             </div>
 
             <p css={textWrapper}>안녕하세요, {userNickName} 님</p>
 
             <div css={buttonWrapper}>
-                <Button text='로그아웃' theme='sec' size='sm' onClick={openModal} />
+                <Button text={BUTTON.LOGOUT} theme='sec' size='sm' onClick={openModal} />
             </div>
 
             {isModalOpen && (
                 <>
                     <ModalOverlay closeModal={closeModal} />
                     <ColumnButtonModal
-                        titleText='로그아웃'
-                        descriptionText='정말 로그아웃할까요?'
-                        confirmText='로그아웃'
-                        cancelText='닫기'
+                        title={LOGOUT_MODAL.TITLE}
+                        message={LOGOUT_MODAL.MESSAGE}
+                        confirmText={LOGOUT_MODAL.CONFIRM_TEXT}
+                        cancelText={LOGOUT_MODAL.CANCEL_TEXT}
                         confirmModal={confirmModal}
                         closeModal={closeModal}
                     />
@@ -79,7 +80,7 @@ const containerStyle = css`
     min-height: 100vh;
 `;
 
-const imgContainerStyle = css`
+const imgWrapperStyle = css`
     flex: 1;
 
     display: flex;

@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react';
 
 import { css } from '@emotion/react';
 
-import Button from '@/components/common/Button/Button';
+import Button from '@/components/common/button/Button';
 import theme from '@/styles/theme';
 
 export interface SingleInputModalProps {

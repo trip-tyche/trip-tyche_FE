@@ -5,7 +5,7 @@ import { getToken } from '@/utils/auth';
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-export const fetchUserInfo = async (userId: string): Promise<UserInfo> => {
+export const getUserData = async (userId: string): Promise<UserInfo> => {
     try {
         const token = getToken();
         const response = await axios.get<UserInfo>(`${apiBaseUrl}/api/user/tripInfo?userId=${userId}`, {

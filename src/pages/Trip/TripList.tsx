@@ -4,16 +4,15 @@ import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
 import { getTripList } from '@/api/trip';
-import Button from '@/components/common/Button/Button';
+import Button from '@/components/common/button/Button';
 import Header from '@/components/layout/Header';
 import Navbar from '@/components/layout/Navbar';
-import BorderPass from '@/components/pages/BorderPass';
+import BorderPass from '@/components/pages/trip-list/BorderPass';
 import { TRIP } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { BUTTON, PAGE } from '@/constants/title';
 import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
-import { getToken } from '@/utils/auth';
 import { formatTripDate } from '@/utils/date';
 
 const TripList = (): JSX.Element => {
@@ -23,13 +22,11 @@ const TripList = (): JSX.Element => {
 
     const navigate = useNavigate();
 
-    console.log(tripList);
-
     useEffect(() => {
         const fetchTripList = async () => {
             try {
-                const token = getToken();
-                const tripList = await getTripList(token);
+                const tripList = await getTripList();
+                console.log(tripList);
                 if (!tripList) {
                     return;
                 }

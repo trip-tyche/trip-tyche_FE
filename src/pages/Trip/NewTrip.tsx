@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import Button from '@/components/common/Button/Button';
+import Button from '@/components/common/button/Button';
 import Header from '@/components/layout/Header';
 import TripForm from '@/components/pages/newTrip/TripForm';
 import { BUTTON, PAGE } from '@/constants/title';

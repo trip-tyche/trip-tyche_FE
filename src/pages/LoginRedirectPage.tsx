@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import Loading from '@/components/Loading';
+import Loading from '@/components/common/Loading';
 import { PATH } from '@/constants/path';
 import useAuthStore from '@/stores/useAuthStore';
 

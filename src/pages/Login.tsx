@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import SocialLoginButtons from '@/components/common/Button/SocialLoginButtons';
+import SocialLoginButtons from '@/components/common/button/SocialLoginButtons';
 import LogoImages from '@/components/common/LogoImages';
 import FightHeader from '@/components/layout/AirplaneHeader';
 import { OAUTH_URL } from '@/constants/auth';

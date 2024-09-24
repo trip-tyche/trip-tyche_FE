@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { postTripInfo } from '@/api/trip';
 import { PATH } from '@/constants/path';
-import { getToken } from '@/utils/auth';
 
 export const useTripForm = () => {
     const [tripTitle, setTripTitle] = useState('');
@@ -17,8 +16,7 @@ export const useTripForm = () => {
 
     const handleSubmit = async () => {
         try {
-            const token = getToken();
-            const response = await postTripInfo({ tripTitle, country, startDate, endDate, hashtags }, token);
+            const response = await postTripInfo({ tripTitle, country, startDate, endDate, hashtags });
             const { tripId } = response;
 
             navigate(PATH.TRIP_UPLOAD, { state: { tripId, tripTitle } });

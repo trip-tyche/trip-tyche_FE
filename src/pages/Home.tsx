@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
-import { fetchUserInfo, postUserNickName } from '@/api/user';
-import Card from '@/components/common/Card';
+import { getUserData, postUserNickName } from '@/api/user';
 import LogoImages from '@/components/common/LogoImages';
-import ModalOverlay from '@/components/common/Modal/ModalOverlay';
-import SingleInputModal from '@/components/common/Modal/SingleInputModal';
+import ModalOverlay from '@/components/common/modal/ModalOverlay';
+import SingleInputModal from '@/components/common/modal/SingleInputModal';
 import FightHeader from '@/components/layout/AirplaneHeader';
+import Card from '@/components/pages/home/Card';
 import { GREETING_MESSAGE, NICKNAME_MODAL } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { useModalStore } from '@/stores/useModalStore';
@@ -38,7 +38,7 @@ const Home = (): JSX.Element => {
         }
 
         try {
-            const { userNickName, trips, pinPoints } = await fetchUserInfo(userId);
+            const { userNickName, trips, pinPoints } = await getUserData(userId);
             if (!userNickName) {
                 openModal();
             } else {

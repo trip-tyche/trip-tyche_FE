@@ -31,7 +31,8 @@ const TripForm = ({
             <section css={sectionStyle}>
                 <label htmlFor='title'>{NEW_COUNTRY.TITLE}</label>
                 <input
-                    id='title'
+                    id='tripTitle'
+                    name='tripTitle'
                     type='text'
                     placeholder={NEW_COUNTRY.TITLE_PLACEHOLDER}
                     value={tripTitle}
@@ -42,7 +43,13 @@ const TripForm = ({
 
             <section css={sectionStyle}>
                 <label htmlFor='country'>{NEW_COUNTRY.COUNTRY}</label>
-                <select value={country} onChange={(e) => setCountry(e.target.value)} css={inputStyle}>
+                <select
+                    id='country'
+                    name='country'
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                    css={inputStyle}
+                >
                     <option value=''>{NEW_COUNTRY.COUNTRY_DEFAULT}</option>
                     {COUNTRY_OPTIONS.map((county) => (
                         <option key={county.emoji} value={`${county.emoji} ${county.name}`}>
@@ -58,6 +65,7 @@ const TripForm = ({
                     <div css={dateInputContainerStyle}>
                         <input
                             id='startDate'
+                            name='startDate'
                             type='date'
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
@@ -70,6 +78,7 @@ const TripForm = ({
                     <div css={dateInputContainerStyle}>
                         <input
                             id='endDate'
+                            name='endDate'
                             type='date'
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
