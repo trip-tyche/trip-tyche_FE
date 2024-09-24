@@ -5,8 +5,7 @@ interface AuthState {
     userId: string | null;
     token: string | null;
     setLogin: (userId: string, token: string) => void;
-    logout: () => void;
-    // checkAuthStatus: () => boolean;
+    setLogout: () => void;
 }
 
 const useAuthStore = create<AuthState>()((set) => ({
@@ -18,25 +17,11 @@ const useAuthStore = create<AuthState>()((set) => ({
         localStorage.setItem('token', token);
         set({ isLogIn: true, userId, token });
     },
-    logout: () => {
+    setLogout: () => {
         localStorage.removeItem('userId');
         localStorage.removeItem('token');
         set({ isLogIn: false, userId: null, token: null });
     },
-    // checkAuthStatus: () => {
-    //     const token = localStorage.getItem('token');
-    //     const expiry = localStorage.getItem('tokenExpiry');
-    //     if (token && expiry) {
-    //         const now = Date.now();
-    //         if (now < parseInt(expiry)) {
-    //             const user = JSON.parse(localStorage.getItem('user') || '{}');
-    //             set({ isLogIn: true, user, token, tokenExpiry: parseInt(expiry) });
-    //             return true;
-    //         }
-    //     }
-    //     get().logout(); // 토큰이 만료되었거나 없으면 로그아웃
-    //     return false;
-    // },
 }));
 
 export default useAuthStore;

@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import ButtonContainer from '@/components/common/Button/ButtonContainer';
+import ButtonContainer from '@/components/common/button/ButtonContainer';
 
 export interface RowButtonModalProps {
     descriptionText: string;

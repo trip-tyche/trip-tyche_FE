@@ -1,51 +1,39 @@
 import axios from 'axios';
 
+import { TripInfo, Trips } from '@/types/trip';
 import { getToken } from '@/utils/auth';
 
-interface Trip {
-    tripId: string;
-    tripTitle: string;
-    country: string;
-    startDate: string;
-    endDate: string;
-    hashtags: string[];
-}
-interface Trips {
-    userNickName: string;
-    trips: Trip[];
-}
-
-interface TripInfo {
-    tripTitle: string;
-    country: string;
-    startDate: string;
-    endDate: string;
-    hashtags: string[];
-}
-
-const token2 = getToken();
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-export const fetchTripsList = async (token: string | null): Promise<Trips> => {
+export const getTripList = async () => {
     try {
+        const token = getToken();
         const response = await axios.get<Trips>(`${apiBaseUrl}/api/trips`, {
             headers: {
+                accept: '*/*',
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         });
         return response.data;
     } catch (error) {
-        console.error('==> ', error);
-        throw error;
+        console.error('Error fetching trip data:', error);
     }
 };
 
-export const postTripInfo = async (
-    token: string | null,
-    { tripTitle, country, startDate, endDate, hashtags }: TripInfo,
-) => {
+export const postTripInfo = async ({ tripTitle, country, startDate, endDate, hashtags }: TripInfo) => {
     try {
+        const token = getToken();
+        console.log(
+            {
+                tripTitle,
+                country,
+                startDate,
+                endDate,
+                hashtags,
+            },
+            token,
+        );
         const response = await axios.post(
             `${apiBaseUrl}/api/trips`,
             {
@@ -66,18 +54,18 @@ export const postTripInfo = async (
         console.log(response.data);
         return response.data;
     } catch (error) {
-        console.error('==> ', error);
-        throw error;
+        console.error('Error post trip-info:', error);
     }
 };
 
-export const postTripImages = async (token: string | null, tripId: string, files: File[]) => {
+export const postTripImages = async (tripId: string, files: File[]) => {
     const formData = new FormData();
     files.forEach((file) => {
         formData.append('files', file);
     });
 
     try {
+        const token = getToken();
         const response = await axios.post(`${apiBaseUrl}/api/trips/${tripId}/upload`, formData, {
             headers: {
                 accept: '*/*',
@@ -88,17 +76,16 @@ export const postTripImages = async (token: string | null, tripId: string, files
         console.log(response.data);
         return response.data;
     } catch (error) {
-        console.error('==> ', error);
-        throw error;
+        console.error('Error post trip-images:', error);
     }
 };
 
 export const updateTripInfo = async (
-    token: string | null,
     tripId: string,
     { tripTitle, country, startDate, endDate, hashtags }: TripInfo,
 ) => {
     try {
+        const token = getToken();
         const response = await axios.put(
             `${apiBaseUrl}/api/trips/${tripId}`,
             {
@@ -112,44 +99,44 @@ export const updateTripInfo = async (
                 headers: {
                     accept: '*/*',
                     Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
                 },
             },
         );
-        console.log('Update Success');
+        console.log(response.data);
         return response.data;
     } catch (error) {
-        console.error('==> ', error);
-        throw error;
+        console.error('Error update trip-info:', error);
     }
 };
 
-export const deleteTripInfo = async (token: string | null, tripId: string) => {
+export const deleteTripInfo = async (tripId: string) => {
     try {
+        const token = getToken();
         const response = await axios.delete(`${apiBaseUrl}/api/trips/${tripId}`, {
             headers: {
                 accept: '*/*',
                 Authorization: `Bearer ${token}`,
             },
         });
-        console.log('Delete Success');
         return response.data;
     } catch (error) {
-        console.error('==> ', error);
-        throw error;
+        console.error('Error delete trip-info:', error);
     }
 };
 
 export const fetchTripMapData = async (tripId: string) => {
     try {
+        const token = getToken();
         const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/info`, {
             headers: {
-                Authorization: `Bearer ${token2}`,
+                accept: '*/*',
+                Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         });
         return response.data;
     } catch (error) {
-        console.error('==> ', error);
-        throw error;
+        console.error('Error fetching trip-map-data:', error);
     }
 };

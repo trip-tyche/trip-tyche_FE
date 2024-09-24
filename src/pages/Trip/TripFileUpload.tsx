@@ -1,35 +1,41 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { css } from '@emotion/react';
 import { FaCloudUploadAlt } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { postTripImages } from '@/api/trips';
-import Button from '@/components/common/Button/Button';
+import { postTripImages } from '@/api/trip';
+import Button from '@/components/common/button/Button';
 import Header from '@/components/layout/Header';
-import { getToken } from '@/utils/auth';
+import { PATH } from '@/constants/path';
+import { PAGE } from '@/constants/title';
 
-const TripFileUpload: React.FC = () => {
+const TripFileUpload = () => {
+    const [images, setImages] = useState<File[]>([]);
+
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [images, setImages] = useState<File[]>([]);
-
     const { tripId, tripTitle } = location.state;
-    const token = getToken();
+
+    console.log(tripId, tripTitle);
 
     const handleFileUpload = (files: FileList | null) => {
         if (files) setImages(Array.from(files));
     };
-    console.log(tripId, tripTitle);
+
     const uploadTripImages = async () => {
-        await postTripImages(token, tripId, images);
-        navigate('/trips');
+        try {
+            await postTripImages(tripId, images);
+            navigate(PATH.TRIP_LIST);
+        } catch (error) {
+            console.error('Error post trip-images:', error);
+        }
     };
 
     return (
-        <div css={containerStyle}>
-            <Header title='이미지 등록' isBackButton={true} onClick={() => navigate(-1)} />
+        <div>
+            <Header title={PAGE.UPLOAD_IMAGES} isBackButton />
 
             <main css={mainStyle}>
                 <section css={sectionStyle}>
@@ -58,7 +64,6 @@ const TripFileUpload: React.FC = () => {
         </div>
     );
 };
-const containerStyle = css``;
 
 const mainStyle = css`
     padding: 20px;

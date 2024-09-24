@@ -1,20 +1,20 @@
 import { css } from '@emotion/react';
 
-import KakaoButton from '@/components/common/Button/KakaoButton';
+import SocialLoginButtons from '@/components/common/button/SocialLoginButtons';
 import LogoImages from '@/components/common/LogoImages';
 import FightHeader from '@/components/layout/AirplaneHeader';
+import { OAUTH_URL } from '@/constants/auth';
 import theme from '@/styles/theme';
 
-const Login = () => {
-    const KAKAO_LINK: string = `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/oauth2/authorization/kakao`;
-    const GOOGLE_LINK: string = `http://ec2-3-34-22-216.ap-northeast-2.compute.amazonaws.com/oauth2/authorization/google`;
-
-    const handleKaKaoLogin = () => {
-        window.location.href = KAKAO_LINK;
+const Login = (): JSX.Element => {
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+    const oauthLinks = {
+        kakao: `${apiBaseUrl}/${OAUTH_URL}/kakao`,
+        google: `${apiBaseUrl}/${OAUTH_URL}/google`,
     };
 
-    const handleGoogleLogin = () => {
-        window.location.href = GOOGLE_LINK;
+    const handleSocialLogin = (provider: keyof typeof oauthLinks) => () => {
+        window.location.href = oauthLinks[provider];
     };
 
     return (
@@ -26,15 +26,13 @@ const Login = () => {
                 <p>오감 저리게 시작해보세요</p>
             </div>
 
-            <div css={imageStyle}>
+            <div css={imageWrapperStyle}>
                 <LogoImages />
             </div>
 
             <div css={buttonContainerStyle}>
-                <KakaoButton handleLogin={handleKaKaoLogin} />
-            </div>
-            <div css={buttonContainerStyle}>
-                <KakaoButton handleLogin={handleGoogleLogin} />
+                <SocialLoginButtons provider='kakao' handleSocialLogin={handleSocialLogin('kakao')} />
+                <SocialLoginButtons provider='google' handleSocialLogin={handleSocialLogin('google')} />
             </div>
         </div>
     );
@@ -66,7 +64,7 @@ const textStyle = css`
     }
 `;
 
-const imageStyle = css`
+const imageWrapperStyle = css`
     flex: 3;
 
     display: flex;
@@ -78,8 +76,10 @@ const buttonContainerStyle = css`
     flex: 1;
 
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 14px;
     margin-bottom: 1rem;
 `;
 

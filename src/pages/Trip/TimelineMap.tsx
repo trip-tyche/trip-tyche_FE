@@ -7,7 +7,7 @@ import L, { LatLngExpression } from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { fetchTripMapData } from '@/api/trips';
+import { fetchTripMapData } from '@/api/trip';
 import Header from '@/components/layout/Header';
 
 interface TripMapData {
@@ -18,7 +18,7 @@ interface TripMapData {
     recordDate: string;
 }
 
-const TripMap = () => {
+const TimelineMap = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const trip = location.state;
@@ -59,7 +59,7 @@ const TripMap = () => {
 
     return (
         <PageContainer>
-            <Header title={`${trip.tripTitle}`} isBackButton onClick={() => navigate('/trips')} />
+            <Header title={`${trip.tripTitle}`} isBackButton onBack={() => navigate('/trips')} />
             <MapWrapper>
                 <MapContainer center={center} zoom={13} css={mapContainerStyle}>
                     <TileLayer
@@ -112,4 +112,4 @@ const popupImageStyle = css`
     object-fit: cover;
 `;
 
-export default TripMap;
+export default TimelineMap;

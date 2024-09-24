@@ -9,7 +9,7 @@ const RootLayout = () => {
     const location = useLocation();
 
     const showNavbar = () => {
-        const navbarPaths = [PATH.HOME, PATH.TRIPS, PATH.MYPAGE];
+        const navbarPaths = [PATH.HOME, PATH.TRIP_LIST, PATH.MYPAGE];
 
         return navbarPaths.some((path) => location.pathname === path);
     };
@@ -24,7 +24,7 @@ const RootLayout = () => {
     );
 };
 const containerStyle = css`
-    max-width: 498px;
+    max-width: 428px;
     min-height: 100vh;
     margin: 0 auto;
     background-color: ${theme.colors.white};

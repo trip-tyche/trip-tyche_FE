@@ -2,15 +2,15 @@ export const PATH = {
     ONBOARDING: '/onboarding',
     HOME: '/',
     LOGIN: '/login',
-    OAUTH_SUCCESS: '/oauth2/success',
+    LOGIN_REDIRECT: '/oauth2/success',
+    // LOGIN_REDIRECT: '/auth/redirect',
     MYPAGE: '/my-page',
     SETTINGS: '/my-page/settings',
-    TRIPS: '/trips',
-    TRIP_CREATE_INFO: '/trips/create-info',
+    TRIP_LIST: '/trips',
+    TRIP_NEW: '/trips/new',
     TRIP_UPLOAD: '/trips/upload',
     TRIPS_EDIT: '/trips/:tripId/edit',
-    TRIP_MAP: '/trips/:tripId/map',
-    // BORDER_PASS: '/borderpass',
+    TIMELINE_MAP: '/timeline-map',
 };
 
 export const PATH_TITLE = {
@@ -19,8 +19,8 @@ export const PATH_TITLE = {
     HOME: '홈',
     MYPAGE: '나',
     SETTINGS: '설정',
-    TRIPS: '보더패스',
-    TRIP_CREATE: '여행 등록',
+    TRIP_LIST: '보더패스',
+    TRIP_NEW: '여행 등록',
     TRIP_UPLOAD: '이미지 업로드',
     TRIPS_EDIT: '여행 수정',
 };

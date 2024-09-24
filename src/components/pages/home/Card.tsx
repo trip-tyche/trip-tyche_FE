@@ -1,9 +1,6 @@
 import { css } from '@emotion/react';
 
-interface Trip {
-    tripId: number;
-    country: string;
-}
+import { Trip } from '@/types/trip';
 
 interface CardProps {
     trips: Trip[] | undefined;
