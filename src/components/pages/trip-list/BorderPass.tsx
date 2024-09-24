@@ -2,13 +2,13 @@ import { Dispatch, SetStateAction } from 'react';
 
 import { css } from '@emotion/react';
 import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
+import { FiPlus } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
 import { deleteTripInfo } from '@/api/trip';
 import characterImg from '@/assets/images/character.png';
 import { PATH } from '@/constants/path';
 import { FormattedTripDate } from '@/types/trip';
-import { getToken } from '@/utils/auth';
 
 interface BorderPassProps {
     trip: FormattedTripDate;
@@ -27,13 +27,17 @@ const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.
 
     const handleDelete = async () => {
         try {
-            const token = getToken();
-            await deleteTripInfo(tripId, token);
+            await deleteTripInfo(tripId);
         } catch (error) {
             console.error('Error delete trip:', error);
         }
         setTripCount((prev: number) => prev - 1);
     };
+
+    const goToUpload = () => {
+        navigate(PATH.TRIP_UPLOAD, { state: { tripId, tripTitle } });
+    };
+
     return (
         <div css={borderPassContainer}>
             <div css={borderPassContent} onClick={() => navigate(`${PATH.TIMELINE_MAP}/${tripId}`, { state: trip })}>
@@ -75,6 +79,9 @@ const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.
                 </button>
                 <button css={deleteButton} onClick={handleDelete}>
                     <FaTrashAlt /> Delete
+                </button>
+                <button css={uploadButton} onClick={goToUpload}>
+                    <FiPlus /> Upload
                 </button>
             </div>
         </div>
@@ -240,9 +247,21 @@ const deleteButton = css`
     ${buttonBase}
     background-color: #453525;
     color: #c4a671;
+    margin-right: 10px;
 
     &:hover {
-        background-color: #5a4632;
+        background-color: #5a3432;
+    }
+`;
+
+const uploadButton = css`
+    ${buttonBase}
+    background-color: #dc453d;
+    color: #c4a671;
+    margin-right: 10px;
+
+    &:hover {
+        background-color: #962f2a;
     }
 `;
 
