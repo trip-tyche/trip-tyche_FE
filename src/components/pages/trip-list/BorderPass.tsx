@@ -7,7 +7,10 @@ import { useNavigate } from 'react-router-dom';
 
 import { deleteTripInfo } from '@/api/trip';
 import characterImg from '@/assets/images/character.png';
+import ColumnButtonModal from '@/components/common/modal/ColumnButtonModal';
+import ModalOverlay from '@/components/common/modal/ModalOverlay';
 import { PATH } from '@/constants/path';
+import { useModalStore } from '@/stores/useModalStore';
 import { FormattedTripDate } from '@/types/trip';
 
 interface BorderPassProps {
@@ -17,6 +20,8 @@ interface BorderPassProps {
 }
 
 const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.Element => {
+    const { isModalOpen, openModal, closeModal } = useModalStore();
+
     const navigate = useNavigate();
 
     const { tripId, tripTitle, country, startDate, endDate, hashtags } = trip;
@@ -28,16 +33,16 @@ const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.
     const handleDelete = async () => {
         try {
             await deleteTripInfo(tripId);
+            closeModal();
+            setTripCount((prev: number) => prev - 1);
         } catch (error) {
             console.error('Error delete trip:', error);
         }
-        setTripCount((prev: number) => prev - 1);
     };
 
     const goToUpload = () => {
         navigate(PATH.TRIP_UPLOAD, { state: { tripId } });
     };
-
     return (
         <div css={borderPassContainer}>
             <div css={borderPassContent} onClick={() => navigate(`${PATH.TIMELINE_MAP}/${tripId}`, { state: trip })}>
@@ -77,13 +82,27 @@ const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.
                 <button css={editButton} onClick={handleEdit}>
                     <FaPencilAlt /> Edit
                 </button>
-                <button css={deleteButton} onClick={handleDelete}>
+                <button css={deleteButton} onClick={openModal}>
                     <FaTrashAlt /> Delete
                 </button>
                 <button css={uploadButton} onClick={goToUpload}>
                     <FiPlus /> Upload
                 </button>
             </div>
+
+            {isModalOpen && (
+                <>
+                    <ModalOverlay closeModal={closeModal} />
+                    <ColumnButtonModal
+                        title='정말 삭제하시겠습니까?'
+                        message='삭제 후, 여행 정보는 다시 복구할 수 없습니다.'
+                        confirmText='삭제하기'
+                        cancelText='취소'
+                        confirmModal={handleDelete}
+                        closeModal={closeModal}
+                    />
+                </>
+            )}
         </div>
     );
 };
@@ -100,7 +119,7 @@ const borderPassContainer = css`
     position: relative;
 
     &:hover {
-        transform: translateY(-2px);
+        /* transform: translateY(-2px); */
         cursor: pointer;
     }
 `;

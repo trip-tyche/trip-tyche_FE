@@ -10,11 +10,14 @@ const ModalOverlay = ({ closeModal }: ModalOverlayProps): JSX.Element => (
 
 const modalOverlayStyle = css`
     cursor: pointer;
-    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: fixed;
     width: 100%;
     min-height: 100vh;
     background-color: rgb(0, 0, 0, 0.5);
-    z-index: 9;
+    z-index: 999;
 `;
 
 export default ModalOverlay;

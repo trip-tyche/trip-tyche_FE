@@ -79,7 +79,7 @@ const modalStyle = css`
     display: flex;
     flex-direction: column;
     border-radius: 20px;
-    z-index: 10;
+    z-index: 1000;
     border: 1px solid #ccc;
 `;
 

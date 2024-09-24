@@ -16,14 +16,15 @@ const Button = ({ text, theme, size, onClick }: ButtonProps): JSX.Element => (
 export default Button;
 
 const ButtonStyle = (theme: 'pri' | 'sec', size: 'lg' | 'sm') => css`
-    padding: 8px 16px;
+    padding: 8px 12px;
     border-radius: 10px;
     border: 2px solid #333;
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    width: ${size === 'lg' ? '240px' : '120px'};
-    height: 40px;
+    width: ${size === 'lg' ? '220px' : '80px'};
+    height: 34px;
+    line-height: 16px;
     transition: background-color 0.3s ease;
 
     color: ${theme === 'pri' ? '#333' : '#fff'};

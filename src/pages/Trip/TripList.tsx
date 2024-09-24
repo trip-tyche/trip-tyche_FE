@@ -83,7 +83,7 @@ const fixedStyle = css`
     width: 100%;
     max-width: 428px;
     background-color: ${theme.colors.white};
-    z-index: 1000;
+    z-index: 100;
 `;
 
 const buttonWrapperStyle = css`
