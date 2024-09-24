@@ -34,7 +34,7 @@ export const useTripEditForm = () => {
         };
 
         fetchTripInfo();
-    }, []);
+    }, [tripId]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
