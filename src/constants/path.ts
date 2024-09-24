@@ -2,7 +2,6 @@ export const PATH = {
     ONBOARDING: '/onboarding',
     HOME: '/',
     LOGIN: '/login',
-    // LOGIN_REDIRECT: '/oauth2/success',
     LOGIN_REDIRECT: '/auth/redirect',
     MYPAGE: '/my-page',
     SETTINGS: '/my-page/settings',

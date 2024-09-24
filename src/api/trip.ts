@@ -24,16 +24,6 @@ export const getTripList = async () => {
 export const postTripInfo = async ({ tripTitle, country, startDate, endDate, hashtags }: TripInfo) => {
     try {
         const token = getToken();
-        console.log(
-            {
-                tripTitle,
-                country,
-                startDate,
-                endDate,
-                hashtags,
-            },
-            token,
-        );
         const response = await axios.post(
             `${apiBaseUrl}/api/trips`,
             {

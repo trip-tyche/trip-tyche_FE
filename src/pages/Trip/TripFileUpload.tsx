@@ -9,9 +9,11 @@ import Button from '@/components/common/button/Button';
 import Header from '@/components/layout/Header';
 import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
+import { ImageWithLocation } from '@/types/image';
+import { getImageLocation } from '@/utils/piexif';
 
 const TripFileUpload = () => {
-    const [images, setImages] = useState<File[]>([]);
+    const [imagesWithLocation, setImagesWithLocation] = useState<ImageWithLocation[]>([]);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -20,12 +22,32 @@ const TripFileUpload = () => {
 
     console.log(tripId, tripTitle);
 
-    const handleFileUpload = (files: FileList | null) => {
-        if (files) setImages(Array.from(files));
+    const handleFileUpload = async (files: FileList | null) => {
+        if (!files) {
+            return;
+        }
+
+        try {
+            const processedImages = await Promise.all(
+                Array.from(files).map(async (file) => {
+                    const location = await getImageLocation(file);
+                    console.log(`Location for ${file.name}:`, location);
+                    return { file, location };
+                }),
+            );
+
+            const filteredImages = processedImages.filter((image) => image.location);
+
+            console.log('Filtered images:', filteredImages);
+            setImagesWithLocation(filteredImages);
+        } catch (error) {
+            console.error('Error processing files:', error);
+        }
     };
 
     const uploadTripImages = async () => {
         try {
+            const images = imagesWithLocation.map((image) => image.file);
             await postTripImages(tripId, images);
             navigate(PATH.TRIP_LIST);
         } catch (error) {
@@ -37,10 +59,11 @@ const TripFileUpload = () => {
         <div>
             <Header title={PAGE.UPLOAD_IMAGES} isBackButton />
 
-            <main css={mainStyle}>
+            <div css={containerStyle}>
                 <section css={sectionStyle}>
-                    <h2>{`'${tripTitle}' 여행 이미지를 등록해주세요!`}</h2>
+                    <h2>{`여행 이미지를 등록해주세요`}</h2>
                     <div css={uploadAreaStyle}>
+                        {imagesWithLocation.length > 0 && <div css={countStyle}>+ {imagesWithLocation.length}</div>}
                         <input
                             type='file'
                             accept='image/*'
@@ -53,10 +76,9 @@ const TripFileUpload = () => {
                             <FaCloudUploadAlt size={40} />
                             <span>Drag and drop files or click to upload</span>
                         </label>
-                        {images.length > 0 && <div css={countStyle}>+ {images.length}</div>}
                     </div>
                 </section>
-            </main>
+            </div>
 
             <div css={submitButtonStyle}>
                 <Button text='완료' theme='sec' size='sm' onClick={uploadTripImages} />
@@ -65,7 +87,7 @@ const TripFileUpload = () => {
     );
 };
 
-const mainStyle = css`
+const containerStyle = css`
     padding: 20px;
     display: flex;
     flex-direction: column;

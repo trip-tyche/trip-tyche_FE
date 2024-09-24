@@ -57,7 +57,7 @@ export const router = createBrowserRouter([
                     { path: PATH.TRIP_NEW, element: <NewTrip /> },
                     { path: PATH.TRIP_UPLOAD, element: <TripFileUpload /> },
                     { path: PATH.TRIPS_EDIT, element: <TripEdit /> },
-                    { path: `${PATH.TIMELINE_MAP}:tripId`, element: <TimelineMap /> },
+                    { path: `${PATH.TIMELINE_MAP}/:tripId`, element: <TimelineMap /> },
                 ],
             },
             { path: '*', element: <PageNotFound /> },
