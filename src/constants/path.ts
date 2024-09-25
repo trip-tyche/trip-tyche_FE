@@ -8,6 +8,7 @@ export const PATH = {
     TRIP_LIST: '/trips',
     TRIP_NEW: '/trips/new',
     TRIP_UPLOAD: '/trips/upload',
+    TRIP_UPLOAD_ADD_LOCATION: '/trips/add-location',
     TRIPS_EDIT: '/trips/:tripId/edit',
     TIMELINE_MAP: '/timeline-map',
 };

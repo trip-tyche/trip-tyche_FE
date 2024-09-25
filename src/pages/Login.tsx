@@ -3,14 +3,13 @@ import { css } from '@emotion/react';
 import SocialLoginButtons from '@/components/common/button/SocialLoginButtons';
 import LogoImages from '@/components/common/LogoImages';
 import FightHeader from '@/components/layout/AirplaneHeader';
-import { OAUTH_URL } from '@/constants/auth';
+import { ENV, OAUTH_URL } from '@/constants/auth';
 import theme from '@/styles/theme';
 
 const Login = (): JSX.Element => {
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
     const oauthLinks = {
-        kakao: `${apiBaseUrl}/${OAUTH_URL}/kakao`,
-        google: `${apiBaseUrl}/${OAUTH_URL}/google`,
+        kakao: `${ENV.BASE_URL}/${OAUTH_URL}/kakao`,
+        google: `${ENV.BASE_URL}/${OAUTH_URL}/google`,
     };
 
     const handleSocialLogin = (provider: keyof typeof oauthLinks) => () => {

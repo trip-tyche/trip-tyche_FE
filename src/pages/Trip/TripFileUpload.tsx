@@ -1,13 +1,27 @@
 import { css } from '@emotion/react';
 import { FaCloudUploadAlt } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/button/Button';
 import Header from '@/components/layout/Header';
+import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
 import { useFileUpload } from '@/hooks/useFileUpload';
 
 const TripFileUpload = () => {
     const { imagesWithLocation, imagesNoLocation, handleFileUpload, uploadTripImages } = useFileUpload();
+
+    const navigate = useNavigate();
+
+    // useEffect(() => {
+    //     if (imagesNoLocation) {
+    //         sessionStorage.setItem('images', JSON.stringify(imagesNoLocation));
+    //     }
+    // }, [imagesNoLocation]);
+
+    const goToAddLocation = () => {
+        navigate(PATH.TRIP_UPLOAD_ADD_LOCATION, { state: { imagesNoLocation } });
+    };
 
     return (
         <div>
@@ -36,6 +50,9 @@ const TripFileUpload = () => {
 
             <div css={submitButtonStyle}>
                 <Button text='완료' theme='sec' size='sm' onClick={uploadTripImages} />
+                {imagesNoLocation.length > 0 && (
+                    <Button text='위치 넣기' theme='pri' size='sm' onClick={goToAddLocation} />
+                )}
             </div>
         </div>
     );

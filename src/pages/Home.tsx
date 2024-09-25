@@ -39,7 +39,7 @@ const Home = (): JSX.Element => {
 
         try {
             const { userNickName, trips, pinPoints } = await getUserData(userId);
-            if (userNickName) {
+            if (!userNickName) {
                 openModal();
             } else {
                 console.log(userNickName, trips, pinPoints);

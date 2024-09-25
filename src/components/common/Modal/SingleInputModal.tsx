@@ -67,6 +67,9 @@ const modalStyle = css`
     .buttonWrapper {
         margin-top: 14px;
         align-self: flex-end;
+        display: flex;
+        align-items: end;
+        flex: 1;
     }
 
     position: fixed;
@@ -76,11 +79,12 @@ const modalStyle = css`
 
     background-color: #fff;
     width: 280px;
-    height: auto;
+    height: 180px;
     padding: 16px;
     display: flex;
     flex-direction: column;
     align-items: start;
+    justify-content: stretch;
     border-radius: 20px;
     z-index: 1000;
     border: 1px solid #ccc;
