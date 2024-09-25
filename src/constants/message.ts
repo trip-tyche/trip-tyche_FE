@@ -1,9 +1,9 @@
 export const GREETING_MESSAGE = '님의 여행을 기억해주세요 😀';
 
 export const NICKNAME_MODAL = {
-    TITLE: '당신의 이름을 알려주세요',
-    INFO_MESSAGE: '최대 10자리까지 입력할 수 있습니다.',
-    EXAMPLE_TEXT: '(예. 동남아킬러24)',
+    TITLE: '새로운 닉네임을 입력해주세요',
+    INFO_MESSAGE: '닉네임을 2~10자로 입력해주세요.',
+    PLACEHOLDER: '동남아찾아삼만리',
 };
 
 export const LOGOUT_MODAL = {

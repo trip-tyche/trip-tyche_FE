@@ -39,7 +39,7 @@ const Home = (): JSX.Element => {
 
         try {
             const { userNickName, trips, pinPoints } = await getUserData(userId);
-            if (!userNickName) {
+            if (userNickName) {
                 openModal();
             } else {
                 console.log(userNickName, trips, pinPoints);
@@ -79,7 +79,7 @@ const Home = (): JSX.Element => {
                     <SingleInputModal
                         title={NICKNAME_MODAL.TITLE}
                         infoMessage={NICKNAME_MODAL.INFO_MESSAGE}
-                        exampleText={NICKNAME_MODAL.EXAMPLE_TEXT}
+                        placeholder={NICKNAME_MODAL.PLACEHOLDER}
                         submitModal={submitUserNickName}
                         inputValue={inputValue}
                         setInputValue={setInputValue}
