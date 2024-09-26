@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { GoogleMap, Marker, InfoWindow, LoadScript } from '@react-google-maps/api';
+import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { fetchTripMapData } from '@/api/trip';
 import Loading from '@/components/common/Loading';
 import Header from '@/components/layout/Header';
 import { ENV } from '@/constants/auth';
+import theme from '@/styles/theme';
 
 interface TripMapData {
     pinPointId: number;
@@ -21,11 +22,11 @@ interface TripMapData {
 const svgMarker = {
     path: 'M10.453 14.016l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM12 2.016q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z',
     fillColor: 'blue',
-    fillOpacity: 1,
+    fillOpacity: 0.8,
     strokeWeight: 1,
     rotation: 0,
     scale: 1.5,
-    anchor: new window.google.maps.Point(15, 30),
+    // anchor: new window.google.maps.Point(15, 30),
 };
 
 const TimelineMap = () => {
@@ -82,21 +83,14 @@ const TimelineMap = () => {
                                 key={point.pinPointId}
                                 position={{ lat: point.latitude, lng: point.longitude }}
                                 onClick={() => setSelectedPoint(point)}
-                                animation={window.google.maps.Animation.DROP}
+                                // animation={window.google.maps.Animation.DROP}
                                 icon={svgMarker}
                             />
                         ))}
                         {selectedPoint && (
-                            // <InfoWindow
-                            //     position={{ lat: selectedPoint.latitude, lng: selectedPoint.longitude }}
-                            //     onCloseClick={() => setSelectedPoint(null)}
-                            // >
-                            //     <div>
-                            //         <img css={popupImageStyle} src={selectedPoint.mediaLink} alt='Trip location' />
-                            //         <p>{selectedPoint.recordDate}</p>
-                            //     </div>
-                            // </InfoWindow>
                             <div css={divStyle}>
+                                <p css={pStyle}>사그라다 파밀리아</p>
+                                {/* <p css={pStyle}>{selectedPoint.recordDate}</p> */}
                                 <img css={imageStyle} src={selectedPoint.mediaLink} alt='photo-card' />
                             </div>
                         )}
@@ -131,19 +125,29 @@ const divStyle = css`
     top: 10px;
     background-color: white;
     border-radius: 8px;
-    width: 100px;
-    height: 180px;
+    width: 35%;
     object-fit: cover;
-    padding: 4px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    box-shadow:
+        rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
+        rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
 `;
 
+const pStyle = css`
+    font-size: ${theme.fontSizes.normal_14};
+    font-weight: 600;
+    margin-bottom: 8px;
+`;
 const imageStyle = css`
     width: 100%;
-    border-radius: 8px;
-    /* margin: 0 auto; */
+    object-fit: cover;
+    border-radius: 4px;
+    aspect-ratio: 1;
 `;
 
 export default TimelineMap;
