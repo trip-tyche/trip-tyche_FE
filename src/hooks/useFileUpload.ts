@@ -46,7 +46,9 @@ export const useFileUpload = () => {
         try {
             const images = imagesWithLocation.map((image) => image.file);
 
-            await postTripImages(tripId, images);
+            if (images) {
+                await postTripImages(tripId, images);
+            }
             navigate(PATH.TRIP_LIST);
         } catch (error) {
             console.error('Error post trip-images:', error);

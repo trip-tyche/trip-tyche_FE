@@ -21,33 +21,29 @@ const SingleInputModal = ({
     submitModal,
     setInputValue,
     inputValue,
-}: SingleInputModalProps): JSX.Element => {
-    const a = 1;
-    console.log(inputValue.length);
-    return (
-        <div css={modalStyle}>
-            <h2>{title}</h2>
-            <input
-                type='text'
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                maxLength={14}
-                placeholder={placeholder}
-                css={inputStyle(inputValue)}
+}: SingleInputModalProps): JSX.Element => (
+    <div css={modalStyle}>
+        <h2>{title}</h2>
+        <input
+            type='text'
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            maxLength={14}
+            placeholder={placeholder}
+            css={inputStyle(inputValue)}
+        />
+        {(inputValue.length === 1 || inputValue.length > 10) && <p className='infoMessage'>{infoMessage}</p>}
+        <div className='buttonWrapper'>
+            <Button
+                text='완료'
+                theme='sec'
+                size='sm'
+                onClick={submitModal}
+                disabled={inputValue.length < 2 || inputValue.length > 10}
             />
-            {(inputValue.length === 1 || inputValue.length > 10) && <p className='infoMessage'>{infoMessage}</p>}
-            <div className='buttonWrapper'>
-                <Button
-                    text='완료'
-                    theme='sec'
-                    size='sm'
-                    onClick={submitModal}
-                    disabled={inputValue.length < 2 || inputValue.length > 10}
-                />
-            </div>
         </div>
-    );
-};
+    </div>
+);
 
 const modalStyle = css`
     h2 {

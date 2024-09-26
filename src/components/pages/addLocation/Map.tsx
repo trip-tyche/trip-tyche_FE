@@ -5,8 +5,7 @@ import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import { ENV } from '@/constants/auth';
 
 interface MapProps {
-    // onLocationSelect: (lat: number, lng: number) => void;
-    setSelectedLocation: () => void;
+    onLocationSelect: (lat: number, lng: number) => void;
 }
 
 const center = {

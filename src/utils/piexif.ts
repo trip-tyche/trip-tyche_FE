@@ -86,6 +86,7 @@ export const getImageLocation = async (file: File): Promise<GpsData | null> => {
     }
 };
 
+// 아래부분이 위치 추가
 export const createGpsExif = (lat: number, lng: number) => {
     const latRef = lat >= 0 ? 'N' : 'S';
     const lngRef = lng >= 0 ? 'E' : 'W';

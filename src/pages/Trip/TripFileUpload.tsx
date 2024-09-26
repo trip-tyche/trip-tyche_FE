@@ -19,8 +19,15 @@ const TripFileUpload = () => {
     //     }
     // }, [imagesNoLocation]);
 
-    const goToAddLocation = () => {
-        navigate(PATH.TRIP_UPLOAD_ADD_LOCATION, { state: { imagesNoLocation } });
+    const goToAddLocation = async () => {
+        try {
+            if (imagesWithLocation.length !== 0) {
+                await uploadTripImages();
+            }
+            navigate(PATH.TRIP_UPLOAD_ADD_LOCATION, { state: { imagesNoLocation } });
+        } catch (error) {
+            console.error('Error post trip-images:', error);
+        }
     };
 
     return (
