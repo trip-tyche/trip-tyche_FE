@@ -31,7 +31,10 @@ const TripFileUpload = () => {
                 <section css={sectionStyle}>
                     <h2>{`여행 이미지를 등록해주세요`}</h2>
                     <div css={uploadAreaStyle}>
-                        {imagesWithLocation.length > 0 && <div css={countStyle}>+ {imagesWithLocation.length}</div>}
+                        {imagesWithLocation.length > 0 && (
+                            <div css={countStyle(true)}>+ {imagesWithLocation.length}</div>
+                        )}
+                        {imagesNoLocation.length > 0 && <div css={countStyle(false)}>+ {imagesNoLocation.length}</div>}
                         <input
                             type='file'
                             accept='image/*'
@@ -96,13 +99,13 @@ const uploadLabelStyle = css`
     color: #666;
 `;
 
-const countStyle = css`
+const countStyle = (hasLocation: boolean) => css`
     position: absolute;
-    top: 10px;
+    top: ${hasLocation ? '10px' : '30px'};
     right: 10px;
     font-size: 16px;
     font-weight: bold;
-    color: #4caf50;
+    color: ${hasLocation ? '#4caf50' : '#f44336'};
 `;
 
 const submitButtonStyle = css`

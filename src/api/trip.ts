@@ -63,7 +63,7 @@ export const postTripImages = async (tripId: string, files: File[]) => {
                 'Content-Type': 'multipart/form-data',
             },
         });
-        console.log(response.data);
+        console.log('업로드 완료', response.data);
         return response.data;
     } catch (error) {
         console.error('Error post trip-images:', error);

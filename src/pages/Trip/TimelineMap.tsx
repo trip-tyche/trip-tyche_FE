@@ -29,7 +29,7 @@ const TimelineMap = () => {
         const getTripMapData = async () => {
             try {
                 const data = await fetchTripMapData(trip.tripId);
-                console.log('Fetched data:', data.pinPoints);
+                console.log('Fetched data:', data);
                 setTripMapData(data.pinPoints);
             } catch (error) {
                 console.error('Error fetching trip data:', error);

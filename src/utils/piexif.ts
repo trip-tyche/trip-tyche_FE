@@ -85,3 +85,43 @@ export const getImageLocation = async (file: File): Promise<GpsData | null> => {
         return null;
     }
 };
+
+export const createGpsExif = (lat: number, lng: number) => {
+    const latRef = lat >= 0 ? 'N' : 'S';
+    const lngRef = lng >= 0 ? 'E' : 'W';
+
+    const latDeg = Math.abs(lat);
+    const lngDeg = Math.abs(lng);
+
+    const latDMS = piexif.GPSHelper.degToDmsRational(latDeg);
+    const lngDMS = piexif.GPSHelper.degToDmsRational(lngDeg);
+
+    return {
+        GPS: {
+            [piexif.GPSIFD.GPSLatitudeRef]: latRef,
+            [piexif.GPSIFD.GPSLatitude]: latDMS,
+            [piexif.GPSIFD.GPSLongitudeRef]: lngRef,
+            [piexif.GPSIFD.GPSLongitude]: lngDMS,
+        },
+    };
+};
+
+export const readFileAsDataURL = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target?.result as string);
+        reader.onerror = (e) => reject(e);
+        reader.readAsDataURL(file);
+    });
+
+export const insertExifIntoJpeg = async (file: File, exifStr: string): Promise<Blob> => {
+    const dataUrl = await readFileAsDataURL(file);
+    const newDataUrl = piexif.insert(exifStr, dataUrl);
+    const base64 = newDataUrl.split(',')[1];
+    const binary = atob(base64);
+    const array = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        array[i] = binary.charCodeAt(i);
+    }
+    return new Blob([array], { type: file.type });
+};
