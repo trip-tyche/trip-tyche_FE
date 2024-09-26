@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, Marker, useJsApiLoader } from '@react-google-maps/api';
 
 import { ENV } from '@/constants/auth';
 
@@ -16,6 +16,11 @@ const center = {
 const Map = ({ onLocationSelect }: MapProps) => {
     const [selectedLocation, setSelectedLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
+    // const { isLoaded } = useJsApiLoader({
+    //     id: 'google-map-script',
+    //     googleMapsApiKey: ENV.GOOGLE_MAPS_API_KEY,
+    // });
+
     const handleMapClick = (event: google.maps.MapMouseEvent) => {
         if (event.latLng) {
             const newLocation = {
@@ -27,6 +32,10 @@ const Map = ({ onLocationSelect }: MapProps) => {
             onLocationSelect(newLocation.lat, newLocation.lng);
         }
     };
+
+    // if (!isLoaded) {
+    //     return <div>Loading...</div>;
+    // }
 
     return (
         <LoadScript googleMapsApiKey={ENV.GOOGLE_MAPS_API_KEY || ''}>

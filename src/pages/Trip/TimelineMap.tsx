@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 
-import 'leaflet/dist/leaflet.css';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import L, { LatLngExpression } from 'leaflet';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { GoogleMap, Marker, InfoWindow, LoadScript } from '@react-google-maps/api';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { fetchTripMapData } from '@/api/trip';
+import Loading from '@/components/common/Loading';
 import Header from '@/components/layout/Header';
+import { ENV } from '@/constants/auth';
 
 interface TripMapData {
     pinPointId: number;
@@ -18,12 +18,24 @@ interface TripMapData {
     recordDate: string;
 }
 
+const svgMarker = {
+    path: 'M10.453 14.016l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM12 2.016q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z',
+    fillColor: 'blue',
+    fillOpacity: 1,
+    strokeWeight: 1,
+    rotation: 0,
+    scale: 1.5,
+    anchor: new window.google.maps.Point(15, 30),
+};
+
 const TimelineMap = () => {
+    const [tripMapData, setTripMapData] = useState<TripMapData[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [selectedPoint, setSelectedPoint] = useState<TripMapData | null>(null);
+
     const navigate = useNavigate();
     const location = useLocation();
     const trip = location.state;
-    const [tripMapData, setTripMapData] = useState<TripMapData[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const getTripMapData = async () => {
@@ -41,46 +53,55 @@ const TimelineMap = () => {
         getTripMapData();
     }, [trip.tripId]);
 
-    const center: LatLngExpression =
-        tripMapData.length > 0 ? [tripMapData[0].latitude, tripMapData[0].longitude] : [37.5665, 126.978]; // 서울의 좌표 또는 다른 기본값
+    const center =
+        tripMapData.length > 0
+            ? { lat: tripMapData[0].latitude, lng: tripMapData[0].longitude }
+            : { lat: 37.5665, lng: 126.978 }; // 서울의 좌표 또는 다른 기본값
 
-    const customIcon = L.icon({
-        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-        shadowSize: [41, 41],
-    });
+    const mapOptions: google.maps.MapOptions = {
+        mapTypeControl: false, // 지도 타입 컨트롤 (지도, 위성 등) 숨기기
+        fullscreenControl: false, // 전체화면 컨트롤 숨기기
+        zoomControl: false, // 줌 컨트롤 (+, -) 숨기기
+        streetViewControl: false, // 거리뷰 (페그맨) 컨트롤 숨기기
+        rotateControl: false, // 나침반 숨기기 (지도 회전 시 나타나는 나침반)
 
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
+        // maxZoom: 12, // 최대 줌 레벨
+        minZoom: 12, // 최소 줌 레벨
+    };
+
+    if (isLoading) <Loading />;
 
     return (
         <PageContainer>
             <Header title={`${trip.tripTitle}`} isBackButton onBack={() => navigate('/trips')} />
             <MapWrapper>
-                <MapContainer center={center} zoom={13} css={mapContainerStyle}>
-                    <TileLayer
-                        url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?lang=ko'
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    />
-                    {tripMapData.map((point) => (
-                        <Marker
-                            key={point.pinPointId}
-                            position={[point.latitude, point.longitude] as LatLngExpression}
-                            icon={customIcon}
-                        >
-                            <Popup>
-                                <div>
-                                    <img css={popupImageStyle} src={point.mediaLink} alt='Trip location' />
-                                    <p>{point.recordDate}</p>
-                                </div>
-                            </Popup>
-                        </Marker>
-                    ))}
-                </MapContainer>
+                <LoadScript googleMapsApiKey={ENV.GOOGLE_MAPS_API_KEY || ''}>
+                    <GoogleMap mapContainerStyle={mapContainerStyle} center={center} zoom={13} options={mapOptions}>
+                        {tripMapData.map((point) => (
+                            <Marker
+                                key={point.pinPointId}
+                                position={{ lat: point.latitude, lng: point.longitude }}
+                                onClick={() => setSelectedPoint(point)}
+                                animation={window.google.maps.Animation.DROP}
+                                icon={svgMarker}
+                            />
+                        ))}
+                        {selectedPoint && (
+                            // <InfoWindow
+                            //     position={{ lat: selectedPoint.latitude, lng: selectedPoint.longitude }}
+                            //     onCloseClick={() => setSelectedPoint(null)}
+                            // >
+                            //     <div>
+                            //         <img css={popupImageStyle} src={selectedPoint.mediaLink} alt='Trip location' />
+                            //         <p>{selectedPoint.recordDate}</p>
+                            //     </div>
+                            // </InfoWindow>
+                            <div css={divStyle}>
+                                <img css={imageStyle} src={selectedPoint.mediaLink} alt='photo-card' />
+                            </div>
+                        )}
+                    </GoogleMap>
+                </LoadScript>
             </MapWrapper>
         </PageContainer>
     );
@@ -99,17 +120,30 @@ const MapWrapper = styled.div`
     min-height: 400px;
 `;
 
-const mapContainerStyle = css`
-    height: 100%;
-    width: 100%;
+const mapContainerStyle = {
+    height: '100%',
+    width: '100%',
+};
+
+const divStyle = css`
     position: absolute;
-    inset: 0;
+    right: 10px;
+    top: 10px;
+    background-color: white;
+    border-radius: 8px;
+    width: 100px;
+    height: 180px;
+    object-fit: cover;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 `;
 
-const popupImageStyle = css`
+const imageStyle = css`
     width: 100%;
-    max-height: 200px;
-    object-fit: cover;
+    border-radius: 8px;
+    /* margin: 0 auto; */
 `;
 
 export default TimelineMap;
