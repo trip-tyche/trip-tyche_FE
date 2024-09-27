@@ -8,10 +8,24 @@ export interface ButtonProps {
     disabled?: boolean;
 }
 
-const Button = ({ text, theme, size, onClick, disabled }: ButtonProps): JSX.Element => (
+// 부모 Button 컴포넌트
+const Button = ({
+    text,
+    theme,
+    size,
+    onClick,
+    disabled,
+    children,
+}: ButtonProps & { children?: React.ReactNode }): JSX.Element => (
     <button css={ButtonStyle(theme, size)} onClick={onClick} disabled={disabled}>
         {text}
+        {children} {/* 자식 컴포넌트를 여기에 렌더링 */}
     </button>
+);
+
+// 자식 컴포넌트 정의
+Button.Left = ({ children }: { children?: React.ReactNode }) => (
+    <span style={{ marginRight: '8px' }}>{children}</span> // Left 스타일
 );
 
 export default Button;

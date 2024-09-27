@@ -21,6 +21,22 @@ export const getTripList = async () => {
     }
 };
 
+export const getTripData = async (tripId: string) => {
+    try {
+        const token = getToken();
+        const response = await axios.get<TripInfo>(`${apiBaseUrl}/api/trips/${tripId}`, {
+            headers: {
+                accept: '*/*',
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching trip data:', error);
+    }
+};
+
 export const postTripInfo = async ({ tripTitle, country, startDate, endDate, hashtags }: TripInfo) => {
     try {
         const token = getToken();

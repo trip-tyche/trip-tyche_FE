@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { getTripList, updateTripInfo } from '@/api/trip';
+import { getTripData, updateTripInfo } from '@/api/trip';
 import { PATH } from '@/constants/path';
 
 export const useTripEditForm = () => {
     const [tripData, setTripData] = useState({
+        tripId: '',
         tripTitle: '',
         country: '',
         startDate: '',
@@ -23,9 +24,19 @@ export const useTripEditForm = () => {
         const fetchTripInfo = async () => {
             setIsLoading(true);
             try {
-                const data = await getTripList();
-                const tripData = data?.trips?.filter((trip) => trip.tripId.toString() === tripId);
-                if (tripData) setTripData(tripData[0]);
+                if (!tripId) {
+                    return;
+                }
+                const tripData = await getTripData(tripId);
+
+                if (!tripData) {
+                    return;
+                }
+                // tripId가 string으로 확실히 존재하는 경우만 setTripData 호출
+                setTripData({
+                    ...tripData,
+                    tripId: tripData.tripId || '', // tripId가 undefined일 경우 빈 문자열로 처리
+                });
             } catch (error) {
                 console.error('Error fetching trip data:', error);
             } finally {

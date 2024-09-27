@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -19,20 +19,11 @@ interface TripMapData {
     recordDate: string;
 }
 
-const svgMarker = {
-    path: 'M10.453 14.016l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM12 2.016q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z',
-    fillColor: 'blue',
-    fillOpacity: 0.8,
-    strokeWeight: 1,
-    rotation: 0,
-    scale: 1.5,
-    // anchor: new window.google.maps.Point(15, 30),
-};
-
 const TimelineMap = () => {
     const [tripMapData, setTripMapData] = useState<TripMapData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedPoint, setSelectedPoint] = useState<TripMapData | null>(null);
+    const [mapsApiLoaded, setMapsApiLoaded] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -41,6 +32,7 @@ const TimelineMap = () => {
     useEffect(() => {
         const getTripMapData = async () => {
             try {
+                setIsLoading(true);
                 const data = await fetchTripMapData(trip.tripId);
                 console.log('Fetched data:', data);
                 setTripMapData(data.pinPoints);
@@ -53,6 +45,21 @@ const TimelineMap = () => {
 
         getTripMapData();
     }, [trip.tripId]);
+
+    const svgMarker = useMemo(() => {
+        if (mapsApiLoaded) {
+            return {
+                path: 'M10.453 14.016l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM12 2.016q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z',
+                fillColor: 'blue',
+                fillOpacity: 0.8,
+                strokeWeight: 1,
+                rotation: 0,
+                scale: 1.5,
+                anchor: new window.google.maps.Point(15, 30),
+            };
+        }
+        return null;
+    }, [mapsApiLoaded]);
 
     const center =
         tripMapData.length > 0
@@ -76,15 +83,15 @@ const TimelineMap = () => {
         <PageContainer>
             <Header title={`${trip.tripTitle}`} isBackButton onBack={() => navigate('/trips')} />
             <MapWrapper>
-                <LoadScript googleMapsApiKey={ENV.GOOGLE_MAPS_API_KEY || ''}>
+                <LoadScript googleMapsApiKey={ENV.GOOGLE_MAPS_API_KEY || ''} onLoad={() => setMapsApiLoaded(true)}>
                     <GoogleMap mapContainerStyle={mapContainerStyle} center={center} zoom={13} options={mapOptions}>
                         {tripMapData.map((point) => (
                             <Marker
                                 key={point.pinPointId}
                                 position={{ lat: point.latitude, lng: point.longitude }}
                                 onClick={() => setSelectedPoint(point)}
-                                // animation={window.google.maps.Animation.DROP}
-                                icon={svgMarker}
+                                animation={mapsApiLoaded ? window.google.maps.Animation.DROP : undefined}
+                                icon={svgMarker || undefined}
                             />
                         ))}
                         {selectedPoint && (

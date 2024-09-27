@@ -1,5 +1,6 @@
 // 여행정보
 export interface TripInfo {
+    tripId?: string;
     tripTitle: string;
     country: string;
     startDate: string;
