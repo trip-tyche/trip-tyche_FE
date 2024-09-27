@@ -19,10 +19,9 @@ import { getToken, getUserId } from '@/utils/auth';
 const Home = (): JSX.Element => {
     const [userNickName, setUserNickName] = useState<string>('');
     const [userTrips, setUserTrips] = useState<Trip[]>();
-    const [pinPoints, setPinPoints] = useState<PinPoint[]>();
+    const [pinPoints, setPinPoints] = useState<Omit<PinPoint, 'mediaLink' | 'recordDate'>[]>();
     const [inputValue, setInputValue] = useState('');
     const { isModalOpen, openModal, closeModal } = useModalStore();
-
     const navigate = useNavigate();
 
     useEffect(() => {

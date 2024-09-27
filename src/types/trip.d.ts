@@ -31,4 +31,6 @@ export interface PinPoint {
     pinPointId: string;
     latitude: number;
     longitude: number;
+    mediaLink: string;
+    recordDate: string;
 }
