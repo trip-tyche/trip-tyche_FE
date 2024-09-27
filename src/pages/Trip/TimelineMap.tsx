@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -13,16 +13,22 @@ import { PATH } from '@/constants/path';
 import theme from '@/styles/theme';
 import { PinPoint } from '@/types/trip';
 
+const MOVE_DURATION = 2000;
+const WAIT_DURATION = 2000;
+
 const TimelineMap = () => {
     const [pinPoints, setPinPoints] = useState<PinPoint[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedPoint, setSelectedPoint] = useState<PinPoint | null>(null);
     const [mapsApiLoaded, setMapsApiLoaded] = useState(false);
-
-    const [characterPosition, setCharacterPosition] = useState<google.maps.LatLngLiteral | null>(null);
-    const [currentPinIndex, setCurrentPinIndex] = useState(0);
+    const characterPositionRef = useRef<google.maps.LatLngLiteral | null>(null);
+    const currentPinIndexRef = useRef(0);
+    const [showPhotoCard, setShowPhotoCard] = useState(false);
     const animationRef = useRef<number | null>(null);
-    // const [mapRef, setMapRef] = useState<google.maps.Map | null>(null);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const isMounted = useRef(true);
+    const mapRef = useRef<google.maps.Map | null>(null);
+
+    const [, forceUpdate] = useState({});
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -32,29 +38,35 @@ const TimelineMap = () => {
         const getTripMapData = async () => {
             try {
                 setIsLoading(true);
-
                 const data = await fetchTripMapData(trip.tripId);
                 const sortedDataByDate = data.pinPoints.sort(
                     (a: PinPoint, b: PinPoint) => new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime(),
                 );
-                // console.log(sortedData);
-                console.log('Fetched data:', data);
-                setPinPoints(sortedDataByDate);
+                if (isMounted.current) {
+                    setPinPoints(sortedDataByDate);
+                    console.log('Fetched pinPoints:', sortedDataByDate);
+                }
             } catch (error) {
                 console.error('Error fetching trip data:', error);
             } finally {
-                setIsLoading(false);
+                if (isMounted.current) {
+                    setIsLoading(false);
+                }
             }
         };
 
         getTripMapData();
+
+        return () => {
+            isMounted.current = false;
+        };
     }, [trip.tripId]);
 
     const characterIcon = useMemo(() => {
         if (mapsApiLoaded) {
             return {
                 url: '/src/assets/images/ogami_1.png',
-                scaledSize: new window.google.maps.Size(50, 66.5) || undefined, //1.33, 1.4
+                scaledSize: new window.google.maps.Size(50, 66.5),
             };
         }
         return null;
@@ -75,139 +87,174 @@ const TimelineMap = () => {
         return null;
     }, [mapsApiLoaded]);
 
-    const center = useMemo(() => {
-        if (selectedPoint) {
-            return { lat: selectedPoint.latitude, lng: selectedPoint.longitude };
-        }
-        return { lat: pinPoints[0]?.latitude, lng: pinPoints[0]?.longitude };
-    }, [selectedPoint, pinPoints]);
-
     const mapOptions: google.maps.MapOptions = {
-        mapTypeControl: false, // 지도 타입 컨트롤 (지도, 위성 등) 숨기기
-        fullscreenControl: false, // 전체화면 컨트롤 숨기기
-        zoomControl: false, // 줌 컨트롤 (+, -) 숨기기
-        streetViewControl: false, // 거리뷰 (페그맨) 컨트롤 숨기기
-        rotateControl: false, // 나침반 숨기기 (지도 회전 시 나타나는 나침반)
+        mapTypeControl: false,
+        fullscreenControl: false,
+        zoomControl: false,
+        streetViewControl: false,
+        rotateControl: false,
         clickableIcons: false,
-
-        // maxZoom: 12, // 최대 줌 레벨
-        minZoom: 12, // 최소 줌 레벨
+        minZoom: 12,
     };
-
-    const MOVE_DURATION = 2000;
-    const WAIT_DURATION = 2000;
-
     const moveCharacter = useCallback(() => {
-        if (currentPinIndex >= pinPoints.length - 1) {
-            console.log('마지막 핀포인트에 도달');
+        if (!isMounted.current || pinPoints.length === 0) return;
+
+        const currentIndex = currentPinIndexRef.current;
+        console.log('moveCharacter called. Current index:', currentIndex);
+        const nextPinIndex = currentIndex + 1;
+
+        if (nextPinIndex >= pinPoints.length) {
+            console.log('마지막 핀포인트에 도달. 종료.');
             return;
         }
 
-        const start = pinPoints[currentPinIndex];
-        const end = pinPoints[currentPinIndex + 1];
+        const start = pinPoints[currentIndex];
+        const end = pinPoints[nextPinIndex];
+        console.log(`Moving from pin ${currentIndex} to ${nextPinIndex}`);
+
         const startTime = performance.now();
+        setShowPhotoCard(false);
 
         const animate = (currentTime: number) => {
+            if (!isMounted.current) return;
+
             const elapsedTime = currentTime - startTime;
             const progress = Math.min(elapsedTime / MOVE_DURATION, 1);
 
             const lat = start.latitude + (end.latitude - start.latitude) * progress;
             const lng = start.longitude + (end.longitude - start.longitude) * progress;
 
-            setCharacterPosition({ lat, lng });
+            characterPositionRef.current = { lat, lng };
+
+            // 지도 중심 업데이트
+            if (mapRef.current) {
+                mapRef.current.panTo({ lat, lng });
+            }
+
+            forceUpdate({});
 
             if (progress < 1) {
                 animationRef.current = requestAnimationFrame(animate);
             } else {
-                console.log('다음 핀 도착');
-                setTimeout(() => {
-                    setCurrentPinIndex((prev) => prev + 1);
-                }, WAIT_DURATION);
+                console.log(`Arrived at pin ${nextPinIndex}`);
+                currentPinIndexRef.current = nextPinIndex;
+                setShowPhotoCard(true);
+
+                if (nextPinIndex < pinPoints.length - 1) {
+                    console.log(`Scheduling next move to pin ${nextPinIndex + 1}`);
+                    timeoutRef.current = setTimeout(() => {
+                        if (isMounted.current) {
+                            moveCharacter();
+                        }
+                    }, WAIT_DURATION);
+                } else {
+                    console.log('Reached the last pin. Animation complete.');
+                }
             }
         };
 
         animationRef.current = requestAnimationFrame(animate);
-    }, [currentPinIndex, pinPoints]);
+    }, [pinPoints]);
 
     useEffect(() => {
-        if (pinPoints.length > 0 && mapsApiLoaded) {
-            console.log('애니메이션 시작');
-            setCharacterPosition({ lat: pinPoints[0].latitude, lng: pinPoints[0].longitude });
-            setCurrentPinIndex(0);
-        }
-    }, [pinPoints, mapsApiLoaded]);
+        if (pinPoints.length > 0 && mapsApiLoaded && currentPinIndexRef.current === 0) {
+            console.log('Starting animation sequence');
+            characterPositionRef.current = { lat: pinPoints[0].latitude, lng: pinPoints[0].longitude };
 
-    useEffect(() => {
-        if (currentPinIndex < pinPoints.length - 1) {
-            console.log(`${currentPinIndex}번 핀에서 ${currentPinIndex + 1}번 핀으로 이동`);
-            moveCharacter();
-        } else if (currentPinIndex === pinPoints.length - 1) {
-            console.log('마지막 핀에 도달, 애니메이션 종료');
+            // 초기 위치로 지도 중심 설정
+            if (mapRef.current) {
+                mapRef.current.panTo(characterPositionRef.current);
+            }
+
+            setShowPhotoCard(true);
+            forceUpdate({});
+
+            timeoutRef.current = setTimeout(() => {
+                if (isMounted.current) {
+                    moveCharacter();
+                }
+            }, WAIT_DURATION);
         }
 
         return () => {
+            console.log('Cleaning up animations and timeouts');
             if (animationRef.current) {
                 cancelAnimationFrame(animationRef.current);
             }
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
         };
-    }, [currentPinIndex, moveCharacter, pinPoints.length]);
+    }, [pinPoints, mapsApiLoaded, moveCharacter]);
+
+    const onMapLoad = React.useCallback((map: google.maps.Map) => {
+        mapRef.current = map;
+    }, []);
+
+    const center = useMemo(
+        () => (pinPoints.length > 0 ? { lat: pinPoints[0].latitude, lng: pinPoints[0].longitude } : { lat: 0, lng: 0 }),
+        [pinPoints],
+    );
 
     return (
         <PageContainer>
             <Header title={`${trip.tripTitle}`} isBackButton onBack={() => navigate(PATH.TRIP_LIST)} />
 
             <MapWrapper>
-                <LoadScript
-                    googleMapsApiKey={ENV.GOOGLE_MAPS_API_KEY || ''}
-                    onLoad={() => setMapsApiLoaded(true)}
-                    loadingElement={
-                        <LoadingWrapper>
-                            <Loading />
-                        </LoadingWrapper>
-                    }
-                >
-                    <GoogleMap
-                        mapContainerStyle={mapContainerStyle}
-                        center={center}
-                        zoom={14}
-                        options={mapOptions}
-                        // onLoad={(map: google.maps.Map) => {
-                        //     setMapRef(map);
-                        // }}
+                {isLoading ? (
+                    <LoadingWrapper>
+                        <Loading />
+                    </LoadingWrapper>
+                ) : (
+                    <LoadScript
+                        googleMapsApiKey={ENV.GOOGLE_MAPS_API_KEY || ''}
+                        onLoad={() => {
+                            console.log('Google Maps API loaded');
+                            setMapsApiLoaded(true);
+                        }}
                     >
-                        <Polyline
-                            path={pinPoints.map((point) => ({ lat: point.latitude, lng: point.longitude }))}
-                            options={{
-                                strokeColor: '#17012E',
-                                strokeOpacity: 1,
-                                strokeWeight: 4,
-                            }}
-                        />
-                        {pinPoints.map((point) => (
-                            <Marker
-                                key={point.pinPointId}
-                                position={{ lat: point.latitude, lng: point.longitude }}
-                                onClick={() => setSelectedPoint(point)}
-                                animation={mapsApiLoaded ? window.google.maps.Animation.DROP : undefined}
-                                icon={svgMarker || undefined}
+                        <GoogleMap
+                            mapContainerStyle={mapContainerStyle}
+                            center={characterPositionRef.current || undefined}
+                            zoom={14}
+                            options={mapOptions}
+                            onLoad={onMapLoad}
+                        >
+                            <Polyline
+                                path={pinPoints.map((point) => ({ lat: point.latitude, lng: point.longitude }))}
+                                options={{
+                                    strokeColor: '#17012E',
+                                    strokeOpacity: 1,
+                                    strokeWeight: 4,
+                                }}
                             />
-                        ))}
-                        {characterPosition && (
-                            <Marker
-                                position={characterPosition}
-                                icon={characterIcon || undefined}
-                                zIndex={1000} // 캐릭터를 다른 마커 위에 표시
-                            />
-                        )}
-                        {selectedPoint && (
-                            <div css={divStyle}>
-                                <p css={pStyle}>사그라다 파밀리아</p>
-                                {/* <p css={pStyle}>{selectedPoint.recordDate}</p> */}
-                                <img css={imageStyle} src={selectedPoint.mediaLink} alt='photo-card' />
-                            </div>
-                        )}
-                    </GoogleMap>
-                </LoadScript>
+                            {pinPoints.map((point, index) => (
+                                <Marker
+                                    key={point.pinPointId}
+                                    position={{ lat: point.latitude, lng: point.longitude }}
+                                    icon={svgMarker || undefined}
+                                    label={(index + 1).toString()}
+                                />
+                            ))}
+                            {characterPositionRef.current && (
+                                <Marker
+                                    position={characterPositionRef.current}
+                                    icon={characterIcon || undefined}
+                                    zIndex={1000}
+                                />
+                            )}
+                            {showPhotoCard && currentPinIndexRef.current < pinPoints.length && (
+                                <div css={divStyle}>
+                                    <img
+                                        css={imageStyle}
+                                        src={pinPoints[currentPinIndexRef.current].mediaLink}
+                                        alt='photo-card'
+                                    />
+                                </div>
+                            )}
+                        </GoogleMap>
+                    </LoadScript>
+                )}
             </MapWrapper>
         </PageContainer>
     );
@@ -262,6 +309,7 @@ const pStyle = css`
     font-weight: 600;
     margin-bottom: 8px;
 `;
+
 const imageStyle = css`
     width: 100%;
     object-fit: cover;
