@@ -131,7 +131,7 @@ export const deleteTripInfo = async (tripId: string) => {
     }
 };
 
-export const fetchTripMapData = async (tripId: string) => {
+export const getTripMapData = async (tripId: string) => {
     try {
         const token = getToken();
         const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/info`, {

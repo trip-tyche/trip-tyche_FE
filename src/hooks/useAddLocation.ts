@@ -16,7 +16,7 @@ export const useAddLocation = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const { imagesNoLocation } = location.state;
+    const { defaultLocation, imagesNoLocation } = location.state;
 
     useEffect(() => {
         setDisplayedImages(imagesNoLocation);
@@ -96,6 +96,7 @@ export const useAddLocation = () => {
     };
 
     return {
+        defaultLocation,
         displayedImages,
         selectedImages,
         selectedLocation,

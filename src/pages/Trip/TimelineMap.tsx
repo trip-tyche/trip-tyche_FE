@@ -2,49 +2,58 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { GoogleMap, Marker, LoadScript, Polyline } from '@react-google-maps/api';
+import { GoogleMap, Marker, LoadScript, Polyline, OverlayView } from '@react-google-maps/api';
+import { Play, Pause } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { fetchTripMapData } from '@/api/trip';
+import { getTripMapData } from '@/api/trip';
 import Loading from '@/components/common/Loading';
 import Header from '@/components/layout/Header';
 import { ENV } from '@/constants/auth';
 import { PATH } from '@/constants/path';
-import theme from '@/styles/theme';
 import { PinPoint } from '@/types/trip';
 
-const MOVE_DURATION = 2000;
+const MOVE_DURATION = 3000;
 const WAIT_DURATION = 2000;
 
 const TimelineMap = () => {
     const [pinPoints, setPinPoints] = useState<PinPoint[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [mapsApiLoaded, setMapsApiLoaded] = useState(false);
-    const characterPositionRef = useRef<google.maps.LatLngLiteral | null>(null);
-    const currentPinIndexRef = useRef(0);
-    const [showPhotoCard, setShowPhotoCard] = useState(false);
-    const animationRef = useRef<number | null>(null);
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-    const isMounted = useRef(true);
-    const mapRef = useRef<google.maps.Map | null>(null);
+    const [characterPosition, setCharacterPosition] = useState<google.maps.LatLngLiteral | null>(null);
+    const [currentPinIndex, setCurrentPinIndex] = useState(0);
+    const [showPhotoCard, setShowPhotoCard] = useState(true);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [isMoving, setIsMoving] = useState(false);
+    const [isAtPin, setIsAtPin] = useState(true);
 
-    const [, forceUpdate] = useState({});
+    const mapRef = useRef<google.maps.Map | null>(null);
+    const animationRef = useRef<number | null>(null);
+    const startTimeRef = useRef<number | null>(null);
+    const isMounted = useRef(true);
+    const autoPlayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const navigate = useNavigate();
     const location = useLocation();
     const trip = location.state;
 
     useEffect(() => {
-        const getTripMapData = async () => {
+        const fetchTripMapData = async () => {
             try {
                 setIsLoading(true);
-                const data = await fetchTripMapData(trip.tripId);
+                const data = await getTripMapData(trip.tripId);
+                if (data.pinPoints.length === 0) {
+                    navigate(PATH.TRIP_LIST);
+                    return;
+                }
                 const sortedDataByDate = data.pinPoints.sort(
                     (a: PinPoint, b: PinPoint) => new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime(),
                 );
                 if (isMounted.current) {
                     setPinPoints(sortedDataByDate);
-                    console.log('Fetched pinPoints:', sortedDataByDate);
+                    setCharacterPosition({ lat: sortedDataByDate[0].latitude, lng: sortedDataByDate[0].longitude });
+                    setIsPlaying(false);
+                    setIsAtPin(true);
                 }
             } catch (error) {
                 console.error('Error fetching trip data:', error);
@@ -55,18 +64,113 @@ const TimelineMap = () => {
             }
         };
 
-        getTripMapData();
+        fetchTripMapData();
 
         return () => {
             isMounted.current = false;
+            if (autoPlayTimeoutRef.current) {
+                clearTimeout(autoPlayTimeoutRef.current);
+            }
         };
-    }, [trip.tripId]);
+    }, [trip.tripId, navigate]);
+
+    const moveCharacter = useCallback(() => {
+        if (currentPinIndex >= pinPoints.length - 1) {
+            setIsPlaying(false);
+            setIsMoving(false);
+            return;
+        }
+
+        const start = pinPoints[currentPinIndex];
+        const end = pinPoints[currentPinIndex + 1];
+        setShowPhotoCard(false);
+        setIsMoving(true);
+
+        const animate = (time: number) => {
+            if (!startTimeRef.current) startTimeRef.current = time;
+            const progress = Math.min((time - startTimeRef.current) / MOVE_DURATION, 1);
+
+            const newLat = start.latitude + (end.latitude - start.latitude) * progress;
+            const newLng = start.longitude + (end.longitude - start.longitude) * progress;
+            setCharacterPosition({ lat: newLat, lng: newLng });
+
+            if (mapRef.current) {
+                mapRef.current.panTo({ lat: newLat, lng: newLng });
+            }
+
+            if (progress < 1 && isPlaying) {
+                animationRef.current = requestAnimationFrame(animate);
+            } else {
+                startTimeRef.current = null;
+                setCurrentPinIndex((prev) => prev + 1);
+                setShowPhotoCard(true);
+                setIsMoving(false);
+                setIsPlaying(false);
+                setIsAtPin(true);
+
+                // 2초 후 자동으로 다음 핀으로 이동
+                autoPlayTimeoutRef.current = setTimeout(() => {
+                    if (isMounted.current) {
+                        setIsPlaying(true);
+                    }
+                }, WAIT_DURATION);
+            }
+        };
+
+        animationRef.current = requestAnimationFrame(animate);
+    }, [currentPinIndex, pinPoints, isPlaying]);
+
+    useEffect(() => {
+        if (isPlaying && !isMoving) {
+            moveCharacter();
+        }
+    }, [isPlaying, isMoving, moveCharacter]);
+
+    useEffect(
+        () => () => {
+            if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current);
+            }
+            if (autoPlayTimeoutRef.current) {
+                clearTimeout(autoPlayTimeoutRef.current);
+            }
+        },
+        [],
+    );
+
+    const onMapLoad = React.useCallback((map: google.maps.Map) => {
+        mapRef.current = map;
+    }, []);
+
+    const togglePlayPause = () => {
+        if (currentPinIndex === pinPoints.length - 1) {
+            // 마지막 핀포인트에서 재생 버튼을 누르면 첫 번째 핀포인트로 이동
+            setCurrentPinIndex(0);
+            setCharacterPosition({ lat: pinPoints[0].latitude, lng: pinPoints[0].longitude });
+            if (mapRef.current) {
+                mapRef.current.panTo({ lat: pinPoints[0].latitude, lng: pinPoints[0].longitude });
+            }
+            setShowPhotoCard(true);
+            setIsPlaying(false);
+            setIsMoving(false);
+            setIsAtPin(true);
+        } else if (isAtPin && !isPlaying) {
+            // 핀포인트에 있고 재생 버튼을 누르면 바로 다음으로 이동
+            setIsPlaying(true);
+        } else {
+            setIsPlaying(!isPlaying);
+            if (isPlaying && autoPlayTimeoutRef.current) {
+                clearTimeout(autoPlayTimeoutRef.current);
+            }
+        }
+    };
 
     const characterIcon = useMemo(() => {
         if (mapsApiLoaded) {
             return {
-                url: '/src/assets/images/ogami_1.png',
-                scaledSize: new window.google.maps.Size(50, 66.5),
+                url: '/src/assets/images/dog.gif',
+                scaledSize: new window.google.maps.Size(150, 150),
+                anchor: new window.google.maps.Point(75, 90), // 이미지 하단 중앙에 앵커 설정
             };
         }
         return null;
@@ -81,7 +185,7 @@ const TimelineMap = () => {
                 strokeWeight: 1,
                 rotation: 0,
                 scale: 1.5,
-                anchor: new window.google.maps.Point(12, 22),
+                anchor: new window.google.maps.Point(12, 24), // SVG 마커의 하단 중앙에 앵커 설정
             };
         }
         return null;
@@ -96,161 +200,56 @@ const TimelineMap = () => {
         clickableIcons: false,
         minZoom: 12,
     };
-    const moveCharacter = useCallback(() => {
-        if (!isMounted.current || pinPoints.length === 0) return;
-
-        const currentIndex = currentPinIndexRef.current;
-        console.log('moveCharacter called. Current index:', currentIndex);
-        const nextPinIndex = currentIndex + 1;
-
-        if (nextPinIndex >= pinPoints.length) {
-            console.log('마지막 핀포인트에 도달. 종료.');
-            return;
-        }
-
-        const start = pinPoints[currentIndex];
-        const end = pinPoints[nextPinIndex];
-        console.log(`Moving from pin ${currentIndex} to ${nextPinIndex}`);
-
-        const startTime = performance.now();
-        setShowPhotoCard(false);
-
-        const animate = (currentTime: number) => {
-            if (!isMounted.current) return;
-
-            const elapsedTime = currentTime - startTime;
-            const progress = Math.min(elapsedTime / MOVE_DURATION, 1);
-
-            const lat = start.latitude + (end.latitude - start.latitude) * progress;
-            const lng = start.longitude + (end.longitude - start.longitude) * progress;
-
-            characterPositionRef.current = { lat, lng };
-
-            // 지도 중심 업데이트
-            if (mapRef.current) {
-                mapRef.current.panTo({ lat, lng });
-            }
-
-            forceUpdate({});
-
-            if (progress < 1) {
-                animationRef.current = requestAnimationFrame(animate);
-            } else {
-                console.log(`Arrived at pin ${nextPinIndex}`);
-                currentPinIndexRef.current = nextPinIndex;
-                setShowPhotoCard(true);
-
-                if (nextPinIndex < pinPoints.length - 1) {
-                    console.log(`Scheduling next move to pin ${nextPinIndex + 1}`);
-                    timeoutRef.current = setTimeout(() => {
-                        if (isMounted.current) {
-                            moveCharacter();
-                        }
-                    }, WAIT_DURATION);
-                } else {
-                    console.log('Reached the last pin. Animation complete.');
-                }
-            }
-        };
-
-        animationRef.current = requestAnimationFrame(animate);
-    }, [pinPoints]);
-
-    useEffect(() => {
-        if (pinPoints.length > 0 && mapsApiLoaded && currentPinIndexRef.current === 0) {
-            console.log('Starting animation sequence');
-            characterPositionRef.current = { lat: pinPoints[0].latitude, lng: pinPoints[0].longitude };
-
-            // 초기 위치로 지도 중심 설정
-            if (mapRef.current) {
-                mapRef.current.panTo(characterPositionRef.current);
-            }
-
-            setShowPhotoCard(true);
-            forceUpdate({});
-
-            timeoutRef.current = setTimeout(() => {
-                if (isMounted.current) {
-                    moveCharacter();
-                }
-            }, WAIT_DURATION);
-        }
-
-        return () => {
-            console.log('Cleaning up animations and timeouts');
-            if (animationRef.current) {
-                cancelAnimationFrame(animationRef.current);
-            }
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-        };
-    }, [pinPoints, mapsApiLoaded, moveCharacter]);
-
-    const onMapLoad = React.useCallback((map: google.maps.Map) => {
-        mapRef.current = map;
-    }, []);
-
-    const center = useMemo(
-        () => (pinPoints.length > 0 ? { lat: pinPoints[0].latitude, lng: pinPoints[0].longitude } : { lat: 0, lng: 0 }),
-        [pinPoints],
-    );
 
     return (
         <PageContainer>
             <Header title={`${trip.tripTitle}`} isBackButton onBack={() => navigate(PATH.TRIP_LIST)} />
-
             <MapWrapper>
                 {isLoading ? (
                     <LoadingWrapper>
                         <Loading />
                     </LoadingWrapper>
                 ) : (
-                    <LoadScript
-                        googleMapsApiKey={ENV.GOOGLE_MAPS_API_KEY || ''}
-                        onLoad={() => {
-                            console.log('Google Maps API loaded');
-                            setMapsApiLoaded(true);
-                        }}
-                    >
+                    <LoadScript googleMapsApiKey={ENV.GOOGLE_MAPS_API_KEY || ''} onLoad={() => setMapsApiLoaded(true)}>
                         <GoogleMap
                             mapContainerStyle={mapContainerStyle}
-                            center={characterPositionRef.current || undefined}
-                            zoom={14}
+                            center={characterPosition || undefined}
+                            zoom={15}
                             options={mapOptions}
                             onLoad={onMapLoad}
                         >
-                            <Polyline
-                                path={pinPoints.map((point) => ({ lat: point.latitude, lng: point.longitude }))}
-                                options={{
-                                    strokeColor: '#17012E',
-                                    strokeOpacity: 1,
-                                    strokeWeight: 4,
-                                }}
-                            />
                             {pinPoints.map((point, index) => (
                                 <Marker
                                     key={point.pinPointId}
                                     position={{ lat: point.latitude, lng: point.longitude }}
                                     icon={svgMarker || undefined}
-                                    label={(index + 1).toString()}
                                 />
                             ))}
-                            {characterPositionRef.current && (
-                                <Marker
-                                    position={characterPositionRef.current}
-                                    icon={characterIcon || undefined}
-                                    zIndex={1000}
-                                />
+                            {characterPosition && (
+                                <Marker position={characterPosition} icon={characterIcon || undefined} zIndex={1000} />
                             )}
-                            {showPhotoCard && currentPinIndexRef.current < pinPoints.length && (
-                                <div css={divStyle}>
-                                    <img
-                                        css={imageStyle}
-                                        src={pinPoints[currentPinIndexRef.current].mediaLink}
-                                        alt='photo-card'
-                                    />
-                                </div>
+                            {!isMoving && (
+                                <ControlButton onClick={togglePlayPause}>
+                                    {isPlaying || !isAtPin ? <Pause /> : <Play />}
+                                </ControlButton>
+                            )}
+                            {showPhotoCard && currentPinIndex < pinPoints.length && (
+                                <PhotoCardOverlay>
+                                    <div
+                                        css={photoCardStyle}
+                                        onClick={() =>
+                                            navigate(
+                                                `/music-video/${trip.tripId}/${pinPoints[currentPinIndex].pinPointId}`,
+                                            )
+                                        }
+                                    >
+                                        <img
+                                            css={imageStyle}
+                                            src={pinPoints[currentPinIndex].mediaLink}
+                                            alt='photo-card'
+                                        />
+                                    </div>
+                                </PhotoCardOverlay>
                             )}
                         </GoogleMap>
                     </LoadScript>
@@ -260,17 +259,37 @@ const TimelineMap = () => {
     );
 };
 
-const PageContainer = styled.div`
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-`;
-
 const MapWrapper = styled.div`
     flex-grow: 1;
     position: relative;
     z-index: 0;
     min-height: 400px;
+`;
+
+const ControlButton = styled.button`
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    &:hover {
+        background-color: #f0f0f0;
+    }
+`;
+
+const PageContainer = styled.div`
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 `;
 
 const LoadingWrapper = styled.div`
@@ -285,36 +304,38 @@ const mapContainerStyle = {
     width: '100%',
 };
 
-const divStyle = css`
+const PhotoCardOverlay = styled.div`
     position: absolute;
-    right: 10px;
     top: 10px;
+    right: 10px;
+    z-index: 1000;
+`;
+
+const photoCardStyle = css`
     background-color: white;
     border-radius: 8px;
-    width: 35%;
-    object-fit: cover;
-    padding: 8px;
+    width: 150px;
+    aspect-ratio: 1;
+    padding: 4px;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
+    justify-content: center;
     box-shadow:
         rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
         rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
-`;
+    cursor: pointer;
+    transition: transform 0.2s ease;
 
-const pStyle = css`
-    font-size: ${theme.fontSizes.normal_14};
-    font-weight: 600;
-    margin-bottom: 8px;
+    &:hover {
+        transform: scale(1.05);
+    }
 `;
 
 const imageStyle = css`
     width: 100%;
+    height: 100%;
     object-fit: cover;
     border-radius: 4px;
-    aspect-ratio: 1;
 `;
 
 export default TimelineMap;

@@ -8,6 +8,7 @@ import PageNotFound from '../pages/PageNotFound';
 import TripList from '../pages/Trip/TripList';
 import { PATH } from '@/constants/path';
 import LoginRedirectPage from '@/pages/LoginRedirectPage';
+import MusicVideo from '@/pages/MusicVideo';
 import Onboarding from '@/pages/Onboarding';
 import AddLocation from '@/pages/Trip/AddLocation';
 import NewTrip from '@/pages/Trip/NewTrip';
@@ -60,6 +61,7 @@ export const router = createBrowserRouter([
                     { path: PATH.TRIP_UPLOAD_ADD_LOCATION, element: <AddLocation /> },
                     { path: PATH.TRIPS_EDIT, element: <TripEdit /> },
                     { path: `${PATH.TIMELINE_MAP}/:tripId`, element: <TimelineMap /> },
+                    { path: `${PATH.MUSIC_VIDEO}/:tripId/:pinPointId`, element: <MusicVideo /> },
                 ],
             },
             { path: '*', element: <PageNotFound /> },

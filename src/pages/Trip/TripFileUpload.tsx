@@ -10,7 +10,6 @@ import { useFileUpload } from '@/hooks/useFileUpload';
 
 const TripFileUpload = () => {
     const { imagesWithLocation, imagesNoLocation, handleFileUpload, uploadTripImages } = useFileUpload();
-
     const navigate = useNavigate();
 
     // useEffect(() => {
@@ -23,8 +22,9 @@ const TripFileUpload = () => {
         try {
             if (imagesWithLocation.length !== 0) {
                 await uploadTripImages();
+                const defaultLocation = imagesWithLocation[0].location;
+                navigate(PATH.TRIP_UPLOAD_ADD_LOCATION, { state: { defaultLocation, imagesNoLocation } });
             }
-            navigate(PATH.TRIP_UPLOAD_ADD_LOCATION, { state: { imagesNoLocation } });
         } catch (error) {
             console.error('Error post trip-images:', error);
         }

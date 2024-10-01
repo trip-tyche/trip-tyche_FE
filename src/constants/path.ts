@@ -11,6 +11,7 @@ export const PATH = {
     TRIP_UPLOAD_ADD_LOCATION: '/trips/add-location',
     TRIPS_EDIT: '/trips/:tripId/edit',
     TIMELINE_MAP: '/timeline-map',
+    MUSIC_VIDEO: '/music-video',
 };
 
 export const PATH_TITLE = {
