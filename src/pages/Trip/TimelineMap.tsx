@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { GoogleMap, Marker, LoadScript, Polyline, OverlayView } from '@react-google-maps/api';
+import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
 import { Play, Pause } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -17,6 +17,7 @@ const MOVE_DURATION = 3000;
 const WAIT_DURATION = 2000;
 
 const TimelineMap = () => {
+    const [tripInfo, setTripInfo] = useState();
     const [pinPoints, setPinPoints] = useState<PinPoint[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [mapsApiLoaded, setMapsApiLoaded] = useState(false);
@@ -37,11 +38,14 @@ const TimelineMap = () => {
     const location = useLocation();
     const trip = location.state;
 
+    console.log(location.state);
+
     useEffect(() => {
         const fetchTripMapData = async () => {
             try {
                 setIsLoading(true);
                 const data = await getTripMapData(trip.tripId);
+                setTripInfo(data.tripInfo);
                 if (data.pinPoints.length === 0) {
                     navigate(PATH.TRIP_LIST);
                     return;
@@ -240,6 +244,7 @@ const TimelineMap = () => {
                                         onClick={() =>
                                             navigate(
                                                 `/music-video/${trip.tripId}/${pinPoints[currentPinIndex].pinPointId}`,
+                                                { state: trip.tripTitle },
                                             )
                                         }
                                     >

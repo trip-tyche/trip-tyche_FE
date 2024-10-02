@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 
 import { css } from '@emotion/react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const carouselStyles = css`
     position: relative;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     overflow: hidden;
+    background-color: #1a202c;
 `;
 
 const slideContainerStyles = css`
@@ -16,21 +18,21 @@ const slideContainerStyles = css`
 
 const slideStyles = css`
     position: relative;
-    width: 60%;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
 const imageStyles = css`
     position: absolute;
     top: 0;
     left: 0;
-    /* width: 80%; */
-    height: 100%;
+    width: 428px;
     object-fit: cover;
-    transition:
-        opacity 0.3s,
-        transform 0.3s;
+    transition: opacity 0.3s;
 `;
 
 const buttonStyles = css`
@@ -40,9 +42,10 @@ const buttonStyles = css`
     background-color: rgba(255, 255, 255, 0.5);
     border: none;
     border-radius: 50%;
-    padding: 10px;
-    font-size: 18px;
+    padding: 0.5rem;
     cursor: pointer;
+    transition: background-color 0.3s;
+
     &:hover {
         background-color: rgba(255, 255, 255, 0.8);
     }
@@ -82,8 +85,7 @@ const ImageCarousel = ({ images }: ImageProps) => {
                             css={[
                                 imageStyles,
                                 css`
-                                    opacity: ${index === currentIndex ? 1 : 0.5};
-                                    transform: scale(${index === currentIndex ? 1 : 0.8});
+                                    opacity: ${index === currentIndex ? 1 : 0.3};
                                 `,
                             ]}
                         />
@@ -95,22 +97,22 @@ const ImageCarousel = ({ images }: ImageProps) => {
                 css={[
                     buttonStyles,
                     css`
-                        left: 20px;
+                        left: 1rem;
                     `,
                 ]}
             >
-                &#10094;
+                <ChevronLeft size={24} />
             </button>
             <button
                 onClick={nextSlide}
                 css={[
                     buttonStyles,
                     css`
-                        right: 20px;
+                        right: 1rem;
                     `,
                 ]}
             >
-                &#10095;
+                <ChevronRight size={24} />
             </button>
         </div>
     );

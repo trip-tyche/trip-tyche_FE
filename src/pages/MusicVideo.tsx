@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 import { getPinPointImages } from '@/api/image';
 import ImageCarousel from '@/components/ImageCarousel';
@@ -17,6 +17,10 @@ const MusicVideo = () => {
     const [displayedImages, setDisplayedImages] = useState<ImageType[]>([]);
     const { tripId, pinPointId } = useParams<{ tripId: string; pinPointId: string }>();
     const imagesUrl: string[] = [];
+
+    const location = useLocation();
+    const tripTitle = location.state;
+
     useEffect(() => {
         const fetchPinPointImages = async () => {
             try {
@@ -24,6 +28,7 @@ const MusicVideo = () => {
                     return;
                 }
                 const data = await getPinPointImages(tripId, pinPointId);
+                console.log(data);
                 const { images } = data.firstImage;
                 setDisplayedImages(images);
             } catch (error) {
@@ -40,7 +45,7 @@ const MusicVideo = () => {
     console.log(imagesUrl);
     return (
         <div>
-            <Header title={PAGE.UPLOAD_IMAGES} isBackButton />
+            <Header title={tripTitle} isBackButton />
 
             {/* <div>
                 {displayedImages?.map((image: ImageType) => (
