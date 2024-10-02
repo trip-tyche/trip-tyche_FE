@@ -106,7 +106,6 @@ const TripForm = ({
     </>
 );
 const containerStyle = css`
-    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 30px;

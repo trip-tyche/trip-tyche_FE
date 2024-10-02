@@ -22,31 +22,43 @@ const NewTrip = (): JSX.Element => {
     } = useTripForm();
 
     return (
-        <div>
+        <div css={containerStyle}>
             <Header title={PAGE.NEW_TRIP} isBackButton />
-            <TripForm
-                tripTitle={tripTitle}
-                setTripTitle={setTripTitle}
-                country={country}
-                setCountry={setCountry}
-                startDate={startDate}
-                setStartDate={setStartDate}
-                endDate={endDate}
-                setEndDate={setEndDate}
-                hashtags={hashtags}
-                setHashtags={setHashtags}
-            />
-            <div css={buttonWrapperStyle}>
-                <Button text={BUTTON.NEXT} theme='sec' size='sm' onClick={handleSubmit} />
-            </div>
+            <main css={mainStyle}>
+                <TripForm
+                    tripTitle={tripTitle}
+                    setTripTitle={setTripTitle}
+                    country={country}
+                    setCountry={setCountry}
+                    startDate={startDate}
+                    setStartDate={setStartDate}
+                    endDate={endDate}
+                    setEndDate={setEndDate}
+                    hashtags={hashtags}
+                    setHashtags={setHashtags}
+                />
+                <div css={buttonWrapperStyle}>
+                    <Button text={BUTTON.NEXT} theme='sec' size='full' onClick={handleSubmit} />
+                </div>
+            </main>
         </div>
     );
 };
 
-const buttonWrapperStyle = css`
-    padding: 20px;
+const containerStyle = css`
+    height: 100vh;
     display: flex;
-    justify-content: end;
+    flex-direction: column;
 `;
+
+const mainStyle = css`
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+`;
+
+const buttonWrapperStyle = css``;
 
 export default NewTrip;

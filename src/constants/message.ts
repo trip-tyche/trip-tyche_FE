@@ -16,3 +16,8 @@ export const LOGOUT_MODAL = {
 export const TRIP = {
     NO_TRIP: '새로운 여행을 등록해주세요:)',
 };
+
+export const TRIP_IMAGES_UPLOAD = {
+    title: '여행 이미지를 등록해주세요.',
+    message: '이미지를 업로드해주세요.',
+};

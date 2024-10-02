@@ -8,19 +8,22 @@ import { ImageWithLocation } from '@/types/image';
 import { getImageLocation } from '@/utils/piexif';
 
 export const useFileUpload = () => {
+    const [imageCount, setImagesCount] = useState(0);
     const [imagesWithLocation, setImagesWithLocation] = useState<ImageWithLocation[]>([]);
     const [imagesNoLocation, setImagesNoLocation] = useState<File[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { tripId } = location.state;
+    const tripId = location.state;
 
+    // 이미지 메타데이터의 위치 정보 유무 확인
     const handleFileUpload = async (files: FileList | null) => {
         if (!files) {
             return;
         }
-
+        setImagesCount(files.length);
         try {
             const processedImages = await Promise.all(
                 Array.from(files).map(async (file) => {
@@ -29,6 +32,7 @@ export const useFileUpload = () => {
                     return { file, location };
                 }),
             );
+
             // 위치 정보가 없는 이미지
             const noLocationImages = processedImages.filter((image) => !image.location).map((image) => image.file);
             setImagesNoLocation(noLocationImages);
@@ -44,21 +48,18 @@ export const useFileUpload = () => {
 
     const uploadTripImages = async () => {
         try {
+            setIsLoading(true);
             const images = imagesWithLocation.map((image) => image.file);
-
             if (images) {
                 await postTripImages(tripId, images);
             }
-            navigate(PATH.TRIP_LIST);
+            // navigate(PATH.TRIP_LIST);
         } catch (error) {
             console.error('Error post trip-images:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    return {
-        imagesWithLocation,
-        imagesNoLocation,
-        handleFileUpload,
-        uploadTripImages,
-    };
+    return { imageCount, imagesWithLocation, imagesNoLocation, isLoading, handleFileUpload, uploadTripImages };
 };

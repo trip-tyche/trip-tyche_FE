@@ -1,22 +1,19 @@
 import { css } from '@emotion/react';
-import { FaCloudUploadAlt } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { ImageUp, Image } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/button/Button';
+import Loading from '@/components/common/Loading';
 import Header from '@/components/layout/Header';
+import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
 import { useFileUpload } from '@/hooks/useFileUpload';
 
 const TripFileUpload = () => {
-    const { imagesWithLocation, imagesNoLocation, handleFileUpload, uploadTripImages } = useFileUpload();
+    const { imageCount, imagesWithLocation, imagesNoLocation, isLoading, handleFileUpload, uploadTripImages } =
+        useFileUpload();
     const navigate = useNavigate();
-
-    // useEffect(() => {
-    //     if (imagesNoLocation) {
-    //         sessionStorage.setItem('images', JSON.stringify(imagesNoLocation));
-    //     }
-    // }, [imagesNoLocation]);
 
     const goToAddLocation = async () => {
         try {
@@ -30,18 +27,21 @@ const TripFileUpload = () => {
         }
     };
 
+    // if (!isLoading) {
+    //     return <Loading />;
+    // }
     return (
-        <div>
+        <div css={containerStyle}>
             <Header title={PAGE.UPLOAD_IMAGES} isBackButton />
 
-            <div css={containerStyle}>
+            <main css={mainStyle}>
                 <section css={sectionStyle}>
-                    <h2>{`여행 이미지를 등록해주세요`}</h2>
+                    <h2>{TRIP_IMAGES_UPLOAD.title}</h2>
                     <div css={uploadAreaStyle}>
-                        {imagesWithLocation.length > 0 && (
+                        {/* {imagesWithLocation.length > 0 && (
                             <div css={countStyle(true)}>+ {imagesWithLocation.length}</div>
                         )}
-                        {imagesNoLocation.length > 0 && <div css={countStyle(false)}>+ {imagesNoLocation.length}</div>}
+                        {imagesNoLocation.length > 0 && <div css={countStyle(false)}>+ {imagesNoLocation.length}</div>} */}
                         <input
                             type='file'
                             accept='image/*'
@@ -50,39 +50,51 @@ const TripFileUpload = () => {
                             css={fileInputStyle}
                             id='imageUpload'
                         />
-                        <label htmlFor='imageUpload' css={uploadLabelStyle}>
-                            <FaCloudUploadAlt size={40} />
-                            <span>Drag and drop files or click to upload</span>
-                        </label>
+                        {!imageCount ? (
+                            <label htmlFor='imageUpload' css={uploadLabelStyle}>
+                                <ImageUp size={36} />
+                                <span>{TRIP_IMAGES_UPLOAD.message}</span>
+                            </label>
+                        ) : (
+                            <label htmlFor='imageUpload' css={uploadLabelStyle}>
+                                <Image size={36} />
+                                <h3 css={uploadedStyle}>
+                                    총 <span css={countStyle}>{imageCount}</span>개의 이미지를 선택하셨습니다.
+                                </h3>
+                            </label>
+                        )}
                     </div>
                 </section>
-            </div>
+                <Button text='등록하기' theme='sec' size='full' onClick={uploadTripImages} isLoading={isLoading} />
+            </main>
 
-            <div css={submitButtonStyle}>
-                <Button text='완료' theme='sec' size='sm' onClick={uploadTripImages} />
-                {imagesNoLocation.length > 0 && (
+            {/* {imagesNoLocation.length > 0 && (
                     <Button text='위치 넣기' theme='pri' size='sm' onClick={goToAddLocation} />
-                )}
-            </div>
+                )} */}
         </div>
     );
 };
 
 const containerStyle = css`
-    padding: 20px;
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+`;
+
+const mainStyle = css`
+    padding: 20px;
 `;
 
 const sectionStyle = css`
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 30px;
     h2 {
         font-size: 18px;
         font-weight: bold;
     }
+
+    margin-bottom: 70px;
 `;
 
 const uploadAreaStyle = css`
@@ -102,25 +114,27 @@ const uploadLabelStyle = css`
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 18px;
     color: #666;
 `;
 
-const countStyle = (hasLocation: boolean) => css`
-    position: absolute;
-    top: ${hasLocation ? '10px' : '30px'};
-    right: 10px;
+const uploadedStyle = css`
     font-size: 16px;
     font-weight: bold;
-    color: ${hasLocation ? '#4caf50' : '#f44336'};
 `;
 
-const submitButtonStyle = css`
-    color: white;
-    margin-top: 60px;
-    display: flex;
-    padding: 20px;
-    justify-content: flex-end;
+const countStyle = css`
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0 4px;
 `;
+
+// const submitButtonStyle = css`
+//     color: white;
+//     margin-top: 60px;
+//     display: flex;
+//     padding: 20px;
+//     justify-content: flex-end;
+// `;
 
 export default TripFileUpload;

@@ -28,6 +28,7 @@
         "react-leaflet": "^4.2.1",
         "react-router-dom": "^6.26.0",
         "react-spinners": "^0.14.1",
+        "react-spinners-kit": "^1.9.1",
         "react-toastify": "^10.0.5",
         "zustand": "^4.5.5"
     },
