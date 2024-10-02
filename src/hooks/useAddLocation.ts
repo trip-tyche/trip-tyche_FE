@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { postTripImages } from '@/api/trip';
 import { PATH } from '@/constants/path';
+import { getUserId } from '@/utils/auth';
 import { createGpsExif, insertExifIntoJpeg, readFileAsDataURL } from '@/utils/piexif';
 
 export const useAddLocation = () => {
@@ -12,7 +13,7 @@ export const useAddLocation = () => {
     const [selectedImages, setSelectedImages] = useState<File[]>([]);
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [showMap, setShowMap] = useState(false);
-    const [updatedImages, setUpdatedImages] = useState<File[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -34,6 +35,10 @@ export const useAddLocation = () => {
         });
     };
 
+    const goToTripList = () => {
+        navigate(PATH.TRIP_LIST);
+    };
+
     const handleNextClick = () => {
         if (selectedImages.length > 0) {
             setShowMap(true);
@@ -42,15 +47,6 @@ export const useAddLocation = () => {
 
     const handleLocationSelect = (lat: number, lng: number) => {
         setSelectedLocation({ lat, lng });
-    };
-
-    const handleSubmitClick = async () => {
-        try {
-            await postTripImages('1', updatedImages);
-            navigate(PATH.TRIP_LIST);
-        } catch (error) {
-            console.error('Error post trip-images:', error);
-        }
     };
 
     const handleConfirmLocation = async () => {
@@ -75,14 +71,24 @@ export const useAddLocation = () => {
             }),
         );
 
-        setUpdatedImages(updatedImages);
         console.log('Images with updated location:', updatedImages);
 
         const updatedDisplayedImages = displayedImages.filter(
             (image) => !selectedImages.some((selected) => selected.name === image.name),
         );
 
-        await postTripImages('1', updatedImages);
+        try {
+            setIsLoading(true);
+            const userId = getUserId();
+            if (!userId) {
+                return;
+            }
+            await postTripImages(userId, updatedImages);
+        } catch (error) {
+            console.error('Error post trip-images:', error);
+        } finally {
+            setIsLoading(false);
+        }
 
         if (updatedDisplayedImages.length === 0) {
             navigate(PATH.TRIP_LIST);
@@ -101,10 +107,12 @@ export const useAddLocation = () => {
         selectedImages,
         selectedLocation,
         showMap,
+        setShowMap,
+        isLoading,
         toggleImageSelection,
+        goToTripList,
         handleNextClick,
         handleLocationSelect,
-        handleSubmitClick,
         handleConfirmLocation,
     };
 };

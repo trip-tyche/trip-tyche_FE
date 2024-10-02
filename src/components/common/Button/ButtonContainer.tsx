@@ -37,6 +37,7 @@ export default ButtonContainer;
 
 const ButtonContainerStyle = (size: 'full' | 'lg' | 'sm') => css`
     display: flex;
+
     flex-direction: ${size === 'lg' ? 'column' : 'row'};
     gap: 8px;
 `;

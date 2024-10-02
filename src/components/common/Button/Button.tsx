@@ -45,7 +45,7 @@ export default Button;
 const buttonStyle = (theme: 'pri' | 'sec', size: 'full' | 'lg' | 'sm') => css`
     padding: 8px 12px;
     border-radius: 10px;
-    border: 0;
+    border: ${theme === 'pri' ? '1px solid #333' : '0'};
     font-size: ${size === 'full' ? '14px' : '12px'};
     font-weight: 600;
     cursor: pointer;
@@ -58,12 +58,12 @@ const buttonStyle = (theme: 'pri' | 'sec', size: 'full' | 'lg' | 'sm') => css`
     background-color: ${theme === 'pri' ? '#fff' : '#333'};
 
     &:active {
-        transform: scale(0.99);
-        background-color: rgb(51, 51, 51, 0.85);
+        transform: scale(0.97);
+        /* background-color: rgb(51, 51, 51, 0.85); */
     }
 
     &:hover {
-        background-color: rgb(51, 51, 51, 0.85);
+        /* background-color: rgb(51, 51, 51, 0.85); */
     }
 
     &:disabled {

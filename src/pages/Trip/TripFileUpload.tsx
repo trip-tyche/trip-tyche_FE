@@ -78,9 +78,9 @@ const TripFileUpload = () => {
                 <>
                     <ModalOverlay />
                     <RowButtonModal
-                        descriptionText={`앗! ${imagesNoLocation.length}개의 사진이 위치 정보가 없네요..`}
-                        confirmText='위치넣기'
-                        cancelText='무시하기'
+                        descriptionText={`앗! ${imagesNoLocation.length}개의 사진이 위치 정보가 없어요..`}
+                        confirmText='직접 위치넣기'
+                        cancelText='나중에'
                         confirmModal={ignoreAddLocation}
                         closeModal={goToAddLocation}
                     />

@@ -20,19 +20,15 @@ const RowButtonModal = ({
 }: RowButtonModalProps): JSX.Element => (
     <div css={modalStyle}>
         <h2>{descriptionText}</h2>
-        <div>
-            <ButtonContainer
-                confirmText={confirmText}
-                cancelText={cancelText}
-                size='full'
-                confirmModal={confirmModal}
-                closeModal={closeModal}
-            />
-        </div>
+        <ButtonContainer
+            confirmText={confirmText}
+            cancelText={cancelText}
+            size='full'
+            confirmModal={confirmModal}
+            closeModal={closeModal}
+        />
     </div>
 );
-
-export default RowButtonModal;
 
 const modalStyle = css`
     h2 {
@@ -53,12 +49,14 @@ const modalStyle = css`
 
     background-color: #fff;
     width: 340px;
-    height: 165px;
     padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    border-radius: 20px;
+    justify-content: space-between;
+    gap: 24px;
+    border-radius: 14px;
     z-index: 1000;
     border: 1px solid #ccc;
 `;
+
+export default RowButtonModal;

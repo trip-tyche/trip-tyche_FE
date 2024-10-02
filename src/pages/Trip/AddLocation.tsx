@@ -14,46 +14,57 @@ const AddLocation = () => {
         selectedImages,
         selectedLocation,
         showMap,
+        setShowMap,
+        isLoading,
         toggleImageSelection,
+        goToTripList,
         handleNextClick,
         handleLocationSelect,
-        handleSubmitClick,
         handleConfirmLocation,
     } = useAddLocation();
 
     return (
-        <div>
-            <Header title={PAGE.ADD_LOCATION} isBackButton />
+        <div css={containerStyle}>
             <div>
                 {!showMap ? (
                     <>
-                        <Button
-                            text='다음'
-                            theme='sec'
-                            size='sm'
-                            onClick={handleNextClick}
-                            disabled={selectedImages.length === 0}
-                        />
-                        <Button text='완료' theme='sec' size='sm' onClick={handleSubmitClick} />
-                        <ImageGrid
-                            displayedImages={displayedImages}
-                            selectedImages={selectedImages}
-                            toggleImageSelection={toggleImageSelection}
-                        />
+                        <Header title={PAGE.ADD_LOCATION} isBackButton />
+                        <section css={sectionStyle}>
+                            <ImageGrid
+                                displayedImages={displayedImages}
+                                selectedImages={selectedImages}
+                                toggleImageSelection={toggleImageSelection}
+                            />
+                            <div css={buttonWrapper}>
+                                <Button text='홈으로 가기' theme='pri' size='full' onClick={goToTripList} />
+                                <Button
+                                    text='지도에서 위치 선택하기'
+                                    theme='sec'
+                                    size='full'
+                                    onClick={handleNextClick}
+                                    disabled={selectedImages.length === 0}
+                                />
+                            </div>
+                        </section>
                     </>
                 ) : (
-                    <div css={containerStyle}>
-                        <div css={buttonWrapper}>
+                    <section css={sectionStyle}>
+                        <div css={mapButtonWrapper}>
                             <Button
-                                text='위치 확인'
+                                text='위치 등록하기'
                                 theme='sec'
-                                size='sm'
+                                size='full'
                                 onClick={handleConfirmLocation}
                                 disabled={!selectedLocation}
+                                isLoading={isLoading}
                             />
                         </div>
-                        <Map onLocationSelect={handleLocationSelect} defaultLocation={defaultLocation} />
-                    </div>
+                        <Map
+                            onLocationSelect={handleLocationSelect}
+                            defaultLocation={defaultLocation}
+                            setShowMap={setShowMap}
+                        />
+                    </section>
                 )}
             </div>
         </div>
@@ -63,10 +74,37 @@ const AddLocation = () => {
 const containerStyle = css`
     position: relative;
 `;
+
+const sectionStyle = css`
+    position: relative;
+    display: flex;
+    flex-direction: column;
+`;
+
 const buttonWrapper = css`
-    position: absolute;
-    right: 10px;
-    top: 10px;
+    position: fixed;
+    background-color: white;
+    border-radius: 20px 20px 0 0;
+    width: 100vw;
+    max-width: 428px;
+    bottom: 0;
+    padding: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 8px;
+`;
+
+const mapButtonWrapper = css`
+    position: fixed;
+    width: 100vw;
+    border-radius: 20px 20px 0 0;
+    max-width: 428px;
+    bottom: 0;
+    padding: 20px;
     z-index: 1000;
 `;
+
+// const mapWrapper = css`
+//     flex: 1;
+// `;
 export default AddLocation;
