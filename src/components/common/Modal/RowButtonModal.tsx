@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 
 import ButtonContainer from '@/components/common/button/ButtonContainer';
+import theme from '@/styles/theme';
 
 export interface RowButtonModalProps {
     descriptionText: string;
@@ -18,12 +19,12 @@ const RowButtonModal = ({
     closeModal,
 }: RowButtonModalProps): JSX.Element => (
     <div css={modalStyle}>
-        <p>{descriptionText}</p>
+        <h2>{descriptionText}</h2>
         <div>
             <ButtonContainer
                 confirmText={confirmText}
                 cancelText={cancelText}
-                size='sm'
+                size='full'
                 confirmModal={confirmModal}
                 closeModal={closeModal}
             />
@@ -34,12 +35,13 @@ const RowButtonModal = ({
 export default RowButtonModal;
 
 const modalStyle = css`
-    p {
-        font-size: 18px;
+    h2 {
+        font-size: ${theme.fontSizes.xxlarge_20};
+        font-weight: 600;
     }
 
     div {
-        margin: 0.5rem 0;
+        margin-top: 8px;
         display: flex;
         justify-content: center;
     }
@@ -50,13 +52,13 @@ const modalStyle = css`
     transform: translate(-50%, -50%);
 
     background-color: #fff;
-    width: 300px;
+    width: 340px;
     height: 165px;
-    padding: 2rem;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 10px;
     border-radius: 20px;
-    z-index: 10;
+    z-index: 1000;
     border: 1px solid #ccc;
 `;

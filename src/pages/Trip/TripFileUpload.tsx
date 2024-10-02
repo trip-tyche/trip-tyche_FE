@@ -1,47 +1,46 @@
 import { css } from '@emotion/react';
 import { ImageUp, Image } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/button/Button';
-import Loading from '@/components/common/Loading';
+import ModalOverlay from '@/components/common/modal/ModalOverlay';
+import RowButtonModal from '@/components/common/modal/RowButtonModal';
 import Header from '@/components/layout/Header';
 import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
-import { useFileUpload } from '@/hooks/useFileUpload';
+import { useImageUpload } from '@/hooks/useImageUpload';
+import { useModalStore } from '@/stores/useModalStore';
 
 const TripFileUpload = () => {
+    const { isModalOpen, closeModal } = useModalStore();
+
     const { imageCount, imagesWithLocation, imagesNoLocation, isLoading, handleFileUpload, uploadTripImages } =
-        useFileUpload();
+        useImageUpload();
+
     const navigate = useNavigate();
 
     const goToAddLocation = async () => {
-        try {
-            if (imagesWithLocation.length !== 0) {
-                await uploadTripImages();
-                const defaultLocation = imagesWithLocation[0].location;
-                navigate(PATH.TRIP_UPLOAD_ADD_LOCATION, { state: { defaultLocation, imagesNoLocation } });
-            }
-        } catch (error) {
-            console.error('Error post trip-images:', error);
+        closeModal();
+        if (imagesWithLocation.length) {
+            const defaultLocation = imagesWithLocation[0].location;
+            navigate(PATH.TRIP_UPLOAD_ADD_LOCATION, { state: { defaultLocation, imagesNoLocation } });
+        } else {
+            // 모든 정보가 위치가 없다면? 기본값 설정하기
         }
     };
+    const ignoreAddLocation = () => {
+        closeModal();
+        navigate(PATH.TRIP_LIST);
+    };
 
-    // if (!isLoading) {
-    //     return <Loading />;
-    // }
     return (
         <div css={containerStyle}>
             <Header title={PAGE.UPLOAD_IMAGES} isBackButton />
-
             <main css={mainStyle}>
                 <section css={sectionStyle}>
                     <h2>{TRIP_IMAGES_UPLOAD.title}</h2>
                     <div css={uploadAreaStyle}>
-                        {/* {imagesWithLocation.length > 0 && (
-                            <div css={countStyle(true)}>+ {imagesWithLocation.length}</div>
-                        )}
-                        {imagesNoLocation.length > 0 && <div css={countStyle(false)}>+ {imagesNoLocation.length}</div>} */}
                         <input
                             type='file'
                             accept='image/*'
@@ -65,12 +64,28 @@ const TripFileUpload = () => {
                         )}
                     </div>
                 </section>
-                <Button text='등록하기' theme='sec' size='full' onClick={uploadTripImages} isLoading={isLoading} />
-            </main>
 
-            {/* {imagesNoLocation.length > 0 && (
-                    <Button text='위치 넣기' theme='pri' size='sm' onClick={goToAddLocation} />
-                )} */}
+                <Button
+                    text='등록하기'
+                    theme='sec'
+                    size='full'
+                    onClick={uploadTripImages}
+                    disabled={imageCount === 0}
+                    isLoading={isLoading}
+                />
+            </main>
+            {isModalOpen && (
+                <>
+                    <ModalOverlay />
+                    <RowButtonModal
+                        descriptionText={`앗! ${imagesNoLocation.length}개의 사진이 위치 정보가 없네요..`}
+                        confirmText='위치넣기'
+                        cancelText='무시하기'
+                        confirmModal={ignoreAddLocation}
+                        closeModal={goToAddLocation}
+                    />
+                </>
+            )}
         </div>
     );
 };
@@ -93,16 +108,17 @@ const sectionStyle = css`
         font-size: 18px;
         font-weight: bold;
     }
-
     margin-bottom: 70px;
 `;
 
 const uploadAreaStyle = css`
+    height: 140px;
     border: 2px dashed #ccc;
-    border-radius: 4px;
+    border-radius: 8px;
     padding: 20px;
-    text-align: center;
-    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
 const fileInputStyle = css`

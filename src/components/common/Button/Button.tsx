@@ -20,7 +20,7 @@ const Button = ({
     isLoading = false,
     children,
 }: ButtonProps & { children?: React.ReactNode }): JSX.Element => (
-    <button css={ButtonStyle(theme, size)} onClick={onClick} disabled={isLoading}>
+    <button css={buttonStyle(theme, size)} onClick={onClick} disabled={disabled || isLoading}>
         {isLoading ? (
             <span css={spinnerStyle}>
                 <Loading type='button' />
@@ -42,7 +42,7 @@ Button.Left = ButtonLeft;
 
 export default Button;
 
-const ButtonStyle = (theme: 'pri' | 'sec', size: 'full' | 'lg' | 'sm') => css`
+const buttonStyle = (theme: 'pri' | 'sec', size: 'full' | 'lg' | 'sm') => css`
     padding: 8px 12px;
     border-radius: 10px;
     border: 0;
@@ -67,7 +67,7 @@ const ButtonStyle = (theme: 'pri' | 'sec', size: 'full' | 'lg' | 'sm') => css`
     }
 
     &:disabled {
-        opacity: 0.5;
+        opacity: 0.8;
         cursor: not-allowed;
     }
 `;

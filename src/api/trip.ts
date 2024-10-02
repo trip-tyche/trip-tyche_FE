@@ -69,7 +69,6 @@ export const postTripImages = async (tripId: string, files: File[]) => {
     files.forEach((file) => {
         formData.append('files', file);
     });
-
     try {
         const token = getToken();
         const response = await axios.post(`${apiBaseUrl}/api/trips/${tripId}/upload`, formData, {
