@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
-import { Play, Pause } from 'lucide-react';
+import { Play, Pause, ChevronUp } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { getTripMapData } from '@/api/trip';
@@ -27,6 +27,7 @@ const TimelineMap = () => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMoving, setIsMoving] = useState(false);
     const [isAtPin, setIsAtPin] = useState(true);
+    const [isTransitioning, setIsTransitioning] = useState(false);
 
     const mapRef = useRef<google.maps.Map | null>(null);
     const animationRef = useRef<number | null>(null);
@@ -39,6 +40,13 @@ const TimelineMap = () => {
     const trip = location.state;
 
     console.log(location.state);
+
+    const handleWeatherClick = useCallback(() => {
+        setIsTransitioning(true);
+        setTimeout(() => {
+            navigate('/days-images', { state: { tripId: trip.tripId } });
+        }, 300);
+    }, [navigate, trip.tripId]);
 
     useEffect(() => {
         const fetchTripMapData = async () => {
@@ -206,7 +214,7 @@ const TimelineMap = () => {
     };
 
     return (
-        <PageContainer>
+        <PageContainer isTransitioning={isTransitioning}>
             <Header title={`${trip.tripTitle}`} isBackButton onBack={() => navigate(PATH.TRIP_LIST)} />
             <MapWrapper>
                 {isLoading ? (
@@ -256,6 +264,10 @@ const TimelineMap = () => {
                                     </div>
                                 </PhotoCardOverlay>
                             )}
+                            <WeatherSection onClick={handleWeatherClick}>
+                                <div>날씨 정보 보기</div>
+                                <ChevronUp size={20} />
+                            </WeatherSection>
                         </GoogleMap>
                     </LoadScript>
                 )}
@@ -263,6 +275,24 @@ const TimelineMap = () => {
         </PageContainer>
     );
 };
+
+const WeatherSection = styled.div`
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    height: 54px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+`;
 
 const MapWrapper = styled.div`
     flex-grow: 1;
@@ -273,8 +303,8 @@ const MapWrapper = styled.div`
 
 const ControlButton = styled.button`
     position: absolute;
-    bottom: 20px;
-    right: 20px;
+    bottom: 64px;
+    right: 10px;
     background-color: white;
     border: none;
     border-radius: 50%;
@@ -291,17 +321,19 @@ const ControlButton = styled.button`
     }
 `;
 
-const PageContainer = styled.div`
+const PageContainer = styled.div<{ isTransitioning: boolean }>`
     height: 100vh;
     display: flex;
     flex-direction: column;
+    transition: transform 0.3s ease-in-out;
+    transform: ${(props) => (props.isTransitioning ? 'translateY(-100%)' : 'translateY(0)')};
 `;
 
 const LoadingWrapper = styled.div`
-    min-height: 400px;
     display: flex;
     justify-content: center;
     align-items: center;
+    height: calc(100vh - 54px);
 `;
 
 const mapContainerStyle = {

@@ -1,11 +1,54 @@
+import { useMemo } from 'react';
+
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/button/Button';
 import Header from '@/components/layout/Header';
+import DateGroupedImageList from '@/components/pages/addLocation/DateGroupedImageList';
 import ImageGrid from '@/components/pages/addLocation/ImageGrid';
 import Map from '@/components/pages/addLocation/Map';
 import { PAGE } from '@/constants/title';
 import { useAddLocation } from '@/hooks/useAddLocation';
+
+// const AddLocation = () => {
+//     const {
+//         defaultLocation,
+//         displayedImages,
+//         selectedImages,
+//         selectedLocation,
+//         showMap,
+//         setShowMap,
+//         isLoading,
+//         toggleImageSelection,
+//         goToTripList,
+//         handleNextClick,
+//         handleLocationSelect,
+//         handleConfirmLocation,
+//     } = useAddLocation();
+
+//     const filteredByDate = displayedImages.filter((image) => image.formattedDate === '2023-07-28');
+//     console.log(filteredByDate);
+
+//     return (
+//         <div css={containerStyle}>
+//             <div>
+//                 {!showMap ? (
+//                     <>
+//                         <Header title={PAGE.ADD_LOCATION} isBackButton />
+//                         <section css={sectionStyle}>
+//                             <div>
+//                                 {/* <h2>{formattedDate}</h2> */}
+//                                 <ImageGrid
+//                                     displayedImages={displayedImages}
+//                                     selectedImages={selectedImages}
+//                                     toggleImageSelection={toggleImageSelection}
+//                                 />
+//                             </div>
+
+interface ImageWithDate {
+    file: File;
+    formattedDate: string; // YYYY-MM-DD 형식
+}
 
 const AddLocation = () => {
     const {
@@ -23,6 +66,22 @@ const AddLocation = () => {
         handleConfirmLocation,
     } = useAddLocation();
 
+    const groupedImages = useMemo(() => {
+        const groups: Record<string, ImageWithDate[]> = displayedImages.reduce(
+            (acc, image) => {
+                const date = image.formattedDate;
+                if (!acc[date]) {
+                    acc[date] = [];
+                }
+                acc[date].push(image);
+                return acc;
+            },
+            {} as Record<string, ImageWithDate[]>,
+        );
+
+        return Object.entries(groups).sort(([dateA], [dateB]) => dateA.localeCompare(dateB));
+    }, [displayedImages]);
+
     return (
         <div css={containerStyle}>
             <div>
@@ -30,8 +89,8 @@ const AddLocation = () => {
                     <>
                         <Header title={PAGE.ADD_LOCATION} isBackButton />
                         <section css={sectionStyle}>
-                            <ImageGrid
-                                displayedImages={displayedImages}
+                            <DateGroupedImageList
+                                groupedImages={groupedImages}
                                 selectedImages={selectedImages}
                                 toggleImageSelection={toggleImageSelection}
                             />

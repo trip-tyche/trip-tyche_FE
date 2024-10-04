@@ -1,9 +1,19 @@
 import piexif from 'piexifjs';
 
 import { GpsData } from '@/types/image';
+// EXIF 데이터의 타입 정의
+interface ExifData {
+    '0th'?: {
+        [key: number]: any;
+    };
+    GPS?: {
+        [key: number]: any;
+    };
+    [key: string]: any;
+}
 
 // 이미지 파일을 읽고 EXIF 데이터를 추출하여 반환하는 함수
-const readExifData = (file: File) =>
+const readExifData = (file: File): Promise<ExifData | null> =>
     new Promise((resolve, reject) => {
         const reader = new FileReader();
 
@@ -73,6 +83,7 @@ const extractGpsData = (exifObj: any): GpsData | null => {
     }
 };
 
+// 이미지에서 위치 추출 함수
 export const getImageLocation = async (file: File): Promise<GpsData | null> => {
     try {
         const exifData = await readExifData(file);
@@ -125,4 +136,32 @@ export const insertExifIntoJpeg = async (file: File, exifStr: string): Promise<B
         array[i] = binary.charCodeAt(i);
     }
     return new Blob([array], { type: file.type });
+};
+
+// 이미지에서 날짜 추출
+export const extractDateFromImage = async (file: File): Promise<Date | null> => {
+    try {
+        const exifData = await readExifData(file);
+        if (!exifData || !exifData['0th']) return null;
+
+        const dateTimeOriginal = exifData['0th'][piexif.ImageIFD.DateTime];
+        if (!dateTimeOriginal) return null;
+
+        // EXIF 날짜 형식 (예: "2023:04:01 12:34:56")을 파싱
+        const [datePart, timePart] = dateTimeOriginal.split(' ');
+        const [year, month, day] = datePart.split(':');
+        const [hour, minute, second] = timePart.split(':');
+
+        return new Date(
+            parseInt(year),
+            parseInt(month) - 1, // JavaScript의 월은 0-based
+            parseInt(day),
+            parseInt(hour),
+            parseInt(minute),
+            parseInt(second),
+        );
+    } catch (error) {
+        console.error('Error extracting date from image:', error);
+        return null;
+    }
 };

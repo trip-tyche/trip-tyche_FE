@@ -7,6 +7,7 @@ import MyPage from '../pages/MyPage';
 import PageNotFound from '../pages/PageNotFound';
 import TripList from '../pages/Trip/TripList';
 import { PATH } from '@/constants/path';
+import DayImages from '@/pages/DayImages';
 import LoginRedirectPage from '@/pages/LoginRedirectPage';
 import MusicVideo from '@/pages/MusicVideo';
 import Onboarding from '@/pages/Onboarding';
@@ -62,6 +63,7 @@ export const router = createBrowserRouter([
                     { path: PATH.TRIPS_EDIT, element: <TripEdit /> },
                     { path: `${PATH.TIMELINE_MAP}/:tripId`, element: <TimelineMap /> },
                     { path: `${PATH.MUSIC_VIDEO}/:tripId/:pinPointId`, element: <MusicVideo /> },
+                    { path: PATH.DAY_IMAGES, element: <DayImages /> },
                 ],
             },
             { path: '*', element: <PageNotFound /> },

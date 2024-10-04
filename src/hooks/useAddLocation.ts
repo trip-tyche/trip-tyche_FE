@@ -8,27 +8,34 @@ import { PATH } from '@/constants/path';
 import { getUserId } from '@/utils/auth';
 import { createGpsExif, insertExifIntoJpeg, readFileAsDataURL } from '@/utils/piexif';
 
+interface ImageWithDate {
+    file: File;
+    formattedDate: string; // YYYY-MM-DD 형식
+}
+
 export const useAddLocation = () => {
-    const [displayedImages, setDisplayedImages] = useState<File[]>([]);
-    const [selectedImages, setSelectedImages] = useState<File[]>([]);
+    const [displayedImages, setDisplayedImages] = useState<ImageWithDate[]>([]);
+    const [selectedImages, setSelectedImages] = useState<ImageWithDate[]>([]);
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [showMap, setShowMap] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
-    const { defaultLocation, imagesNoLocation } = location.state;
+    const { defaultLocation, imagesNoLocation } = location.state; // 나중에 restful하게 수정하자
 
     useEffect(() => {
         setDisplayedImages(imagesNoLocation);
+        console.log(imagesNoLocation);
     }, []);
 
-    const toggleImageSelection = (image: File) => {
+    const toggleImageSelection = (image: ImageWithDate) => {
+        console.log(image);
         setSelectedImages((prev) => {
-            const isSelected = prev.some((file) => file.name === image.name);
+            const isSelected = prev.some((item) => item.file.name === image.file.name);
 
             if (isSelected) {
-                return prev.filter((file) => file.name !== image.name);
+                return prev.filter((item) => item.file.name !== image.file.name);
             } else {
                 return [...prev, image];
             }
@@ -60,21 +67,24 @@ export const useAddLocation = () => {
 
         const updatedImages = await Promise.all(
             selectedImages.map(async (image) => {
-                const exifObj = piexif.load(await readFileAsDataURL(image));
+                const exifObj = piexif.load(await readFileAsDataURL(image.file));
                 const gpsExif = createGpsExif(selectedLocation.lat, selectedLocation.lng);
 
                 const newExif = { ...exifObj, ...gpsExif };
                 const exifStr = piexif.dump(newExif);
 
-                const newImageBlob = await insertExifIntoJpeg(image, exifStr);
-                return new File([newImageBlob], image.name, { type: image.type });
+                const newImageBlob = await insertExifIntoJpeg(image.file, exifStr);
+                return {
+                    file: new File([newImageBlob], image.file.name, { type: image.file.type }),
+                    formattedDate: image.formattedDate,
+                };
             }),
         );
 
         console.log('Images with updated location:', updatedImages);
 
         const updatedDisplayedImages = displayedImages.filter(
-            (image) => !selectedImages.some((selected) => selected.name === image.name),
+            (image) => !selectedImages.some((selected) => selected.file.name === image.file.name),
         );
 
         try {
@@ -83,7 +93,10 @@ export const useAddLocation = () => {
             if (!userId) {
                 return;
             }
-            await postTripImages(userId, updatedImages);
+            await postTripImages(
+                userId,
+                updatedImages.map((img) => img.file),
+            );
         } catch (error) {
             console.error('Error post trip-images:', error);
         } finally {

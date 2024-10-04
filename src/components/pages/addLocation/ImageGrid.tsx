@@ -82,10 +82,15 @@ import { GoCheckCircleFill } from 'react-icons/go';
 
 import Loading from '@/components/common/Loading';
 
+interface ImageWithDate {
+    file: File;
+    formattedDate: string;
+}
+
 interface ImageGridProps {
-    displayedImages: File[];
-    selectedImages: File[];
-    toggleImageSelection: (image: File) => void;
+    displayedImages: ImageWithDate[];
+    selectedImages: ImageWithDate[];
+    toggleImageSelection: (image: ImageWithDate) => void;
 }
 
 const ImageGrid = ({ displayedImages, selectedImages, toggleImageSelection }: ImageGridProps): JSX.Element => {
@@ -94,7 +99,7 @@ const ImageGrid = ({ displayedImages, selectedImages, toggleImageSelection }: Im
     const [allImagesLoaded, setAllImagesLoaded] = useState(false);
 
     useEffect(() => {
-        const urls = displayedImages.map((image) => URL.createObjectURL(image));
+        const urls = displayedImages.map((image) => URL.createObjectURL(image.file));
         setImageUrls(urls);
         setLoadedImages(new Array(urls.length).fill(false));
         setAllImagesLoaded(false);
@@ -131,7 +136,7 @@ const ImageGrid = ({ displayedImages, selectedImages, toggleImageSelection }: Im
             {imageUrls.map((url, index) => (
                 <div key={url} css={imageContainerStyle} onClick={() => toggleImageSelection(displayedImages[index])}>
                     <img src={url} alt={`image-${index}`} css={imageStyle} onLoad={() => handleImageLoad(index)} />
-                    {selectedImages.some((file) => file.name === displayedImages[index].name) && (
+                    {selectedImages.some((file) => file.file.name === displayedImages[index].file.name) && (
                         <div css={selectedOverlayStyle}>
                             <GoCheckCircleFill css={checkIconStyle} />
                         </div>

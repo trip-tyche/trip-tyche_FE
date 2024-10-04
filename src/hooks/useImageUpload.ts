@@ -5,13 +5,20 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { postTripImages } from '@/api/trip';
 import { PATH } from '@/constants/path';
 import { useModalStore } from '@/stores/useModalStore';
-import { ImageWithLocation } from '@/types/image';
-import { getImageLocation } from '@/utils/piexif';
+import { ImageWithLocationAndDate } from '@/types/image';
+import { formatDateToYYYYMMDD } from '@/utils/date';
+import { getImageLocation, extractDateFromImage } from '@/utils/piexif';
+
+interface ImageWithDate {
+    file: File;
+    formattedDate: string; // YYYY-MM-DD 형식
+}
 
 export const useImageUpload = () => {
     const [imageCount, setImagesCount] = useState(0);
-    const [imagesWithLocation, setImagesWithLocation] = useState<ImageWithLocation[]>([]);
-    const [imagesNoLocation, setImagesNoLocation] = useState<File[]>([]);
+    const [imagesWithLocation, setImagesWithLocation] = useState<ImageWithLocationAndDate[]>([]);
+    const [imagesNoLocation, setImagesNoLocation] = useState<ImageWithDate[]>([]);
+    // const [imagesNoLocation, setImagesNoLocation] = useState<File[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const { openModal, closeModal } = useModalStore();
 
@@ -31,19 +38,30 @@ export const useImageUpload = () => {
             const processedImages = await Promise.all(
                 Array.from(files).map(async (file) => {
                     const location = await getImageLocation(file);
-                    // console.log(`Location for ${file.name}:`, location);
-                    return { file, location };
+                    const date = await extractDateFromImage(file);
+
+                    let formattedDate = '';
+                    if (date) {
+                        formattedDate = formatDateToYYYYMMDD(date);
+                    }
+                    return { file, formattedDate, location };
                 }),
             );
 
             // 위치 정보가 없는 이미지
-            const noLocationImages = processedImages.filter((image) => !image.location).map((image) => image.file);
+            // const noLocationImages = processedImages.filter((image) => !image.location).map((image) => image.file);
+            // const noLocationImages = processedImages.filter((image) => !image.location).map((image) => image.file);
+            const noLocationImages = processedImages
+                .filter((image) => !image.location)
+                .map(({ file, formattedDate }) => ({ file, formattedDate }));
+            setImagesNoLocation(noLocationImages);
+            console.log('위치 ⛔️:', noLocationImages);
             setImagesNoLocation(noLocationImages);
 
             // 위치 정보가 있는 이미지
             const filteredImages = processedImages.filter((image) => image.location);
             setImagesWithLocation(filteredImages);
-            console.log('Filtered images:', filteredImages);
+            console.log('위치 ✅:', filteredImages);
         } catch (error) {
             console.error('Error processing files:', error);
         }
@@ -73,9 +91,7 @@ export const useImageUpload = () => {
         imageCount,
         imagesWithLocation,
         imagesNoLocation,
-        // isModalOpen,
         openModal,
-        // closeModal,
         isLoading,
         handleFileUpload,
         uploadTripImages,
