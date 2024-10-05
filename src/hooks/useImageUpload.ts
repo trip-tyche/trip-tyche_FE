@@ -32,7 +32,6 @@ export const useImageUpload = () => {
         if (!files) {
             return;
         }
-        setImagesCount(files.length);
 
         try {
             const processedImages = await Promise.all(
@@ -65,6 +64,7 @@ export const useImageUpload = () => {
         } catch (error) {
             console.error('Error processing files:', error);
         }
+        setImagesCount(files.length);
     };
 
     const uploadTripImages = async () => {

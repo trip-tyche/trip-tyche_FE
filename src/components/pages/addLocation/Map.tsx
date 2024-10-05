@@ -172,7 +172,7 @@ const searchInputStyle = css`
 
 const autocompleteDropdownStyle = `
     .pac-container {
-        border-radius: 0 0 20px 20px;
+        border-radius: 10px;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         border: none;
         font-family: Arial, sans-serif;
@@ -181,7 +181,7 @@ const autocompleteDropdownStyle = `
         max-width: calc(428px * 0.9);
         left: 50% !important;
         transform: translateX(-50%) !important;
-        margin-top: 0px;
+        margin-top: 4px;
     }
 
     .pac-item {
