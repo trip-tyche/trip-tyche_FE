@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
-import { useParams } from 'react-router-dom';
+import { X } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { getImagesByPinPoint } from '@/api/image';
 import ImageCarousel from '@/components/ImageCarousel';
-import Header from '@/components/layout/Header';
-
+import { PATH } from '@/constants/path';
+// import Header from '@/components/layout/Header';
 interface ImageType {
     mediaFileId: string;
     mediaLink: string;
@@ -16,7 +17,7 @@ const MusicVideo = () => {
     const [displayedImages, setDisplayedImages] = useState<ImageType[]>([]);
     const { tripId, pinPointId } = useParams<{ tripId: string; pinPointId: string }>();
 
-    const tripTitle = localStorage.getItem('tripTitle');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPinPointImages = async () => {
@@ -37,7 +38,10 @@ const MusicVideo = () => {
 
     return (
         <div css={containerStyle}>
-            {tripTitle && <Header title={tripTitle} isBackButton />}
+            <div css={backStyle} onClick={() => navigate(`${PATH.TIMELINE_MAP}/${tripId}`)}>
+                <X size={24} color='#FDFDFD' />
+            </div>
+            {/* {tripTitle && <Header title={tripTitle} isBackButton />} */}
             <div css={carouselWrapper}>
                 <ImageCarousel images={displayedImages} />
             </div>
@@ -46,7 +50,16 @@ const MusicVideo = () => {
 };
 
 const containerStyle = css`
+    position: relative;
     height: 100vh;
+`;
+
+const backStyle = css`
+    position: absolute;
+    cursor: pointer;
+    top: 15px;
+    right: 15px;
+    z-index: 1000;
 `;
 
 const carouselWrapper = css`

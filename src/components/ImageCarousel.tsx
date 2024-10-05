@@ -19,14 +19,13 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
 
     const settings = {
         className: 'center',
-        centerMode: true,
-        infinite: true,
-        centerPadding: '60px',
+        // centerMode: true,
+        infinite: false,
         slidesToShow: 1,
         speed: 500,
         focusOnSelect: true,
         autoplay: true,
-        autoplaySpeed: 1500,
+        autoplaySpeed: 1000,
         pauseOnHover: true,
         dots: false,
         arrows: false,
@@ -52,7 +51,8 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
 
 const carouselStyle = css`
     width: 100%;
-    height: calc(100vh - 54px);
+    /* height: calc(100vh - 54px); */
+    height: 100vh;
     background-color: #090909;
     cursor: pointer;
 `;
@@ -76,7 +76,8 @@ const imageWrapper = css`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 54px);
+    /* height: calc(100vh - 54px); */
+    height: 100vh;
 `;
 
 const imageStyle = css`
