@@ -1,12 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-import { getPinPointImages } from '@/api/image';
+import { getImagesByPinPoint } from '@/api/image';
 import ImageCarousel from '@/components/ImageCarousel';
 import Header from '@/components/layout/Header';
-import { PAGE } from '@/constants/title';
 
 interface ImageType {
     mediaFileId: string;
@@ -16,10 +15,8 @@ interface ImageType {
 const MusicVideo = () => {
     const [displayedImages, setDisplayedImages] = useState<ImageType[]>([]);
     const { tripId, pinPointId } = useParams<{ tripId: string; pinPointId: string }>();
-    const imagesUrl: string[] = [];
 
-    const location = useLocation();
-    const tripTitle = location.state;
+    const tripTitle = localStorage.getItem('tripTitle');
 
     useEffect(() => {
         const fetchPinPointImages = async () => {
@@ -27,8 +24,7 @@ const MusicVideo = () => {
                 if (!(tripId && pinPointId)) {
                     return;
                 }
-                const data = await getPinPointImages(tripId, pinPointId);
-                console.log(data);
+                const data = await getImagesByPinPoint(tripId, pinPointId);
                 const { images } = data.firstImage;
                 setDisplayedImages(images);
             } catch (error) {
@@ -37,38 +33,26 @@ const MusicVideo = () => {
         };
 
         fetchPinPointImages();
-    }, []);
+    }, [tripId, pinPointId]);
 
-    // console.log(displayedImages);
-
-    const images = displayedImages.map((image) => imagesUrl.push(image.mediaLink));
-    console.log(imagesUrl);
     return (
-        <div>
-            <Header title={tripTitle} isBackButton />
-
-            {/* <div>
-                {displayedImages?.map((image: ImageType) => (
-                    <div key={image.mediaFileId} css={imageContainerStyle}>
-                        <img src={image.mediaLink} alt={`image`} css={imageStyle} />
-                    </div>
-                ))}
-            </div> */}
+        <div css={containerStyle}>
+            {tripTitle && <Header title={tripTitle} isBackButton />}
             <div css={carouselWrapper}>
-                <ImageCarousel images={imagesUrl || undefined} />
+                <ImageCarousel images={displayedImages} />
             </div>
         </div>
     );
 };
 
-const carouselWrapper = css`
+const containerStyle = css`
     height: 100vh;
 `;
 
-const imageStyle = css`
-    width: 100%;
-    height: 100%;
-    /* object-fit: cover; */
+const carouselWrapper = css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `;
 
 export default MusicVideo;

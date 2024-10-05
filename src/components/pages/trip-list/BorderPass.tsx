@@ -45,7 +45,14 @@ const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.
     };
     return (
         <div css={borderPassContainer}>
-            <div css={borderPassContent} onClick={() => navigate(`${PATH.TIMELINE_MAP}/${tripId}`, { state: trip })}>
+            <div
+                css={borderPassContent}
+                onClick={() =>
+                    navigate(`${PATH.TIMELINE_MAP}/${tripId}`, {
+                        state: { tripId: trip.tripId, tripTitle: trip.tripTitle },
+                    })
+                }
+            >
                 <div css={borderPassLeft}>
                     <div css={countryName}>{country}</div>
                     <img src={characterImg} alt='character' css={characterImage} />

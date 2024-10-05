@@ -11,13 +11,24 @@ import Loading from '@/components/common/Loading';
 import Header from '@/components/layout/Header';
 import { ENV } from '@/constants/auth';
 import { PATH } from '@/constants/path';
+import theme from '@/styles/theme';
 import { PinPoint } from '@/types/trip';
+import { formatDateToKorean, getDayNumber } from '@/utils/date';
 
 const MOVE_DURATION = 3000;
 const WAIT_DURATION = 2000;
 
+interface TripInfo {
+    country: string;
+    endDate: string;
+    hashtags: null;
+    startDate: string;
+    tripId: string;
+    tripTitle: string;
+}
+
 const TimelineMap = () => {
-    const [tripInfo, setTripInfo] = useState();
+    const [tripInfo, setTripInfo] = useState<TripInfo>();
     const [pinPoints, setPinPoints] = useState<PinPoint[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [mapsApiLoaded, setMapsApiLoaded] = useState(false);
@@ -29,6 +40,8 @@ const TimelineMap = () => {
     const [isAtPin, setIsAtPin] = useState(true);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [mediaFiles, setMediaFiles] = useState();
+    const [currentDate, setCurrentDate] = useState<string>();
+    const [currentDay, setCurrentDay] = useState<string>();
 
     const mapRef = useRef<google.maps.Map | null>(null);
     const animationRef = useRef<number | null>(null);
@@ -38,20 +51,35 @@ const TimelineMap = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const trip = location.state;
 
-    const handleWeatherClick = useCallback(() => {
+    useEffect(() => {
+        if (localStorage.getItem('tripId') === 'undefined') {
+            localStorage.setItem('tripId', location.state.tripId);
+        }
+
+        if (localStorage.getItem('tripTitle') === 'undefined') {
+            localStorage.setItem('tripTitle', location.state.tripTitle);
+        }
+    }, []);
+
+    const tripId = localStorage.getItem('tripId');
+    const tripTitle = localStorage.getItem('tripTitle');
+
+    const handleDayClick = useCallback(() => {
         setIsTransitioning(true);
         setTimeout(() => {
-            navigate('/days-images', { state: { tripId: trip.tripId, mediaFiles } });
+            navigate('/days-images', { state: { tripId, currentDate } });
         }, 300);
-    }, [navigate, trip.tripId, mediaFiles]);
+    }, [navigate, tripId, currentDate]);
 
     useEffect(() => {
         const fetchTripMapData = async () => {
             try {
+                if (!tripId) {
+                    return;
+                }
                 setIsLoading(true);
-                const data = await getTripMapData(trip.tripId);
+                const data = await getTripMapData(tripId);
                 setTripInfo(data.tripInfo);
                 setMediaFiles(data.mediaFiles);
                 if (data.pinPoints.length === 0) {
@@ -84,7 +112,7 @@ const TimelineMap = () => {
                 clearTimeout(autoPlayTimeoutRef.current);
             }
         };
-    }, [trip.tripId, navigate]);
+    }, [tripId, navigate]);
 
     const moveCharacter = useCallback(() => {
         if (currentPinIndex >= pinPoints.length - 1) {
@@ -136,7 +164,13 @@ const TimelineMap = () => {
         if (isPlaying && !isMoving) {
             moveCharacter();
         }
-    }, [isPlaying, isMoving, moveCharacter]);
+
+        if (!(pinPoints && tripInfo)) {
+            return;
+        }
+        setCurrentDate(pinPoints[currentPinIndex].recordDate);
+        setCurrentDay(getDayNumber(currentDate as string, tripInfo.startDate));
+    }, [isPlaying, isMoving, moveCharacter, pinPoints, currentPinIndex, tripInfo, currentDate]);
 
     useEffect(
         () => () => {
@@ -215,7 +249,7 @@ const TimelineMap = () => {
 
     return (
         <PageContainer isTransitioning={isTransitioning}>
-            <Header title={`${trip.tripTitle}`} isBackButton onBack={() => navigate(PATH.TRIP_LIST)} />
+            <Header title={`${tripTitle}`} isBackButton onBack={() => navigate(PATH.TRIP_LIST)} />
             <MapWrapper>
                 {isLoading ? (
                     <LoadingWrapper>
@@ -250,10 +284,7 @@ const TimelineMap = () => {
                                     <div
                                         css={photoCardStyle}
                                         onClick={() =>
-                                            navigate(
-                                                `/music-video/${trip.tripId}/${pinPoints[currentPinIndex].pinPointId}`,
-                                                { state: trip.tripTitle },
-                                            )
+                                            navigate(`/music-video/${tripId}/${pinPoints[currentPinIndex].pinPointId}`)
                                         }
                                     >
                                         <img
@@ -264,10 +295,13 @@ const TimelineMap = () => {
                                     </div>
                                 </PhotoCardOverlay>
                             )}
-                            <WeatherSection onClick={handleWeatherClick}>
-                                <div>날씨 정보 보기</div>
+                            <DaySection onClick={handleDayClick}>
+                                <div css={dayInfoTextStyle}>
+                                    <h2>{currentDay}</h2>
+                                    <p>{currentDate && formatDateToKorean(currentDate)}</p>
+                                </div>
                                 <ChevronUp size={20} />
-                            </WeatherSection>
+                            </DaySection>
                         </GoogleMap>
                     </LoadScript>
                 )}
@@ -276,22 +310,38 @@ const TimelineMap = () => {
     );
 };
 
-const WeatherSection = styled.div`
+const DaySection = styled.div`
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: white;
-    height: 54px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
-    font-size: 16px;
-    color: #333;
     cursor: pointer;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
+    height: ${theme.heights.xtall_60};
+    background-color: ${theme.colors.white};
+`;
+
+const dayInfoTextStyle = css`
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    h2 {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    p {
+        font-size: 14px;
+        color: ${theme.colors.darkGray};
+        margin: 0;
+    }
 `;
 
 const MapWrapper = styled.div`
@@ -446,15 +496,15 @@ export default TimelineMap;
 //     const handleWeatherClick = useCallback(() => {
 //         setIsTransitioning(true);
 //         setTimeout(() => {
-//             navigate('/days-images', { state: { tripId: trip.tripId } });
+//             navigate('/days-images', { state: { tripId: tripId } });
 //         }, 300);
-//     }, [navigate, trip.tripId]);
+//     }, [navigate, tripId]);
 
 //     useEffect(() => {
 //         const fetchTripMapData = async () => {
 //             try {
 //                 setIsLoading(true);
-//                 const data = await getTripMapData(trip.tripId);
+//                 const data = await getTripMapData(tripId);
 //                 setTripInfo(data.tripInfo);
 //                 if (data.mediaFiles.length === 0) {
 //                     navigate(PATH.TRIP_LIST);
@@ -486,7 +536,7 @@ export default TimelineMap;
 //                 clearTimeout(autoPlayTimeoutRef.current);
 //             }
 //         };
-//     }, [trip.tripId, navigate]);
+//     }, [tripId, navigate]);
 
 //     const moveCharacter = useCallback(() => {
 //         if (currentMediaIndex >= mediaFiles.length - 1 || showClustering) {
@@ -673,7 +723,7 @@ export default TimelineMap;
 //                                         css={photoCardStyle}
 //                                         onClick={() =>
 //                                             navigate(
-//                                                 `/music-video/${trip.tripId}/${mediaFiles[currentMediaIndex].mediaFileId}`,
+//                                                 `/music-video/${tripId}/${mediaFiles[currentMediaIndex].mediaFileId}`,
 //                                                 { state: trip.tripTitle },
 //                                             )
 //                                         }
