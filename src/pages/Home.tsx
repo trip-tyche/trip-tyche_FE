@@ -41,7 +41,7 @@ const Home = (): JSX.Element => {
             if (!userNickName) {
                 openModal();
             } else {
-                console.log(userNickName, trips, pinPoints);
+                // console.log(userNickName, trips, pinPoints);
                 setUserNickName(userNickName);
                 setUserTrips(trips);
                 setPinPoints(pinPoints);

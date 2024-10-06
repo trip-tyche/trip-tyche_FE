@@ -26,12 +26,14 @@ const TripList = (): JSX.Element => {
         const fetchTripList = async () => {
             try {
                 const tripList = await getTripList();
-                if (!tripList) {
+                console.log(tripList);
+
+                if (typeof tripList !== 'object') {
                     navigate(PATH.LOGIN);
                     localStorage.clear();
                     return;
                 }
-                // console.log(tripList);
+
                 if (!tripList) {
                     return;
                 }

@@ -1,4 +1,3 @@
-import heic2any from 'heic2any';
 import piexif from 'piexifjs';
 
 import { GpsData } from '@/types/image';
@@ -13,51 +12,9 @@ interface ExifData {
     [key: string]: any;
 }
 
-export const isHEIC = (file: File): boolean => file.type === 'image/heic' || file.name.toUpperCase().endsWith('.heic');
-
-export const convertHEICToJPEG = async (file: File): Promise<File> => {
-    try {
-        const blob = await heic2any({
-            blob: file,
-            toType: 'image/jpeg',
-            quality: 0.8,
-        });
-        return new File([blob as Blob], file.name.replace(/\.heic$/i, '.jpg'), { type: 'image/jpeg' });
-    } catch (error) {
-        console.error('Error converting HEIC to JPEG:', error);
-        throw error;
-    }
-};
-
 // 이미지 파일을 읽고 EXIF 데이터를 추출하여 반환하는 함수
-// const readExifData = (file: File): Promise<ExifData | null> =>
-//     new Promise((resolve, reject) => {
-//         const reader = new FileReader();
-
-//         reader.onload = (e: ProgressEvent<FileReader>) => {
-//             const result = e.target?.result;
-
-//             if (typeof result === 'string') {
-//                 try {
-//                     const exif = piexif.load(result);
-//                     resolve(exif);
-//                 } catch (error) {
-//                     resolve(null);
-//                 }
-//             } else {
-//                 reject(new Error('Failed to read image file as string'));
-//             }
-//         };
-
-//         reader.readAsDataURL(file); // 파일을 Base64로 변환한 데이터를 읽는 방식
-//         reader.onerror = (error) => reject(error);
-//     });
-export const readExifData = async (file: File): Promise<ExifData | null> => {
-    if (isHEIC(file)) {
-        file = await convertHEICToJPEG(file);
-    }
-
-    return new Promise((resolve, reject) => {
+const readExifData = (file: File): Promise<ExifData | null> =>
+    new Promise((resolve, reject) => {
         const reader = new FileReader();
 
         reader.onload = (e: ProgressEvent<FileReader>) => {
@@ -68,7 +25,6 @@ export const readExifData = async (file: File): Promise<ExifData | null> => {
                     const exif = piexif.load(result);
                     resolve(exif);
                 } catch (error) {
-                    console.error('Error loading EXIF data:', error);
                     resolve(null);
                 }
             } else {
@@ -76,10 +32,37 @@ export const readExifData = async (file: File): Promise<ExifData | null> => {
             }
         };
 
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file); // 파일을 Base64로 변환한 데이터를 읽는 방식
         reader.onerror = (error) => reject(error);
     });
-};
+// export const readExifData = async (file: File): Promise<ExifData | null> => {
+//     if (isHEIC(file)) {
+//         file = await convertHEICToJPEG(file);
+//     }
+
+//     return new Promise((resolve, reject) => {
+//         const reader = new FileReader();
+
+//         reader.onload = (e: ProgressEvent<FileReader>) => {
+//             const result = e.target?.result;
+
+//             if (typeof result === 'string') {
+//                 try {
+//                     const exif = piexif.load(result);
+//                     resolve(exif);
+//                 } catch (error) {
+//                     console.error('Error loading EXIF data:', error);
+//                     resolve(null);
+//                 }
+//             } else {
+//                 reject(new Error('Failed to read image file as string'));
+//             }
+//         };
+
+//         reader.readAsDataURL(file);
+//         reader.onerror = (error) => reject(error);
+//     });
+// };
 
 // DMS (도, 분, 초) 형식의 GPS 데이터를 DD (십진수) 형식으로 변환하는 함수
 const convertDMSToDD = (degrees: number, minutes: number, seconds: number, direction: string): number => {

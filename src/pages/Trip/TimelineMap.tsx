@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { GoogleMap, Marker, useLoadScript } from '@react-google-maps/api';
+import { GoogleMap, Marker, useLoadScript, OverlayView } from '@react-google-maps/api';
 import { Play, Pause, ChevronUp } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -18,6 +18,10 @@ import { formatDateToKorean, getDayNumber } from '@/utils/date';
 const MOVE_DURATION = 3000;
 const WAIT_DURATION = 2000;
 
+const PHOTO_CARD_WIDTH = 150;
+const PHOTO_CARD_HEIGHT = 150;
+const MARKER_HEIGHT = 24; // SVG 마커의 높이
+
 const TimelineMap: React.FC = () => {
     const [tripInfo, setTripInfo] = useState<TripInfo | null>(null);
     const [pinPoints, setPinPoints] = useState<PinPoint[]>([]);
@@ -31,6 +35,7 @@ const TimelineMap: React.FC = () => {
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [currentDate, setCurrentDate] = useState<string | undefined>();
     const [currentDay, setCurrentDay] = useState<string | undefined>();
+    const [photoCardPosition, setPhotoCardPosition] = useState<google.maps.LatLngLiteral | null>(null);
 
     const mapRef = useRef<google.maps.Map | null>(null);
     const animationRef = useRef<number | null>(null);
@@ -42,7 +47,7 @@ const TimelineMap: React.FC = () => {
 
     const tripId = localStorage.getItem('tripId');
     const tripTitle = localStorage.getItem('tripTitle');
-    console.log(currentDate, currentDay);
+
     useEffect(() => {
         if (!tripId || tripId === 'undefined') {
             const newTripId = location.state?.tripId;
@@ -172,6 +177,12 @@ const TimelineMap: React.FC = () => {
         }
     }, [currentPinIndex, pinPoints, tripInfo]);
 
+    useEffect(() => {
+        if (characterPosition) {
+            setPhotoCardPosition(characterPosition);
+        }
+    }, [characterPosition]);
+
     const handleDayClick = useCallback(() => {
         setIsTransitioning(true);
         setTimeout(() => {
@@ -263,7 +274,7 @@ const TimelineMap: React.FC = () => {
                     <GoogleMap
                         mapContainerStyle={mapContainerStyle}
                         center={characterPosition || undefined}
-                        zoom={15}
+                        zoom={14}
                         options={mapOptions}
                         onLoad={(map) => {
                             mapRef.current = map;
@@ -282,8 +293,15 @@ const TimelineMap: React.FC = () => {
                         {isAtPin && (
                             <ControlButton onClick={togglePlayPause}>{isPlaying ? <Pause /> : <Play />}</ControlButton>
                         )}
-                        {showPhotoCard && currentPinIndex < pinPoints.length && (
-                            <PhotoCardOverlay>
+                        {showPhotoCard && photoCardPosition && currentPinIndex < pinPoints.length && (
+                            <OverlayView
+                                position={photoCardPosition}
+                                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                                getPixelPositionOffset={(width, height) => ({
+                                    x: -(PHOTO_CARD_WIDTH / 2),
+                                    y: -(PHOTO_CARD_HEIGHT + MARKER_HEIGHT + 10), // 10은 마커와 카드 사이의 간격
+                                })}
+                            >
                                 <div
                                     css={photoCardStyle}
                                     onClick={() =>
@@ -292,7 +310,7 @@ const TimelineMap: React.FC = () => {
                                 >
                                     <img css={imageStyle} src={pinPoints[currentPinIndex].mediaLink} alt='photo-card' />
                                 </div>
-                            </PhotoCardOverlay>
+                            </OverlayView>
                         )}
                         <DaySection onClick={handleDayClick}>
                             <div css={dayInfoTextStyle}>
@@ -388,18 +406,11 @@ const mapContainerStyle = {
     width: '100%',
 };
 
-const PhotoCardOverlay = styled.div`
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 1000;
-`;
-
 const photoCardStyle = css`
     background-color: white;
     border-radius: 8px;
-    width: 150px;
-    aspect-ratio: 1;
+    width: ${PHOTO_CARD_WIDTH}px;
+    height: ${PHOTO_CARD_HEIGHT}px;
     padding: 4px;
     display: flex;
     align-items: center;

@@ -19,13 +19,13 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
 
     const settings = {
         className: 'center',
-        // centerMode: true,
-        infinite: false,
+        centerMode: true,
+        infinite: true,
         slidesToShow: 1,
-        speed: 500,
+        speed: 1000,
         focusOnSelect: true,
         autoplay: true,
-        autoplaySpeed: 1000,
+        autoplaySpeed: 500,
         pauseOnHover: true,
         dots: false,
         arrows: false,

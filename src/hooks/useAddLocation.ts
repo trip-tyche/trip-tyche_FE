@@ -26,11 +26,9 @@ export const useAddLocation = () => {
 
     useEffect(() => {
         setDisplayedImages(imagesNoLocation);
-        console.log(imagesNoLocation);
     }, []);
 
     const toggleImageSelection = (image: ImageWithDate) => {
-        console.log(image);
         setSelectedImages((prev) => {
             const isSelected = prev.some((item) => item.file.name === image.file.name);
 

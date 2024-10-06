@@ -15,8 +15,15 @@ import { useModalStore } from '@/stores/useModalStore';
 const TripFileUpload = () => {
     const { isModalOpen, closeModal } = useModalStore();
 
-    const { imageCount, imagesWithLocation, imagesNoLocation, isLoading, handleFileUpload, uploadTripImages } =
-        useImageUpload();
+    const {
+        imageCount,
+        imagesWithLocation,
+        noDateImagesCount,
+        imagesNoLocation,
+        isLoading,
+        handleFileUpload,
+        uploadTripImages,
+    } = useImageUpload();
 
     const navigate = useNavigate();
 
@@ -78,11 +85,12 @@ const TripFileUpload = () => {
                 <>
                     <ModalOverlay />
                     <RowButtonModal
-                        descriptionText={`앗! ${imagesNoLocation.length}개의 사진이 위치 정보가 없어요..`}
                         confirmText='직접 위치넣기'
                         cancelText='나중에'
                         confirmModal={ignoreAddLocation}
                         closeModal={goToAddLocation}
+                        noDateImagesCount={noDateImagesCount}
+                        imagesNoLocationCount={imagesNoLocation.length}
                     />
                 </>
             )}

@@ -35,7 +35,7 @@ const DateGroupedImageList: React.FC<DateGroupedImageListProps> = ({
 
 const listContainerStyle = css`
     overflow-y: auto;
-    max-height: calc(100vh - 200px); // 적절한 높이로 조정하세요
+    max-height: calc(100vh - 60px);
 `;
 
 const dateGroupStyle = css`

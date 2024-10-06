@@ -43,7 +43,8 @@ const DaysImages: React.FC = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const { tripId } = location.state as { tripId: string };
+    // const { tripId } = location.state as { tripId: string };
+    const tripId = localStorage.getItem('tripId');
 
     const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -56,6 +57,9 @@ const DaysImages: React.FC = () => {
     // 여행정보(시작일, 종료일)
     useEffect(() => {
         const fetchTripInfo = async () => {
+            if (!tripId) {
+                return;
+            }
             const data = await getTripMapData(tripId);
             const { tripInfo } = data;
             setStartDate(tripInfo.startDate);
@@ -207,7 +211,7 @@ const MainContent = styled.div`
     flex: 1;
     display: flex;
     flex-direction: column;
-    background-color: #333;
+    background-color: #090909;
     overflow-y: auto;
 `;
 
@@ -294,6 +298,7 @@ const ImageItem = styled.div`
         width: 100%;
         border-radius: 4px;
     }
+    margin-bottom: 30px;
 `;
 
 export default DaysImages;

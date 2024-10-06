@@ -5,7 +5,6 @@ import { css } from '@emotion/react';
 import Button from '@/components/common/button/Button';
 import Header from '@/components/layout/Header';
 import DateGroupedImageList from '@/components/pages/addLocation/DateGroupedImageList';
-import ImageGrid from '@/components/pages/addLocation/ImageGrid';
 import Map from '@/components/pages/addLocation/Map';
 import { PAGE } from '@/constants/title';
 import { useAddLocation } from '@/hooks/useAddLocation';
@@ -86,26 +85,23 @@ const AddLocation = () => {
         <div css={containerStyle}>
             <div>
                 {!showMap ? (
-                    <>
-                        <Header title={PAGE.ADD_LOCATION} isBackButton />
-                        <section css={sectionStyle}>
-                            <DateGroupedImageList
-                                groupedImages={groupedImages}
-                                selectedImages={selectedImages}
-                                toggleImageSelection={toggleImageSelection}
+                    <section css={sectionStyle}>
+                        <DateGroupedImageList
+                            groupedImages={groupedImages}
+                            selectedImages={selectedImages}
+                            toggleImageSelection={toggleImageSelection}
+                        />
+                        <div css={buttonWrapper}>
+                            <Button text='홈으로 가기' theme='pri' size='full' onClick={goToTripList} />
+                            <Button
+                                text='지도에서 위치 선택하기'
+                                theme='sec'
+                                size='full'
+                                onClick={handleNextClick}
+                                disabled={selectedImages.length === 0}
                             />
-                            <div css={buttonWrapper}>
-                                <Button text='홈으로 가기' theme='pri' size='full' onClick={goToTripList} />
-                                <Button
-                                    text='지도에서 위치 선택하기'
-                                    theme='sec'
-                                    size='full'
-                                    onClick={handleNextClick}
-                                    disabled={selectedImages.length === 0}
-                                />
-                            </div>
-                        </section>
-                    </>
+                        </div>
+                    </section>
                 ) : (
                     <section css={sectionStyle}>
                         <div css={mapButtonWrapper}>
@@ -163,7 +159,4 @@ const mapButtonWrapper = css`
     z-index: 1000;
 `;
 
-// const mapWrapper = css`
-//     flex: 1;
-// `;
 export default AddLocation;

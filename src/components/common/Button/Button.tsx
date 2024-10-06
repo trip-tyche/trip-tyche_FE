@@ -55,7 +55,7 @@ const buttonStyle = (theme: 'pri' | 'sec', size: 'full' | 'lg' | 'sm') => css`
     transition: all 0.2s ease;
 
     color: ${theme === 'pri' ? '#333' : '#fff'};
-    background-color: ${theme === 'pri' ? '#fff' : '#333'};
+    background-color: ${theme === 'pri' ? '#fff' : '#0073bb'};
 
     &:active {
         transform: scale(0.97);
