@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { postTripImages } from '@/api/trip';
 import { PATH } from '@/constants/path';
+import { useToastStore } from '@/stores/useToastStore';
 import { getUserId } from '@/utils/auth';
 import { createGpsExif, insertExifIntoJpeg, readFileAsDataURL } from '@/utils/piexif';
 
@@ -20,11 +21,18 @@ export const useAddLocation = () => {
     const [showMap, setShowMap] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
+    const { showToast } = useToastStore();
+
     const navigate = useNavigate();
     const location = useLocation();
     const { defaultLocation, imagesNoLocation } = location.state; // 나중에 restful하게 수정하자
 
     useEffect(() => {
+        if (imagesNoLocation.length === 0) {
+            showToast('모든 사진의 위치 정보가 없습니다.');
+            navigate(PATH.TRIP_LIST, { state: { toastMessage: '모든 사진의 위치 정보가 없습니다.' } });
+            return;
+        }
         setDisplayedImages(imagesNoLocation);
     }, []);
 

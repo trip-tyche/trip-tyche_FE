@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
@@ -10,17 +10,18 @@ import characterImg from '@/assets/images/character.png';
 import ColumnButtonModal from '@/components/common/modal/ColumnButtonModal';
 import ModalOverlay from '@/components/common/modal/ModalOverlay';
 import { PATH } from '@/constants/path';
-import { useModalStore } from '@/stores/useModalStore';
 import { FormattedTripDate } from '@/types/trip';
 
 interface BorderPassProps {
     trip: FormattedTripDate;
     userNickname: string;
     setTripCount: Dispatch<SetStateAction<number>>;
+    setIsDelete: Dispatch<SetStateAction<boolean>>;
 }
 
-const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.Element => {
-    const { isModalOpen, openModal, closeModal } = useModalStore();
+const BorderPass = ({ trip, userNickname, setTripCount, setIsDelete }: BorderPassProps): JSX.Element => {
+    // const { isModalOpen, openModal, closeModal } = useModalStore();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const navigate = useNavigate();
 
@@ -33,10 +34,14 @@ const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.
     const handleDelete = async () => {
         try {
             await deleteTripInfo(tripId);
-            closeModal();
+            setIsModalOpen(false);
+            setIsDelete(true);
             setTripCount((prev: number) => prev - 1);
         } catch (error) {
             console.error('Error delete trip:', error);
+            setIsModalOpen(false);
+        } finally {
+            setIsModalOpen(false);
         }
     };
 
@@ -89,7 +94,7 @@ const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.
                 <button css={editButton} onClick={handleEdit}>
                     <FaPencilAlt /> Edit
                 </button>
-                <button css={deleteButton} onClick={openModal}>
+                <button css={deleteButton} onClick={() => setIsModalOpen(true)}>
                     <FaTrashAlt /> Delete
                 </button>
                 <button css={uploadButton} onClick={goToUpload}>
@@ -99,14 +104,14 @@ const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.
 
             {isModalOpen && (
                 <>
-                    <ModalOverlay closeModal={closeModal} />
+                    <ModalOverlay closeModal={() => setIsModalOpen(false)} />
                     <ColumnButtonModal
                         title='정말 삭제하시겠습니까?'
                         message='삭제 후, 여행 정보는 다시 복구할 수 없습니다.'
                         confirmText='삭제하기'
                         cancelText='취소'
                         confirmModal={handleDelete}
-                        closeModal={closeModal}
+                        closeModal={() => setIsModalOpen(false)}
                     />
                 </>
             )}

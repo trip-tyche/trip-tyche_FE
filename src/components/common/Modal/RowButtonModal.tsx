@@ -61,6 +61,7 @@ const noDataContainer = css`
         font-size: 12px;
         color: #666;
         font-weight: 600;
+        text-decoration: underline;
     }
 `;
 const noDataTextStyle = css`
@@ -102,7 +103,7 @@ const modalStyle = css`
 
     background-color: #fff;
     width: 360px;
-    padding: 20px;
+    padding: 14px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

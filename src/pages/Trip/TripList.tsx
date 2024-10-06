@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { getTripList } from '@/api/trip';
 import Button from '@/components/common/button/Button';
+import Toast from '@/components/common/Toast';
 import Header from '@/components/layout/Header';
 import Navbar from '@/components/layout/Navbar';
 import BorderPass from '@/components/pages/trip-list/BorderPass';
@@ -19,6 +20,7 @@ const TripList = (): JSX.Element => {
     const [userNickname, setUserNickname] = useState<string>('');
     const [tripList, setTripList] = useState<Trip[]>([]);
     const [tripCount, setTripCount] = useState(0);
+    const [isDelete, setIsDelete] = useState(false);
 
     const navigate = useNavigate();
 
@@ -41,6 +43,7 @@ const TripList = (): JSX.Element => {
                 setUserNickname(tripList.userNickName);
                 setTripList(tripList.trips);
                 setTripCount(tripList.trips?.length);
+                setIsDelete(false);
             } catch (error) {
                 console.error('Error fetching trip-list data:', error);
             }
@@ -50,7 +53,7 @@ const TripList = (): JSX.Element => {
         localStorage.removeItem('tripTitle');
 
         fetchTripList();
-    }, []);
+    }, [isDelete]);
 
     return (
         <div css={containerStyle}>
@@ -70,6 +73,7 @@ const TripList = (): JSX.Element => {
                                 trip={trip}
                                 userNickname={userNickname}
                                 setTripCount={setTripCount}
+                                setIsDelete={setIsDelete}
                             />
                         ))}
                     </div>
@@ -78,6 +82,7 @@ const TripList = (): JSX.Element => {
                 )}
             </main>
             <Navbar />
+            <Toast />
         </div>
     );
 };

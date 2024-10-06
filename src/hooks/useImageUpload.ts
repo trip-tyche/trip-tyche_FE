@@ -21,6 +21,7 @@ export const useImageUpload = () => {
     const [noDateImagesCount, setNoDateImagesCount] = useState(0);
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
     const { openModal, closeModal } = useModalStore();
 
     const navigate = useNavigate();
@@ -35,6 +36,7 @@ export const useImageUpload = () => {
         }
 
         try {
+            setIsLoading(true);
             const processedImages = await Promise.all(
                 Array.from(files).map(async (file) => {
                     const location = await getImageLocation(file);
@@ -70,6 +72,7 @@ export const useImageUpload = () => {
             console.log('위치 ⛔️:', noLocationImages);
 
             setImagesCount(files.length);
+            setIsLoading(false);
         } catch (error) {
             console.error('Error processing files:', error);
         }
@@ -77,7 +80,7 @@ export const useImageUpload = () => {
 
     const uploadTripImages = async () => {
         try {
-            setIsLoading(true);
+            setIsUploading(true);
             const images = imagesWithLocation.map((image) => image.file);
             if (images.length) {
                 await postTripImages(tripId, images);
@@ -90,9 +93,9 @@ export const useImageUpload = () => {
             navigate(PATH.TRIP_LIST);
         } catch (error) {
             console.error('Error post trip-images:', error);
-            setIsLoading(false);
+            setIsUploading(false);
         } finally {
-            setIsLoading(false);
+            setIsUploading(false);
         }
     };
 
@@ -103,6 +106,7 @@ export const useImageUpload = () => {
         noDateImagesCount,
         openModal,
         isLoading,
+        isUploading,
         handleFileUpload,
         uploadTripImages,
     };

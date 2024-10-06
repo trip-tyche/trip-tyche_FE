@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import { ImageUp, Image } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import loadingImage from '@/assets/images/flightLoading5.gif';
 import Button from '@/components/common/button/Button';
 import ModalOverlay from '@/components/common/modal/ModalOverlay';
 import RowButtonModal from '@/components/common/modal/RowButtonModal';
@@ -21,6 +22,7 @@ const TripFileUpload = () => {
         noDateImagesCount,
         imagesNoLocation,
         isLoading,
+        isUploading,
         handleFileUpload,
         uploadTripImages,
     } = useImageUpload();
@@ -94,9 +96,43 @@ const TripFileUpload = () => {
                     />
                 </>
             )}
+            {isUploading && (
+                <>
+                    <ModalOverlay />
+                    <div css={modalStyle}>
+                        <img src={loadingImage} />
+                        <p>추억의 조각들을 저장 중입니다.</p>
+                    </div>
+                </>
+            )}
         </div>
     );
 };
+
+const modalStyle = css`
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background-color: #fff;
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 14px;
+    z-index: 1000;
+    border: 2px solid #ccc;
+    overflow: hidden;
+
+    p {
+        font-size: 16px;
+        color: #666;
+        font-weight: 600;
+        text-align: center;
+        margin: 12px 0;
+    }
+`;
 
 const containerStyle = css`
     height: 100vh;
@@ -152,13 +188,5 @@ const countStyle = css`
     font-weight: bold;
     margin: 0 4px;
 `;
-
-// const submitButtonStyle = css`
-//     color: white;
-//     margin-top: 60px;
-//     display: flex;
-//     padding: 20px;
-//     justify-content: flex-end;
-// `;
 
 export default TripFileUpload;

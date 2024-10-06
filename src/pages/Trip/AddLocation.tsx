@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/button/Button';
+import Toast from '@/components/common/Toast';
 import Header from '@/components/layout/Header';
 import DateGroupedImageList from '@/components/pages/addLocation/DateGroupedImageList';
 import Map from '@/components/pages/addLocation/Map';
@@ -122,6 +123,7 @@ const AddLocation = () => {
                     </section>
                 )}
             </div>
+            <Toast />
         </div>
     );
 };
