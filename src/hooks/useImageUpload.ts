@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import heic2any from 'heic2any';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { postTripImages } from '@/api/trip';
@@ -18,7 +19,6 @@ export const useImageUpload = () => {
     const [imageCount, setImagesCount] = useState(0);
     const [imagesWithLocation, setImagesWithLocation] = useState<ImageWithLocationAndDate[]>([]);
     const [imagesNoLocation, setImagesNoLocation] = useState<ImageWithDate[]>([]);
-    // const [imagesNoLocation, setImagesNoLocation] = useState<File[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const { openModal, closeModal } = useModalStore();
 
@@ -27,6 +27,23 @@ export const useImageUpload = () => {
 
     const tripId = location.state;
 
+    const convertHEICToJPEG = async (file: File): Promise<File> => {
+        if (file.type === 'image/heic' || file.name.toLowerCase().endsWith('.heic')) {
+            try {
+                const blob = await heic2any({
+                    blob: file,
+                    toType: 'image/jpeg',
+                    quality: 0.8,
+                });
+                return new File([blob as Blob], file.name.replace(/\.heic$/i, '.jpg'), { type: 'image/jpeg' });
+            } catch (error) {
+                console.error('Error converting HEIC to JPEG:', error);
+                return file; // 변환 실패 시 원본 파일 반환
+            }
+        }
+        return file; // HEIC가 아닌 경우 원본 파일 반환
+    };
+
     // 이미지 메타데이터의 위치 정보 유무 확인
     const handleFileUpload = async (files: FileList | null) => {
         if (!files) {
@@ -34,10 +51,15 @@ export const useImageUpload = () => {
         }
 
         try {
+            console.log('1');
+
             const processedImages = await Promise.all(
                 Array.from(files).map(async (file) => {
-                    const location = await getImageLocation(file);
-                    const date = await extractDateFromImage(file);
+                    // const location = await getImageLocation(file);
+                    // const date = await extractDateFromImage(file);
+                    const convertedFile = await convertHEICToJPEG(file);
+                    const location = await getImageLocation(convertedFile);
+                    const date = await extractDateFromImage(convertedFile);
 
                     let formattedDate = '';
                     if (date) {
@@ -46,6 +68,8 @@ export const useImageUpload = () => {
                     return { file, formattedDate, location };
                 }),
             );
+            console.log(processedImages);
+            console.log('2');
 
             // 위치 정보가 없는 이미지
             // const noLocationImages = processedImages.filter((image) => !image.location).map((image) => image.file);
@@ -61,10 +85,11 @@ export const useImageUpload = () => {
             const filteredImages = processedImages.filter((image) => image.location);
             setImagesWithLocation(filteredImages);
             console.log('위치 ✅:', filteredImages);
+
+            setImagesCount(files.length);
         } catch (error) {
             console.error('Error processing files:', error);
         }
-        setImagesCount(files.length);
     };
 
     const uploadTripImages = async () => {

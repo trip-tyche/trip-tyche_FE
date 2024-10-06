@@ -26,7 +26,12 @@ const TripList = (): JSX.Element => {
         const fetchTripList = async () => {
             try {
                 const tripList = await getTripList();
-                console.log(tripList);
+                if (!tripList) {
+                    navigate(PATH.LOGIN);
+                    localStorage.clear();
+                    return;
+                }
+                // console.log(tripList);
                 if (!tripList) {
                     return;
                 }
@@ -38,6 +43,9 @@ const TripList = (): JSX.Element => {
                 console.error('Error fetching trip-list data:', error);
             }
         };
+
+        localStorage.removeItem('tripId');
+        localStorage.removeItem('tripTitle');
 
         fetchTripList();
     }, []);
@@ -97,7 +105,7 @@ const mainStyle = css`
     flex: 1;
     padding-bottom: 90px;
 
-    margin-top: 120px;
+    margin-top: 80px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -107,7 +115,6 @@ const mainStyle = css`
 const tripListStyle = css`
     display: flex;
     flex-direction: column;
-    gap: 18px;
     padding: 10px;
 `;
 

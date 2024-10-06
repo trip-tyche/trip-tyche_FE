@@ -43,7 +43,7 @@ const TripFileUpload = () => {
                     <div css={uploadAreaStyle}>
                         <input
                             type='file'
-                            accept='image/*'
+                            accept='image/*,.heic'
                             multiple
                             onChange={(e) => handleFileUpload(e.target.files)}
                             css={fileInputStyle}
