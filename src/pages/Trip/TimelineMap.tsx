@@ -20,7 +20,6 @@ const WAIT_DURATION = 2000;
 
 const PHOTO_CARD_WIDTH = 150;
 const PHOTO_CARD_HEIGHT = 150;
-const MARKER_HEIGHT = 24; // SVG 마커의 높이
 
 const TimelineMap: React.FC = () => {
     const [tripInfo, setTripInfo] = useState<TripInfo | null>(null);
@@ -128,10 +127,12 @@ const TimelineMap: React.FC = () => {
 
             const newLat = start.latitude + (end.latitude - start.latitude) * progress;
             const newLng = start.longitude + (end.longitude - start.longitude) * progress;
-            setCharacterPosition({ lat: newLat, lng: newLng });
+            const newPosition = { lat: newLat, lng: newLng };
+            setCharacterPosition(newPosition);
+            setPhotoCardPosition(newPosition); // 즉시 photoCardPosition 업데이트
 
             if (mapRef.current) {
-                mapRef.current.panTo({ lat: newLat, lng: newLng });
+                mapRef.current.panTo(newPosition);
             }
 
             if (progress < 1) {
@@ -221,24 +222,24 @@ const TimelineMap: React.FC = () => {
     const characterIcon = useMemo(() => {
         if (isLoaded) {
             return {
-                url: '/src/assets/images/dog.gif',
-                scaledSize: new window.google.maps.Size(150, 150),
-                anchor: new window.google.maps.Point(75, 100),
+                url: '/src/assets/images/ogami_1.png',
+                scaledSize: new window.google.maps.Size(50, 65),
+                anchor: new window.google.maps.Point(25, 65),
             };
         }
         return null;
     }, [isLoaded]);
 
-    const svgMarker = useMemo(() => {
+    const markerIcon = useMemo(() => {
         if (isLoaded) {
             return {
-                path: 'M10.453 14.016l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM12 2.016q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z',
-                fillColor: '#17012E',
-                fillOpacity: 0.8,
-                strokeWeight: 1,
+                path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
+                fillColor: '#0073bb',
+                fillOpacity: 1,
+                strokeWeight: 0,
                 rotation: 0,
-                scale: 1.5,
-                anchor: new window.google.maps.Point(12, 24),
+                scale: 2,
+                anchor: new google.maps.Point(12, 23),
             };
         }
         return null;
@@ -284,7 +285,7 @@ const TimelineMap: React.FC = () => {
                             <Marker
                                 key={point.pinPointId}
                                 position={{ lat: point.latitude, lng: point.longitude }}
-                                icon={svgMarker || undefined}
+                                icon={markerIcon || undefined}
                             />
                         ))}
                         {characterPosition && (
@@ -299,7 +300,7 @@ const TimelineMap: React.FC = () => {
                                 mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                                 getPixelPositionOffset={(width, height) => ({
                                     x: -(PHOTO_CARD_WIDTH / 2),
-                                    y: -(PHOTO_CARD_HEIGHT + MARKER_HEIGHT + 10), // 10은 마커와 카드 사이의 간격
+                                    y: -(PHOTO_CARD_HEIGHT + 65 + 40), // 65는 characterIcon의 높이, 40은 추가 간격
                                 })}
                             >
                                 <div
@@ -308,6 +309,7 @@ const TimelineMap: React.FC = () => {
                                         navigate(`/music-video/${tripId}/${pinPoints[currentPinIndex].pinPointId}`)
                                     }
                                 >
+                                    <p>{formatDateToKorean(pinPoints[currentPinIndex].recordDate)}</p>
                                     <img css={imageStyle} src={pinPoints[currentPinIndex].mediaLink} alt='photo-card' />
                                 </div>
                             </OverlayView>
@@ -407,12 +409,14 @@ const mapContainerStyle = {
 };
 
 const photoCardStyle = css`
-    background-color: white;
-    border-radius: 8px;
-    width: ${PHOTO_CARD_WIDTH}px;
-    height: ${PHOTO_CARD_HEIGHT}px;
-    padding: 4px;
+    background-color: ${theme.colors.white};
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 150px;
+    height: auto;
+    padding: 2px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     box-shadow:
@@ -420,15 +424,42 @@ const photoCardStyle = css`
         rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
     cursor: pointer;
     transition: transform 0.2s ease;
+    position: relative;
+
+    p {
+        font-size: 18px;
+        color: #333;
+        /* color: ${theme.colors.primary}; */
+        font-weight: 600;
+        align-self: start;
+        padding: 4px;
+    }
 
     &:hover {
         transform: scale(1.05);
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        border: 1px solid #ccc;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-top: 10px solid white;
+        box-shadow:
+            rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
+            rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
     }
 `;
 
 const imageStyle = css`
     width: 100%;
-    height: 100%;
+    aspect-ratio: 1;
     object-fit: cover;
     border-radius: 4px;
 `;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import { css } from '@emotion/react';
 import { X } from 'lucide-react';
@@ -7,7 +7,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getImagesByPinPoint } from '@/api/image';
 import ImageCarousel from '@/components/ImageCarousel';
 import { PATH } from '@/constants/path';
-// import Header from '@/components/layout/Header';
+
+type CarouselState = 'auto' | 'paused' | 'zoomed';
+
 interface ImageType {
     mediaFileId: string;
     mediaLink: string;
@@ -15,6 +17,7 @@ interface ImageType {
 
 const MusicVideo = () => {
     const [displayedImages, setDisplayedImages] = useState<ImageType[]>([]);
+    const [carouselState, setCarouselState] = useState<CarouselState>('auto');
     const { tripId, pinPointId } = useParams<{ tripId: string; pinPointId: string }>();
 
     const navigate = useNavigate();
@@ -36,14 +39,19 @@ const MusicVideo = () => {
         fetchPinPointImages();
     }, [tripId, pinPointId]);
 
+    const handleCarouselStateChange = useCallback((newState: CarouselState) => {
+        setCarouselState(newState);
+    }, []);
+
     return (
         <div css={containerStyle}>
-            <div css={backStyle} onClick={() => navigate(`${PATH.TIMELINE_MAP}/${tripId}`)}>
-                <X size={24} color='#FDFDFD' />
-            </div>
-            {/* {tripTitle && <Header title={tripTitle} isBackButton />} */}
+            {carouselState !== 'zoomed' && (
+                <div css={backStyle} onClick={() => navigate(`${PATH.TIMELINE_MAP}/${tripId}`)}>
+                    <X size={24} color='#FDFDFD' />
+                </div>
+            )}
             <div css={carouselWrapper}>
-                <ImageCarousel images={displayedImages} />
+                <ImageCarousel images={displayedImages} onStateChange={handleCarouselStateChange} />
             </div>
         </div>
     );
