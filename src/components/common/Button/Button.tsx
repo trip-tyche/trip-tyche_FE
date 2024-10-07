@@ -9,6 +9,7 @@ export interface ButtonProps {
     onClick?: () => void;
     disabled?: boolean;
     isLoading?: boolean;
+    loadingMessage?: string;
 }
 
 const Button = ({
@@ -18,10 +19,15 @@ const Button = ({
     onClick,
     disabled,
     isLoading = false,
+    loadingMessage,
     children,
 }: ButtonProps & { children?: React.ReactNode }): JSX.Element => (
     <button css={buttonStyle(theme, size)} onClick={onClick} disabled={disabled || isLoading}>
-        {isLoading ? (
+        {isLoading && loadingMessage ? (
+            <span css={spinnerStyle}>
+                <p>{loadingMessage}</p>
+            </span>
+        ) : isLoading ? (
             <span css={spinnerStyle}>
                 <Loading type='button' />
             </span>
@@ -78,4 +84,8 @@ const spinnerStyle = css`
     align-items: center;
     width: 100%;
     height: 100%;
+
+    p {
+        font-size: 14px;
+    }
 `;

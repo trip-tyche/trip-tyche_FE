@@ -2,9 +2,10 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { GoogleMap, Marker, useLoadScript, OverlayView } from '@react-google-maps/api';
+import { GoogleMap, Marker, useLoadScript, OverlayView, MarkerClusterer } from '@react-google-maps/api';
 import { Play, Pause, ChevronUp } from 'lucide-react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { BsPersonWalking } from 'react-icons/bs';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { getTripMapData } from '@/api/trip';
 import Loading from '@/components/common/Loading';
@@ -21,9 +22,14 @@ const WAIT_DURATION = 3000;
 const PHOTO_CARD_WIDTH = 150;
 const PHOTO_CARD_HEIGHT = 150;
 
+const INITIAL_ZOOM_SCALE = 14;
+const SHOW_DETAILED_ZOOM = 14;
+const INDIVIDUAL_MARKER_ZOOM = 17;
+
 const TimelineMap: React.FC = () => {
     const [tripInfo, setTripInfo] = useState<TripInfo | null>(null);
     const [pinPoints, setPinPoints] = useState<PinPoint[]>([]);
+    const [mediaFiles, setMediaFiles] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [characterPosition, setCharacterPosition] = useState<google.maps.LatLngLiteral | null>(null);
     const [currentPinIndex, setCurrentPinIndex] = useState(0);
@@ -35,6 +41,8 @@ const TimelineMap: React.FC = () => {
     const [currentDate, setCurrentDate] = useState<string | undefined>();
     const [currentDay, setCurrentDay] = useState<string | undefined>();
     const [photoCardPosition, setPhotoCardPosition] = useState<google.maps.LatLngLiteral | null>(null);
+    const [currentZoom, setCurrentZoom] = useState(INITIAL_ZOOM_SCALE);
+    const [selectedMarker, setSelectedMarker] = useState<PinPoint | null>(null);
 
     const mapRef = useRef<google.maps.Map | null>(null);
     const animationRef = useRef<number | null>(null);
@@ -50,8 +58,8 @@ const TimelineMap: React.FC = () => {
         try {
             setIsLoading(true);
             const data = await getTripMapData(tripId);
-            console.log(data);
             setTripInfo(data.tripInfo);
+            setMediaFiles(data.mediaFiles);
 
             if (data.pinPoints.length === 0) {
                 navigate(PATH.TRIP_LIST);
@@ -218,9 +226,9 @@ const TimelineMap: React.FC = () => {
                 path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
                 fillColor: '#0073bb',
                 fillOpacity: 1,
-                strokeWeight: 0,
+                strokeWeight: 1,
                 rotation: 0,
-                scale: 2,
+                scale: 1.5,
                 anchor: new google.maps.Point(12, 23),
             };
         }
@@ -237,6 +245,50 @@ const TimelineMap: React.FC = () => {
         minZoom: 12,
     };
 
+    const clusterOptions = {
+        maxZoom: INDIVIDUAL_MARKER_ZOOM - 1,
+        zoomOnClick: true,
+        // averageCenter: true,
+        minimumClusterSize: 2,
+        clickZoom: 2, // 클릭 시 줌 레벨 증가량
+        onClick: (cluster: any, markers: any) => {
+            if (mapRef.current) {
+                const currentZoom = mapRef.current.getZoom() || 0;
+                const newZoom = Math.min(currentZoom + 3, INDIVIDUAL_MARKER_ZOOM - 1);
+                mapRef.current.setZoom(newZoom);
+                mapRef.current.panTo(cluster.getCenter());
+            }
+        },
+    };
+
+    const handleZoomChanged = () => {
+        if (mapRef.current) {
+            const newZoom = mapRef.current.getZoom();
+            if (newZoom !== undefined) {
+                setCurrentZoom(newZoom);
+            }
+        }
+    };
+
+    const showDetailedView = currentZoom === SHOW_DETAILED_ZOOM;
+    const showIndividualMarkers = currentZoom >= INDIVIDUAL_MARKER_ZOOM;
+
+    const handleHomeClick = useCallback(() => {
+        if (mapRef.current) {
+            mapRef.current.setZoom(SHOW_DETAILED_ZOOM);
+            if (characterPosition) {
+                mapRef.current.panTo(characterPosition);
+            }
+        }
+    }, [characterPosition]);
+
+    const handleMarkerClick = (marker: PinPoint) => {
+        setSelectedMarker(marker);
+        if (mapRef.current) {
+            mapRef.current.panTo({ lat: marker.latitude, lng: marker.longitude });
+        }
+    };
+
     if (loadError) {
         return <div>Error loading maps</div>;
     }
@@ -244,6 +296,131 @@ const TimelineMap: React.FC = () => {
     if (!isLoaded) {
         return <div>Loading maps</div>;
     }
+
+    const renderPhotoCard = (marker: PinPoint) => (
+        <OverlayView
+            position={{ lat: marker.latitude, lng: marker.longitude }}
+            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+            getPixelPositionOffset={(width, height) => ({
+                x: -(PHOTO_CARD_WIDTH / 2),
+                y: -(PHOTO_CARD_HEIGHT + 45),
+            })}
+        >
+            <div css={clusterPhotoCardStyle}>
+                <img css={imageStyle} src={marker.mediaLink} alt='photo-card' />
+            </div>
+        </OverlayView>
+    );
+
+    const renderControls = () => {
+        if (showDetailedView) {
+            return (
+                <>
+                    {isAtPin && (
+                        <ControlButton onClick={togglePlayPause} style={{ bottom: '94px' }}>
+                            {isPlaying ? <Pause size={18} /> : <Play size={18} />}
+                        </ControlButton>
+                    )}
+                    {isAtPin && (
+                        <DaySection onClick={handleDayClick}>
+                            <div css={dayInfoTextStyle}>
+                                <h2>{currentDay}</h2>
+                                <p>{currentDate && formatDateToKorean(currentDate)}</p>
+                            </div>
+                            <ChevronUp size={20} />
+                        </DaySection>
+                    )}
+                </>
+            );
+        } else {
+            return (
+                <ControlDefaultButton onClick={handleHomeClick}>
+                    <BsPersonWalking />
+                </ControlDefaultButton>
+            );
+        }
+    };
+
+    const renderMarkers = () => {
+        if (showDetailedView) {
+            return (
+                <>
+                    {pinPoints.map((point) => (
+                        <Marker
+                            key={point.pinPointId}
+                            position={{ lat: point.latitude, lng: point.longitude }}
+                            icon={markerIcon || undefined}
+                        />
+                    ))}
+                    {characterPosition && (
+                        <Marker position={characterPosition} icon={characterIcon || undefined} zIndex={1000} />
+                    )}
+                    {isAtPin && (
+                        <ControlButton onClick={togglePlayPause}>{isPlaying ? <Pause /> : <Play />}</ControlButton>
+                    )}
+                    {showPhotoCard && photoCardPosition && currentPinIndex < pinPoints.length && (
+                        <OverlayView
+                            position={photoCardPosition}
+                            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                            getPixelPositionOffset={(width, height) => ({
+                                x: -(PHOTO_CARD_WIDTH / 2),
+                                y: -(PHOTO_CARD_HEIGHT + 65 + 40),
+                            })}
+                        >
+                            <div
+                                css={photoCardStyle}
+                                onClick={() =>
+                                    navigate(`/music-video/${tripId}/${pinPoints[currentPinIndex].pinPointId}`)
+                                }
+                            >
+                                <p>{formatDateToKorean(pinPoints[currentPinIndex].recordDate)}</p>
+                                <img css={imageStyle} src={pinPoints[currentPinIndex].mediaLink} alt='photo-card' />
+                            </div>
+                        </OverlayView>
+                    )}
+                    {isAtPin && (
+                        <DaySection onClick={handleDayClick}>
+                            <div css={dayInfoTextStyle}>
+                                <h2>{currentDay}</h2>
+                                <p>{currentDate && formatDateToKorean(currentDate)}</p>
+                            </div>
+                            <ChevronUp size={20} />
+                        </DaySection>
+                    )}
+                </>
+            );
+        } else if (showIndividualMarkers) {
+            return (
+                <>
+                    {mediaFiles.map((file) => (
+                        <Marker
+                            key={file.mediaFileId}
+                            position={{ lat: file.latitude, lng: file.longitude }}
+                            icon={markerIcon || undefined}
+                            onClick={() => handleMarkerClick(file as PinPoint)}
+                        />
+                    ))}
+                    {selectedMarker && renderPhotoCard(selectedMarker)}
+                </>
+            );
+        } else {
+            return (
+                <MarkerClusterer options={clusterOptions}>
+                    {(clusterer) => (
+                        <>
+                            {mediaFiles.map((file) => (
+                                <Marker
+                                    key={file.mediaFileId}
+                                    position={{ lat: file.latitude, lng: file.longitude }}
+                                    clusterer={clusterer}
+                                />
+                            ))}
+                        </>
+                    )}
+                </MarkerClusterer>
+            );
+        }
+    };
 
     return (
         <PageContainer isTransitioning={isTransitioning}>
@@ -257,63 +434,26 @@ const TimelineMap: React.FC = () => {
                     <GoogleMap
                         mapContainerStyle={mapContainerStyle}
                         center={characterPosition || undefined}
-                        zoom={14}
+                        zoom={INITIAL_ZOOM_SCALE}
                         options={mapOptions}
                         onLoad={(map) => {
                             mapRef.current = map;
                         }}
+                        onZoomChanged={handleZoomChanged}
+                        onClick={() => setSelectedMarker(null)}
                     >
-                        {pinPoints.map((point) => (
-                            <Marker
-                                key={point.pinPointId}
-                                position={{ lat: point.latitude, lng: point.longitude }}
-                                icon={markerIcon || undefined}
-                            />
-                        ))}
-                        {characterPosition && (
-                            <Marker position={characterPosition} icon={characterIcon || undefined} zIndex={1000} />
-                        )}
-                        {isAtPin && (
-                            <ControlButton onClick={togglePlayPause}>{isPlaying ? <Pause /> : <Play />}</ControlButton>
-                        )}
-                        {showPhotoCard && photoCardPosition && currentPinIndex < pinPoints.length && (
-                            <OverlayView
-                                position={photoCardPosition}
-                                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                                getPixelPositionOffset={(width, height) => ({
-                                    x: -(PHOTO_CARD_WIDTH / 2),
-                                    y: -(PHOTO_CARD_HEIGHT + 65 + 40), // 65는 characterIcon의 높이, 40은 추가 간격
-                                })}
-                            >
-                                <div
-                                    css={photoCardStyle}
-                                    onClick={() =>
-                                        navigate(`/music-video/${tripId}/${pinPoints[currentPinIndex].pinPointId}`)
-                                    }
-                                >
-                                    <p>{formatDateToKorean(pinPoints[currentPinIndex].recordDate)}</p>
-                                    <img css={imageStyle} src={pinPoints[currentPinIndex].mediaLink} alt='photo-card' />
-                                </div>
-                            </OverlayView>
-                        )}
-                        {isAtPin && (
-                            <DaySection onClick={handleDayClick}>
-                                <div css={dayInfoTextStyle}>
-                                    <h2>{currentDay}</h2>
-                                    <p>{currentDate && formatDateToKorean(currentDate)}</p>
-                                </div>
-                                <ChevronUp size={20} />
-                            </DaySection>
-                        )}
+                        {renderMarkers()}
+                        {renderControls()}
                     </GoogleMap>
                 )}
             </MapWrapper>
         </PageContainer>
     );
 };
+
 const DaySection = styled.div`
     position: absolute;
-    bottom: 0;
+    bottom: 20px;
     left: 0;
     right: 0;
     display: flex;
@@ -352,9 +492,35 @@ const MapWrapper = styled.div`
     min-height: 400px;
 `;
 
+const ControlDefaultButton = styled.button`
+    position: absolute;
+    bottom: 35px;
+    right: 15px;
+    font-size: 18px;
+    background-color: white;
+    background-color: ${theme.colors.primary};
+    color: ${theme.colors.white};
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background-color: ${theme.colors.white};
+        color: ${theme.colors.primary};
+    }
+`;
+
 const ControlButton = styled.button`
     position: absolute;
-    bottom: 74px;
+    bottom: 94px;
     right: 10px;
     background-color: white;
     background-color: ${theme.colors.primary};
@@ -393,9 +559,46 @@ const LoadingWrapper = styled.div`
 `;
 
 const mapContainerStyle = {
-    height: '100%',
+    height: 'calc(100% + 20px)',
     width: '100%',
+    paddingTop: '20px',
 };
+
+const clusterPhotoCardStyle = css`
+    background-color: ${theme.colors.white};
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 150px;
+    height: auto;
+    padding: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
+        rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        border: 1px solid #ccc;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-top: 10px solid white;
+        box-shadow:
+            rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
+            rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+    }
+`;
 
 const photoCardStyle = css`
     background-color: ${theme.colors.white};

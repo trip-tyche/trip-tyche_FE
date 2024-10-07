@@ -20,7 +20,8 @@ interface MediaFiles {
     mediaLink: string;
 }
 
-const INITIAL_ZOOM_SCALE = 16;
+const INITIAL_ZOOM_LEVEL = 16;
+
 const mapOptions: google.maps.MapOptions = {
     mapTypeControl: false,
     fullscreenControl: false,
@@ -222,7 +223,7 @@ const DaysImages: React.FC = () => {
                             <GoogleMap
                                 mapContainerStyle={mapContainerStyle}
                                 center={currentImageLocation}
-                                zoom={INITIAL_ZOOM_SCALE}
+                                zoom={INITIAL_ZOOM_LEVEL}
                                 options={mapOptions}
                             >
                                 <Marker position={currentImageLocation} icon={markerIcon || undefined} />

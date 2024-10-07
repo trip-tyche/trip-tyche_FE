@@ -113,6 +113,7 @@ const AddLocation = () => {
                                 onClick={handleConfirmLocation}
                                 disabled={!selectedLocation}
                                 isLoading={isLoading}
+                                loadingMessage='위치를 넣는 중입니다...'
                             />
                         </div>
                         <Map
