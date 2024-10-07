@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { getTripList } from '@/api/trip';
 import Button from '@/components/common/button/Button';
@@ -12,6 +12,7 @@ import BorderPass from '@/components/pages/trip-list/BorderPass';
 import { TRIP } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { BUTTON, PAGE } from '@/constants/title';
+import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
 import { formatTripDate } from '@/utils/date';
@@ -22,6 +23,8 @@ const TripList = (): JSX.Element => {
     const [tripCount, setTripCount] = useState(0);
     const [isDelete, setIsDelete] = useState(false);
 
+    const { showToast } = useToastStore();
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -31,6 +34,7 @@ const TripList = (): JSX.Element => {
                 console.log(tripList);
 
                 if (typeof tripList !== 'object') {
+                    showToast('일시적인 서버 문제로 로그아웃 되었습니다.');
                     navigate(PATH.LOGIN);
                     localStorage.clear();
                     return;

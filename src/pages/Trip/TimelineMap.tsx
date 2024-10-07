@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { GoogleMap, Marker, useLoadScript, OverlayView } from '@react-google-maps/api';
 import { Play, Pause, ChevronUp } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { getTripMapData } from '@/api/trip';
 import Loading from '@/components/common/Loading';
@@ -16,7 +16,7 @@ import { PinPoint, TripInfo } from '@/types/trip';
 import { formatDateToKorean, getDayNumber } from '@/utils/date';
 
 const MOVE_DURATION = 3000;
-const WAIT_DURATION = 2000;
+const WAIT_DURATION = 3000;
 
 const PHOTO_CARD_WIDTH = 150;
 const PHOTO_CARD_HEIGHT = 150;
@@ -42,29 +42,7 @@ const TimelineMap: React.FC = () => {
     const autoPlayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const navigate = useNavigate();
-    const location = useLocation();
-
-    const tripId = localStorage.getItem('tripId');
-    const tripTitle = localStorage.getItem('tripTitle');
-
-    useEffect(() => {
-        if (!tripId || tripId === 'undefined') {
-            const newTripId = location.state?.tripId;
-            if (newTripId) {
-                localStorage.setItem('tripId', newTripId);
-            } else {
-                navigate(PATH.TRIP_LIST);
-                return;
-            }
-        }
-
-        if (!tripTitle || tripTitle === 'undefined') {
-            const newTripTitle = location.state?.tripTitle;
-            if (newTripTitle) {
-                localStorage.setItem('tripTitle', newTripTitle);
-            }
-        }
-    }, [location.state, navigate]);
+    const { tripId } = useParams();
 
     const fetchTripMapData = useCallback(async () => {
         if (!tripId) return;
@@ -72,6 +50,7 @@ const TimelineMap: React.FC = () => {
         try {
             setIsLoading(true);
             const data = await getTripMapData(tripId);
+            console.log(data);
             setTripInfo(data.tripInfo);
 
             if (data.pinPoints.length === 0) {
@@ -187,9 +166,12 @@ const TimelineMap: React.FC = () => {
     const handleDayClick = useCallback(() => {
         setIsTransitioning(true);
         setTimeout(() => {
-            navigate('/days-images', { state: { tripId, currentDate } });
+            navigate('/days-images');
         }, 300);
-    }, [navigate, tripId, currentDate]);
+        if (currentDate) {
+            localStorage.setItem('current-date', currentDate);
+        }
+    }, [navigate, currentDate]);
 
     const togglePlayPause = useCallback(() => {
         if (currentPinIndex === pinPoints.length - 1) {
@@ -265,7 +247,7 @@ const TimelineMap: React.FC = () => {
 
     return (
         <PageContainer isTransitioning={isTransitioning}>
-            <Header title={tripTitle || ''} isBackButton onBack={() => navigate(PATH.TRIP_LIST)} />
+            <Header title={tripInfo?.tripTitle || ''} isBackButton onBack={() => navigate(PATH.TRIP_LIST)} />
             <MapWrapper>
                 {isLoading ? (
                     <LoadingWrapper>
@@ -314,13 +296,15 @@ const TimelineMap: React.FC = () => {
                                 </div>
                             </OverlayView>
                         )}
-                        <DaySection onClick={handleDayClick}>
-                            <div css={dayInfoTextStyle}>
-                                <h2>{currentDay}</h2>
-                                <p>{currentDate && formatDateToKorean(currentDate)}</p>
-                            </div>
-                            <ChevronUp size={20} />
-                        </DaySection>
+                        {isAtPin && (
+                            <DaySection onClick={handleDayClick}>
+                                <div css={dayInfoTextStyle}>
+                                    <h2>{currentDay}</h2>
+                                    <p>{currentDate && formatDateToKorean(currentDate)}</p>
+                                </div>
+                                <ChevronUp size={20} />
+                            </DaySection>
+                        )}
                     </GoogleMap>
                 )}
             </MapWrapper>
@@ -370,9 +354,11 @@ const MapWrapper = styled.div`
 
 const ControlButton = styled.button`
     position: absolute;
-    bottom: 64px;
+    bottom: 74px;
     right: 10px;
     background-color: white;
+    background-color: ${theme.colors.primary};
+    color: ${theme.colors.white};
     border: none;
     border-radius: 50%;
     width: 40px;
@@ -383,8 +369,11 @@ const ControlButton = styled.button`
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     z-index: 1000;
+    transition: all 0.3s ease;
+
     &:hover {
-        background-color: #f0f0f0;
+        background-color: ${theme.colors.white};
+        color: ${theme.colors.primary};
     }
 `;
 

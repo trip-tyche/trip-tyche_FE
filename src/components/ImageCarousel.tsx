@@ -122,6 +122,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, onStateChange }) 
     const [carouselState, setCarouselState] = useState<CarouselState>('auto');
     const sliderRef = useRef<Slider | null>(null);
     const touchStartTimeRef = useRef<number | null>(null);
+    const zoomTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const settings = useMemo(
         () => ({
@@ -153,8 +154,24 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, onStateChange }) 
                 event.preventDefault();
             }
 
+            if (zoomTimerRef.current) {
+                clearTimeout(zoomTimerRef.current);
+                zoomTimerRef.current = null;
+            }
+
             setCarouselState((prevState) => {
-                const newState = prevState === 'auto' ? 'paused' : prevState === 'paused' ? 'zoomed' : 'auto';
+                let newState: CarouselState;
+                if (prevState === 'auto') {
+                    newState = 'paused';
+                    zoomTimerRef.current = setTimeout(() => {
+                        setCarouselState('zoomed');
+                        onStateChange('zoomed');
+                    }, 1000);
+                } else if (prevState === 'paused') {
+                    newState = 'auto';
+                } else {
+                    newState = 'auto';
+                }
                 onStateChange(newState);
                 return newState;
             });
@@ -186,6 +203,15 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, onStateChange }) 
             }
         }
     }, [carouselState]);
+
+    useEffect(
+        () => () => {
+            if (zoomTimerRef.current) {
+                clearTimeout(zoomTimerRef.current);
+            }
+        },
+        [],
+    );
 
     return (
         <div css={carouselStyle}>
