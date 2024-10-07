@@ -2,16 +2,17 @@ import { css } from '@emotion/react';
 import { ImageUp, Image } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import loadingImage from '@/assets/images/flightLoading5.gif';
 import Button from '@/components/common/button/Button';
-import ModalOverlay from '@/components/common/modal/ModalOverlay';
-import RowButtonModal from '@/components/common/modal/RowButtonModal';
+import GuideModal from '@/components/common/modal/GuideModal';
 import Header from '@/components/layout/Header';
+import NoDataImageContent from '@/components/pages/image-upload/NoDataImageContent';
+import UploadingSpinner from '@/components/pages/image-upload/UploadingSpinner';
 import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useModalStore } from '@/stores/useModalStore';
+import theme from '@/styles/theme';
 
 const TripFileUpload = () => {
     const { isModalOpen, closeModal } = useModalStore();
@@ -26,6 +27,8 @@ const TripFileUpload = () => {
         handleFileUpload,
         uploadTripImages,
     } = useImageUpload();
+
+    const noDataImagesCount = noDateImagesCount + imagesNoLocation.length;
 
     const navigate = useNavigate();
 
@@ -76,40 +79,36 @@ const TripFileUpload = () => {
 
                 <Button
                     text='등록하기'
-                    theme='sec'
-                    size='full'
+                    btnTheme='sec'
+                    size='lg'
                     onClick={uploadTripImages}
                     disabled={imageCount === 0}
                     isLoading={isLoading}
                 />
             </main>
             {isModalOpen && (
-                <>
-                    <ModalOverlay />
-                    <RowButtonModal
-                        confirmText='직접 위치넣기'
-                        cancelText='나중에'
-                        confirmModal={ignoreAddLocation}
-                        closeModal={goToAddLocation}
-                        noDateImagesCount={noDateImagesCount}
-                        imagesNoLocationCount={imagesNoLocation.length}
-                    />
-                </>
+                <GuideModal
+                    confirmText='다음'
+                    cancelText='취소'
+                    confirmModal={ignoreAddLocation}
+                    closeModal={goToAddLocation}
+                >
+                    {noDataImagesCount !== 0 && <NoDataImageContent noDataImagesCount={noDataImagesCount} />}
+                </GuideModal>
             )}
-            {isUploading && (
-                <>
-                    <ModalOverlay />
-                    <div css={modalStyle}>
-                        <img src={loadingImage} />
-                        <p>추억의 조각들을 저장 중입니다.</p>
-                    </div>
-                </>
-            )}
+            {isUploading && <UploadingSpinner />}
         </div>
     );
 };
 
-const modalStyle = css`
+const countStyle = css`
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 4px;
+    color: #0073bb;
+`;
+
+const divStyle = css`
     position: fixed;
     top: 50%;
     left: 50%;
@@ -124,14 +123,6 @@ const modalStyle = css`
     z-index: 1000;
     border: 2px solid #ccc;
     overflow: hidden;
-
-    p {
-        font-size: 16px;
-        color: #666;
-        font-weight: 600;
-        text-align: center;
-        margin: 12px 0;
-    }
 `;
 
 const containerStyle = css`
@@ -181,12 +172,6 @@ const uploadLabelStyle = css`
 const uploadedStyle = css`
     font-size: 16px;
     font-weight: bold;
-`;
-
-const countStyle = css`
-    font-size: 20px;
-    font-weight: bold;
-    margin: 0 4px;
 `;
 
 export default TripFileUpload;

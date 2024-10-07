@@ -7,7 +7,9 @@ import { getUserData } from '@/api/user';
 import characterImg from '@/assets/images/character.png';
 import Button from '@/components/common/button/Button';
 import ColumnButtonModal from '@/components/common/modal/ColumnButtonModal';
+import ConfirmModal from '@/components/common/modal/ConfirmModal';
 import ModalOverlay from '@/components/common/modal/ModalOverlay';
+import RowButtonModal from '@/components/common/modal/RowButtonModal';
 import { LOGOUT_MODAL } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { BUTTON } from '@/constants/title';
@@ -54,21 +56,18 @@ const MyPage = (): JSX.Element => {
             <p css={textWrapper}>안녕하세요, {userNickName} 님</p>
 
             <div css={buttonWrapper}>
-                <Button text={BUTTON.LOGOUT} theme='sec' size='sm' onClick={openModal} />
+                <Button text={BUTTON.LOGOUT} btnTheme='pri' size='sm' onClick={openModal} />
             </div>
 
             {isModalOpen && (
-                <>
-                    <ModalOverlay closeModal={closeModal} />
-                    <ColumnButtonModal
-                        title={LOGOUT_MODAL.TITLE}
-                        message={LOGOUT_MODAL.MESSAGE}
-                        confirmText={LOGOUT_MODAL.CONFIRM_TEXT}
-                        cancelText={LOGOUT_MODAL.CANCEL_TEXT}
-                        confirmModal={confirmModal}
-                        closeModal={closeModal}
-                    />
-                </>
+                <ConfirmModal
+                    title={LOGOUT_MODAL.TITLE}
+                    description={LOGOUT_MODAL.MESSAGE}
+                    confirmText={LOGOUT_MODAL.CONFIRM_TEXT}
+                    cancelText={LOGOUT_MODAL.CANCEL_TEXT}
+                    confirmModal={confirmModal}
+                    closeModal={closeModal}
+                />
             )}
         </div>
     );

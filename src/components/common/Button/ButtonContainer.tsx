@@ -20,13 +20,13 @@ const ButtonContainer = ({
     <div css={ButtonContainerStyle(size)}>
         <Button
             text={size === 'lg' ? `${confirmText}` : `${cancelText}`}
-            theme={size === 'lg' ? 'sec' : 'pri'}
+            btnTheme={size === 'lg' ? 'sec' : 'pri'}
             size={size === 'lg' ? 'lg' : size === 'full' ? 'full' : 'sm'}
             onClick={confirmModal}
         />
         <Button
             text={size === 'lg' ? `${cancelText}` : `${confirmText}`}
-            theme={size === 'lg' ? 'pri' : 'sec'}
+            btnTheme={size === 'lg' ? 'pri' : 'sec'}
             size={size === 'lg' ? 'lg' : size === 'full' ? 'full' : 'sm'}
             onClick={closeModal}
         />

@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
+import { TicketsPlane } from 'lucide-react';
+import { LuPlus } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 
 import { getTripList } from '@/api/trip';
 import Button from '@/components/common/button/Button';
 import Toast from '@/components/common/Toast';
 import Header from '@/components/layout/Header';
-import Navbar from '@/components/layout/Navbar';
 import BorderPass from '@/components/pages/trip-list/BorderPass';
 import { TRIP } from '@/constants/message';
 import { PATH } from '@/constants/path';
@@ -31,16 +32,11 @@ const TripList = (): JSX.Element => {
         const fetchTripList = async () => {
             try {
                 const tripList = await getTripList();
-                console.log(tripList);
 
                 if (typeof tripList !== 'object') {
                     showToast('일시적인 서버 문제로 로그아웃 되었습니다.');
                     navigate(PATH.LOGIN);
                     localStorage.clear();
-                    return;
-                }
-
-                if (!tripList) {
                     return;
                 }
 
@@ -57,18 +53,24 @@ const TripList = (): JSX.Element => {
         localStorage.removeItem('tripTitle');
 
         fetchTripList();
-    }, [isDelete]);
+    }, [isDelete, showToast, navigate]);
 
     return (
-        <div css={containerStyle}>
-            <div css={fixedStyle}>
-                <Header title={PAGE.TRIP_LIST} />
-                <div css={buttonWrapperStyle}>
-                    <Button text={BUTTON.NEW_TRIP} theme='sec' size='sm' onClick={() => navigate(PATH.TRIP_NEW)} />
+        <>
+            <div css={containerStyle}>
+                <Header title={PAGE.TRIP_LIST} isBackButton />
+                <div css={addTripStyle}>
+                    <div css={countStyle}>
+                        <TicketsPlane size={20} /> <span>{tripCount}</span> 개의 티켓을 만들었어요!
+                    </div>
+                    <div>
+                        <Button text={BUTTON.NEW_TRIP} btnTheme='pri' size='sm' onClick={() => navigate(PATH.TRIP_NEW)}>
+                            <Button.Left>
+                                <LuPlus size={16} />
+                            </Button.Left>
+                        </Button>
+                    </div>
                 </div>
-            </div>
-
-            <main css={mainStyle}>
                 {tripCount > 0 ? (
                     <div css={tripListStyle}>
                         {formatTripDate(tripList)?.map((trip) => (
@@ -82,56 +84,53 @@ const TripList = (): JSX.Element => {
                         ))}
                     </div>
                 ) : (
-                    <p css={pStyle}>{TRIP.NO_TRIP}</p>
+                    <p css={noTripListStyle}>{TRIP.NO_TRIP}</p>
                 )}
-            </main>
-            <Navbar />
+            </div>
             <Toast />
-        </div>
+        </>
     );
 };
 
 const containerStyle = css`
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-`;
-
-const fixedStyle = css`
-    position: fixed;
-    width: 100%;
-    max-width: 428px;
-    background-color: ${theme.colors.white};
-    z-index: 100;
-`;
-
-const buttonWrapperStyle = css`
-    display: flex;
-    justify-content: end;
-    padding: 0.5rem;
-    padding-right: 1rem;
-`;
-
-const mainStyle = css`
-    flex: 1;
-    padding-bottom: 90px;
-
-    margin-top: 80px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     position: relative;
+`;
+
+const addTripStyle = css`
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+`;
+
+const countStyle = css`
+    margin-left: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: ${theme.colors.black};
+
+    span {
+        font-size: 18px;
+        font-weight: 600;
+        color: ${theme.colors.primary};
+        margin: 0 2px 0 8px;
+    }
 `;
 
 const tripListStyle = css`
     display: flex;
     flex-direction: column;
-    padding: 10px;
+    margin: 0 8px;
+    padding-bottom: 80px;
 `;
 
-const pStyle = css`
+const noTripListStyle = css`
+    height: calc(100vh - 96px);
     display: flex;
     justify-content: center;
+    align-items: center;
 `;
 
 export default TripList;

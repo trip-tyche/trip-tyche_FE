@@ -10,8 +10,7 @@ export interface RowButtonModalProps {
     cancelText: string;
     confirmModal?: () => void;
     closeModal?: () => void;
-    noDateImagesCount?: number;
-    imagesNoLocationCount?: number;
+    noDataImagesCount?: number;
 }
 
 const RowButtonModal = ({
@@ -20,36 +19,28 @@ const RowButtonModal = ({
     cancelText,
     confirmModal,
     closeModal,
-    noDateImagesCount,
-    imagesNoLocationCount,
-}: RowButtonModalProps): JSX.Element => {
-    let noDataImagesCount = 0;
-    if (noDateImagesCount === undefined || imagesNoLocationCount === undefined) {
-        noDataImagesCount = 0;
-    } else noDataImagesCount = noDateImagesCount + imagesNoLocationCount;
-
-    return (
-        <div css={modalStyle}>
-            {descriptionText && <h2>{descriptionText}</h2>}
-            {noDataImagesCount && (
-                <div css={noDataContainer}>
-                    <h3 css={noDataTextStyle}>
-                        <span css={countStyle}>{noDataImagesCount}</span>개의 사진이 위치 또는 날짜 정보가 없습니다 😢
-                    </h3>
-                    <img css={mapImageStyle} src={mapImage} alt='map-image' />
-                    <p>위치 정보가 없는 사진의 경우, 직접 위치를 설정할 수 있습니다.</p>
-                </div>
-            )}
-            <ButtonContainer
-                confirmText={confirmText}
-                cancelText={cancelText}
-                size='full'
-                confirmModal={confirmModal}
-                closeModal={closeModal}
-            />
-        </div>
-    );
-};
+    noDataImagesCount,
+}: RowButtonModalProps): JSX.Element => (
+    <div css={modalStyle}>
+        {descriptionText && <h2>{descriptionText}</h2>}
+        {noDataImagesCount !== 0 && (
+            <div css={noDataContainer}>
+                <h3 css={noDataTextStyle}>
+                    <span css={countStyle}>{noDataImagesCount}</span>개의 사진이 위치 또는 날짜 정보가 없습니다 😢
+                </h3>
+                <img css={mapImageStyle} src={mapImage} alt='map-image' />
+                <p>위치 정보가 없는 사진의 경우, 직접 위치를 설정할 수 있습니다.</p>
+            </div>
+        )}
+        <ButtonContainer
+            confirmText={confirmText}
+            cancelText={cancelText}
+            size='full'
+            confirmModal={confirmModal}
+            closeModal={closeModal}
+        />
+    </div>
+);
 const noDataContainer = css`
     display: flex;
     flex-direction: column;

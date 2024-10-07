@@ -544,6 +544,7 @@ const ControlButton = styled.button`
 `;
 
 const PageContainer = styled.div<{ isTransitioning: boolean }>`
+    overflow: hidden;
     height: 100vh;
     display: flex;
     flex-direction: column;

@@ -20,7 +20,7 @@ const Header = ({ title, isBackButton, onBack }: HeaderProps): JSX.Element => {
         <div css={headerStyle}>
             {isBackButton && (
                 <div css={backButtonStyle} onClick={handleBack}>
-                    <ChevronLeft size={24} />
+                    <ChevronLeft size={24} strokeWidth={1.5} />
                 </div>
             )}
             <h1>{title}</h1>
@@ -29,16 +29,16 @@ const Header = ({ title, isBackButton, onBack }: HeaderProps): JSX.Element => {
 };
 
 const headerStyle = css`
-    height: ${theme.heights.tall_54};
+    height: ${theme.heights.medium_44};
     display: flex;
     justify-content: center;
     align-items: center;
-    border-bottom: 1px solid #dddddd;
+    border-bottom: 1px solid ${theme.colors.borderColor};
     position: relative;
     background-color: ${theme.colors.white};
 
     h1 {
-        font-size: ${theme.fontSizes.xlarge_18};
+        font-size: ${theme.fontSizes.large_16};
         font-weight: 600;
     }
 `;

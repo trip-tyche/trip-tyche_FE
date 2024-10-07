@@ -5,23 +5,27 @@ import { useNavigate } from 'react-router-dom';
 
 import { getUserData, postUserNickName } from '@/api/user';
 import LogoImages from '@/components/common/LogoImages';
-import ModalOverlay from '@/components/common/modal/ModalOverlay';
-import SingleInputModal from '@/components/common/modal/SingleInputModal';
+import GuideModal from '@/components/common/modal/GuideModal';
+import InputModal from '@/components/common/modal/InputModal';
 import FightHeader from '@/components/layout/AirplaneHeader';
 import Card from '@/components/pages/home/Card';
+import Guide from '@/components/pages/home/Guide';
 import { GREETING_MESSAGE, NICKNAME_MODAL } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { useModalStore } from '@/stores/useModalStore';
 import theme from '@/styles/theme';
-import { PinPoint, Trip } from '@/types/trip';
+import { Trip } from '@/types/trip';
 import { getToken, getUserId } from '@/utils/auth';
 
-const Home = (): JSX.Element => {
+const Home = () => {
     const [userNickName, setUserNickName] = useState<string>('');
     const [userTrips, setUserTrips] = useState<Trip[]>();
-    const [pinPoints, setPinPoints] = useState<Omit<PinPoint, 'mediaLink' | 'recordDate'>[]>();
+    // const [pinPoints, setPinPoints] = useState<Omit<PinPoint, 'mediaLink' | 'recordDate'>[]>();
     const [inputValue, setInputValue] = useState('');
+    const [isOpenGuide, setIsOpenGuide] = useState(false);
+
     const { isModalOpen, openModal, closeModal } = useModalStore();
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -37,14 +41,15 @@ const Home = (): JSX.Element => {
         }
 
         try {
-            const { userNickName, trips, pinPoints } = await getUserData(userId);
+            const { userNickName, trips } = await getUserData(userId);
             if (!userNickName) {
                 openModal();
             } else {
-                // console.log(userNickName, trips, pinPoints);
+                console.log(userNickName, trips);
+                localStorage.setItem('nickName', userNickName);
                 setUserNickName(userNickName);
                 setUserTrips(trips);
-                setPinPoints(pinPoints);
+                // setPinPoints(pinPoints);
             }
         } catch (error) {
             console.error('Error fetching user data:', error);
@@ -56,36 +61,53 @@ const Home = (): JSX.Element => {
             await postUserNickName(inputValue);
             closeModal();
             fetchUserData();
+            setIsOpenGuide(true);
         } catch (error) {
             console.error('Error post user-nickname:', error);
         }
     };
 
-    return (
-        <div css={containerStyle}>
-            <FightHeader />
-            <div css={cardWrapperStyle}>
-                <Card trips={userTrips} />
-            </div>
-            <div css={imageWrapperStyle}>
-                <LogoImages />
-            </div>
+    const confirmGuideModal = () => {
+        navigate(PATH.TRIP_LIST);
+        setIsOpenGuide(false);
+    };
 
-            {userNickName && <p css={greetingMessageStyle}> {`${userNickName} ${GREETING_MESSAGE}`}</p>}
+    return (
+        <>
+            <div css={containerStyle}>
+                <FightHeader />
+                <div css={cardWrapperStyle}>
+                    <Card trips={userTrips} />
+                </div>
+                <div css={imageWrapperStyle}>
+                    <LogoImages />
+                </div>
+
+                {userNickName && <p css={greetingMessageStyle}> {`${userNickName} ${GREETING_MESSAGE}`}</p>}
+            </div>
             {isModalOpen && (
-                <>
-                    <ModalOverlay />
-                    <SingleInputModal
-                        title={NICKNAME_MODAL.TITLE}
-                        infoMessage={NICKNAME_MODAL.INFO_MESSAGE}
-                        placeholder={NICKNAME_MODAL.PLACEHOLDER}
-                        submitModal={submitUserNickName}
-                        inputValue={inputValue}
-                        setInputValue={setInputValue}
-                    />
-                </>
+                <InputModal
+                    title={NICKNAME_MODAL.TITLE}
+                    infoMessage={NICKNAME_MODAL.INFO_MESSAGE}
+                    placeholder={NICKNAME_MODAL.PLACEHOLDER}
+                    submitModal={submitUserNickName}
+                    inputValue={inputValue}
+                    setInputValue={setInputValue}
+                />
             )}
-        </div>
+            {isOpenGuide && (
+                <GuideModal
+                    confirmText='등록하러 가기'
+                    cancelText='나중에'
+                    confirmModal={confirmGuideModal}
+                    closeModal={() => {
+                        setIsOpenGuide(false);
+                    }}
+                >
+                    <Guide nickname={userNickName} />
+                </GuideModal>
+            )}
+        </>
     );
 };
 

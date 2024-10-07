@@ -38,7 +38,7 @@ const Toast: React.FC = () => {
     return <div css={[toastStyle, isAnimating ? toastEnterStyle : toastLeaveStyle]}>{message}</div>;
 };
 const toastStyle = css`
-    width: 65%;
+    width: 90%;
     max-width: 428px;
     height: 60px;
     position: fixed;

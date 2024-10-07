@@ -4,10 +4,8 @@ import { css } from '@emotion/react';
 
 import Button from '@/components/common/button/Button';
 import Toast from '@/components/common/Toast';
-import Header from '@/components/layout/Header';
 import DateGroupedImageList from '@/components/pages/addLocation/DateGroupedImageList';
 import Map from '@/components/pages/addLocation/Map';
-import { PAGE } from '@/constants/title';
 import { useAddLocation } from '@/hooks/useAddLocation';
 
 // const AddLocation = () => {
@@ -93,11 +91,11 @@ const AddLocation = () => {
                             toggleImageSelection={toggleImageSelection}
                         />
                         <div css={buttonWrapper}>
-                            <Button text='홈으로 가기' theme='pri' size='full' onClick={goToTripList} />
+                            <Button text='홈으로 가기' btnTheme='pri' size='lg' onClick={goToTripList} />
                             <Button
                                 text='지도에서 위치 선택하기'
-                                theme='sec'
-                                size='full'
+                                btnTheme='sec'
+                                size='lg'
                                 onClick={handleNextClick}
                                 disabled={selectedImages.length === 0}
                             />
@@ -108,8 +106,8 @@ const AddLocation = () => {
                         <div css={mapButtonWrapper}>
                             <Button
                                 text='위치 등록하기'
-                                theme='sec'
-                                size='full'
+                                btnTheme='sec'
+                                size='lg'
                                 onClick={handleConfirmLocation}
                                 disabled={!selectedLocation}
                                 isLoading={isLoading}

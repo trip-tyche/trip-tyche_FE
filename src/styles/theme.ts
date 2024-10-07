@@ -9,8 +9,8 @@ const colors = {
     disabled: '#CCCCCC', // whiteTextHover도 동일
     disabledText: '#7C7C7C',
 
-    white: '#F1F1F1',
-    black: '#1E1E1E',
+    // white: '#F1F1F1',
+    // black: '#1E1E1E',
 
     blue: '#3EA6FF',
     blueHover: '#0073D6',
@@ -20,7 +20,15 @@ const colors = {
     darkGray: '#8B95A1', // placeholder
     bgMypage: '#353535', // 마이페이지 프로필 배경색
     goldStar: '#FFC700', // 별점 색상
-    // borderColor: #DDDDDD,
+
+    black: '#181818',
+    descriptionText: '#5e5e5e',
+    error: '#ff0101',
+    white: '#F1F1F1',
+    modalBg: '#FFFFFF',
+    borderColor: '#DDDDDD',
+    boxShadowUp: 'rgba(50, 50, 93, 0.25) 0px 13px 27px -5px',
+    boxShadowDown: 'rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;',
 };
 
 const fontSizes = {
