@@ -1,6 +1,6 @@
 export const PAGE = {
     TRIP_LIST: '추억 티켓',
-    NEW_TRIP: '여행 등록',
+    NEW_TRIP: '새 티켓 만들기',
     TRIP_EDIT: '여행 수정',
     UPLOAD_IMAGES: '이미지 등록',
     ADD_LOCATION: '위치 등록',

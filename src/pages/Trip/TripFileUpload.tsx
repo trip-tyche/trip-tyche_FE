@@ -79,7 +79,7 @@ const TripFileUpload = () => {
 
                 <Button
                     text='등록하기'
-                    btnTheme='sec'
+                    btnTheme='pri'
                     size='lg'
                     onClick={uploadTripImages}
                     disabled={imageCount === 0}
@@ -90,8 +90,9 @@ const TripFileUpload = () => {
                 <GuideModal
                     confirmText='다음'
                     cancelText='취소'
-                    confirmModal={ignoreAddLocation}
-                    closeModal={goToAddLocation}
+                    confirmModal={goToAddLocation}
+                    closeModal={ignoreAddLocation}
+                    isOverlay
                 >
                     {noDataImagesCount !== 0 && <NoDataImageContent noDataImagesCount={noDataImagesCount} />}
                 </GuideModal>

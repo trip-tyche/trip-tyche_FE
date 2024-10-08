@@ -91,10 +91,10 @@ const AddLocation = () => {
                             toggleImageSelection={toggleImageSelection}
                         />
                         <div css={buttonWrapper}>
-                            <Button text='홈으로 가기' btnTheme='pri' size='lg' onClick={goToTripList} />
+                            <Button text='홈으로 가기' btnTheme='sec' size='lg' onClick={goToTripList} />
                             <Button
                                 text='지도에서 위치 선택하기'
-                                btnTheme='sec'
+                                btnTheme='pri'
                                 size='lg'
                                 onClick={handleNextClick}
                                 disabled={selectedImages.length === 0}
@@ -144,7 +144,7 @@ const buttonWrapper = css`
     width: 100vw;
     max-width: 428px;
     bottom: 0;
-    padding: 20px;
+    padding: 12px;
     z-index: 1000;
     display: flex;
     gap: 8px;

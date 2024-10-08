@@ -37,7 +37,7 @@ const contentContainer = css`
 const titleStyle = css`
     font-size: 16px;
     font-weight: 600;
-    color: #181818;
+    color: ${theme.colors.black};
 `;
 
 const descriptionStyle = css`
@@ -55,6 +55,7 @@ const imageContainer = css`
 
 const imageStyle = css`
     width: 60px;
+    height: auto;
     border-radius: 12px;
 `;
 

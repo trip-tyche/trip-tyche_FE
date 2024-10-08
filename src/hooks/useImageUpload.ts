@@ -90,7 +90,7 @@ export const useImageUpload = () => {
                 return;
             }
             // closeModal();
-            navigate(PATH.TRIP_LIST);
+            // navigate(PATH.TRIP_LIST);
         } catch (error) {
             console.error('Error post trip-images:', error);
             setIsUploading(false);

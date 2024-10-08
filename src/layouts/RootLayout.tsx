@@ -28,6 +28,7 @@ const containerStyle = css`
     min-height: 100vh;
     margin: 0 auto;
     background-color: ${theme.colors.white};
+    box-shadow: ${theme.colors.boxShadowDown};
 `;
 
 export default RootLayout;

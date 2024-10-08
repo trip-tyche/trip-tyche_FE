@@ -10,17 +10,28 @@ export interface GuideModalProps {
     cancelText: string;
     confirmModal?: () => void;
     closeModal?: () => void;
+    isOverlay?: boolean;
     children: React.ReactNode;
 }
 
-const GuideModal: React.FC<GuideModalProps> = ({ confirmText, cancelText, confirmModal, closeModal, children }) => (
-    <div css={modalStyle}>
-        <div css={contentStyle}>{children}</div>
-        <div css={buttonContainer}>
-            <Button text={cancelText} btnTheme='sec' size='lg' onClick={closeModal} />
-            <Button text={confirmText} btnTheme='pri' size='lg' onClick={confirmModal} />
+const GuideModal: React.FC<GuideModalProps> = ({
+    confirmText,
+    cancelText,
+    confirmModal,
+    closeModal,
+    isOverlay = false,
+    children,
+}) => (
+    <>
+        {isOverlay && <ModalOverlay />}
+        <div css={modalStyle}>
+            <div css={contentStyle}>{children}</div>
+            <div css={buttonContainer}>
+                <Button text={cancelText} btnTheme='sec' size='lg' onClick={closeModal} />
+                <Button text={confirmText} btnTheme='pri' size='lg' onClick={confirmModal} />
+            </div>
         </div>
-    </div>
+    </>
 );
 
 const modalStyle = css`

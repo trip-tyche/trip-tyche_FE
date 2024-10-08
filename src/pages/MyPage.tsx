@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
 import { getUserData } from '@/api/user';
-import characterImg from '@/assets/images/character.png';
+import characterImg from '@/assets/images/ogami_3.png';
 import Button from '@/components/common/button/Button';
 import ColumnButtonModal from '@/components/common/modal/ColumnButtonModal';
 import ConfirmModal from '@/components/common/modal/ConfirmModal';

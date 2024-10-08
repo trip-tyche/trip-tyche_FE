@@ -249,7 +249,7 @@ const TimelineMap: React.FC = () => {
         maxZoom: INDIVIDUAL_MARKER_ZOOM - 1,
         zoomOnClick: true,
         // averageCenter: true,
-        minimumClusterSize: 2,
+        minimumClusterSize: 1,
         clickZoom: 2, // 클릭 시 줌 레벨 증가량
         onClick: (cluster: any, markers: any) => {
             if (mapRef.current) {
@@ -294,7 +294,11 @@ const TimelineMap: React.FC = () => {
     }
 
     if (!isLoaded) {
-        return <div>Loading maps</div>;
+        return (
+            <div css={loadingStyle}>
+                <Loading />
+            </div>
+        );
     }
 
     const renderPhotoCard = (marker: PinPoint) => (
@@ -413,6 +417,7 @@ const TimelineMap: React.FC = () => {
                                     key={file.mediaFileId}
                                     position={{ lat: file.latitude, lng: file.longitude }}
                                     clusterer={clusterer}
+                                    icon={markerIcon || undefined}
                                 />
                             ))}
                         </>
@@ -465,6 +470,14 @@ const DaySection = styled.div`
     z-index: 1000;
     height: ${theme.heights.xtall_60};
     background-color: ${theme.colors.white};
+`;
+
+const loadingStyle = css`
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
 const dayInfoTextStyle = css`
