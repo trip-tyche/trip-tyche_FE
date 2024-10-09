@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 
-import SocialLoginButtons from '@/components/common/button/SocialLoginButtons';
+import SocialLoginButtons from '../components/common/button/SocialLoginButtons';
+// import SocialLoginButtons from '@/components/common/button/SocialLoginButtons';
 import LogoImages from '@/components/common/LogoImages';
 import Toast from '@/components/common/Toast';
 import FightHeader from '@/components/layout/AirplaneHeader';
