@@ -1,5 +1,5 @@
-import { createBrowserRouter, Outlet } from 'react-router-dom';
-// import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router-dom';
+// import { createBrowserRouter, Outlet } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router-dom';
 
 import RootLayout from '../layouts/RootLayout';
 import Home from '../pages/Home';
@@ -17,18 +17,18 @@ import NewTrip from '@/pages/Trip/NewTrip';
 import TimelineMap from '@/pages/Trip/TimelineMap';
 import TripEdit from '@/pages/Trip/TripEdit';
 import TripFileUpload from '@/pages/Trip/TripFileUpload';
-// import { getToken, getUserId } from '@/utils/auth';
+import { getToken, getUserId } from '@/utils/auth';
 
-const ProtectedRoute = () => (
-    // const { pathname, search } = useLocation();
-    // const userId = getUserId();
-    // const token = getToken();
+const ProtectedRoute = () => {
+    const { pathname, search } = useLocation();
+    const userId = getUserId();
+    const token = getToken();
 
     // userId, 토큰 유효성 검사
-    // if (!userId || !token) {
-    // return <Navigate to={`/onboarding`} replace state={pathname + search} />;
-    // return <Navigate to={`${PATH.LOGIN}`} replace state={pathname + search} />;
-    // }
+    if (!userId || !token) {
+        return <Navigate to={`/onboarding`} replace state={pathname + search} />;
+        return <Navigate to={`${PATH.LOGIN}`} replace state={pathname + search} />;
+    }
 
     // // 토큰 만료 검사 (예: JWT 디코딩)
     // const isTokenExpired = checkTokenExpiration(token); // 이 함수는 직접 구현해야 합니다
@@ -38,8 +38,8 @@ const ProtectedRoute = () => (
     //     return <Navigate to={`${PATH.LOGIN}`} replace state={pathname + search} />;
     // }
 
-    <Outlet />
-);
+    return <Outlet />;
+};
 export const router = createBrowserRouter([
     {
         path: PATH.HOME,
