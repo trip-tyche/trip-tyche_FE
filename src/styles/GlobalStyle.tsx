@@ -1,5 +1,4 @@
 import { css, Global } from '@emotion/react';
-// import { createGlobalStyle } from '@emotion/react'
 
 import fontStyles from '@/styles/globalFonts';
 import theme from '@/styles/theme';

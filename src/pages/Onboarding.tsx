@@ -31,8 +31,8 @@ const Onboarding = () => {
                     <img css={imageStyle} src={imageRight} alt='image-right' />
                 </div>
                 <div>
-                    <h1 css={titleStyle}>여행을 통해 추억을 남기다</h1>
-                    <p css={subtitleStyle}>당신만의 특별한 여정을 기록하세요</p>
+                    <h1 css={titleStyle}>여행의 추억을 티켓으로</h1>
+                    <p css={subtitleStyle}>추억 티켓을 만들어 여행을 기록하세요</p>
                 </div>
             </div>
         </div>
@@ -44,6 +44,7 @@ const containerStyle = css`
     flex-direction: column;
     min-height: 100vh;
     padding: 20px;
+    background-color: rgb(0, 115, 187, 0.8);
 `;
 
 const contentStyle = css`
@@ -53,7 +54,7 @@ const contentStyle = css`
     justify-content: center;
     align-items: center;
     text-align: center;
-    gap: 24px;
+    gap: 18px;
 `;
 
 const imageContainerStyle = css`
@@ -63,7 +64,7 @@ const imageContainerStyle = css`
 `;
 
 const imageStyle = css`
-    width: 60px;
+    width: 70px;
     height: auto;
     border-radius: 12px;
     margin-right: 8px;
@@ -72,12 +73,14 @@ const imageStyle = css`
 const titleStyle = css`
     font-size: ${theme.fontSizes.xxxlarge_24};
     font-weight: bold;
-    margin-bottom: 10px;
+    margin-bottom: 14px;
+    color: ${theme.colors.white};
 `;
 
 const subtitleStyle = css`
     font-size: ${theme.fontSizes.large_16};
-    color: ${theme.colors.descriptionText};
+    font-weight: 600;
+    color: ${theme.colors.black};
 `;
 
 export default Onboarding;

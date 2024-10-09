@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/button/Button';
 import GuideModal from '@/components/common/modal/GuideModal';
+import ModalOverlay from '@/components/common/modal/ModalOverlay';
 import Header from '@/components/layout/Header';
 import NoDataImageContent from '@/components/pages/image-upload/NoDataImageContent';
 import UploadingSpinner from '@/components/pages/image-upload/UploadingSpinner';
@@ -89,15 +90,18 @@ const TripFileUpload = () => {
                 </div>
             </main>
             {isModalOpen && (
-                <GuideModal
-                    confirmText='다음'
-                    cancelText='취소'
-                    confirmModal={goToAddLocation}
-                    closeModal={ignoreAddLocation}
-                    isOverlay
-                >
-                    {noDataImagesCount !== 0 && <NoDataImageContent noDataImagesCount={noDataImagesCount} />}
-                </GuideModal>
+                <>
+                    <ModalOverlay />
+                    <GuideModal
+                        confirmText='다음'
+                        cancelText='취소'
+                        confirmModal={goToAddLocation}
+                        closeModal={ignoreAddLocation}
+                        isOverlay
+                    >
+                        {noDataImagesCount !== 0 && <NoDataImageContent noDataImagesCount={noDataImagesCount} />}
+                    </GuideModal>
+                </>
             )}
             {isUploading && <UploadingSpinner />}
         </div>

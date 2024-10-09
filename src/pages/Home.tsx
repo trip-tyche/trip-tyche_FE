@@ -56,8 +56,7 @@ const Home = () => {
     const submitUserNickName = async () => {
         try {
             await postUserNickName(inputValue);
-            // closeModal();
-            openModal;
+            closeModal();
             fetchUserData();
             setIsOpenGuide(true);
         } catch (error) {
@@ -100,7 +99,7 @@ const Home = () => {
                     setInputValue={setInputValue}
                 />
             )}
-            {!isOpenGuide && (
+            {isOpenGuide && (
                 <GuideModal
                     confirmText='등록하러 가기'
                     cancelText='나중에'
@@ -160,7 +159,7 @@ const cardWrapperStyle = css`
 `;
 
 const imageStyle = css`
-    width: 60px;
+    width: 70px;
     height: auto;
     border-radius: 12px;
 `;

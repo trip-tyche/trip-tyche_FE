@@ -26,8 +26,8 @@ const Login = (): JSX.Element => {
                         <img css={imageStyle} src={imageRight} alt='image-right' />
                     </div>
                     <div>
-                        <h1 css={titleStyle}>여행을 통해 추억을 남기다</h1>
-                        <p css={subtitleStyle}>당신만의 특별한 여정을 기록하세요</p>
+                        <h1 css={titleStyle}>여행의 추억을 티켓으로</h1>
+                        <p css={subtitleStyle}>추억 티켓을 만들어 여행을 기록하세요</p>
                     </div>
                 </div>
                 <div css={buttonContainerStyle}>
