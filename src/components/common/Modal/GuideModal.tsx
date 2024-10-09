@@ -2,8 +2,8 @@ import React from 'react';
 
 import { css } from '@emotion/react';
 
-import Button from '@/components/common/button/Button';
-import ModalOverlay from '@/components/common/modal/ModalOverlay';
+import Button from '@/components/common/button/Button.tsx';
+import ModalOverlay from '@/components/common/modal/ModalOverlay.tsx';
 
 export interface GuideModalProps {
     confirmText: string;

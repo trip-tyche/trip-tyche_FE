@@ -54,15 +54,9 @@ export default defineConfig({
         tsconfigPaths(),
     ],
     resolve: {
-        // alias: {
-        //     '@': path.resolve(__dirname, 'src'),
-        // },
-        alias: [
-            {
-                find: '@',
-                replacement: '/src',
-            },
-        ],
+        alias: {
+            '@': '/src',
+        },
     },
     optimizeDeps: {
         include: ['@emotion/react', '@emotion/styled'],
