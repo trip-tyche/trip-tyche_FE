@@ -7,7 +7,9 @@
         "dev": "vite",
         "build": "tsc -b && vite build",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "vercel-build": "yarn install && yarn build",
+        "vercel": "vercel"
     },
     "dependencies": {
         "@emotion/babel-plugin": "^11.12.0",
@@ -55,6 +57,7 @@
         "prettier": "^3.3.3",
         "rollup": "^4.24.0",
         "typescript": "^5.6.3",
+        "vercel": "^37.6.3",
         "vite": "^5.4.8",
         "vite-tsconfig-paths": "^5.0.1"
     }
