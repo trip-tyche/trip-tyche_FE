@@ -1,9 +1,9 @@
 import { css } from '@emotion/react';
 
+import imageLeft from '@/assets/images/ogami_1.png';
+import imageRight from '@/assets/images/ogami_2.png';
 import SocialLoginButtons from '@/components/common/button/SocialLoginButtons';
-import LogoImages from '@/components/common/LogoImages';
 import Toast from '@/components/common/Toast';
-import FightHeader from '@/components/layout/AirplaneHeader';
 import { ENV, OAUTH_URL } from '@/constants/auth';
 import theme from '@/styles/theme';
 
@@ -19,69 +19,85 @@ const Login = (): JSX.Element => {
 
     return (
         <div css={containerStyle}>
-            <FightHeader />
-            <div css={textStyle}>
-                <h1>오감 저리는 여행 기록 플랫폼</h1>
-                <p>오감 저리는 여행 기록 플랫폼입니다.</p>
-                <p>오감 저리게 시작해보세요</p>
-            </div>
-
-            <div css={imageWrapperStyle}>
-                <LogoImages />
-            </div>
-
-            <div css={buttonContainerStyle}>
-                <SocialLoginButtons provider='kakao' handleSocialLogin={handleSocialLogin('kakao')} />
-                <SocialLoginButtons provider='google' handleSocialLogin={handleSocialLogin('google')} />
-            </div>
+            <main css={mainStyle}>
+                <div css={contentStyle}>
+                    <div css={imageContainerStyle}>
+                        <img css={imageStyle} src={imageLeft} alt='image-left' />
+                        <img css={imageStyle} src={imageRight} alt='image-right' />
+                    </div>
+                    <div>
+                        <h1 css={titleStyle}>여행을 통해 추억을 남기다</h1>
+                        <p css={subtitleStyle}>당신만의 특별한 여정을 기록하세요</p>
+                    </div>
+                </div>
+                <div css={buttonContainerStyle}>
+                    <SocialLoginButtons provider='kakao' handleSocialLogin={handleSocialLogin('kakao')} />
+                    <SocialLoginButtons provider='google' handleSocialLogin={handleSocialLogin('google')} />
+                </div>
+            </main>
             <Toast />
         </div>
     );
 };
 
 const containerStyle = css`
+    width: 100%;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
 `;
 
-const textStyle = css`
-    flex: 1;
+const mainStyle = css`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 84px;
+`;
 
+const contentStyle = css`
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     text-align: center;
-
-    h1 {
-        color: ${theme.colors.black};
-        font-size: ${theme.fontSizes.xxlarge_20};
-        font-weight: 600;
-        margin: 3rem 0 1.5rem;
-    }
-    p {
-        color: ${theme.colors.disabledText};
-        font-size: ${theme.fontSizes.normal_14};
-    }
+    gap: 24px;
 `;
 
-const imageWrapperStyle = css`
-    flex: 3;
+const imageContainerStyle = css`
+    width: 200px;
+    overflow: hidden;
+    margin: 12px 0;
+`;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+const imageStyle = css`
+    width: 60px;
+    height: auto;
+    border-radius: 12px;
+    margin-right: 8px;
+`;
+
+const titleStyle = css`
+    font-size: ${theme.fontSizes.xxxlarge_24};
+    font-weight: bold;
+    margin-bottom: 10px;
+`;
+
+const subtitleStyle = css`
+    font-size: ${theme.fontSizes.large_16};
+    color: ${theme.colors.descriptionText};
 `;
 
 const buttonContainerStyle = css`
-    flex: 1;
-
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 1rem;
+    gap: 20px;
 `;
 
 export default Login;

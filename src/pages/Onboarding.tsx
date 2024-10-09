@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-// import { css, keyframes } from '@emotion/react';
 import { Navigate } from 'react-router-dom';
 
 import imageLeft from '@/assets/images/ogami_1.png';
@@ -28,10 +27,8 @@ const Onboarding = () => {
         <div css={containerStyle}>
             <div css={contentStyle}>
                 <div css={imageContainerStyle}>
-                    {/* <div css={imageSlideStyle}> */}
                     <img css={imageStyle} src={imageLeft} alt='image-left' />
                     <img css={imageStyle} src={imageRight} alt='image-right' />
-                    {/* </div> */}
                 </div>
                 <div>
                     <h1 css={titleStyle}>여행을 통해 추억을 남기다</h1>
@@ -41,15 +38,6 @@ const Onboarding = () => {
         </div>
     );
 };
-
-// const slideAnimation = keyframes`
-//     0% {
-//         transform: translateX(0);
-//     }
-//     100% {
-//         transform: translateX(-50%);
-//     }
-// `;
 
 const containerStyle = css`
     display: flex;
@@ -73,11 +61,6 @@ const imageContainerStyle = css`
     overflow: hidden;
     margin: 12px 0;
 `;
-
-/* const imageSlideStyle = css`
-    display: flex;
-    animation: ${slideAnimation} 1.5s linear infinite;
-`; */
 
 const imageStyle = css`
     width: 60px;
