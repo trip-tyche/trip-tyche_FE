@@ -1,14 +1,16 @@
 import { css } from '@emotion/react';
 
+import mapImage from '@/assets/images/map-image.png';
 import ButtonContainer from '@/components/common/button/ButtonContainer';
 import theme from '@/styles/theme';
 
 export interface RowButtonModalProps {
-    descriptionText: string;
+    descriptionText?: string;
     confirmText: string;
     cancelText: string;
     confirmModal?: () => void;
     closeModal?: () => void;
+    noDataImagesCount?: number;
 }
 
 const RowButtonModal = ({
@@ -17,9 +19,19 @@ const RowButtonModal = ({
     cancelText,
     confirmModal,
     closeModal,
+    noDataImagesCount,
 }: RowButtonModalProps): JSX.Element => (
     <div css={modalStyle}>
-        <h2>{descriptionText}</h2>
+        {descriptionText && <h2>{descriptionText}</h2>}
+        {noDataImagesCount !== 0 && (
+            <div css={noDataContainer}>
+                <h3 css={noDataTextStyle}>
+                    <span css={countStyle}>{noDataImagesCount}</span>개의 사진이 위치 또는 날짜 정보가 없습니다 😢
+                </h3>
+                <img css={mapImageStyle} src={mapImage} alt='map-image' />
+                <p>위치 정보가 없는 사진의 경우, 직접 위치를 설정할 수 있습니다.</p>
+            </div>
+        )}
         <ButtonContainer
             confirmText={confirmText}
             cancelText={cancelText}
@@ -29,6 +41,39 @@ const RowButtonModal = ({
         />
     </div>
 );
+const noDataContainer = css`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+
+    p {
+        font-size: 12px;
+        color: #666;
+        font-weight: 600;
+        text-decoration: underline;
+    }
+`;
+const noDataTextStyle = css`
+    font-size: 16px;
+    font-weight: 600;
+    color: #666;
+`;
+
+const countStyle = css`
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 4px;
+    color: #0073bb;
+`;
+
+const mapImageStyle = css`
+    width: 95%;
+    opacity: 0.9;
+    border: 2px solid #ddd;
+    border-radius: 20px;
+`;
 
 const modalStyle = css`
     h2 {
@@ -48,8 +93,8 @@ const modalStyle = css`
     transform: translate(-50%, -50%);
 
     background-color: #fff;
-    width: 340px;
-    padding: 20px;
+    width: 360px;
+    padding: 14px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

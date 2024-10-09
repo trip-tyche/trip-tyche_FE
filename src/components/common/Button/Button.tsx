@@ -4,72 +4,82 @@ import Loading from '@/components/common/Loading';
 
 export interface ButtonProps {
     text: string;
-    theme: 'pri' | 'sec';
-    size: 'full' | 'lg' | 'sm';
+    btnTheme: 'pri' | 'sec';
+    size: 'lg' | 'sm';
     onClick?: () => void;
     disabled?: boolean;
     isLoading?: boolean;
+    loadingMessage?: string;
 }
 
 const Button = ({
     text,
-    theme,
+    btnTheme,
     size,
     onClick,
     disabled,
     isLoading = false,
+    loadingMessage,
     children,
 }: ButtonProps & { children?: React.ReactNode }): JSX.Element => (
-    <button css={buttonStyle(theme, size)} onClick={onClick} disabled={disabled || isLoading}>
-        {isLoading ? (
+    <button css={buttonStyle(btnTheme, size)} onClick={onClick} disabled={disabled || isLoading}>
+        {isLoading && loadingMessage ? (
+            <span css={spinnerStyle}>
+                <p>{loadingMessage}</p>
+            </span>
+        ) : isLoading ? (
             <span css={spinnerStyle}>
                 <Loading type='button' />
             </span>
         ) : (
             <>
-                {text}
                 {children}
+                {text}
             </>
         )}
     </button>
 );
 
-const ButtonLeft = ({ children }: { children?: React.ReactNode }) => (
-    <span style={{ marginRight: '8px' }}>{children}</span>
-);
+const ButtonLeft = ({ children }: { children?: React.ReactNode }) => <div css={iconStyle}>{children}</div>;
 
 Button.Left = ButtonLeft;
 
 export default Button;
 
-const buttonStyle = (theme: 'pri' | 'sec', size: 'full' | 'lg' | 'sm') => css`
-    padding: 8px 12px;
-    border-radius: 10px;
-    border: ${theme === 'pri' ? '1px solid #333' : '0'};
-    font-size: ${size === 'full' ? '14px' : '12px'};
-    font-weight: 600;
-    cursor: pointer;
-    width: ${size === 'lg' ? '220px' : size === 'sm' ? '80px' : '100%'};
-    height: ${size === 'full' ? '44px' : '32px'};
-    line-height: 16px;
-    transition: all 0.2s ease;
+const buttonStyle = (btnTheme: 'pri' | 'sec', size: 'lg' | 'sm') => css`
+    ${basicButtonStyle}
+    color: ${btnTheme === 'pri' ? '#f2f4f9' : '#0073bb'};
+    background-color: ${btnTheme === 'pri' ? '#0073bb' : '#f2f4f9'};
+    font-size: ${size === 'lg' ? '14px' : '12px'};
+    border-radius: ${size === 'lg' ? '16px' : '8px'};
+    width: ${size === 'lg' ? '100%' : 'auto'};
+    height: ${size === 'lg' ? '44px' : '34px'};
+    padding: ${size === 'lg' ? '0' : '0 12px'};
+`;
 
-    color: ${theme === 'pri' ? '#333' : '#fff'};
-    background-color: ${theme === 'pri' ? '#fff' : '#333'};
+const basicButtonStyle = css`
+    border: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     &:active {
         transform: scale(0.97);
-        /* background-color: rgb(51, 51, 51, 0.85); */
-    }
-
-    &:hover {
-        /* background-color: rgb(51, 51, 51, 0.85); */
     }
 
     &:disabled {
-        opacity: 0.8;
+        opacity: 0.7;
         cursor: not-allowed;
     }
+`;
+
+const iconStyle = css`
+    margin-right: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
 const spinnerStyle = css`
@@ -78,4 +88,8 @@ const spinnerStyle = css`
     align-items: center;
     width: 100%;
     height: 100%;
+
+    p {
+        font-size: 14px;
+    }
 `;

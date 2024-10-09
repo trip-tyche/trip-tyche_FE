@@ -3,20 +3,32 @@ import { ImageUp, Image } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/button/Button';
-import ModalOverlay from '@/components/common/modal/ModalOverlay';
-import RowButtonModal from '@/components/common/modal/RowButtonModal';
+import GuideModal from '@/components/common/modal/GuideModal';
 import Header from '@/components/layout/Header';
+import NoDataImageContent from '@/components/pages/image-upload/NoDataImageContent';
+import UploadingSpinner from '@/components/pages/image-upload/UploadingSpinner';
 import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useModalStore } from '@/stores/useModalStore';
+import theme from '@/styles/theme';
 
 const TripFileUpload = () => {
     const { isModalOpen, closeModal } = useModalStore();
 
-    const { imageCount, imagesWithLocation, imagesNoLocation, isLoading, handleFileUpload, uploadTripImages } =
-        useImageUpload();
+    const {
+        imageCount,
+        imagesWithLocation,
+        noDateImagesCount,
+        imagesNoLocation,
+        isLoading,
+        isUploading,
+        handleFileUpload,
+        uploadTripImages,
+    } = useImageUpload();
+
+    const noDataImagesCount = noDateImagesCount + imagesNoLocation.length;
 
     const navigate = useNavigate();
 
@@ -40,10 +52,11 @@ const TripFileUpload = () => {
             <main css={mainStyle}>
                 <section css={sectionStyle}>
                     <h2>{TRIP_IMAGES_UPLOAD.title}</h2>
+                    <p>여행 기간 외 사진은 등록되지 않습니다</p>
                     <div css={uploadAreaStyle}>
                         <input
                             type='file'
-                            accept='image/*'
+                            accept='image/*,.heic'
                             multiple
                             onChange={(e) => handleFileUpload(e.target.files)}
                             css={fileInputStyle}
@@ -64,31 +77,39 @@ const TripFileUpload = () => {
                         )}
                     </div>
                 </section>
-
-                <Button
-                    text='등록하기'
-                    theme='sec'
-                    size='full'
-                    onClick={uploadTripImages}
-                    disabled={imageCount === 0}
-                    isLoading={isLoading}
-                />
+                <div css={buttonWrapperStyle}>
+                    <Button
+                        text='등록하기'
+                        btnTheme='pri'
+                        size='lg'
+                        onClick={uploadTripImages}
+                        disabled={imageCount === 0}
+                        isLoading={isLoading}
+                    />
+                </div>
             </main>
             {isModalOpen && (
-                <>
-                    <ModalOverlay />
-                    <RowButtonModal
-                        descriptionText={`앗! ${imagesNoLocation.length}개의 사진이 위치 정보가 없어요..`}
-                        confirmText='직접 위치넣기'
-                        cancelText='나중에'
-                        confirmModal={ignoreAddLocation}
-                        closeModal={goToAddLocation}
-                    />
-                </>
+                <GuideModal
+                    confirmText='다음'
+                    cancelText='취소'
+                    confirmModal={goToAddLocation}
+                    closeModal={ignoreAddLocation}
+                    isOverlay
+                >
+                    {noDataImagesCount !== 0 && <NoDataImageContent noDataImagesCount={noDataImagesCount} />}
+                </GuideModal>
             )}
+            {isUploading && <UploadingSpinner />}
         </div>
     );
 };
+
+const countStyle = css`
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 4px;
+    color: #0073bb;
+`;
 
 const containerStyle = css`
     height: 100vh;
@@ -97,16 +118,27 @@ const containerStyle = css`
 `;
 
 const mainStyle = css`
+    flex: 1;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
 `;
 
 const sectionStyle = css`
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    /* gap: 30px; */
     h2 {
         font-size: 18px;
         font-weight: bold;
+        margin-bottom: 8px;
+    }
+    p {
+        font-size: 12px;
+        color: ${theme.colors.descriptionText};
+        margin-bottom: 24px;
+        margin-left: 2px;
     }
     margin-bottom: 70px;
 `;
@@ -139,18 +171,8 @@ const uploadedStyle = css`
     font-weight: bold;
 `;
 
-const countStyle = css`
-    font-size: 20px;
-    font-weight: bold;
-    margin: 0 4px;
+const buttonWrapperStyle = css`
+    margin-bottom: 40px;
 `;
-
-// const submitButtonStyle = css`
-//     color: white;
-//     margin-top: 60px;
-//     display: flex;
-//     padding: 20px;
-//     justify-content: flex-end;
-// `;
 
 export default TripFileUpload;

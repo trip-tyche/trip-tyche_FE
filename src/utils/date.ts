@@ -24,6 +24,21 @@ export function formatDateToKorean(dateString: string): string {
         throw new Error('Invalid date format. Expected YYYY-MM-DD');
     }
 
-    // return `${year}년 ${month}월 ${day}일`;
     return `${month}월 ${day}일`;
 }
+
+export const getDayNumber = (recordDate: string, startDate: string) => {
+    if (!recordDate || !startDate) {
+        return 'Invalid date'; // recordDate 또는 startDate가 없으면 기본 메시지 반환
+    }
+
+    const start = new Date(startDate).getTime();
+    const current = new Date(recordDate).getTime();
+
+    // 날짜 차이를 밀리초 단위로 계산한 후 일 단위로 변환
+    const diffInTime = current - start;
+    const diffInDays = Math.floor(diffInTime / (1000 * 60 * 60 * 24));
+
+    // Day1부터 시작하므로 1을 더해줌
+    return `Day ${diffInDays + 1}`;
+};

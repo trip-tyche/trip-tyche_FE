@@ -8,10 +8,10 @@ export const HASHTAG_MENU = [
     '우울탈출',
     '혼자서도괜찮아',
     '행복한시간',
-    '용기있는도전',
-    '특별한순간',
-    '감정여행',
-    '나를위한여행',
+    // '용기있는도전',
+    // '특별한순간',
+    // '감정여행',
+    // '나를위한여행',
 ];
 
 export const COUNTRY_OPTIONS = [
@@ -54,7 +54,6 @@ export const NEW_COUNTRY = {
     TITLE_PLACEHOLDER: '여행 제목을 입력하세요',
     COUNTRY: '여행 국가',
     COUNTRY_DEFAULT: '국가를 선택하세요',
-    START_DATE: '시작 날짜',
-    END_DATE: '종료 날짜',
+    DATE: '여행 기간',
     HASHTAG: '해시태그',
 };

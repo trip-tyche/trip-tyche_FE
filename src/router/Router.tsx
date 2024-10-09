@@ -25,7 +25,8 @@ const ProtectedRoute = () => {
 
     // userId, 토큰 유효성 검사
     if (!userId || !token) {
-        return <Navigate to={`${PATH.LOGIN}`} replace state={pathname + search} />;
+        return <Navigate to={`/onboarding`} replace state={pathname + search} />;
+        // return <Navigate to={`${PATH.LOGIN}`} replace state={pathname + search} />;
     }
 
     // // 토큰 만료 검사 (예: JWT 디코딩)
@@ -64,6 +65,7 @@ export const router = createBrowserRouter([
                     { path: `${PATH.TIMELINE_MAP}/:tripId`, element: <TimelineMap /> },
                     { path: `${PATH.MUSIC_VIDEO}/:tripId/:pinPointId`, element: <MusicVideo /> },
                     { path: PATH.DAY_IMAGES, element: <DayImages /> },
+                    { path: '/onboarding', element: <Onboarding /> },
                 ],
             },
             { path: '*', element: <PageNotFound /> },

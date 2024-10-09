@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 
 import SocialLoginButtons from '@/components/common/button/SocialLoginButtons';
 import LogoImages from '@/components/common/LogoImages';
+import Toast from '@/components/common/Toast';
 import FightHeader from '@/components/layout/AirplaneHeader';
 import { ENV, OAUTH_URL } from '@/constants/auth';
 import theme from '@/styles/theme';
@@ -33,6 +34,7 @@ const Login = (): JSX.Element => {
                 <SocialLoginButtons provider='kakao' handleSocialLogin={handleSocialLogin('kakao')} />
                 <SocialLoginButtons provider='google' handleSocialLogin={handleSocialLogin('google')} />
             </div>
+            <Toast />
         </div>
     );
 };

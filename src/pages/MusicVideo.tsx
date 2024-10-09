@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import { css } from '@emotion/react';
-import { useLocation, useParams } from 'react-router-dom';
+import { X } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { getPinPointImages } from '@/api/image';
+import { getImagesByPinPoint } from '@/api/image';
 import ImageCarousel from '@/components/ImageCarousel';
-import Header from '@/components/layout/Header';
-import { PAGE } from '@/constants/title';
+import { PATH } from '@/constants/path';
+
+type CarouselState = 'auto' | 'paused' | 'zoomed';
 
 interface ImageType {
     mediaFileId: string;
@@ -15,11 +17,10 @@ interface ImageType {
 
 const MusicVideo = () => {
     const [displayedImages, setDisplayedImages] = useState<ImageType[]>([]);
+    const [carouselState, setCarouselState] = useState<CarouselState>('auto');
     const { tripId, pinPointId } = useParams<{ tripId: string; pinPointId: string }>();
-    const imagesUrl: string[] = [];
 
-    const location = useLocation();
-    const tripTitle = location.state;
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPinPointImages = async () => {
@@ -27,8 +28,7 @@ const MusicVideo = () => {
                 if (!(tripId && pinPointId)) {
                     return;
                 }
-                const data = await getPinPointImages(tripId, pinPointId);
-                console.log(data);
+                const data = await getImagesByPinPoint(tripId, pinPointId);
                 const { images } = data.firstImage;
                 setDisplayedImages(images);
             } catch (error) {
@@ -37,38 +37,43 @@ const MusicVideo = () => {
         };
 
         fetchPinPointImages();
+    }, [tripId, pinPointId]);
+
+    const handleCarouselStateChange = useCallback((newState: CarouselState) => {
+        setCarouselState(newState);
     }, []);
 
-    // console.log(displayedImages);
-
-    const images = displayedImages.map((image) => imagesUrl.push(image.mediaLink));
-    console.log(imagesUrl);
     return (
-        <div>
-            <Header title={tripTitle} isBackButton />
-
-            {/* <div>
-                {displayedImages?.map((image: ImageType) => (
-                    <div key={image.mediaFileId} css={imageContainerStyle}>
-                        <img src={image.mediaLink} alt={`image`} css={imageStyle} />
-                    </div>
-                ))}
-            </div> */}
+        <div css={containerStyle}>
+            {carouselState !== 'zoomed' && (
+                <div css={backStyle} onClick={() => navigate(`${PATH.TIMELINE_MAP}/${tripId}`)}>
+                    <X size={24} color='#FDFDFD' />
+                </div>
+            )}
             <div css={carouselWrapper}>
-                <ImageCarousel images={imagesUrl || undefined} />
+                <ImageCarousel images={displayedImages} onStateChange={handleCarouselStateChange} />
             </div>
         </div>
     );
 };
 
-const carouselWrapper = css`
+const containerStyle = css`
+    position: relative;
     height: 100vh;
 `;
 
-const imageStyle = css`
-    width: 100%;
-    height: 100%;
-    /* object-fit: cover; */
+const backStyle = css`
+    position: absolute;
+    cursor: pointer;
+    top: 15px;
+    right: 15px;
+    z-index: 1000;
+`;
+
+const carouselWrapper = css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `;
 
 export default MusicVideo;

@@ -100,7 +100,7 @@ const baseStyles = css`
         line-height: 1;
         font-size: ${theme.fontSizes.large_16}; /* 16px */
         color: ${theme.colors.black};
-        background-color: ${theme.colors.black};
+        background-color: #eee;
         letter-spacing: -0.14px;
     }
 

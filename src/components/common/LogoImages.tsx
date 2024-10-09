@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 
-import characterImg from '@/assets/images/character.png';
 import earthImg from '@/assets/images/earth.png';
+import characterImg from '@/assets/images/ogami_3.png';
 
 const LogoImages = () => (
     <div css={LogoImagesStyle}>

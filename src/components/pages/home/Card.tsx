@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 
+import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
 
 interface CardProps {
@@ -14,20 +15,23 @@ const Card = ({ trips }: CardProps): JSX.Element => {
         <div className='home-trips' css={CardStyle}>
             {uniqueCounties?.length ? (
                 <>
-                    <p>지금까지 여행한 국가는</p>
-                    <p>
+                    <h3>지금까지 여행한 국가는</h3>
+                    <h3>
                         <span>{uniqueCounties?.length}</span> 군데입니다.
-                    </p>
+                    </h3>
                 </>
             ) : (
-                <p>새로운 여행을 등록해주세요!</p>
+                <h3>아직 등록된 여행 국가가 없네요 😆</h3>
             )}
             {uniqueCounties?.length ? (
                 <div className='home-flags'>
                     {uniqueCounties?.map((country, index) => <span key={index}>{country.slice(0, 4)}</span>)}
                 </div>
             ) : (
-                <div className='home-flags'>🇰🇷 🇯🇵 🇰🇷 🇯🇵 </div>
+                <>
+                    <p css={subtitleStyle}>보더패스에서 새로운 여행을 등록해주세요!</p>
+                    {/* <div className='home-flags'>🇰🇷 🇯🇵 🇰🇷 🇯🇵 </div> */}
+                </>
             )}
         </div>
     );
@@ -35,19 +39,27 @@ const Card = ({ trips }: CardProps): JSX.Element => {
 
 export default Card;
 
+const subtitleStyle = css`
+    font-size: ${theme.fontSizes.large_16};
+    color: ${theme.colors.descriptionText};
+    margin-top: 14px;
+`;
+
 const CardStyle = css`
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 1px solid #ccc;
-    padding: 15px;
-    border-radius: 40px;
+    border: 2px solid ${theme.colors.borderColor};
+    box-shadow: ${theme.colors.boxShadowDown} ${theme.colors.boxShadowUp};
+    padding: 16px;
+    border-radius: 16px;
     width: 330px;
 
-    p {
+    h3 {
         font-size: 18px;
         font-weight: bold;
+        margin: 4px;
     }
     span {
         font-size: 30px;

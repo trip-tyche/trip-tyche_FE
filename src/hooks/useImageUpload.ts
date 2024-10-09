@@ -18,14 +18,16 @@ export const useImageUpload = () => {
     const [imageCount, setImagesCount] = useState(0);
     const [imagesWithLocation, setImagesWithLocation] = useState<ImageWithLocationAndDate[]>([]);
     const [imagesNoLocation, setImagesNoLocation] = useState<ImageWithDate[]>([]);
-    // const [imagesNoLocation, setImagesNoLocation] = useState<File[]>([]);
+    const [noDateImagesCount, setNoDateImagesCount] = useState(0);
+
     const [isLoading, setIsLoading] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
     const { openModal, closeModal } = useModalStore();
 
     const navigate = useNavigate();
     const location = useLocation();
 
-    const tripId = location.state;
+    const { tripId, startDate, endDate } = location.state;
 
     // 이미지 메타데이터의 위치 정보 유무 확인
     const handleFileUpload = async (files: FileList | null) => {
@@ -34,6 +36,7 @@ export const useImageUpload = () => {
         }
 
         try {
+            setIsLoading(true);
             const processedImages = await Promise.all(
                 Array.from(files).map(async (file) => {
                     const location = await getImageLocation(file);
@@ -47,34 +50,50 @@ export const useImageUpload = () => {
                 }),
             );
 
-            // 위치 정보가 없는 이미지
-            // const noLocationImages = processedImages.filter((image) => !image.location).map((image) => image.file);
-            // const noLocationImages = processedImages.filter((image) => !image.location).map((image) => image.file);
-            const noLocationImages = processedImages
-                .filter((image) => !image.location)
-                .map(({ file, formattedDate }) => ({ file, formattedDate }));
-            setImagesNoLocation(noLocationImages);
-            console.log('위치 ⛔️:', noLocationImages);
-            setImagesNoLocation(noLocationImages);
+            // startDate와 endDate 사이에 있는 이미지만 필터링
+            const filteredImages = processedImages.filter((image) => {
+                if (!image.formattedDate) return false;
+                return image.formattedDate >= startDate && image.formattedDate <= endDate;
+            });
 
             // 위치 정보가 있는 이미지
-            const filteredImages = processedImages.filter((image) => image.location);
-            setImagesWithLocation(filteredImages);
-            console.log('위치 ✅:', filteredImages);
+            const imagesWithLocation = filteredImages.filter((image) => image.location);
+            setImagesWithLocation(imagesWithLocation);
+            console.log('위치 ✅:', imagesWithLocation);
+
+            // 위치 정보가 없는 이미지
+            const noLocationImages = filteredImages
+                .filter((image) => !image.location)
+                .map(({ file, formattedDate }) => ({
+                    file,
+                    formattedDate,
+                }));
+            setImagesNoLocation(noLocationImages);
+            console.log('위치 ⛔️:', noLocationImages);
+
+            // 날짜 정보가 없는 이미지 (startDate와 endDate 범위 밖의 이미지 포함)
+            const noDateImages = processedImages.filter(
+                (image) =>
+                    image.formattedDate === '' || image.formattedDate < startDate || image.formattedDate > endDate,
+            );
+            setNoDateImagesCount(noDateImages.length);
+            console.log('날짜 ⛔️:', noDateImages);
+
+            setImagesCount(files.length);
+            setIsLoading(false);
         } catch (error) {
             console.error('Error processing files:', error);
         }
-        setImagesCount(files.length);
     };
 
     const uploadTripImages = async () => {
         try {
-            setIsLoading(true);
+            setIsUploading(true);
             const images = imagesWithLocation.map((image) => image.file);
             if (images.length) {
                 await postTripImages(tripId, images);
             }
-            if (imagesNoLocation.length) {
+            if (noDateImagesCount || imagesNoLocation.length) {
                 openModal();
                 return;
             }
@@ -82,8 +101,9 @@ export const useImageUpload = () => {
             navigate(PATH.TRIP_LIST);
         } catch (error) {
             console.error('Error post trip-images:', error);
+            setIsUploading(false);
         } finally {
-            setIsLoading(false);
+            setIsUploading(false);
         }
     };
 
@@ -91,8 +111,10 @@ export const useImageUpload = () => {
         imageCount,
         imagesWithLocation,
         imagesNoLocation,
+        noDateImagesCount,
         openModal,
         isLoading,
+        isUploading,
         handleFileUpload,
         uploadTripImages,
     };
