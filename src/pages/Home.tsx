@@ -56,7 +56,8 @@ const Home = () => {
     const submitUserNickName = async () => {
         try {
             await postUserNickName(inputValue);
-            closeModal();
+            // closeModal();
+            openModal;
             fetchUserData();
             setIsOpenGuide(true);
         } catch (error) {
@@ -99,7 +100,7 @@ const Home = () => {
                     setInputValue={setInputValue}
                 />
             )}
-            {isOpenGuide && (
+            {!isOpenGuide && (
                 <GuideModal
                     confirmText='등록하러 가기'
                     cancelText='나중에'
