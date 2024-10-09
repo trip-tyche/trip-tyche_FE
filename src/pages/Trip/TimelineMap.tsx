@@ -12,6 +12,7 @@ import Loading from '@/components/common/Loading';
 import Header from '@/components/layout/Header';
 import { ENV } from '@/constants/auth';
 import { PATH } from '@/constants/path';
+import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { PinPoint, TripInfo } from '@/types/trip';
 import { formatDateToKorean, getDayNumber } from '@/utils/date';
@@ -43,6 +44,9 @@ const TimelineMap: React.FC = () => {
     const [photoCardPosition, setPhotoCardPosition] = useState<google.maps.LatLngLiteral | null>(null);
     const [currentZoom, setCurrentZoom] = useState(INITIAL_ZOOM_SCALE);
     const [selectedMarker, setSelectedMarker] = useState<PinPoint | null>(null);
+    const [isMapInteractive, setIsMapInteractive] = useState(true);
+
+    const { showToast } = useToastStore();
 
     const mapRef = useRef<google.maps.Map | null>(null);
     const animationRef = useRef<number | null>(null);
@@ -58,10 +62,12 @@ const TimelineMap: React.FC = () => {
         try {
             setIsLoading(true);
             const data = await getTripMapData(tripId);
+            console.log(data);
             setTripInfo(data.tripInfo);
             setMediaFiles(data.mediaFiles);
 
             if (data.pinPoints.length === 0) {
+                showToast('보더패스에 저장된 이미지가 없습니다.');
                 navigate(PATH.TRIP_LIST);
                 return;
             }
@@ -99,6 +105,7 @@ const TimelineMap: React.FC = () => {
             setIsPlaying(false);
             setIsMoving(false);
             setIsAtPin(true);
+            setIsMapInteractive(true);
             return;
         }
 
@@ -107,6 +114,7 @@ const TimelineMap: React.FC = () => {
         setShowPhotoCard(false);
         setIsMoving(true);
         setIsAtPin(false);
+        setIsMapInteractive(false); // 캐릭터 이동 시작 시 지도 조작 비활성화
 
         const animate = (time: number) => {
             if (!startTimeRef.current) startTimeRef.current = time;
@@ -130,6 +138,7 @@ const TimelineMap: React.FC = () => {
                 setShowPhotoCard(true);
                 setIsMoving(false);
                 setIsAtPin(true);
+                setIsMapInteractive(true); // 캐릭터 이동 완료 시 지도 조작 활성화
 
                 // 항상 WAIT_DURATION 동안 대기
                 autoPlayTimeoutRef.current = setTimeout(() => {
@@ -235,15 +244,22 @@ const TimelineMap: React.FC = () => {
         return null;
     }, [isLoaded]);
 
-    const mapOptions: google.maps.MapOptions = {
-        mapTypeControl: false,
-        fullscreenControl: false,
-        zoomControl: false,
-        streetViewControl: false,
-        rotateControl: false,
-        clickableIcons: false,
-        minZoom: 12,
-    };
+    const mapOptions: google.maps.MapOptions = useMemo(
+        () => ({
+            mapTypeControl: false,
+            fullscreenControl: false,
+            zoomControl: false,
+            streetViewControl: false,
+            rotateControl: false,
+            clickableIcons: false,
+            minZoom: 12,
+
+            draggable: isMapInteractive,
+            scrollwheel: isMapInteractive,
+            disableDoubleClickZoom: !isMapInteractive,
+        }),
+        [isMapInteractive],
+    );
 
     const clusterOptions = {
         maxZoom: INDIVIDUAL_MARKER_ZOOM - 1,
@@ -468,7 +484,7 @@ const DaySection = styled.div`
     cursor: pointer;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    height: ${theme.heights.xtall_60};
+    height: 66px;
     background-color: ${theme.colors.white};
 `;
 

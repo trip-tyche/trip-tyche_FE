@@ -58,11 +58,16 @@ const TripList = (): JSX.Element => {
     return (
         <>
             <div css={containerStyle}>
-                <Header title={PAGE.TRIP_LIST} isBackButton />
+                <Header title={PAGE.TRIP_LIST} isBackButton onBack={() => navigate(PATH.HOME)} />
                 <div css={addTripStyle}>
-                    <div css={countStyle}>
-                        <TicketsPlane size={20} /> <span>{tripCount}</span> 개의 티켓을 만들었어요!
-                    </div>
+                    {tripCount === 0 ? (
+                        <div css={countStyle}>아직 만든 티켓이 없어요!</div>
+                    ) : (
+                        <div css={countStyle}>
+                            <TicketsPlane size={20} /> <span>{tripCount}</span> 개의 티켓을 만들었어요!
+                        </div>
+                    )}
+
                     <div>
                         <Button text={BUTTON.NEW_TRIP} btnTheme='pri' size='sm' onClick={() => navigate(PATH.TRIP_NEW)}>
                             <Button.Left>
@@ -99,7 +104,8 @@ const containerStyle = css`
 const addTripStyle = css`
     display: flex;
     justify-content: space-between;
-    padding: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
 `;
 
 const countStyle = css`
@@ -123,11 +129,11 @@ const tripListStyle = css`
     display: flex;
     flex-direction: column;
     margin: 0 8px;
-    padding-bottom: 80px;
+    padding-bottom: 20px;
 `;
 
 const noTripListStyle = css`
-    height: calc(100vh - 96px);
+    height: calc(100vh - 106px);
     display: flex;
     justify-content: center;
     align-items: center;

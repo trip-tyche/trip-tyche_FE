@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { getUserData, postUserNickName } from '@/api/user';
-import mainImage from '@/assets/images/ogami_1.png';
+import LogoImages from '@/components/common/LogoImages';
 import GuideModal from '@/components/common/modal/GuideModal';
 import InputModal from '@/components/common/modal/InputModal';
+import FightHeader from '@/components/layout/AirplaneHeader';
 import Card from '@/components/pages/home/Card';
 import Guide from '@/components/pages/home/Guide';
-import BorderPass from '@/components/pages/trip-list/BorderPass';
-import { NICKNAME_MODAL } from '@/constants/message';
+import { GREETING_MESSAGE, NICKNAME_MODAL } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { useModalStore } from '@/stores/useModalStore';
 import theme from '@/styles/theme';
@@ -21,6 +20,7 @@ import { getToken, getUserId } from '@/utils/auth';
 const Home = () => {
     const [userNickName, setUserNickName] = useState<string>('');
     const [userTrips, setUserTrips] = useState<Trip[]>();
+    // const [pinPoints, setPinPoints] = useState<Omit<PinPoint, 'mediaLink' | 'recordDate'>[]>();
     const [inputValue, setInputValue] = useState('');
     const [isOpenGuide, setIsOpenGuide] = useState(false);
 
@@ -45,9 +45,11 @@ const Home = () => {
             if (!userNickName) {
                 openModal();
             } else {
+                console.log(userNickName, trips);
                 localStorage.setItem('nickName', userNickName);
                 setUserNickName(userNickName);
                 setUserTrips(trips);
+                // setPinPoints(pinPoints);
             }
         } catch (error) {
             console.error('Error fetching user data:', error);
@@ -71,31 +73,18 @@ const Home = () => {
     };
 
     return (
-        <div css={containerStyle}>
-            <div css={headerStyle}>
-                <User css={userIconStyle} onClick={() => navigate(PATH.MYPAGE)} />
-            </div>
-            <div css={cardWrapperStyle}>
-                <Card trips={userTrips} />
-            </div>
-            <div css={contentStyle}>
-                <div css={userStyle}>
-                    <img css={imageStyle} src={mainImage} alt='main-image' />
-                    <p css={subtitleStyle}>
-                        안녕하세요, <span css={spanStyle}>{userNickName}</span> 님
-                    </p>
+        <>
+            <div css={containerStyle}>
+                <FightHeader />
+                <div css={cardWrapperStyle}>
+                    <Card trips={userTrips} />
                 </div>
-            </div>
-            <div css={borderPassCardStyle} onClick={() => navigate(PATH.TRIP_LIST)}>
-                <h2>보더 패스</h2>
-                <p>여행 기록 시작하기</p>
-            </div>
-            {/* <BorderPass
-                userNickname={userNickname}
-                setTripCount={setTripCount}
-                setIsDelete={setIsDelete}
-            /> */}
+                <div css={imageWrapperStyle}>
+                    <LogoImages />
+                </div>
 
+                {userNickName && <p css={greetingMessageStyle}> {`${userNickName} ${GREETING_MESSAGE}`}</p>}
+            </div>
             {isModalOpen && (
                 <InputModal
                     title={NICKNAME_MODAL.TITLE}
@@ -118,87 +107,40 @@ const Home = () => {
                     <Guide nickname={userNickName} />
                 </GuideModal>
             )}
-        </div>
+        </>
     );
 };
 
 const containerStyle = css`
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    padding: 20px;
-`;
-
-const headerStyle = css`
-    display: flex;
-    justify-content: flex-end;
-    padding: 10px;
-`;
-
-const userIconStyle = css`
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
-`;
-
-const contentStyle = css`
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-`;
-
-const userStyle = css`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 24px;
+    padding-bottom: 80px;
 `;
 
 const cardWrapperStyle = css`
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 36px;
+    margin: 3rem 0 2rem;
+    display: flex;
 `;
 
-const imageStyle = css`
-    width: 60px;
-    height: auto;
-    border-radius: 12px;
+const imageWrapperStyle = css`
+    flex: 3;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
-const spanStyle = css`
-    font-size: ${theme.fontSizes.xxlarge_20};
+const greetingMessageStyle = css`
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: ${theme.fontSizes.xlarge_18};
     font-weight: 600;
-    color: ${theme.colors.black};
-`;
-
-const subtitleStyle = css`
-    font-size: ${theme.fontSizes.large_16};
-    color: ${theme.colors.descriptionText};
-`;
-
-const borderPassCardStyle = css`
-    background-color: ${theme.colors.primary};
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
     text-align: center;
-    cursor: pointer;
-    margin-bottom: 36px;
-
-    h2 {
-        font-size: ${theme.fontSizes.xxlarge_20};
-        margin-bottom: 10px;
-    }
-
-    p {
-        font-size: ${theme.fontSizes.large_16};
-    }
+    margin: 2rem 0;
 `;
 
 export default Home;

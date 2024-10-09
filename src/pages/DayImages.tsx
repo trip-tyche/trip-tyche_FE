@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 
 import styled from '@emotion/styled';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
-import { ChevronDown, ImageOff } from 'lucide-react';
+import { ChevronDown, ImageOff, ArrowDown } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { getImagesByDay } from '@/api/image';
@@ -44,9 +44,15 @@ const DaysImages: React.FC = () => {
     const [currentImageLocation, setCurrentImageLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [isMapLoaded, setIsMapLoaded] = useState(false);
     const [isImagesLoaded, setIsImagesLoaded] = useState(false);
+    const [showScrollHint, setShowScrollHint] = useState(false);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+    const imageListRef = useRef<HTMLDivElement>(null);
 
     const navigate = useNavigate();
     const tripId = localStorage.getItem('tripId');
+
+    const isFullyLoaded = isMapLoaded && isImagesLoaded && !isLoading;
 
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: ENV.GOOGLE_MAPS_API_KEY || '',
@@ -77,6 +83,7 @@ const DaysImages: React.FC = () => {
         clickedDate.setDate(clickedDate.getDate() + day - 1);
         const formattedDate = clickedDate.toISOString().split('T')[0];
         setCurrentDate(formattedDate);
+        setIsInitialLoad(false); // Day 변경 시 isInitialLoad를 false로 설정
 
         setTimeout(() => {
             const container = scrollContainerRef.current;
@@ -93,6 +100,48 @@ const DaysImages: React.FC = () => {
             }
         }, 0);
     };
+
+    const smoothScroll = (element: HTMLElement, target: number, duration: number) => {
+        const start = element.scrollTop;
+        const change = target - start;
+        const startTime = performance.now();
+
+        const animateScroll = (currentTime: number) => {
+            const elapsedTime = currentTime - startTime;
+            const progress = Math.min(elapsedTime / duration, 1);
+            const easeInOutCubic =
+                progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+            element.scrollTop = start + change * easeInOutCubic;
+
+            if (progress < 1) {
+                requestAnimationFrame(animateScroll);
+            }
+        };
+
+        requestAnimationFrame(animateScroll);
+    };
+
+    useEffect(() => {
+        if (isFullyLoaded && imageListRef.current && isInitialLoad) {
+            setShowScrollHint(true);
+
+            const element = imageListRef.current;
+            const scrollDown = () => smoothScroll(element, 80, 1000);
+            const scrollUp = () => smoothScroll(element, 0, 1000);
+
+            const hideHint = () => {
+                setShowScrollHint(false);
+                setIsInitialLoad(false);
+            };
+
+            const timeoutIds = [setTimeout(scrollDown, 100), setTimeout(scrollUp, 1500), setTimeout(hideHint, 2500)];
+
+            return () => {
+                timeoutIds.forEach(clearTimeout);
+            };
+        }
+    }, [isFullyLoaded, isInitialLoad]);
 
     useEffect(() => {
         const currentDate = localStorage.getItem('current-date');
@@ -208,8 +257,6 @@ const DaysImages: React.FC = () => {
         fetchImagesByDay();
     }, [tripId, currentDate, startDate]);
 
-    const isFullyLoaded = isMapLoaded && isImagesLoaded && !isLoading;
-
     return (
         <PageContainer isTransitioning={isTransitioning}>
             {!isFullyLoaded ? (
@@ -251,7 +298,7 @@ const DaysImages: React.FC = () => {
                             <ChevronDown size={20} />
                         </ArrowButton>
                     </DateSelectionDiv>
-                    <ImageList>
+                    <ImageList ref={imageListRef}>
                         {imagesByDay.length > 0 ? (
                             imagesByDay.map((image, index) => (
                                 <ImageItem
@@ -269,11 +316,30 @@ const DaysImages: React.FC = () => {
                             </NoImagesContainer>
                         )}
                     </ImageList>
+                    {isInitialLoad && (
+                        <ScrollHintOverlay show={showScrollHint}>
+                            <ScrollHintContent>
+                                <ScrollHintText>아래로 스크롤하세요</ScrollHintText>
+                                <ArrowDown size={24} color='white' />
+                            </ScrollHintContent>
+                        </ScrollHintOverlay>
+                    )}
                 </>
             )}
         </PageContainer>
     );
 };
+
+// const PageContainer = styled.div<{ isTransitioning: boolean }>`
+//     height: 100vh;
+//     display: flex;
+//     flex-direction: column;
+//     transition: transform 0.3s ease-in-out;
+//     transform: ${(props) => (props.isTransitioning ? 'translateY(100%)' : 'translateY(0)')};
+//     overflow-y: auto;
+//     background-color: #090909;
+//     position: relative;
+// `;
 
 const PageContainer = styled.div<{ isTransitioning: boolean }>`
     height: 100vh;
@@ -284,6 +350,41 @@ const PageContainer = styled.div<{ isTransitioning: boolean }>`
     overflow-y: auto;
     background-color: #090909;
     position: relative;
+`;
+
+const ScrollHintOverlay = styled.div<{ show: boolean }>`
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    opacity: ${(props) => (props.show ? 1 : 0)};
+    visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
+    transition:
+        opacity 0.3s ease-in-out,
+        visibility 0.3s ease-in-out;
+    z-index: 1000;
+    pointer-events: ${(props) => (props.show ? 'auto' : 'none')};
+    padding: 16px;
+`;
+
+const ScrollHintContent = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+`;
+
+const ScrollHintText = styled.p`
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    margin: 0;
 `;
 
 const DateSelectionDiv = styled.div`
@@ -331,8 +432,8 @@ const MapContainer = styled.div`
 const ImageList = styled.div`
     flex: 1;
     overflow-y: auto;
+    position: relative;
 `;
-
 const ImageItem = styled.div`
     margin-bottom: 20px;
     img {

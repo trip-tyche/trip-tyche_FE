@@ -52,6 +52,7 @@ const TripFileUpload = () => {
             <main css={mainStyle}>
                 <section css={sectionStyle}>
                     <h2>{TRIP_IMAGES_UPLOAD.title}</h2>
+                    <p>여행 기간 외 사진은 등록되지 않습니다</p>
                     <div css={uploadAreaStyle}>
                         <input
                             type='file'
@@ -76,15 +77,16 @@ const TripFileUpload = () => {
                         )}
                     </div>
                 </section>
-
-                <Button
-                    text='등록하기'
-                    btnTheme='pri'
-                    size='lg'
-                    onClick={uploadTripImages}
-                    disabled={imageCount === 0}
-                    isLoading={isLoading}
-                />
+                <div css={buttonWrapperStyle}>
+                    <Button
+                        text='등록하기'
+                        btnTheme='pri'
+                        size='lg'
+                        onClick={uploadTripImages}
+                        disabled={imageCount === 0}
+                        isLoading={isLoading}
+                    />
+                </div>
             </main>
             {isModalOpen && (
                 <GuideModal
@@ -109,23 +111,6 @@ const countStyle = css`
     color: #0073bb;
 `;
 
-const divStyle = css`
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
-    background-color: #fff;
-    width: 360px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    border-radius: 14px;
-    z-index: 1000;
-    border: 2px solid #ccc;
-    overflow: hidden;
-`;
-
 const containerStyle = css`
     height: 100vh;
     display: flex;
@@ -133,16 +118,27 @@ const containerStyle = css`
 `;
 
 const mainStyle = css`
+    flex: 1;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
 `;
 
 const sectionStyle = css`
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    /* gap: 30px; */
     h2 {
         font-size: 18px;
         font-weight: bold;
+        margin-bottom: 8px;
+    }
+    p {
+        font-size: 12px;
+        color: ${theme.colors.descriptionText};
+        margin-bottom: 24px;
+        margin-left: 2px;
     }
     margin-bottom: 70px;
 `;
@@ -173,6 +169,10 @@ const uploadLabelStyle = css`
 const uploadedStyle = css`
     font-size: 16px;
     font-weight: bold;
+`;
+
+const buttonWrapperStyle = css`
+    margin-bottom: 40px;
 `;
 
 export default TripFileUpload;

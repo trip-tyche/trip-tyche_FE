@@ -29,7 +29,7 @@ const Header = ({ title, isBackButton, onBack }: HeaderProps): JSX.Element => {
 };
 
 const headerStyle = css`
-    height: ${theme.heights.medium_44};
+    height: ${theme.heights.tall_54};
     display: flex;
     justify-content: center;
     align-items: center;

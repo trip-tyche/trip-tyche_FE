@@ -1,20 +1,24 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { User, MessageCircle, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { getUserData } from '@/api/user';
+import characterImg from '@/assets/images/ogami_3.png';
+import Button from '@/components/common/button/Button';
+import ColumnButtonModal from '@/components/common/modal/ColumnButtonModal';
 import ConfirmModal from '@/components/common/modal/ConfirmModal';
-import Header from '@/components/layout/Header';
+import ModalOverlay from '@/components/common/modal/ModalOverlay';
+import RowButtonModal from '@/components/common/modal/RowButtonModal';
 import { LOGOUT_MODAL } from '@/constants/message';
 import { PATH } from '@/constants/path';
+import { BUTTON } from '@/constants/title';
 import useAuthStore from '@/stores/useAuthStore';
 import { useModalStore } from '@/stores/useModalStore';
 import theme from '@/styles/theme';
 import { getUserId } from '@/utils/auth';
 
-const MyPage = () => {
+const MyPage = (): JSX.Element => {
     const [userNickName, setUserNickname] = useState('');
 
     const { isModalOpen, openModal, closeModal } = useModalStore();
@@ -44,26 +48,15 @@ const MyPage = () => {
     };
 
     return (
-        <>
-            <Header title='설정' isBackButton onBack={() => navigate(PATH.HOME)} />
-            <div css={[myPageContainerStyle]}>
-                <div css={userInfoContainer}>
-                    <p>{userNickName}</p>
-                </div>
-                <nav css={navStyle}>
-                    <button css={navItemStyle} onClick={() => console.log('내 정보')}>
-                        <User size={20} />
-                        <span>프로필 수정</span>
-                    </button>
-                    <button css={navItemStyle} onClick={() => console.log('문의하기')}>
-                        <MessageCircle size={20} />
-                        <span>문의하기</span>
-                    </button>
-                    <button css={navItemStyle} onClick={openModal}>
-                        <LogOut size={20} />
-                        <span>로그아웃</span>
-                    </button>
-                </nav>
+        <div css={containerStyle}>
+            <div css={imgWrapperStyle}>
+                <img src={characterImg} className='characterImg' alt='character' />
+            </div>
+
+            <p css={textWrapper}>안녕하세요, {userNickName} 님</p>
+
+            <div css={buttonWrapper}>
+                <Button text={BUTTON.LOGOUT} btnTheme='pri' size='sm' onClick={openModal} />
             </div>
 
             {isModalOpen && (
@@ -76,44 +69,39 @@ const MyPage = () => {
                     closeModal={closeModal}
                 />
             )}
-        </>
+        </div>
     );
 };
 
-const myPageContainerStyle = css`
-    height: calc(100vh - 54px);
+const containerStyle = css`
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    min-height: 100vh;
 `;
 
-const userInfoContainer = css`
+const imgWrapperStyle = css`
+    flex: 1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .characterImg {
+        width: 120px;
+    }
+`;
+
+const textWrapper = css`
     font-size: ${theme.fontSizes.xxlarge_20};
     font-weight: 600;
-    margin-bottom: 20px;
-    height: 44px;
-    display: flex;
-    align-items: center;
+    text-align: center;
 `;
 
-const navStyle = css`
+const buttonWrapper = css`
+    flex: 1;
     display: flex;
-    flex-direction: column;
-`;
-
-const navItemStyle = css`
-    display: flex;
+    justify-content: center;
     align-items: center;
-    background: none;
-    border: none;
-    text-align: left;
-    font-size: ${theme.fontSizes.large_16};
-    padding: 15px 0;
-    cursor: pointer;
-
-    span {
-        margin-left: 10px;
-    }
 `;
 
 export default MyPage;

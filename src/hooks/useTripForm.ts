@@ -19,7 +19,13 @@ export const useTripForm = () => {
             const response = await postTripInfo({ tripTitle, country, startDate, endDate, hashtags });
             const { tripId } = response;
 
-            navigate(PATH.TRIP_UPLOAD, { state: tripId });
+            navigate(PATH.TRIP_UPLOAD, {
+                state: {
+                    tripId,
+                    startDate,
+                    endDate,
+                },
+            });
         } catch (error) {
             console.error('Error post trip-info:', error);
         }

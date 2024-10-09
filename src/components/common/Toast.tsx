@@ -38,18 +38,18 @@ const Toast: React.FC = () => {
     return <div css={[toastStyle, isAnimating ? toastEnterStyle : toastLeaveStyle]}>{message}</div>;
 };
 const toastStyle = css`
-    width: 90%;
-    max-width: 428px;
+    width: 90vw;
+    max-width: 388px;
     height: 60px;
     position: fixed;
-    bottom: 96px;
+    bottom: 54px;
     left: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px 0;
     border-radius: 8px;
-    background-color: rgb(0, 115, 187, 0.9);
+    background-color: #455555;
     color: ${theme.colors.white};
     z-index: 1000;
     transition: all 0.2s ease-in;

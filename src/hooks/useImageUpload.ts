@@ -27,7 +27,7 @@ export const useImageUpload = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const tripId = location.state;
+    const { tripId, startDate, endDate } = location.state;
 
     // 이미지 메타데이터의 위치 정보 유무 확인
     const handleFileUpload = async (files: FileList | null) => {
@@ -49,20 +49,20 @@ export const useImageUpload = () => {
                     return { file, formattedDate, location };
                 }),
             );
+
+            // startDate와 endDate 사이에 있는 이미지만 필터링
+            const filteredImages = processedImages.filter((image) => {
+                if (!image.formattedDate) return false;
+                return image.formattedDate >= startDate && image.formattedDate <= endDate;
+            });
+
             // 위치 정보가 있는 이미지
-            const filteredImages = processedImages.filter((image) => image.location);
-            setImagesWithLocation(filteredImages);
-            console.log('위치 ✅:', filteredImages);
+            const imagesWithLocation = filteredImages.filter((image) => image.location);
+            setImagesWithLocation(imagesWithLocation);
+            console.log('위치 ✅:', imagesWithLocation);
 
             // 위치 정보가 없는 이미지
-            // const noLocationImages = processedImages.filter((image) => !image.location).map((image) => image.file);
-            const noDateImages = processedImages.filter((image) => image.formattedDate === '');
-            setNoDateImagesCount(noDateImages.length);
-            console.log('날짜 ⛔️:', noDateImages);
-
-            // 날짜 정보가 없는 이미지
-            const noLocationImages = processedImages
-                .filter((image) => image.formattedDate !== '')
+            const noLocationImages = filteredImages
                 .filter((image) => !image.location)
                 .map(({ file, formattedDate }) => ({
                     file,
@@ -70,6 +70,14 @@ export const useImageUpload = () => {
                 }));
             setImagesNoLocation(noLocationImages);
             console.log('위치 ⛔️:', noLocationImages);
+
+            // 날짜 정보가 없는 이미지 (startDate와 endDate 범위 밖의 이미지 포함)
+            const noDateImages = processedImages.filter(
+                (image) =>
+                    image.formattedDate === '' || image.formattedDate < startDate || image.formattedDate > endDate,
+            );
+            setNoDateImagesCount(noDateImages.length);
+            console.log('날짜 ⛔️:', noDateImages);
 
             setImagesCount(files.length);
             setIsLoading(false);
@@ -89,8 +97,8 @@ export const useImageUpload = () => {
                 openModal();
                 return;
             }
-            // closeModal();
-            // navigate(PATH.TRIP_LIST);
+            closeModal();
+            navigate(PATH.TRIP_LIST);
         } catch (error) {
             console.error('Error post trip-images:', error);
             setIsUploading(false);
