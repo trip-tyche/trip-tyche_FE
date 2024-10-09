@@ -34,26 +34,52 @@
 //         // "composite": true
 //     }
 // }
+// {
+//     "extends": "./tsconfig.json",
+//     "include": ["src", "global.d.ts"],
+//     "compilerOptions": {
+//         "typeRoots": ["./node_modules/@types", "./types"],
+//         "types": ["node", "vite/client"],
+//         "noUnusedLocals": true,
+//         "noUnusedParameters": true,
+//         "noFallthroughCasesInSwitch": true,
+//         "strictNullChecks": true,
+//         "noImplicitAny": true,
+//         "moduleDetection": "force",
+//         "lib": ["dom", "dom.iterable", "esnext", "webworker"],
+//         "moduleResolution": "node16",
+//         "jsx": "react-jsx",
+//         "allowSyntheticDefaultImports": true,
+//         "resolveJsonModule": true
+//     }
+// }
+
+//
 {
-    "extends": "./tsconfig.json",
-    "include": ["src", "global.d.ts"],
     "compilerOptions": {
-      "baseUrl": ".",
-      "paths": {
-        "@/*": ["src/*"]
-      },
-      "typeRoots": ["./node_modules/@types", "./types"],
-      "types": ["node", "vite/client"],
-      "noUnusedLocals": true,
-      "noUnusedParameters": true,
-      "noFallthroughCasesInSwitch": true,
-      "strictNullChecks": true,
-      "noImplicitAny": true,
-      "moduleDetection": "force",
-      "lib": ["dom", "dom.iterable", "esnext", "webworker"],
-      "moduleResolution": "node16",
-      "allowSyntheticDefaultImports": true,
-      "resolveJsonModule": true
+        "target": "ESNext",
+        "useDefineForClassFields": true,
+        "lib": ["DOM", "DOM.Iterable", "ESNext"],
+        "allowJs": false,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "types": ["node", "vite/client", "google.maps"],
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "jsx": "react-jsx",
+        "jsxImportSource": "@emotion/react",
+        "allowImportingTsExtensions": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"]
+        }
     },
-    "include": ["src"]
-  }
+    "include": ["src"],
+    "references": [{ "path": "./tsconfig.node.json" }]
+}

@@ -1,7 +1,18 @@
+// {
+//     "extends": "./tsconfig.json",
+//     "compilerOptions": {
+//         "lib": ["ES2023"]
+//     },
+//     "include": ["vite.config.ts"]
+// }
+
 {
-    "extends": "./tsconfig.json",
     "compilerOptions": {
-        "lib": ["ES2023"]
+        "composite": true,
+        "skipLibCheck": true,
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "allowSyntheticDefaultImports": true
     },
     "include": ["vite.config.ts"]
 }
