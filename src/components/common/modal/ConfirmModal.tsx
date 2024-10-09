@@ -1,3 +1,4 @@
+// 대소문자 구별 필요 파일
 import React from 'react';
 
 import { css } from '@emotion/react';
