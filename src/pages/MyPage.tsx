@@ -110,6 +110,7 @@ const navItemStyle = css`
     font-size: ${theme.fontSizes.large_16};
     padding: 15px 0;
     cursor: pointer;
+    color: ${theme.colors.black};
 
     span {
         margin-left: 10px;

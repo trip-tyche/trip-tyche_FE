@@ -18,7 +18,7 @@ import { Trip } from '@/types/trip';
 import { getToken, getUserId } from '@/utils/auth';
 
 const Home = () => {
-    const [userNickName, setUserNickName] = useState<string>('');
+    const [userNickName, setUserNickName] = useState<string>('동남아킬러');
     const [userTrips, setUserTrips] = useState<Trip[]>();
     const [inputValue, setInputValue] = useState('');
     const [isOpenGuide, setIsOpenGuide] = useState(false);
@@ -89,12 +89,6 @@ const Home = () => {
                 <h2>보더 패스</h2>
                 <p>여행 기록 시작하기</p>
             </div>
-            {/* <BorderPass
-                userNickname={userNickname}
-                setTripCount={setTripCount}
-                setIsDelete={setIsDelete}
-            /> */}
-
             {isModalOpen && (
                 <InputModal
                     title={NICKNAME_MODAL.TITLE}
