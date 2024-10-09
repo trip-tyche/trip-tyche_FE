@@ -1,9 +1,9 @@
 import { css } from '@emotion/react';
 
-import SocialLoginButtons from '@/components/common/button/SocialLoginButtons.tsx';
+import SocialLoginButtons from '@/components/common/button/SocialLoginButtons';
 import LogoImages from '@/components/common/LogoImages';
-import Toast from '@/components/common/Toast.tsx';
-import FightHeader from '@/components/layout/AirplaneHeader.tsx';
+import Toast from '@/components/common/Toast';
+import FightHeader from '@/components/layout/AirplaneHeader';
 import { ENV, OAUTH_URL } from '@/constants/auth';
 import theme from '@/styles/theme';
 
