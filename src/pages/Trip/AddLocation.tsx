@@ -106,7 +106,7 @@ const AddLocation = () => {
                         <div css={mapButtonWrapper}>
                             <Button
                                 text='위치 등록하기'
-                                btnTheme='sec'
+                                btnTheme='pri'
                                 size='lg'
                                 onClick={handleConfirmLocation}
                                 disabled={!selectedLocation}

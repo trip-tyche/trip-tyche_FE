@@ -1,34 +1,59 @@
+// {
+//     "extends": "./tsconfig.json",
+//     "include": ["src", "global.d.ts"],
+//     "compilerOptions": {
+//         // 절대경로 import를 위한 설정
+//         "baseUrl": ".",
+//         "paths": {
+//             "@/*": ["src/*"]
+//         },
+//         "typeRoots": ["./node_modules/@types", "./types"],
+//         "target": "ES2022",
+//         // "module": "ESNext",
+//         "skipLibCheck": true,
+//         // "moduleResolution": "bundler",
+//         "module": "Node16",
+//         "moduleResolution": "node16",
+//         "allowImportingTsExtensions": true,
+//         "isolatedModules": true,
+//         "moduleDetection": "force",
+//         "noEmit": true,
+//         "strict": true,
+//         "noUnusedLocals": true,
+//         "noUnusedParameters": true,
+//         "noFallthroughCasesInSwitch": true,
+//         "jsx": "react-jsx",
+//         "jsxImportSource": "@emotion/react",
+//         "strictNullChecks": true, //null 및 undefined를 보다 명확하게 체크
+//         "noImplicitAny": true, //
+//         "esModuleInterop": true,
+//         "lib": ["dom", "dom.iterable", "esnext", "webworker"],
+//         "types": ["node", "vite/client"],
+//         "allowSyntheticDefaultImports": true,
+//         "resolveJsonModule": true
+//         // "composite": true
+//     }
+// }
 {
     "extends": "./tsconfig.json",
     "include": ["src", "global.d.ts"],
     "compilerOptions": {
-        // 절대경로 import를 위한 설정
-        "baseUrl": ".",
-        "paths": {
-            "@/*": ["src/*"]
-        },
-        "typeRoots": ["./node_modules/@types", "./types"],
-        "target": "ES2022",
-        "module": "ESNext",
-        "skipLibCheck": true,
-        "moduleResolution": "bundler",
-        "allowImportingTsExtensions": true,
-        "isolatedModules": true,
-        "moduleDetection": "force",
-        "noEmit": true,
-        "strict": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "noFallthroughCasesInSwitch": true,
-        "jsx": "react-jsx",
-        "jsxImportSource": "@emotion/react",
-        "strictNullChecks": true, //null 및 undefined를 보다 명확하게 체크
-        "noImplicitAny": true, //
-        "esModuleInterop": true,
-        "lib": ["dom", "dom.iterable", "esnext", "webworker"],
-        "types": ["node", "vite/client"],
-        "allowSyntheticDefaultImports": true,
-        "resolveJsonModule": true
-        // "composite": true
-    }
-}
+      "baseUrl": ".",
+      "paths": {
+        "@/*": ["src/*"]
+      },
+      "typeRoots": ["./node_modules/@types", "./types"],
+      "types": ["node", "vite/client"],
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noFallthroughCasesInSwitch": true,
+      "strictNullChecks": true,
+      "noImplicitAny": true,
+      "moduleDetection": "force",
+      "lib": ["dom", "dom.iterable", "esnext", "webworker"],
+      "moduleResolution": "node16",
+      "allowSyntheticDefaultImports": true,
+      "resolveJsonModule": true
+    },
+    "include": ["src"]
+  }

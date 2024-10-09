@@ -2,8 +2,8 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { GoogleMap, Marker, LoadScript, useJsApiLoader } from '@react-google-maps/api';
-import { ChevronDown, ChevronLeft, ChevronRight, CloudFog, ImageOff } from 'lucide-react';
+import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
+import { ChevronDown, ChevronLeft, ChevronRight, ImageOff } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { getImagesByDay } from '@/api/image';
@@ -47,7 +47,7 @@ const DaysImages: React.FC = () => {
 
     const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-    const { isLoaded, loadError } = useJsApiLoader({
+    const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: ENV.GOOGLE_MAPS_API_KEY || '',
     });
 

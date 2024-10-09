@@ -267,7 +267,7 @@ const TimelineMap: React.FC = () => {
         // averageCenter: true,
         minimumClusterSize: 1,
         clickZoom: 2, // 클릭 시 줌 레벨 증가량
-        onClick: (cluster: any, markers: any) => {
+        onClick: (cluster: any, _markers: any) => {
             if (mapRef.current) {
                 const currentZoom = mapRef.current.getZoom() || 0;
                 const newZoom = Math.min(currentZoom + 3, INDIVIDUAL_MARKER_ZOOM - 1);
@@ -321,7 +321,7 @@ const TimelineMap: React.FC = () => {
         <OverlayView
             position={{ lat: marker.latitude, lng: marker.longitude }}
             mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-            getPixelPositionOffset={(width, height) => ({
+            getPixelPositionOffset={(_width, _height) => ({
                 x: -(PHOTO_CARD_WIDTH / 2),
                 y: -(PHOTO_CARD_HEIGHT + 45),
             })}
@@ -382,7 +382,7 @@ const TimelineMap: React.FC = () => {
                         <OverlayView
                             position={photoCardPosition}
                             mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                            getPixelPositionOffset={(width, height) => ({
+                            getPixelPositionOffset={(_width, _height) => ({
                                 x: -(PHOTO_CARD_WIDTH / 2),
                                 y: -(PHOTO_CARD_HEIGHT + 65 + 40),
                             })}

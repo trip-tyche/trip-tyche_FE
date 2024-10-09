@@ -10,7 +10,6 @@ import GuideModal from '@/components/common/modal/GuideModal';
 import InputModal from '@/components/common/modal/InputModal';
 import Card from '@/components/pages/home/Card';
 import Guide from '@/components/pages/home/Guide';
-import BorderPass from '@/components/pages/trip-list/BorderPass';
 import { NICKNAME_MODAL } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { useModalStore } from '@/stores/useModalStore';

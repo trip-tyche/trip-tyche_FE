@@ -1,3 +1,6 @@
+/// <reference types="vite/client" />
+
+
 import '@emotion/react';
 
 declare global {
@@ -7,15 +10,9 @@ declare global {
         }
     }
 
-    interface HTMLElementTagNameMap {
-        // HTML 요소들의 태그 이름과 해당 요소 타입을 매핑
-        // 예: 'div': HTMLDivElement;
-    }
+    interface HTMLElementTagNameMap {}
 
-    interface SVGElementTagNameMap {
-        // SVG 요소들의 태그 이름과 해당 요소 타입을 매핑
-        // 예: 'svg': SVGSVGElement;
-    }
+    interface SVGElementTagNameMap {}
 
     interface DOMRect {
         x: number;
@@ -34,8 +31,3 @@ declare module '@emotion/react' {
 }
 
 export {};
-
-declare module 'leaflet' {
-    export * from '@types/leaflet';
-}
-declare module 'leaflet';

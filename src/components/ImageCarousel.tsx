@@ -112,6 +112,7 @@ interface ImageType {
 
 interface ImageCarouselProps {
     images: ImageType[];
+    // onStateChange: (state: CarouselState) => void;
     onStateChange: (state: CarouselState) => void;
 }
 
@@ -179,7 +180,8 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, onStateChange }) 
         [onStateChange],
     );
 
-    const handleTouchStart = useCallback((event: React.TouchEvent) => {
+    // const handleTouchStart = useCallback((event: React.TouchEvent) => {
+    const handleTouchStart = useCallback(() => {
         touchStartTimeRef.current = Date.now();
     }, []);
 

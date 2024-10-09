@@ -1,4 +1,4 @@
-import { PacmanLoader, RiseLoader, PropagateLoader, MoonLoader, FadeLoader, SyncLoader } from 'react-spinners';
+import { MoonLoader } from 'react-spinners';
 
 const Loading = ({ type }: { type?: string }) => (
     <>

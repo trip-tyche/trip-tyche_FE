@@ -23,7 +23,7 @@ const TripEdit = (): JSX.Element => {
             />
 
             <div css={submitButtonStyle}>
-                <Button text={BUTTON.UPDATE_TRIP} theme='sec' size='sm' onClick={handleUpdateTripInfo} />
+                <Button text={BUTTON.UPDATE_TRIP} btnTheme='pri' size='sm' onClick={handleUpdateTripInfo} />
             </div>
         </div>
     );

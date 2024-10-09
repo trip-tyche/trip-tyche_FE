@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 import styled from '@emotion/styled';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import { ChevronDown, ImageOff, ArrowDown } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { getImagesByDay } from '@/api/image';
 import { getTripMapData } from '@/api/trip';

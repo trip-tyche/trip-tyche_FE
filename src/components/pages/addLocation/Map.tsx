@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 
 import { css } from '@emotion/react';
 import { GoogleMap, LoadScript, Marker, Autocomplete } from '@react-google-maps/api';
