@@ -18,7 +18,7 @@ import { Trip } from '@/types/trip';
 import { getToken, getUserId } from '@/utils/auth';
 
 const Home = () => {
-    const [userNickName, setUserNickName] = useState<string>('동남아킬러');
+    const [userNickName, setUserNickName] = useState<string>('트립티케');
     const [userTrips, setUserTrips] = useState<Trip[]>();
     const [inputValue, setInputValue] = useState('');
     const [isOpenGuide, setIsOpenGuide] = useState(false);
@@ -35,7 +35,7 @@ const Home = () => {
         const token = getToken();
         const userId = getUserId();
         if (!token || !userId) {
-            navigate(PATH.LOGIN);
+            // navigate(PATH.LOGIN);
             return;
         }
 

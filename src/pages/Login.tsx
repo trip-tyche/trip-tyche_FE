@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+import { useNavigate } from 'react-router-dom';
 
 import imageLeft from '@/assets/images/ogami_1.png';
 import imageRight from '@/assets/images/ogami_2.png';
@@ -8,14 +9,21 @@ import { ENV, OAUTH_URL } from '@/constants/auth';
 import theme from '@/styles/theme';
 
 const Login = (): JSX.Element => {
+    const navigate = useNavigate();
     const oauthLinks = {
         kakao: `${ENV.BASE_URL}/${OAUTH_URL}/kakao`,
         google: `${ENV.BASE_URL}/${OAUTH_URL}/google`,
     };
 
     const handleSocialLogin = (provider: keyof typeof oauthLinks) => () => {
+        localStorage.setItem('href', oauthLinks[provider]); ////////////////////////////// 삭제
         window.location.href = oauthLinks[provider];
     };
+
+    // const handleSocialLogin = (provider: keyof typeof oauthLinks) => () => {
+    //     navigate('/');
+    //     console.log('asdf');
+    // };
 
     return (
         <div css={containerStyle}>

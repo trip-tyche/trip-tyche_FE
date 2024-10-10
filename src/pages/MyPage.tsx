@@ -15,7 +15,7 @@ import theme from '@/styles/theme';
 import { getUserId } from '@/utils/auth';
 
 const MyPage = () => {
-    const [userNickName, setUserNickname] = useState('');
+    const [userNickName, setUserNickname] = useState('트립티케');
 
     const { isModalOpen, openModal, closeModal } = useModalStore();
     const setLogout = useAuthStore((state) => state.setLogout);
@@ -26,7 +26,7 @@ const MyPage = () => {
         const fetchUserNickName = async () => {
             const userId = getUserId();
             if (!userId) {
-                navigate(PATH.LOGIN);
+                // navigate(PATH.LOGIN);
                 return;
             }
 
