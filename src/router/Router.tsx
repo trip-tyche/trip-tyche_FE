@@ -24,11 +24,11 @@ const ProtectedRoute = () => {
     const userId = getUserId();
     const token = getToken();
 
-    // // userId, 토큰 유효성 검사
-    // if (!userId || !token) {
-    //     return <Navigate to={`/onboarding`} replace state={pathname + search} />;
-    //     return <Navigate to={`${PATH.LOGIN}`} replace state={pathname + search} />;
-    // }
+    // userId, 토큰 유효성 검사
+    if (!userId || !token) {
+        return <Navigate to={`/onboarding`} replace state={pathname + search} />;
+        return <Navigate to={`${PATH.LOGIN}`} replace state={pathname + search} />;
+    }
 
     // // 토큰 만료 검사 (예: JWT 디코딩)
     // const isTokenExpired = checkTokenExpiration(token); // 이 함수는 직접 구현해야 합니다
