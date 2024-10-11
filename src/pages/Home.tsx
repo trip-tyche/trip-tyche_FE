@@ -5,7 +5,9 @@ import { User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { getUserData, postUserNickName } from '@/api/user';
-import mainImage from '@/assets/images/ogami_1.png';
+
+import mainImage from '/public/ogami_1.png';
+
 import GuideModal from '@/components/common/modal/GuideModal';
 import InputModal from '@/components/common/modal/InputModal';
 import Card from '@/components/pages/home/Card';

@@ -6,7 +6,9 @@ import { FiPlus } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
 import { deleteTripInfo } from '@/api/trip';
-import characterImg from '@/assets/images/ogami_1.png';
+
+import characterImg from '/public/ogami_1.png';
+
 import ConfirmModal from '@/components/common/modal/ConfirmModal';
 import { PATH } from '@/constants/path';
 import theme from '@/styles/theme';

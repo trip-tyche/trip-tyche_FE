@@ -45,7 +45,6 @@ const TimelineMap: React.FC = () => {
     const [currentZoom, setCurrentZoom] = useState(INITIAL_ZOOM_SCALE);
     const [selectedMarker, setSelectedMarker] = useState<PinPoint | null>(null);
     const [isMapInteractive, setIsMapInteractive] = useState(true);
-    // const [photoCardPosition, setPhotoCardPosition] = useState<google.maps.LatLngLiteral | null>(null);
 
     const { showToast } = useToastStore();
 
@@ -101,13 +100,6 @@ const TimelineMap: React.FC = () => {
         };
     }, [fetchTripMapData]);
 
-    useEffect(() => {
-        if (pinPoints.length > 0 && currentPinIndex < pinPoints.length) {
-            const currentPin = pinPoints[currentPinIndex];
-            setPhotoCardPosition({ lat: currentPin.latitude, lng: currentPin.longitude });
-        }
-    }, [currentPinIndex, pinPoints]);
-
     const moveCharacter = useCallback(() => {
         if (currentPinIndex >= pinPoints.length - 1) {
             setIsPlaying(false);
@@ -132,6 +124,7 @@ const TimelineMap: React.FC = () => {
             const newLng = start.longitude + (end.longitude - start.longitude) * progress;
             const newPosition = { lat: newLat, lng: newLng };
             setCharacterPosition(newPosition);
+            setPhotoCardPosition(newPosition); // 즉시 photoCardPosition 업데이트
 
             if (mapRef.current) {
                 mapRef.current.panTo(newPosition);
@@ -145,11 +138,9 @@ const TimelineMap: React.FC = () => {
                 setShowPhotoCard(true);
                 setIsMoving(false);
                 setIsAtPin(true);
-                setIsMapInteractive(true);
+                setIsMapInteractive(true); // 캐릭터 이동 완료 시 지도 조작 활성화
 
-                // 새로운 핀포인트 위치로 포토카드 위치 업데이트
-                setPhotoCardPosition({ lat: end.latitude, lng: end.longitude });
-
+                // 항상 WAIT_DURATION 동안 대기
                 autoPlayTimeoutRef.current = setTimeout(() => {
                     if (isPlaying) {
                         moveCharacter();
@@ -230,7 +221,7 @@ const TimelineMap: React.FC = () => {
     const characterIcon = useMemo(() => {
         if (isLoaded) {
             return {
-                url: '/public/ogami_1.png',
+                url: '/src/assets/images/ogami_1.png',
                 scaledSize: new window.google.maps.Size(50, 65),
                 anchor: new window.google.maps.Point(25, 65),
             };

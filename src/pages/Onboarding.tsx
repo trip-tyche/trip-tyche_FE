@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import { Navigate } from 'react-router-dom';
 
-import imageLeft from '@/assets/images/ogami_1.png';
+import imageLeft from '/public/ogami_1.png';
+
 import imageRight from '@/assets/images/ogami_2.png';
 import { PATH } from '@/constants/path';
 import theme from '@/styles/theme';

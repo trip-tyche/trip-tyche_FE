@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 
-import imageLeft from '@/assets/images/ogami_1.png';
+import imageLeft from '/public/ogami_1.png';
+
 import imageRight from '@/assets/images/ogami_2.png';
 import SocialLoginButtons from '@/components/common/button/SocialLoginButtons';
 import Toast from '@/components/common/Toast';
