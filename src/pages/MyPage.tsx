@@ -65,7 +65,7 @@ const MyPage = () => {
 };
 
 const myPageContainerStyle = css`
-    height: calc(100vh - 54px);
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     padding: 20px;

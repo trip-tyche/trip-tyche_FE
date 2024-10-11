@@ -113,7 +113,7 @@ const countStyle = css`
 `;
 
 const containerStyle = css`
-    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
 `;

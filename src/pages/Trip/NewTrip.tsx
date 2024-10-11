@@ -59,6 +59,7 @@ const NewTrip = () => {
 };
 
 const containerStyle = css`
+    height: 100dvh;
     display: flex;
     flex-direction: column;
 `;

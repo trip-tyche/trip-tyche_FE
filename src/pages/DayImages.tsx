@@ -444,7 +444,7 @@ const ImageItem = styled.div`
 
 const LoadingContainer = styled.div`
     width: 100%;
-    height: 100vh;
+    height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: center;

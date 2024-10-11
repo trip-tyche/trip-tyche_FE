@@ -44,7 +44,7 @@ const Login = (): JSX.Element => {
 
 const containerStyle = css`
     width: 100%;
-    min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     justify-content: center;

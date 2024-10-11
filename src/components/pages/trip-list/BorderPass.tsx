@@ -124,7 +124,7 @@ const BorderPass = ({ trip, userNickname, setTripCount, setIsDelete }: BorderPas
                 <div css={[rightSection, isAnimating && animateRight]}>
                     <div css={rightTopSection}>
                         <div css={label}>FLIGHT</div>
-                        <div css={value}>5FEELING AIR</div>
+                        <div css={value}>TYCHE AIR</div>
                     </div>
                     <div css={rightContent}>
                         <img src={characterImg} alt='Character' css={characterImageStyle} />
@@ -160,12 +160,12 @@ const borderPassContainer = css`
     width: 100%;
     max-width: 428px;
     border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     margin-bottom: 20px;
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); */
 `;
 
 const mainContent = css`
@@ -180,21 +180,22 @@ const topSection = css`
 
 const leftTopSection = css`
     display: flex;
+    justify-content: space-between;
     gap: 16px;
     width: 100%;
     padding: 10px 15px;
 `;
 
 const leftContent = css`
-    width: 70%;
+    width: 75%;
     background: white;
     border-right: 1px solid #e0e0e0;
 `;
 
 const rightSection = css`
-    width: 30%;
+    width: 25%;
     background: white;
-    transition: transform 1s ease;
+    transition: transform 0.5s ease;
 `;
 
 const rightTopSection = css`

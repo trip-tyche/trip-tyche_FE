@@ -59,7 +59,7 @@ const MusicVideo = () => {
 
 const containerStyle = css`
     position: relative;
-    height: 100vh;
+    height: 100dvh;
 `;
 
 const backStyle = css`

@@ -129,6 +129,7 @@ const AddLocation = () => {
 
 const containerStyle = css`
     position: relative;
+    height: 100dvh;
 `;
 
 const sectionStyle = css`

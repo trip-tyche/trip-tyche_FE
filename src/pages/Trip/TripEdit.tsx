@@ -30,7 +30,7 @@ const TripEdit = (): JSX.Element => {
 };
 
 const containerStyle = css`
-    min-height: 100vh;
+    min-height: 100dvh;
 `;
 
 const submitButtonStyle = css`

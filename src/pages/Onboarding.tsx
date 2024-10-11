@@ -42,7 +42,7 @@ const Onboarding = () => {
 const containerStyle = css`
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 100dvh;
     padding: 20px;
     background-color: rgb(0, 115, 187, 0.8);
 `;

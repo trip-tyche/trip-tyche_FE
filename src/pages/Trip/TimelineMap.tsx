@@ -574,7 +574,7 @@ const ControlButton = styled.button`
 
 const PageContainer = styled.div<{ isTransitioning: boolean }>`
     overflow: hidden;
-    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     transition: transform 0.3s ease-in-out;
