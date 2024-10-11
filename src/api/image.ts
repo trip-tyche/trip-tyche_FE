@@ -7,7 +7,8 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 export const getImagesByPinPoint = async (tripId: string, pinPoint: string) => {
     try {
         const token = getToken();
-        const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/pinpoints/${pinPoint}/images`, {
+        const response = await axios.get(`/api/trips/${tripId}/pinpoints/${pinPoint}/images`, {
+            // const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/pinpoints/${pinPoint}/images`, {
             headers: {
                 accept: '*/*',
                 Authorization: `Bearer ${token}`,
@@ -23,7 +24,8 @@ export const getImagesByPinPoint = async (tripId: string, pinPoint: string) => {
 export const getImagesByDay = async (tripId: string, date: string) => {
     try {
         const token = getToken();
-        const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/map?date=${date}`, {
+        const response = await axios.get(`/api/trips/${tripId}/map?date=${date}`, {
+            // const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/map?date=${date}`, {
             headers: {
                 accept: '*/*',
                 Authorization: `Bearer ${token}`,
