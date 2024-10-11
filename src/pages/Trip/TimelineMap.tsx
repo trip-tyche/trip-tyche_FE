@@ -215,7 +215,8 @@ const TimelineMap: React.FC = () => {
     }, [currentPinIndex, pinPoints, isPlaying, moveCharacter]);
 
     const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey: ENV.GOOGLE_MAPS_API_KEY || '',
+        googleMapsApiKey: import.meta.env.VITE_API_GOOGLE_MAPS_API_KEY || '',
+        // googleMapsApiKey: ENV.GOOGLE_MAPS_API_KEY || '',
     });
 
     const characterIcon = useMemo(() => {
