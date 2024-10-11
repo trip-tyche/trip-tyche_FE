@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { postTripImages } from '@/api/trip';
 import { PATH } from '@/constants/path';
 import { useModalStore } from '@/stores/useModalStore';
+import { useToastStore } from '@/stores/useToastStore';
 import { ImageWithLocationAndDate } from '@/types/image';
 import { formatDateToYYYYMMDD } from '@/utils/date';
 import { getImageLocation, extractDateFromImage } from '@/utils/piexif';
@@ -23,6 +24,7 @@ export const useImageUpload = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const { openModal, closeModal } = useModalStore();
+    const { showToast } = useToastStore();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -98,6 +100,7 @@ export const useImageUpload = () => {
                 return;
             }
             closeModal();
+            showToast('사진이 업로드되었습니다.');
             navigate(PATH.TRIP_LIST);
         } catch (error) {
             console.error('Error post trip-images:', error);

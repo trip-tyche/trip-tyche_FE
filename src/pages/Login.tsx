@@ -9,22 +9,16 @@ import theme from '@/styles/theme';
 
 const Login = (): JSX.Element => {
     const oauthLinks = {
-        // kakao: `${ENV.BASE_URL}/${OAUTH_URL}/kakao`,
-        // google: `${ENV.BASE_URL}/${OAUTH_URL}/google`,
-
         kakao: `/${OAUTH_URL}/kakao`,
         google: `/${OAUTH_URL}/google`,
     };
 
     const handleSocialLogin = (provider: keyof typeof oauthLinks) => () => {
-        localStorage.setItem('href', oauthLinks[provider]); ////////////////////////////// 삭제
         window.location.href = oauthLinks[provider];
     };
 
-    // const handleSocialLogin = (provider: keyof typeof oauthLinks) => () => {
-    //     navigate('/');
-    //     console.log('asdf');
-    // };
+    // console.log(ENV.BASE_URL);
+    // console.log(ENV.GOOGLE_MAPS_API_KEY);
 
     return (
         <div css={containerStyle}>
