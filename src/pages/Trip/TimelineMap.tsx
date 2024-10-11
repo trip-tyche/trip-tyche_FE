@@ -68,7 +68,7 @@ const TimelineMap: React.FC = () => {
 
             if (data.pinPoints.length === 0) {
                 showToast('보더패스에 저장된 이미지가 없습니다.');
-                navigate(PATH.TRIP_LIST);
+                // navigate(PATH.TRIP_LIST);
                 return;
             }
 
@@ -337,7 +337,7 @@ const TimelineMap: React.FC = () => {
             return (
                 <>
                     {isAtPin && (
-                        <ControlButton onClick={togglePlayPause} style={{ bottom: '94px' }}>
+                        <ControlButton onClick={togglePlayPause}>
                             {isPlaying ? <Pause size={18} /> : <Play size={18} />}
                         </ControlButton>
                     )}
@@ -375,9 +375,9 @@ const TimelineMap: React.FC = () => {
                     {characterPosition && (
                         <Marker position={characterPosition} icon={characterIcon || undefined} zIndex={1000} />
                     )}
-                    {isAtPin && (
+                    {/* {isAtPin && (
                         <ControlButton onClick={togglePlayPause}>{isPlaying ? <Pause /> : <Play />}</ControlButton>
-                    )}
+                    )} */}
                     {showPhotoCard && photoCardPosition && currentPinIndex < pinPoints.length && (
                         <OverlayView
                             position={photoCardPosition}
@@ -549,7 +549,7 @@ const ControlDefaultButton = styled.button`
 
 const ControlButton = styled.button`
     position: absolute;
-    bottom: 94px;
+    bottom: 104px;
     right: 10px;
     background-color: white;
     background-color: ${theme.colors.primary};

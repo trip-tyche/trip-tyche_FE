@@ -23,7 +23,7 @@ const RootLayout = () => (
 );
 const containerStyle = css`
     max-width: 428px;
-    min-height: 100vh;
+    min-height: 100dvh;
     margin: 0 auto;
     background-color: ${theme.colors.white};
     box-shadow: ${theme.colors.boxShadowDown};

@@ -12,30 +12,14 @@ import { PATH } from '@/constants/path';
 import useAuthStore from '@/stores/useAuthStore';
 import { useModalStore } from '@/stores/useModalStore';
 import theme from '@/styles/theme';
-import { getUserId } from '@/utils/auth';
 
 const MyPage = () => {
-    const [userNickName, setUserNickname] = useState('트립티케');
-
     const { isModalOpen, openModal, closeModal } = useModalStore();
     const setLogout = useAuthStore((state) => state.setLogout);
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchUserNickName = async () => {
-            const userId = getUserId();
-            if (!userId) {
-                // navigate(PATH.LOGIN);
-                return;
-            }
-
-            const { userNickName } = await getUserData(userId);
-            setUserNickname(userNickName);
-        };
-
-        fetchUserNickName();
-    }, []);
+    const userNickName = localStorage.getItem('userNickName') || 'TripTyche';
 
     const confirmModal = () => {
         closeModal();

@@ -259,7 +259,7 @@ const hashtag = css`
 `;
 
 const characterImageStyle = css`
-    width: 70px;
+    width: 60px;
     margin-bottom: 18px;
 `;
 

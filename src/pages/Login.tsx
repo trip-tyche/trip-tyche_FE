@@ -10,15 +10,14 @@ import theme from '@/styles/theme';
 const Login = (): JSX.Element => {
     const oauthLinks = {
         kakao: `/${OAUTH_URL}/kakao`,
+        // kakao: `${ENV.BASE_URL}/${OAUTH_URL}/kakao`,
         google: `/${OAUTH_URL}/google`,
+        // google: `${ENV.BASE_URL}/${OAUTH_URL}/google`,
     };
 
     const handleSocialLogin = (provider: keyof typeof oauthLinks) => () => {
         window.location.href = oauthLinks[provider];
     };
-
-    // console.log(ENV.BASE_URL);
-    // console.log(ENV.GOOGLE_MAPS_API_KEY);
 
     return (
         <div css={containerStyle}>

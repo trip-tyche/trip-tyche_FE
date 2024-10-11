@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { getTripList } from '@/api/trip';
 import Button from '@/components/common/button/Button';
+import Loading from '@/components/common/Loading';
 import Toast from '@/components/common/Toast';
 import Header from '@/components/layout/Header';
 import BorderPass from '@/components/pages/trip-list/BorderPass';
@@ -23,6 +24,7 @@ const TripList = (): JSX.Element => {
     const [tripList, setTripList] = useState<Trip[]>([]);
     const [tripCount, setTripCount] = useState(0);
     const [isDelete, setIsDelete] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const { showToast } = useToastStore();
 
@@ -31,6 +33,7 @@ const TripList = (): JSX.Element => {
     useEffect(() => {
         const fetchTripList = async () => {
             try {
+                setIsLoading(true);
                 const tripList = await getTripList();
 
                 if (typeof tripList !== 'object') {
@@ -46,6 +49,9 @@ const TripList = (): JSX.Element => {
                 setIsDelete(false);
             } catch (error) {
                 console.error('Error fetching trip-list data:', error);
+                setIsLoading(false);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -55,41 +61,58 @@ const TripList = (): JSX.Element => {
         fetchTripList();
     }, [isDelete, showToast, navigate]);
 
+    if (isLoading) {
+        <Loading />;
+    }
+
     return (
         <>
             <div css={containerStyle}>
                 <Header title={PAGE.TRIP_LIST} isBackButton onBack={() => navigate(PATH.HOME)} />
-                <div css={addTripStyle}>
-                    {tripCount === 0 ? (
-                        <div css={countStyle}>아직 만든 티켓이 없어요!</div>
-                    ) : (
-                        <div css={countStyle}>
-                            <TicketsPlane size={20} /> <span>{tripCount}</span> 개의 티켓을 만들었어요!
-                        </div>
-                    )}
-
-                    <div>
-                        <Button text={BUTTON.NEW_TRIP} btnTheme='pri' size='sm' onClick={() => navigate(PATH.TRIP_NEW)}>
-                            <Button.Left>
-                                <LuPlus size={16} />
-                            </Button.Left>
-                        </Button>
-                    </div>
-                </div>
-                {tripCount > 0 ? (
-                    <div css={tripListStyle}>
-                        {formatTripDate(tripList)?.map((trip) => (
-                            <BorderPass
-                                key={trip.tripId}
-                                trip={trip}
-                                userNickname={userNickname}
-                                setTripCount={setTripCount}
-                                setIsDelete={setIsDelete}
-                            />
-                        ))}
+                {isLoading ? (
+                    <div css={loadingWrapper}>
+                        <Loading />
                     </div>
                 ) : (
-                    <p css={noTripListStyle}>{TRIP.NO_TRIP}</p>
+                    <>
+                        <div css={addTripStyle}>
+                            {tripCount === 0 ? (
+                                <div css={countStyle}>아직 만든 티켓이 없어요!</div>
+                            ) : (
+                                <div css={countStyle}>
+                                    <TicketsPlane size={20} /> <span>{tripCount}</span> 개의 티켓을 만들었어요!
+                                </div>
+                            )}
+
+                            <div>
+                                <Button
+                                    text={BUTTON.NEW_TRIP}
+                                    btnTheme='pri'
+                                    size='sm'
+                                    onClick={() => navigate(PATH.TRIP_NEW)}
+                                >
+                                    <Button.Left>
+                                        <LuPlus size={16} />
+                                    </Button.Left>
+                                </Button>
+                            </div>
+                        </div>
+                        {tripCount > 0 ? (
+                            <div css={tripListStyle}>
+                                {formatTripDate(tripList)?.map((trip) => (
+                                    <BorderPass
+                                        key={trip.tripId}
+                                        trip={trip}
+                                        userNickname={userNickname}
+                                        setTripCount={setTripCount}
+                                        setIsDelete={setIsDelete}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <p css={noTripListStyle}>{TRIP.NO_TRIP}</p>
+                        )}
+                    </>
                 )}
             </div>
             <Toast />
@@ -100,6 +123,18 @@ const TripList = (): JSX.Element => {
 const containerStyle = css`
     position: relative;
 `;
+
+const loadingWrapper = css`
+    width: 100%;
+    height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+// const mainStyle = css`
+//     padding-top: ${theme.heights.tall_54};
+// `;
 
 const addTripStyle = css`
     display: flex;
@@ -129,7 +164,7 @@ const tripListStyle = css`
     display: flex;
     flex-direction: column;
     margin: 0 8px;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
 `;
 
 const noTripListStyle = css`

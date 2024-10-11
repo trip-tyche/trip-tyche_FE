@@ -43,7 +43,6 @@ export const useImageUpload = () => {
                 Array.from(files).map(async (file) => {
                     const location = await getImageLocation(file);
                     const date = await extractDateFromImage(file);
-
                     let formattedDate = '';
                     if (date) {
                         formattedDate = formatDateToYYYYMMDD(date);
@@ -51,6 +50,8 @@ export const useImageUpload = () => {
                     return { file, formattedDate, location };
                 }),
             );
+
+            console.log(processedImages);
 
             // startDate와 endDate 사이에 있는 이미지만 필터링
             const filteredImages = processedImages.filter((image) => {

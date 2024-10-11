@@ -36,6 +36,8 @@ const headerStyle = css`
     border-bottom: 1px solid ${theme.colors.borderColor};
     position: relative;
     background-color: ${theme.colors.white};
+    z-index: 800;
+    overflow: hidden;
 
     h1 {
         font-size: ${theme.fontSizes.large_16};

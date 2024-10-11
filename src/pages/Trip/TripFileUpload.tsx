@@ -90,18 +90,15 @@ const TripFileUpload = () => {
                 </div>
             </main>
             {isModalOpen && (
-                <>
-                    <ModalOverlay />
-                    <GuideModal
-                        confirmText='다음'
-                        cancelText='취소'
-                        confirmModal={goToAddLocation}
-                        closeModal={ignoreAddLocation}
-                        isOverlay
-                    >
-                        {noDataImagesCount !== 0 && <NoDataImageContent noDataImagesCount={noDataImagesCount} />}
-                    </GuideModal>
-                </>
+                <GuideModal
+                    confirmText='다음'
+                    cancelText='취소'
+                    confirmModal={goToAddLocation}
+                    closeModal={ignoreAddLocation}
+                    isOverlay
+                >
+                    {noDataImagesCount !== 0 && <NoDataImageContent noDataImagesCount={noDataImagesCount} />}
+                </GuideModal>
             )}
             {isUploading && <UploadingSpinner />}
         </div>

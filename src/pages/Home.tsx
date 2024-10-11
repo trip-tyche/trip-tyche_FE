@@ -18,9 +18,10 @@ import { Trip } from '@/types/trip';
 import { getToken, getUserId } from '@/utils/auth';
 
 const Home = () => {
-    const [userNickName, setUserNickName] = useState<string>('트립티케');
+    const [userNickName, setUserNickName] = useState<string>('TripTyche');
     const [userTrips, setUserTrips] = useState<Trip[]>();
     const [inputValue, setInputValue] = useState('');
+    const [isInputModalClose, setIsInputModalClose] = useState(false);
     const [isOpenGuide, setIsOpenGuide] = useState(false);
 
     const { isModalOpen, openModal, closeModal } = useModalStore();
@@ -30,6 +31,12 @@ const Home = () => {
     useEffect(() => {
         fetchUserData();
     }, []);
+
+    useEffect(() => {
+        if (isInputModalClose) {
+            setIsOpenGuide(true);
+        }
+    }, [isInputModalClose]);
 
     const fetchUserData = async () => {
         const token = getToken();
@@ -44,7 +51,7 @@ const Home = () => {
             if (!userNickName) {
                 openModal();
             } else {
-                localStorage.setItem('nickName', userNickName);
+                localStorage.setItem('userNickName', userNickName);
                 setUserNickName(userNickName);
                 setUserTrips(trips);
             }
@@ -58,7 +65,7 @@ const Home = () => {
             await postUserNickName(inputValue);
             closeModal();
             fetchUserData();
-            setIsOpenGuide(true);
+            setIsInputModalClose(true);
         } catch (error) {
             console.error('Error post user-nickname:', error);
         }
@@ -118,7 +125,7 @@ const Home = () => {
 const containerStyle = css`
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 100dvh;
     padding: 20px;
 `;
 

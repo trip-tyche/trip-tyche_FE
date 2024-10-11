@@ -8,19 +8,16 @@ interface AuthState {
     setLogout: () => void;
 }
 
-const useAuthStore = create<AuthState>()((set) => ({
+const useAuthStore = create<AuthState>()(() => ({
     isLogIn: false,
     userId: null,
     token: null,
     setLogin: (userId, token) => {
         localStorage.setItem('userId', JSON.stringify(userId));
         localStorage.setItem('token', token);
-        set({ isLogIn: true, userId, token });
     },
     setLogout: () => {
-        localStorage.removeItem('userId');
-        localStorage.removeItem('token');
-        set({ isLogIn: false, userId: null, token: null });
+        localStorage.clear();
     },
 }));
 

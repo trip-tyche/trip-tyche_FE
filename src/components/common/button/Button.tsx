@@ -53,7 +53,7 @@ const buttonStyle = (btnTheme: 'pri' | 'sec', size: 'lg' | 'sm') => css`
     font-size: ${size === 'lg' ? '14px' : '12px'};
     border-radius: ${size === 'lg' ? '16px' : '8px'};
     width: ${size === 'lg' ? '100%' : 'auto'};
-    height: ${size === 'lg' ? '44px' : '34px'};
+    height: ${size === 'lg' ? '48px' : '34px'};
     padding: ${size === 'lg' ? '0' : '0 12px'};
 `;
 
