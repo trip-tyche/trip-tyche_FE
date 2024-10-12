@@ -28,28 +28,25 @@ const MyPage = () => {
     };
 
     return (
-        <>
+        <div css={myPageContainerStyle}>
             <Header title='설정' isBackButton onBack={() => navigate(PATH.HOME)} />
-            <div css={[myPageContainerStyle]}>
-                <div css={userInfoContainer}>
-                    <p>{userNickName}</p>
-                </div>
-                <nav css={navStyle}>
-                    <button css={navItemStyle} onClick={() => console.log('내 정보')}>
-                        <User size={20} />
-                        <span>프로필 수정</span>
-                    </button>
-                    <button css={navItemStyle} onClick={() => console.log('문의하기')}>
-                        <MessageCircle size={20} />
-                        <span>문의하기</span>
-                    </button>
-                    <button css={navItemStyle} onClick={openModal}>
-                        <LogOut size={20} />
-                        <span>로그아웃</span>
-                    </button>
-                </nav>
+            <div css={userInfoContainer}>
+                <p>{userNickName}</p>
             </div>
-
+            <nav css={navStyle}>
+                <button css={navItemStyle} onClick={() => console.log('내 정보')}>
+                    <User size={20} />
+                    <span>프로필 수정</span>
+                </button>
+                <button css={navItemStyle} onClick={() => console.log('문의하기')}>
+                    <MessageCircle size={20} />
+                    <span>문의하기</span>
+                </button>
+                <button css={navItemStyle} onClick={openModal}>
+                    <LogOut size={20} />
+                    <span>로그아웃</span>
+                </button>
+            </nav>
             {isModalOpen && (
                 <ConfirmModal
                     title={LOGOUT_MODAL.TITLE}
@@ -60,7 +57,7 @@ const MyPage = () => {
                     closeModal={closeModal}
                 />
             )}
-        </>
+        </div>
     );
 };
 

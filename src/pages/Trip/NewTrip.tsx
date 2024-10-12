@@ -62,10 +62,11 @@ const containerStyle = css`
     height: 100dvh;
     display: flex;
     flex-direction: column;
+    position: relative;
 `;
 
 const mainStyle = css`
-    height: calc(100vh - 54px);
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -73,7 +74,8 @@ const mainStyle = css`
 `;
 
 const buttonWrapperStyle = css`
-    margin-bottom: 40px;
+    position: absolute;
+    bottom: 40px;
 `;
 
 export default NewTrip;

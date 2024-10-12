@@ -66,67 +66,66 @@ const TripList = (): JSX.Element => {
     }
 
     return (
-        <>
-            <div css={containerStyle}>
-                <Header title={PAGE.TRIP_LIST} isBackButton onBack={() => navigate(PATH.HOME)} />
-                {isLoading ? (
-                    <div css={loadingWrapper}>
-                        <Loading />
-                    </div>
-                ) : (
-                    <>
-                        <div css={addTripStyle}>
-                            {tripCount === 0 ? (
-                                <div css={countStyle}>아직 만든 티켓이 없어요!</div>
-                            ) : (
-                                <div css={countStyle}>
-                                    <TicketsPlane size={20} /> <span>{tripCount}</span> 개의 티켓을 만들었어요!
-                                </div>
-                            )}
-
-                            <div>
-                                <Button
-                                    text={BUTTON.NEW_TRIP}
-                                    btnTheme='pri'
-                                    size='sm'
-                                    onClick={() => navigate(PATH.TRIP_NEW)}
-                                >
-                                    <Button.Left>
-                                        <LuPlus size={16} />
-                                    </Button.Left>
-                                </Button>
-                            </div>
-                        </div>
-                        {tripCount > 0 ? (
-                            <div css={tripListStyle}>
-                                {formatTripDate(tripList)?.map((trip) => (
-                                    <BorderPass
-                                        key={trip.tripId}
-                                        trip={trip}
-                                        userNickname={userNickname}
-                                        setTripCount={setTripCount}
-                                        setIsDelete={setIsDelete}
-                                    />
-                                ))}
-                            </div>
+        <div css={containerStyle}>
+            <Header title={PAGE.TRIP_LIST} isBackButton onBack={() => navigate(PATH.HOME)} />
+            {isLoading ? (
+                <div css={loadingWrapper}>
+                    <Loading />
+                </div>
+            ) : (
+                <>
+                    <div css={addTripStyle}>
+                        {tripCount === 0 ? (
+                            <div css={countStyle}>아직 만든 티켓이 없어요!</div>
                         ) : (
-                            <p css={noTripListStyle}>{TRIP.NO_TRIP}</p>
+                            <div css={countStyle}>
+                                <TicketsPlane size={20} /> <span>{tripCount}</span> 개의 티켓을 만들었어요!
+                            </div>
                         )}
-                    </>
-                )}
-            </div>
+
+                        <div>
+                            <Button
+                                text={BUTTON.NEW_TRIP}
+                                btnTheme='pri'
+                                size='sm'
+                                onClick={() => navigate(PATH.TRIP_NEW)}
+                            >
+                                <Button.Left>
+                                    <LuPlus size={16} />
+                                </Button.Left>
+                            </Button>
+                        </div>
+                    </div>
+                    {tripCount > 0 ? (
+                        <div css={tripListStyle}>
+                            {formatTripDate(tripList)?.map((trip) => (
+                                <BorderPass
+                                    key={trip.tripId}
+                                    trip={trip}
+                                    userNickname={userNickname}
+                                    setTripCount={setTripCount}
+                                    setIsDelete={setIsDelete}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <p css={noTripListStyle}>{TRIP.NO_TRIP}</p>
+                    )}
+                </>
+            )}
             <Toast />
-        </>
+        </div>
     );
 };
 
 const containerStyle = css`
     position: relative;
+    height: 100dvh;
 `;
 
 const loadingWrapper = css`
     width: 100%;
-    height: 100dvh;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
