@@ -44,6 +44,7 @@ jobs:
             - name: Create .env file
               run: |
                   echo "VITE_API_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_API_GOOGLE_MAPS_API_KEY }}" >> .env
+                  echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" >> .env
 
             - name: Deploy to S3
               run: |
