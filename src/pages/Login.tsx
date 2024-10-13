@@ -5,13 +5,15 @@ import imageLeft from '/public/ogami_1.png';
 import imageRight from '@/assets/images/ogami_2.png';
 import SocialLoginButtons from '@/components/common/button/SocialLoginButtons';
 import Toast from '@/components/common/Toast';
-import { ENV, OAUTH_URL } from '@/constants/auth';
+import { OAUTH_URL } from '@/constants/auth';
 import theme from '@/styles/theme';
 
 const Login = (): JSX.Element => {
     const oauthLinks = {
-        kakao: `${ENV.BASE_URL}/${OAUTH_URL}/kakao`,
-        google: `${ENV.BASE_URL}/${OAUTH_URL}/google`,
+        kakao: `/${OAUTH_URL}/kakao`,
+        // kakao: `${ENV.BASE_URL}/${OAUTH_URL}/kakao`,
+        google: `/${OAUTH_URL}/google`,
+        // google: `${ENV.BASE_URL}/${OAUTH_URL}/google`,
     };
 
     const handleSocialLogin = (provider: keyof typeof oauthLinks) => () => {

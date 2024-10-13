@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { ENV } from '@/constants/auth';
+// import { ENV } from '@/constants/auth';
 import { UserInfo } from '@/types/user';
 import { getToken } from '@/utils/auth';
 
