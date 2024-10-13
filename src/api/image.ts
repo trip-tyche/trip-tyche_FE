@@ -8,7 +8,6 @@ const apiBaseUrl = ENV.BASE_URL;
 export const getImagesByPinPoint = async (tripId: string, pinPoint: string) => {
     try {
         const token = getToken();
-        // const response = await axios.get(`/api/trips/${tripId}/pinpoints/${pinPoint}/images`, {
         const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/pinpoints/${pinPoint}/images`, {
             headers: {
                 accept: '*/*',

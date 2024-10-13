@@ -1,9 +1,10 @@
 import axios from 'axios';
 
+import { ENV } from '@/constants/auth';
 import { TripInfo, Trips } from '@/types/trip';
 import { getToken } from '@/utils/auth';
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+const apiBaseUrl = ENV.BASE_URL;
 
 export const getTripList = async () => {
     try {

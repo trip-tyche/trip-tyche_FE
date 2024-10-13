@@ -112,7 +112,6 @@ interface ImageType {
 
 interface ImageCarouselProps {
     images: ImageType[];
-    // onStateChange: (state: CarouselState) => void;
     onStateChange: (state: CarouselState) => void;
 }
 
@@ -129,9 +128,9 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, onStateChange }) 
         () => ({
             className: 'center',
             centerMode: carouselState !== 'zoomed',
-            infinite: true,
+            infinite: false,
             slidesToShow: 1,
-            speed: 1000,
+            speed: 1500,
             autoplay: carouselState === 'auto',
             autoplaySpeed: 500,
             pauseOnHover: false,

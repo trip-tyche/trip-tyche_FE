@@ -29,6 +29,7 @@ const MusicVideo = () => {
                     return;
                 }
                 const data = await getImagesByPinPoint(tripId, pinPointId);
+                console.log(tripId, pinPointId, data);
                 const { images } = data.firstImage;
                 setDisplayedImages(images);
             } catch (error) {
