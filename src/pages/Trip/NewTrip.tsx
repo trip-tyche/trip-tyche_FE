@@ -38,21 +38,21 @@ const NewTrip = () => {
         <div css={containerStyle}>
             <Header title={PAGE.NEW_TRIP} isBackButton onBack={() => navigate(PATH.TRIP_LIST)} />
             <main css={mainStyle}>
-                <TripForm
-                    tripTitle={tripTitle}
-                    setTripTitle={setTripTitle}
-                    country={country}
-                    setCountry={setCountry}
-                    startDate={startDate}
-                    setStartDate={setStartDate}
-                    endDate={endDate}
-                    setEndDate={setEndDate}
-                    hashtags={hashtags}
-                    setHashtags={setHashtags}
-                />
-                <div css={buttonWrapperStyle}>
-                    <Button text={BUTTON.NEXT} btnTheme='pri' size='lg' onClick={handleSubmit} disabled={!isRequired} />
+                <div css={tripFormWrapper}>
+                    <TripForm
+                        tripTitle={tripTitle}
+                        setTripTitle={setTripTitle}
+                        country={country}
+                        setCountry={setCountry}
+                        startDate={startDate}
+                        setStartDate={setStartDate}
+                        endDate={endDate}
+                        setEndDate={setEndDate}
+                        hashtags={hashtags}
+                        setHashtags={setHashtags}
+                    />
                 </div>
+                <Button text={BUTTON.NEXT} btnTheme='pri' size='lg' onClick={handleSubmit} disabled={!isRequired} />
             </main>
         </div>
     );
@@ -62,23 +62,17 @@ const containerStyle = css`
     height: 100dvh;
     display: flex;
     flex-direction: column;
-    position: relative;
 `;
 
 const mainStyle = css`
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     padding: 20px;
 `;
 
-const buttonWrapperStyle = css`
-    width: 100%;
-    position: absolute;
-    left: 0;
-    bottom: 20px;
-    padding: 20px;
+const tripFormWrapper = css`
+    flex: 1;
 `;
 
 export default NewTrip;

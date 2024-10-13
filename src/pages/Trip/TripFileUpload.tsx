@@ -78,16 +78,14 @@ const TripFileUpload = () => {
                         )}
                     </div>
                 </section>
-                <div css={buttonWrapperStyle}>
-                    <Button
-                        text='등록하기'
-                        btnTheme='pri'
-                        size='lg'
-                        onClick={uploadTripImages}
-                        disabled={imageCount === 0}
-                        isLoading={isLoading}
-                    />
-                </div>
+                <Button
+                    text='등록하기'
+                    btnTheme='pri'
+                    size='lg'
+                    onClick={uploadTripImages}
+                    disabled={imageCount === 0}
+                    isLoading={isLoading}
+                />
             </main>
             {isModalOpen && (
                 <GuideModal
@@ -129,7 +127,6 @@ const sectionStyle = css`
     flex: 1;
     display: flex;
     flex-direction: column;
-    /* gap: 30px; */
     h2 {
         font-size: 18px;
         font-weight: bold;
@@ -141,7 +138,6 @@ const sectionStyle = css`
         margin-bottom: 24px;
         margin-left: 2px;
     }
-    margin-bottom: 70px;
 `;
 
 const uploadAreaStyle = css`
@@ -170,10 +166,6 @@ const uploadLabelStyle = css`
 const uploadedStyle = css`
     font-size: 16px;
     font-weight: bold;
-`;
-
-const buttonWrapperStyle = css`
-    margin-bottom: 40px;
 `;
 
 export default TripFileUpload;
