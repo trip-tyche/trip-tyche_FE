@@ -10,10 +10,8 @@ import theme from '@/styles/theme';
 
 const Login = (): JSX.Element => {
     const oauthLinks = {
-        kakao: `/${OAUTH_URL}/kakao`,
-        // kakao: `${ENV.BASE_URL}/${OAUTH_URL}/kakao`,
-        google: `/${OAUTH_URL}/google`,
-        // google: `${ENV.BASE_URL}/${OAUTH_URL}/google`,
+        kakao: `${ENV.BASE_URL}/${OAUTH_URL}/kakao`,
+        google: `${ENV.BASE_URL}/${OAUTH_URL}/google`,
     };
 
     const handleSocialLogin = (provider: keyof typeof oauthLinks) => () => {

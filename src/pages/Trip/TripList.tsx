@@ -36,6 +36,8 @@ const TripList = (): JSX.Element => {
                 setIsLoading(true);
                 const tripList = await getTripList();
 
+                console.log(tripList);
+
                 if (typeof tripList !== 'object') {
                     showToast('일시적인 서버 문제로 로그아웃 되었습니다.');
                     navigate(PATH.LOGIN);

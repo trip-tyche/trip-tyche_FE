@@ -50,6 +50,7 @@ const Home = () => {
 
         try {
             const { userNickName, trips } = await getUserData(userId);
+            console.log(userNickName);
             if (!userNickName) {
                 openModal();
             } else {

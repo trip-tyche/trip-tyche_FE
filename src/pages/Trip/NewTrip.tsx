@@ -74,8 +74,11 @@ const mainStyle = css`
 `;
 
 const buttonWrapperStyle = css`
+    width: 100%;
     position: absolute;
-    bottom: 40px;
+    left: 0;
+    bottom: 20px;
+    padding: 20px;
 `;
 
 export default NewTrip;

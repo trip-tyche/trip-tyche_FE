@@ -30,33 +30,35 @@ const MyPage = () => {
     return (
         <div css={myPageContainerStyle}>
             <Header title='설정' isBackButton onBack={() => navigate(PATH.HOME)} />
-            <div css={userInfoContainer}>
-                <p>{userNickName}</p>
-            </div>
-            <nav css={navStyle}>
-                <button css={navItemStyle} onClick={() => console.log('내 정보')}>
-                    <User size={20} />
-                    <span>프로필 수정</span>
-                </button>
-                <button css={navItemStyle} onClick={() => console.log('문의하기')}>
-                    <MessageCircle size={20} />
-                    <span>문의하기</span>
-                </button>
-                <button css={navItemStyle} onClick={openModal}>
-                    <LogOut size={20} />
-                    <span>로그아웃</span>
-                </button>
-            </nav>
-            {isModalOpen && (
-                <ConfirmModal
-                    title={LOGOUT_MODAL.TITLE}
-                    description={LOGOUT_MODAL.MESSAGE}
-                    confirmText={LOGOUT_MODAL.CONFIRM_TEXT}
-                    cancelText={LOGOUT_MODAL.CANCEL_TEXT}
-                    confirmModal={confirmModal}
-                    closeModal={closeModal}
-                />
-            )}
+            <main css={mainStyle}>
+                <div css={userInfoContainer}>
+                    <p>{userNickName}</p>
+                </div>
+                <nav css={navStyle}>
+                    <button css={navItemStyle} onClick={() => console.log('내 정보')}>
+                        <User size={20} />
+                        <span>프로필 수정</span>
+                    </button>
+                    <button css={navItemStyle} onClick={() => console.log('문의하기')}>
+                        <MessageCircle size={20} />
+                        <span>문의하기</span>
+                    </button>
+                    <button css={navItemStyle} onClick={openModal}>
+                        <LogOut size={20} />
+                        <span>로그아웃</span>
+                    </button>
+                </nav>
+                {isModalOpen && (
+                    <ConfirmModal
+                        title={LOGOUT_MODAL.TITLE}
+                        description={LOGOUT_MODAL.MESSAGE}
+                        confirmText={LOGOUT_MODAL.CONFIRM_TEXT}
+                        cancelText={LOGOUT_MODAL.CANCEL_TEXT}
+                        confirmModal={confirmModal}
+                        closeModal={closeModal}
+                    />
+                )}
+            </main>
         </div>
     );
 };
@@ -65,9 +67,11 @@ const myPageContainerStyle = css`
     height: 100dvh;
     display: flex;
     flex-direction: column;
-    padding: 20px;
 `;
 
+const mainStyle = css`
+    padding: 20px;
+`;
 const userInfoContainer = css`
     font-size: ${theme.fontSizes.xxlarge_20};
     font-weight: 600;

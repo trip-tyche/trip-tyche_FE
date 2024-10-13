@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import ogamiIcon from '/public/ogami_1.png';
+
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { GoogleMap, Marker, useLoadScript, OverlayView, MarkerClusterer } from '@react-google-maps/api';
@@ -230,7 +232,7 @@ const TimelineMap: React.FC = () => {
     const characterIcon = useMemo(() => {
         if (isLoaded) {
             return {
-                url: '/public/ogami_1.png',
+                url: ogamiIcon,
                 scaledSize: new window.google.maps.Size(50, 65),
                 anchor: new window.google.maps.Point(25, 65),
             };

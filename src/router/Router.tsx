@@ -24,7 +24,7 @@ const ProtectedRoute = () => {
     const userId = getUserId();
     const token = getToken();
 
-    // userId, 토큰 유효성 검사
+    // // userId, 토큰 유효성 검사
     if (!userId || !token) {
         // return <Navigate to={`/onboarding`} replace state={pathname + search} />;
         return <Navigate to={`${PATH.LOGIN}`} replace state={pathname + search} />;
