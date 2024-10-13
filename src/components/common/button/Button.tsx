@@ -70,7 +70,7 @@ const basicButtonStyle = css`
     }
 
     &:disabled {
-        opacity: 0.7;
+        opacity: 0.5;
         cursor: not-allowed;
     }
 `;

@@ -73,21 +73,23 @@ const TripForm = ({
     };
 
     return (
-        <Stack gap='xl'>
+        <Stack gap='lg'>
             <Box>
-                <Text size='sm' fw={600} mb={8}>
+                <Text size='xs' fw={600} mb={8}>
                     {NEW_COUNTRY.TITLE}
                 </Text>
                 <TextInput
                     placeholder={NEW_COUNTRY.TITLE_PLACEHOLDER}
                     value={tripTitle}
                     onChange={(e) => setTripTitle(e.target.value)}
-                    leftSection={<IconPlane size={18} />}
+                    leftSection={<IconPlane size={16} />}
+                    size='xs'
+                    required={true}
                 />
             </Box>
 
             <Box>
-                <Text size='sm' fw={600} mb={8}>
+                <Text size='xs' fw={600} mb={8}>
                     {NEW_COUNTRY.COUNTRY}
                 </Text>
                 <Select
@@ -97,22 +99,26 @@ const TripForm = ({
                     onChange={(value) => setCountry(value || '')}
                     searchable={false}
                     nothingFoundMessage='옵션이 없습니다'
-                    leftSection={<IconWorld size={18} />}
+                    leftSection={<IconWorld size={16} />}
+                    size='xs'
+                    required={true}
                 />
             </Box>
 
             <Box>
-                <Text size='sm' fw={600} mb={8}>
+                <Text size='xs' fw={600} mb={8}>
                     {NEW_COUNTRY.DATE}
                 </Text>
                 <DatePickerInput
                     type='range'
                     placeholder='여행 시작일과 종료일을 선택하세요'
+                    required={true}
                     value={dateRange}
                     onChange={handleDateChange}
                     onMouseLeave={handleDateMouseLeave}
-                    leftSection={<IconCalendar size={18} />}
+                    leftSection={<IconCalendar size={16} />}
                     locale='ko'
+                    size='xs'
                     valueFormat='YYYY년 MM월 DD일'
                     styles={(theme) => ({
                         day: {
@@ -147,7 +153,7 @@ const TripForm = ({
             </Box>
 
             <Box>
-                <Text size='sm' fw={600} mb={8}>
+                <Text size='xs' fw={600} mb={12}>
                     해시태그
                 </Text>
                 <Group gap='sm'>
@@ -157,8 +163,8 @@ const TripForm = ({
                             variant={hashtags.includes(tag) ? 'filled' : 'light'}
                             color={hashtags.includes(tag) ? 'blue' : 'gray'}
                             onClick={() => toggleHashtag(tag)}
-                            size='sm'
-                            px='md'
+                            size='xs'
+                            px='sm'
                         >
                             {tag}
                         </Button>

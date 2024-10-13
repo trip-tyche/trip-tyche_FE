@@ -50,10 +50,10 @@ export const COUNTRY_OPTIONS = [
 ];
 
 export const NEW_COUNTRY = {
-    TITLE: '여행 제목',
+    TITLE: '여행 제목 *',
     TITLE_PLACEHOLDER: '여행 제목을 입력하세요',
-    COUNTRY: '여행 국가',
+    COUNTRY: '여행 국가 *',
     COUNTRY_DEFAULT: '국가를 선택하세요',
-    DATE: '여행 기간',
+    DATE: '여행 기간 *',
     HASHTAG: '해시태그',
 };

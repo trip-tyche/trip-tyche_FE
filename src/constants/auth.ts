@@ -7,6 +7,6 @@ export const SOCIAL_LOGIN = {
 
 export const ENV = {
     // BASE_URL: import.meta.env.VITE_API_BASE_URL, // 개발 서버
-    BASE_URL: '', // 운영 서버
+    BASE_URL: null, // 운영 서버
     GOOGLE_MAPS_API_KEY: import.meta.env.VITE_API_GOOGLE_MAPS_API_KEY,
 };
