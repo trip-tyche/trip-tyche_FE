@@ -16,17 +16,10 @@ jobs:
               with:
                   node-version: '20'
 
-            # - name: Get yarn cache directory path
-            #   id: yarn-cache-dir-path
-            #   run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
-
-            # - name: Cache yarn dependencies
-            #   uses: actions/cache@v3
-            #   with:
-            #       path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            #       key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-            #       restore-keys: |
-            #           ${{ runner.os }}-yarn-
+            - name: Create .env file
+              run: |
+                  echo "VITE_API_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_API_GOOGLE_MAPS_API_KEY }}" >> .env
+                  echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" >> .env
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
@@ -40,11 +33,6 @@ jobs:
                   aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   aws-region: ${{ secrets.AWS_REGION }}
-
-            - name: Create .env file
-              run: |
-                  echo "VITE_API_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_API_GOOGLE_MAPS_API_KEY }}" >> .env
-                  echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" >> .env
 
             - name: Deploy to S3
               run: |
