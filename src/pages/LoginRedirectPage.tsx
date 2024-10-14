@@ -16,13 +16,6 @@ const LoginRedirectPage = () => {
     const userId = params.get('userId') as string;
     const token = params.get('token') as string;
 
-    // useEffect(() => {
-    //     if (userId && token) {
-    //         setUserIdAndToken();
-    //     } else {
-    //         navigate(PATH.LOGIN, { replace: true });
-    //     }
-    // }, []);
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const userId = params.get('userId');
@@ -39,6 +32,7 @@ const LoginRedirectPage = () => {
 
     const setUserIdAndToken = () => {
         setLogin(JSON.parse(userId), token);
+        localStorage.setItem('lastLoginTime', new Date().getTime().toString());
         navigate(PATH.HOME, { replace: true });
     };
 
@@ -46,5 +40,3 @@ const LoginRedirectPage = () => {
 };
 
 export default LoginRedirectPage;
-
-// http://trip-tyche-fe.s3-website.ap-northeast-2.amazonaws.com/login/oauth2/code/google?state=jflv-SwKPgJ2H-Pi1gU_UZaSgLneDr7lO_Rb6DfvPY4%3D&code=4%2F0AVG7fiSYIYf1dmso5SpdscbSz0-2G6K2nGNsFdcEz72yCrHG_k1UlHgHzyKftHuSeRLftg&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=0&prompt=none

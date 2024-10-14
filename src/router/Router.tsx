@@ -1,5 +1,7 @@
 // import { createBrowserRouter, Outlet } from 'react-router-dom';
-import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+
+import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import RootLayout from '../layouts/RootLayout';
 import Home from '../pages/Home';
@@ -19,27 +21,51 @@ import TripEdit from '@/pages/Trip/TripEdit';
 import TripFileUpload from '@/pages/Trip/TripFileUpload';
 import { getToken, getUserId } from '@/utils/auth';
 
-const ProtectedRoute = () => {
+const LOGIN_TIMEOUT = 60 * 60 * 1000; // 1시간
+const LOGIN_CHECK = 5 * 60 * 1000; // 5분
+
+const LoginCheck = ({ children }: { children: React.ReactNode }) => {
+    const navigate = useNavigate();
     const { pathname, search } = useLocation();
-    const userId = getUserId();
-    const token = getToken();
 
-    // // userId, 토큰 유효성 검사
-    if (!userId || !token) {
-        // return <Navigate to={`/onboarding`} replace state={pathname + search} />;
-        return <Navigate to={`${PATH.LOGIN}`} replace state={pathname + search} />;
-    }
+    useEffect(() => {
+        const checkLoginStatus = () => {
+            const userId = getUserId();
+            const token = getToken();
+            const lastLoginTime = localStorage.getItem('lastLoginTime');
 
-    // // 토큰 만료 검사 (예: JWT 디코딩)
-    // const isTokenExpired = checkTokenExpiration(token); // 이 함수는 직접 구현해야 합니다
-    // if (isTokenExpired) {
-    //     // 토큰 갱신 로직 또는 로그아웃 처리
-    //     useAuthStore.getState().logout();
-    //     return <Navigate to={`${PATH.LOGIN}`} replace state={pathname + search} />;
-    // }
+            if (!userId || !token) {
+                return <Navigate to={`${PATH.LOGIN}`} replace state={pathname + search} />;
+            }
 
-    return <Outlet />;
+            const currentTime = new Date().getTime();
+
+            if (!lastLoginTime) {
+                return;
+            }
+
+            if (currentTime - parseInt(lastLoginTime) > LOGIN_TIMEOUT) {
+                localStorage.clear();
+                <Navigate to={`${PATH.LOGIN}`} replace state={pathname + search} />;
+            }
+        };
+
+        checkLoginStatus();
+
+        const intervalId = setInterval(checkLoginStatus, LOGIN_CHECK);
+
+        return () => clearInterval(intervalId);
+    }, [navigate, pathname, search]);
+
+    return <>{children}</>;
 };
+
+const ProtectedRoute = () => (
+    <LoginCheck>
+        <Outlet />
+    </LoginCheck>
+);
+
 export const router = createBrowserRouter([
     {
         path: PATH.HOME,
