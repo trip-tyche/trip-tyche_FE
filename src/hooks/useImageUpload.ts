@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { postTripImages } from '@/api/trip';
 import { PATH } from '@/constants/path';
-import { useModalStore } from '@/stores/useModalStore';
 import { useToastStore } from '@/stores/useToastStore';
 import { ImageWithLocationAndDate } from '@/types/image';
 import { formatDateToYYYYMMDD } from '@/utils/date';
@@ -20,10 +19,10 @@ export const useImageUpload = () => {
     const [imagesWithLocation, setImagesWithLocation] = useState<ImageWithLocationAndDate[]>([]);
     const [imagesNoLocation, setImagesNoLocation] = useState<ImageWithDate[]>([]);
     const [noDateImagesCount, setNoDateImagesCount] = useState(0);
+    const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
 
     const [isLoading, setIsLoading] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
-    const { openModal, closeModal } = useModalStore();
     const { showToast } = useToastStore();
 
     const navigate = useNavigate();
@@ -51,7 +50,8 @@ export const useImageUpload = () => {
                 }),
             );
 
-            console.log(processedImages);
+            // console.log(processedImages);
+            console.log(startDate, endDate);
 
             // startDate와 endDate 사이에 있는 이미지만 필터링
             const filteredImages = processedImages.filter((image) => {
@@ -93,16 +93,21 @@ export const useImageUpload = () => {
         try {
             setIsUploading(true);
             const images = imagesWithLocation.map((image) => image.file);
-            if (images.length) {
-                await postTripImages(tripId, images);
-            }
-            if (noDateImagesCount || imagesNoLocation.length) {
-                openModal();
+            console.log(images);
+            if (images.length === 0) {
+                setIsGuideModalOpen(true);
                 return;
             }
-            closeModal();
-            showToast('사진이 업로드되었습니다.');
+
+            await postTripImages(tripId, images);
+
+            if (imagesNoLocation.length) {
+                setIsGuideModalOpen(true);
+                return;
+            }
+
             navigate(PATH.TRIP_LIST);
+            showToast('사진이 업로드되었습니다.');
         } catch (error) {
             console.error('Error post trip-images:', error);
             setIsUploading(false);
@@ -116,10 +121,11 @@ export const useImageUpload = () => {
         imagesWithLocation,
         imagesNoLocation,
         noDateImagesCount,
-        openModal,
+        isGuideModalOpen,
         isLoading,
         isUploading,
         handleFileUpload,
         uploadTripImages,
+        setIsGuideModalOpen,
     };
 };

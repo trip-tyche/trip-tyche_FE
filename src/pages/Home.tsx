@@ -10,11 +10,11 @@ import mainImage from '/public/ogami_1.png';
 
 import GuideModal from '@/components/common/modal/GuideModal';
 import InputModal from '@/components/common/modal/InputModal';
+import ModalOverlay from '@/components/common/modal/ModalOverlay';
 import Card from '@/components/pages/home/Card';
 import Guide from '@/components/pages/home/Guide';
 import { NICKNAME_MODAL } from '@/constants/message';
 import { PATH } from '@/constants/path';
-import { useModalStore } from '@/stores/useModalStore';
 import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
 import { getToken, getUserId } from '@/utils/auth';
@@ -23,10 +23,8 @@ const Home = () => {
     const [userNickName, setUserNickName] = useState<string>('TripTyche');
     const [userTrips, setUserTrips] = useState<Trip[]>();
     const [inputValue, setInputValue] = useState('');
-    const [isInputModalClose, setIsInputModalClose] = useState(false);
-    const [isOpenGuide, setIsOpenGuide] = useState(false);
-
-    const { isModalOpen, openModal, closeModal } = useModalStore();
+    const [isOpenInputModal, setIsOpenInputModal] = useState(false);
+    const [isOpenGuideModal, setIsOpenGuideModal] = useState(false);
 
     const navigate = useNavigate();
 
@@ -34,25 +32,18 @@ const Home = () => {
         fetchUserData();
     }, []);
 
-    useEffect(() => {
-        if (isInputModalClose) {
-            setIsOpenGuide(true);
-        }
-    }, [isInputModalClose]);
-
     const fetchUserData = async () => {
         const token = getToken();
         const userId = getUserId();
         if (!token || !userId) {
-            // navigate(PATH.LOGIN);
+            navigate(PATH.LOGIN);
             return;
         }
 
         try {
             const { userNickName, trips } = await getUserData(userId);
-            console.log(userNickName);
             if (!userNickName) {
-                openModal();
+                setIsOpenInputModal(true);
             } else {
                 localStorage.setItem('userNickName', userNickName);
                 setUserNickName(userNickName);
@@ -66,9 +57,9 @@ const Home = () => {
     const submitUserNickName = async () => {
         try {
             await postUserNickName(inputValue);
-            closeModal();
             fetchUserData();
-            setIsInputModalClose(true);
+            setIsOpenInputModal(false);
+            setIsOpenGuideModal(true);
         } catch (error) {
             console.error('Error post user-nickname:', error);
         }
@@ -76,7 +67,7 @@ const Home = () => {
 
     const confirmGuideModal = () => {
         navigate(PATH.TRIP_LIST);
-        setIsOpenGuide(false);
+        setIsOpenGuideModal(false);
     };
 
     return (
@@ -99,7 +90,8 @@ const Home = () => {
                 <h2>보더 패스</h2>
                 <p>여행 기록 시작하기</p>
             </div>
-            {isModalOpen && (
+
+            {isOpenInputModal && (
                 <InputModal
                     title={NICKNAME_MODAL.TITLE}
                     infoMessage={NICKNAME_MODAL.INFO_MESSAGE}
@@ -109,14 +101,15 @@ const Home = () => {
                     setInputValue={setInputValue}
                 />
             )}
-            {isOpenGuide && (
+            {isOpenGuideModal && (
                 <GuideModal
                     confirmText='등록하러 가기'
                     cancelText='나중에'
                     confirmModal={confirmGuideModal}
                     closeModal={() => {
-                        setIsOpenGuide(false);
+                        setIsOpenGuideModal(false);
                     }}
+                    isOverlay
                 >
                     <Guide nickname={userNickName} />
                 </GuideModal>

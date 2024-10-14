@@ -42,3 +42,15 @@ export const getDayNumber = (recordDate: string, startDate: string) => {
     // Day1부터 시작하므로 1을 더해줌
     return `Day ${diffInDays + 1}`;
 };
+
+export function formatDate(dateString: string) {
+    // 입력된 날짜 문자열에서 년, 월, 일을 추출합니다.
+    const [year, month, day] = dateString.split('.').map((part) => part.trim());
+
+    // 월과 일이 한 자리 수인 경우 앞에 0을 붙여 두 자리로 만듭니다.
+    const formattedMonth = month.padStart(2, '0');
+    const formattedDay = day.padStart(2, '0');
+
+    // "YYYY-MM-DD" 형식으로 조합하여 반환합니다.
+    return `${year}-${formattedMonth}-${formattedDay}`;
+}

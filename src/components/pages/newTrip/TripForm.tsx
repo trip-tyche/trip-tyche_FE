@@ -7,15 +7,8 @@ import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
 
 import { COUNTRY_OPTIONS, HASHTAG_MENU, NEW_COUNTRY } from '@/constants/trip';
-import { TripInfo } from '@/types/trip';
-
-interface TripFormProps extends TripInfo {
-    setTripTitle: Dispatch<SetStateAction<string>>;
-    setCountry: Dispatch<SetStateAction<string>>;
-    setStartDate: Dispatch<SetStateAction<string>>;
-    setEndDate: Dispatch<SetStateAction<string>>;
-    setHashtags: Dispatch<SetStateAction<string[]>>;
-}
+import theme from '@/styles/theme';
+import { TripFormProps } from '@/types/trip';
 
 const TripForm = ({
     tripTitle,
@@ -37,7 +30,7 @@ const TripForm = ({
     }));
 
     const toggleHashtag = (tag: string) => {
-        setHashtags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
+        setHashtags((prev: string[]) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
     };
 
     const handleDateChange = (value: [DateValue, DateValue]) => {
@@ -73,9 +66,9 @@ const TripForm = ({
     };
 
     return (
-        <Stack gap='lg'>
+        <Stack gap='xl'>
             <Box>
-                <Text size='xs' fw={600} mb={8}>
+                <Text size='sm' fw={600} mb={8}>
                     {NEW_COUNTRY.TITLE}
                 </Text>
                 <TextInput
@@ -83,13 +76,13 @@ const TripForm = ({
                     value={tripTitle}
                     onChange={(e) => setTripTitle(e.target.value)}
                     leftSection={<IconPlane size={16} />}
-                    size='xs'
+                    size='sm'
                     required={true}
                 />
             </Box>
 
             <Box>
-                <Text size='xs' fw={600} mb={8}>
+                <Text size='sm' fw={600} mb={8}>
                     {NEW_COUNTRY.COUNTRY}
                 </Text>
                 <Select
@@ -100,13 +93,13 @@ const TripForm = ({
                     searchable={false}
                     nothingFoundMessage='옵션이 없습니다'
                     leftSection={<IconWorld size={16} />}
-                    size='xs'
+                    size='sm'
                     required={true}
                 />
             </Box>
 
             <Box>
-                <Text size='xs' fw={600} mb={8}>
+                <Text size='sm' fw={600} mb={8}>
                     {NEW_COUNTRY.DATE}
                 </Text>
                 <DatePickerInput
@@ -118,7 +111,7 @@ const TripForm = ({
                     onMouseLeave={handleDateMouseLeave}
                     leftSection={<IconCalendar size={16} />}
                     locale='ko'
-                    size='xs'
+                    size='sm'
                     valueFormat='YYYY년 MM월 DD일'
                     styles={(theme) => ({
                         day: {
@@ -144,7 +137,7 @@ const TripForm = ({
                         onMouseEnter: () => handleDateMouseEnter(date),
                         style:
                             dateRange[0] && date.getTime() === dateRange[0].getTime()
-                                ? { backgroundColor: 'rgb(51, 102, 255)', color: 'white' }
+                                ? { backgroundColor: `${theme.colors.primary}`, color: 'white' }
                                 : isInRange(date)
                                   ? { backgroundColor: 'rgba(51, 102, 255, 0.1)' }
                                   : {},
@@ -153,7 +146,7 @@ const TripForm = ({
             </Box>
 
             <Box>
-                <Text size='xs' fw={600} mb={12}>
+                <Text size='sm' fw={600} mb={12}>
                     해시태그
                 </Text>
                 <Group gap='sm'>

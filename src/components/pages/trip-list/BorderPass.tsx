@@ -13,6 +13,7 @@ import ConfirmModal from '@/components/common/modal/ConfirmModal';
 import { PATH } from '@/constants/path';
 import theme from '@/styles/theme';
 import { FormattedTripDate } from '@/types/trip';
+import { formatDate } from '@/utils/date';
 
 interface BorderPassProps {
     trip: FormattedTripDate;
@@ -47,7 +48,17 @@ const BorderPass = ({ trip, userNickname, setTripCount, setIsDelete }: BorderPas
 
     const goToUpload = (e: React.MouseEvent) => {
         e.stopPropagation();
-        navigate(PATH.TRIP_UPLOAD, { state: tripId });
+
+        const formattedStartDate = formatDate(startDate);
+        const formattedEndDate = formatDate(endDate);
+        // navigate(PATH.TRIP_UPLOAD, { state: tripId, startDate, endDate });
+        navigate(PATH.TRIP_UPLOAD, {
+            state: {
+                tripId,
+                startDate: formattedStartDate,
+                endDate: formattedEndDate,
+            },
+        });
     };
 
     const handleCardClick = () => {

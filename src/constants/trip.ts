@@ -15,7 +15,8 @@ export const HASHTAG_MENU = [
 ];
 
 export const COUNTRY_OPTIONS = [
-    { emoji: '🇰🇷', name: '한국' },
+    { emoji: '🇰🇷', name: '대한민국' },
+    { emoji: '🇹🇼', name: '대만' },
     { emoji: '🇯🇵', name: '일본' },
     { emoji: '🇺🇸', name: '미국' },
     { emoji: '🇨🇳', name: '중국' },

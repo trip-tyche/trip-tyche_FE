@@ -14,14 +14,14 @@ const NewTrip = () => {
     const [isRequired, setIsRequired] = useState(false);
     const {
         tripTitle,
-        setTripTitle,
         country,
-        setCountry,
         startDate,
-        setStartDate,
         endDate,
-        setEndDate,
         hashtags,
+        setTripTitle,
+        setCountry,
+        setStartDate,
+        setEndDate,
         setHashtags,
         handleSubmit,
     } = useTripForm();
@@ -36,19 +36,21 @@ const NewTrip = () => {
 
     return (
         <div css={containerStyle}>
-            <Header title={PAGE.NEW_TRIP} isBackButton onBack={() => navigate(PATH.TRIP_LIST)} />
+            <div>
+                <Header title={PAGE.NEW_TRIP} isBackButton onBack={() => navigate(PATH.TRIP_LIST)} />
+            </div>
             <main css={mainStyle}>
                 <div css={tripFormWrapper}>
                     <TripForm
                         tripTitle={tripTitle}
-                        setTripTitle={setTripTitle}
                         country={country}
-                        setCountry={setCountry}
                         startDate={startDate}
-                        setStartDate={setStartDate}
                         endDate={endDate}
-                        setEndDate={setEndDate}
                         hashtags={hashtags}
+                        setTripTitle={setTripTitle}
+                        setCountry={setCountry}
+                        setStartDate={setStartDate}
+                        setEndDate={setEndDate}
                         setHashtags={setHashtags}
                     />
                 </div>

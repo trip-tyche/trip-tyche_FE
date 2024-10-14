@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-// import { ENV } from '@/constants/auth';
+import { ENV } from '@/constants/auth';
 import { getToken } from '@/utils/auth';
 
-// const apiBaseUrl = ENV.BASE_URL;
+const apiBaseUrl = ENV.BASE_URL;
 
 export const getImagesByPinPoint = async (tripId: string, pinPoint: string) => {
     try {

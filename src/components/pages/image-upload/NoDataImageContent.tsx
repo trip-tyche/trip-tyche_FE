@@ -4,16 +4,16 @@ import mapImage from '@/assets/images/map-image.png';
 import theme from '@/styles/theme';
 
 interface noDataImagesCountProps {
-    noDataImagesCount: number;
+    noLocationCount: number;
 }
 
-const TITLE = ' 개의 사진이 날짜 또는 위치 정보가 없습니다 😢';
-const DESCRIPTION = '위치 정보가 없는 사진은 직접 위치를 설정할 수 있습니다.';
+const TITLE = ' 개의 사진이 위치 정보가 없습니다 😢';
+const DESCRIPTION = '위 사진과 같이 직접 위치를 설정할 수 있습니다.';
 
-const NoDataImageContent: React.FC<noDataImagesCountProps> = ({ noDataImagesCount }) => (
+const NoDataImageContent: React.FC<noDataImagesCountProps> = ({ noLocationCount }) => (
     <div css={contentContainer}>
         <h1 css={titleStyle}>
-            <span css={countStyle}>{noDataImagesCount}</span>
+            <span css={countStyle}>{noLocationCount}</span>
             {TITLE}
         </h1>
         <img css={imageStyle} src={mapImage} alt='map-image' />
@@ -26,7 +26,7 @@ const contentContainer = css`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 16px;
+    gap: 20px;
     margin-top: 12px;
 `;
 
@@ -44,13 +44,12 @@ const countStyle = css`
 
 const descriptionStyle = css`
     font-size: 12px;
-    color: ${theme.colors.primary};
-    color: #5e5e5e;
+    color: ${theme.colors.descriptionText};
     margin-bottom: 20px;
 `;
 
 const imageStyle = css`
-    width: 85%;
+    width: 75%;
     border: 1px solid ${theme.colors.borderColor};
     border-radius: 12px;
 `;

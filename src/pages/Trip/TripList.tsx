@@ -133,15 +133,12 @@ const loadingWrapper = css`
     align-items: center;
 `;
 
-// const mainStyle = css`
-//     padding-top: ${theme.heights.tall_54};
-// `;
-
 const addTripStyle = css`
     display: flex;
     justify-content: space-between;
     padding: 12px;
     margin-bottom: 8px;
+    height: 54px;
 `;
 
 const countStyle = css`
@@ -169,7 +166,7 @@ const tripListStyle = css`
 `;
 
 const noTripListStyle = css`
-    height: calc(100vh - 106px);
+    height: calc(100dvh - 108px);
     display: flex;
     justify-content: center;
     align-items: center;

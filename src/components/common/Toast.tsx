@@ -42,7 +42,7 @@ const toastStyle = css`
     max-width: 388px;
     height: 60px;
     position: fixed;
-    bottom: 54px;
+    bottom: 84px;
     left: 50%;
     display: flex;
     justify-content: center;

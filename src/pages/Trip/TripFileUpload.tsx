@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/button/Button';
 import GuideModal from '@/components/common/modal/GuideModal';
-import ModalOverlay from '@/components/common/modal/ModalOverlay';
+import Toast from '@/components/common/Toast';
 import Header from '@/components/layout/Header';
 import NoDataImageContent from '@/components/pages/image-upload/NoDataImageContent';
 import UploadingSpinner from '@/components/pages/image-upload/UploadingSpinner';
@@ -12,38 +12,40 @@ import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
 import { useImageUpload } from '@/hooks/useImageUpload';
-import { useModalStore } from '@/stores/useModalStore';
+import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 
 const TripFileUpload = () => {
-    const { isModalOpen, closeModal } = useModalStore();
+    const { showToast } = useToastStore();
 
     const {
         imageCount,
         imagesWithLocation,
-        noDateImagesCount,
         imagesNoLocation,
+        noDateImagesCount,
+        isGuideModalOpen,
         isLoading,
         isUploading,
         handleFileUpload,
         uploadTripImages,
+        setIsGuideModalOpen,
     } = useImageUpload();
-
-    const noDataImagesCount = noDateImagesCount + imagesNoLocation.length;
 
     const navigate = useNavigate();
 
     const goToAddLocation = async () => {
-        closeModal();
-        if (imagesWithLocation.length) {
+        setIsGuideModalOpen(false);
+        if (imagesWithLocation.length !== 0) {
             const defaultLocation = imagesWithLocation[0].location;
             navigate(PATH.TRIP_UPLOAD_ADD_LOCATION, { state: { defaultLocation, imagesNoLocation } });
         } else {
-            // 모든 정보가 위치가 없다면? 기본값 설정하기
+            const defaultLocation = { latitude: 37.5665, longitude: 126.978 };
+            navigate(PATH.TRIP_UPLOAD_ADD_LOCATION, { state: { defaultLocation, imagesNoLocation } });
         }
     };
     const ignoreAddLocation = () => {
-        closeModal();
+        setIsGuideModalOpen(false);
+        showToast('사진이 업로드되었습니다.');
         navigate(PATH.TRIP_LIST);
     };
 
@@ -52,8 +54,12 @@ const TripFileUpload = () => {
             <Header title={PAGE.UPLOAD_IMAGES} isBackButton />
             <main css={mainStyle}>
                 <section css={sectionStyle}>
-                    <h2>{TRIP_IMAGES_UPLOAD.title}</h2>
-                    <p>여행 기간 외 사진은 등록되지 않습니다</p>
+                    {/* <h2>{TRIP_IMAGES_UPLOAD.title}</h2> */}
+                    <h4>[사진 등록 가이드]</h4>
+                    <p>1. 여행 기간 외 사진은 등록되지 않습니다.</p>
+                    <p>2. 위치 정보가 없는 사진은 직접 위치를 등록하실 수 있습니다.</p>
+                    <p>3. 날짜 정보가 없는 사진은 등록하실 수 없습니다.</p>
+
                     <div css={uploadAreaStyle}>
                         <input
                             type='file'
@@ -65,29 +71,47 @@ const TripFileUpload = () => {
                         />
                         {!imageCount ? (
                             <label htmlFor='imageUpload' css={uploadLabelStyle}>
-                                <ImageUp size={36} />
-                                <span>{TRIP_IMAGES_UPLOAD.message}</span>
+                                <ImageUp size={32} />
+                                <span css={uploadedStyle}>{TRIP_IMAGES_UPLOAD.message}</span>
                             </label>
                         ) : (
                             <label htmlFor='imageUpload' css={uploadLabelStyle}>
-                                <Image size={36} />
+                                <Image size={32} />
                                 <h3 css={uploadedStyle}>
                                     총 <span css={countStyle}>{imageCount}</span>개의 이미지를 선택하셨습니다.
                                 </h3>
                             </label>
                         )}
                     </div>
+                    {imageCount !== 0 && (
+                        <>
+                            <h4>{`${imageCount} 개의 이미지 중,`}</h4>
+                            <p>등록 가능 사진 : {imagesWithLocation.length} 개</p>
+                            {/* {imagesWithLocation.length !== 0 && ( */}
+                            {/* <> */}
+                            <p>위치 정보 ❎ : {imagesNoLocation.length} 개 (직접 등록 가능)</p>
+                            <p>날짜 정보 ❎ : {noDateImagesCount} 개</p>
+                            {/* <p>날짜 정보 ❎ : {imagesWithLocation.length !== 0 ? noDateImagesCount : 0} 개</p> */}
+                            {/* </> */}
+                            {/* )} */}
+                        </>
+                    )}
                 </section>
                 <Button
                     text='등록하기'
                     btnTheme='pri'
                     size='lg'
                     onClick={uploadTripImages}
-                    disabled={imageCount === 0}
+                    disabled={
+                        imageCount === 0 ||
+                        (imagesNoLocation.length === 0 &&
+                            imagesWithLocation.length === 0 &&
+                            imagesNoLocation.length === 0)
+                    }
                     isLoading={isLoading}
                 />
             </main>
-            {isModalOpen && (
+            {isGuideModalOpen && (
                 <GuideModal
                     confirmText='다음'
                     cancelText='취소'
@@ -95,10 +119,11 @@ const TripFileUpload = () => {
                     closeModal={ignoreAddLocation}
                     isOverlay
                 >
-                    {noDataImagesCount !== 0 && <NoDataImageContent noDataImagesCount={noDataImagesCount} />}
+                    <NoDataImageContent noLocationCount={imagesNoLocation.length} />
                 </GuideModal>
             )}
-            {isUploading && <UploadingSpinner />}
+            {isUploading && <UploadingSpinner imageCount={imagesWithLocation.length} />}
+            <Toast />
         </div>
     );
 };
@@ -107,7 +132,7 @@ const countStyle = css`
     font-size: 18px;
     font-weight: 600;
     margin: 0 4px;
-    color: #0073bb;
+    color: ${theme.colors.primary};
 `;
 
 const containerStyle = css`
@@ -127,15 +152,23 @@ const sectionStyle = css`
     flex: 1;
     display: flex;
     flex-direction: column;
+
     h2 {
         font-size: 18px;
         font-weight: bold;
-        margin-bottom: 8px;
     }
+
+    h4 {
+        font-size: 14px;
+        color: ${theme.colors.black};
+        font-weight: 600;
+        margin-bottom: 14px;
+    }
+
     p {
         font-size: 12px;
         color: ${theme.colors.descriptionText};
-        margin-bottom: 24px;
+        margin-bottom: 10px;
         margin-left: 2px;
     }
 `;
@@ -144,6 +177,7 @@ const uploadAreaStyle = css`
     height: 140px;
     border: 2px dashed #ccc;
     border-radius: 8px;
+    margin: 20px 0;
     padding: 20px;
     display: flex;
     justify-content: center;
@@ -160,7 +194,7 @@ const uploadLabelStyle = css`
     flex-direction: column;
     align-items: center;
     gap: 18px;
-    color: #666;
+    color: ${theme.colors.descriptionText};
 `;
 
 const uploadedStyle = css`

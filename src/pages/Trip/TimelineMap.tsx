@@ -4,7 +4,7 @@ import ogamiIcon from '/public/ogami_1.png';
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { GoogleMap, Marker, useLoadScript, OverlayView, MarkerClusterer } from '@react-google-maps/api';
+import { GoogleMap, Marker, useLoadScript, OverlayView, MarkerClusterer, Polyline } from '@react-google-maps/api';
 import { Play, Pause, ChevronUp } from 'lucide-react';
 import { BsPersonWalking } from 'react-icons/bs';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -71,7 +71,7 @@ const TimelineMap: React.FC = () => {
 
             if (data.pinPoints.length === 0) {
                 showToast('보더패스에 저장된 이미지가 없습니다.');
-                // navigate(PATH.TRIP_LIST);
+                navigate(PATH.TRIP_LIST);
                 return;
             }
 
@@ -255,6 +255,40 @@ const TimelineMap: React.FC = () => {
         return null;
     }, [isLoaded]);
 
+    // const polylineOptions = {
+    //     strokeColor: `${theme.colors.descriptionText}`,
+    //     strokeOpacity: 1,
+    //     strokeWeight: 2,
+    //     icons: [
+    //         {
+    //             icon: {
+    //                 path: 'M 0,-1 0,1',
+    //                 strokeOpacity: 1,
+    //                 scale: 4,
+    //             },
+    //             offset: '0',
+    //             repeat: '20px',
+    //         },
+    //     ],
+    // };
+
+    const polylineOptions: google.maps.PolylineOptions = {
+        strokeColor: `${theme.colors.descriptionText}`,
+        strokeOpacity: 0,
+        strokeWeight: 2,
+        icons: [
+            {
+                icon: {
+                    path: 'M 0,-1 0,1',
+                    strokeOpacity: 0.5,
+                    scale: 3,
+                },
+                offset: '0',
+                repeat: '15px',
+            },
+        ],
+    };
+
     const mapOptions: google.maps.MapOptions = useMemo(
         () => ({
             mapTypeControl: false,
@@ -372,10 +406,19 @@ const TimelineMap: React.FC = () => {
         }
     };
 
+    const renderPolyline = () => {
+        if (pinPoints.length < 2) return null;
+
+        const path = pinPoints.map((point) => ({ lat: point.latitude, lng: point.longitude }));
+
+        return <Polyline path={path} options={polylineOptions} />;
+    };
+
     const renderMarkers = () => {
         if (showDetailedView) {
             return (
                 <>
+                    {renderPolyline()}
                     {pinPoints.map((point) => (
                         <Marker
                             key={point.pinPointId}
@@ -423,6 +466,7 @@ const TimelineMap: React.FC = () => {
         } else if (showIndividualMarkers) {
             return (
                 <>
+                    {renderPolyline()}
                     {mediaFiles.map((file) => (
                         <Marker
                             key={file.mediaFileId}
@@ -439,6 +483,7 @@ const TimelineMap: React.FC = () => {
                 <MarkerClusterer options={clusterOptions}>
                     {(clusterer) => (
                         <>
+                            {renderPolyline()}
                             {mediaFiles.map((file) => (
                                 <Marker
                                     key={file.mediaFileId}

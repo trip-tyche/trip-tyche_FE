@@ -6,12 +6,14 @@ import theme from '@/styles/theme';
 
 const UPLOADING_MESSAGE = `새로운 추억의 조각들을 저장 중입니다..`;
 
-const UploadingSpinner = () => (
+const UploadingSpinner = ({ imageCount }: { imageCount: number }) => (
     <>
         <ModalOverlay />
         <div css={divStyle}>
             <img src={loadingImage} />
-            <p css={pStyle}>{UPLOADING_MESSAGE}</p>
+            <p css={pStyle}>
+                {<span>{imageCount}</span>} 개의 {UPLOADING_MESSAGE}
+            </p>
         </div>
     </>
 );
@@ -41,6 +43,12 @@ const pStyle = css`
     text-align: center;
     color: ${theme.colors.descriptionText};
     margin: 8px 0;
+
+    span {
+        font-size: 16px;
+        font-weight: 600;
+        color: ${theme.colors.primary};
+    }
 `;
 
 export default UploadingSpinner;
