@@ -44,15 +44,11 @@ export const getTripData = async (tripId: string) => {
     }
 };
 
-export const postTripInfo = async ({ tripTitle, country, startDate, endDate, hashtags }: TripInfo) => {
+export const postTripInfo = async ({ tripId, tripTitle, country, startDate, endDate, hashtags }: TripInfo) => {
     try {
         const token = getToken();
         const response = await axios.post(
-            // const response = await axios.post(
-            //     `${apiBaseUrl ? `/api/trips` : `${apiBaseUrl}/api/trips`}`,
-            //     {
-            `${apiBaseUrl}/api/trips`,
-            // `/api/trips`,
+            `${apiBaseUrl}/api/trips/${tripId}/info`,
             {
                 tripTitle,
                 country,
@@ -68,7 +64,6 @@ export const postTripInfo = async ({ tripTitle, country, startDate, endDate, has
                 },
             },
         );
-        console.log(response.data);
         return response.data;
     } catch (error) {
         console.error('Error post trip-info:', error);
@@ -158,5 +153,24 @@ export const getTripMapData = async (tripId: string) => {
         return response.data;
     } catch (error) {
         console.error('Error fetching trip-map-data:', error);
+    }
+};
+
+export const createTripId = async () => {
+    try {
+        const token = getToken();
+        const response = await axios.post(
+            `${apiBaseUrl}/api/trips`,
+            {},
+            {
+                headers: {
+                    accept: '*/*',
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching trip data:', error);
     }
 };

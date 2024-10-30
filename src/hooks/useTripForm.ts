@@ -16,12 +16,16 @@ export const useTripForm = () => {
 
     const handleSubmit = async () => {
         try {
-            const response = await postTripInfo({ tripTitle, country, startDate, endDate, hashtags });
-            const { tripId } = response;
+            const tripId = localStorage.getItem('tripId');
+            if (!tripId) {
+                return;
+            }
+
+            const response = await postTripInfo({ tripId, tripTitle, country, startDate, endDate, hashtags });
+            console.log(response);
 
             navigate(PATH.TRIP_UPLOAD, {
                 state: {
-                    tripId,
                     startDate,
                     endDate,
                 },

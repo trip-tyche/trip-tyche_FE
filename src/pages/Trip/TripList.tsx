@@ -6,7 +6,7 @@ import { TicketsPlane } from 'lucide-react';
 import { LuPlus } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 
-import { getTripList } from '@/api/trip';
+import { createTripId, getTripList } from '@/api/trip';
 import Button from '@/components/common/button/Button';
 import Loading from '@/components/common/Loading';
 import Toast from '@/components/common/Toast';
@@ -61,7 +61,6 @@ const TripList = (): JSX.Element => {
         };
 
         localStorage.removeItem('tripId');
-        localStorage.removeItem('tripTitle');
 
         fetchTripList();
     }, [isDelete, showToast, navigate]);
@@ -71,19 +70,9 @@ const TripList = (): JSX.Element => {
     }
 
     const handleTicketCreate = async () => {
-        // try {
-        //     const token = getToken();
-        //     const response = await axios.post(`${ENV.BASE_URL}/api/trips`, {
-        //         headers: {
-        //             accept: '*/*',
-        //             Authorization: `Bearer ${token}`,
-        //         },
-        //     });
-        //     console.log(response.data);
-        // } catch (error) {
-        //     console.error('Error fetching trip data:', error);
-        // }
-
+        const response = await createTripId();
+        const { tripId } = response;
+        localStorage.setItem('tripId', tripId);
         navigate(PATH.TRIP_NEW);
     };
 

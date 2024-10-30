@@ -8,11 +8,10 @@ import { getUserData, postUserNickName } from '@/api/user';
 
 import mainImage from '/public/ogami_1.png';
 
-import GuideModal from '@/components/common/modal/GuideModal';
+// import GuideModal from '@/components/common/modal/GuideModal';
 import InputModal from '@/components/common/modal/InputModal';
-import ModalOverlay from '@/components/common/modal/ModalOverlay';
 import Card from '@/components/pages/home/Card';
-import Guide from '@/components/pages/home/Guide';
+// import Guide from '@/components/pages/home/Guide';
 import { NICKNAME_MODAL } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import theme from '@/styles/theme';
@@ -24,7 +23,7 @@ const Home = () => {
     const [userTrips, setUserTrips] = useState<Trip[]>();
     const [inputValue, setInputValue] = useState('');
     const [isOpenInputModal, setIsOpenInputModal] = useState(false);
-    const [isOpenGuideModal, setIsOpenGuideModal] = useState(false);
+    // const [isOpenGuideModal, setIsOpenGuideModal] = useState(false);
 
     const navigate = useNavigate();
 
@@ -42,6 +41,7 @@ const Home = () => {
 
         try {
             const { userNickName, trips } = await getUserData(userId);
+            console.log(userNickName, trips);
             if (!userNickName) {
                 setIsOpenInputModal(true);
             } else {
@@ -59,16 +59,16 @@ const Home = () => {
             await postUserNickName(inputValue);
             fetchUserData();
             setIsOpenInputModal(false);
-            setIsOpenGuideModal(true);
+            // setIsOpenGuideModal(true);
         } catch (error) {
             console.error('Error post user-nickname:', error);
         }
     };
 
-    const confirmGuideModal = () => {
-        navigate(PATH.TRIP_LIST);
-        setIsOpenGuideModal(false);
-    };
+    // const confirmGuideModal = () => {
+    //     navigate(PATH.TRIP_LIST);
+    //     setIsOpenGuideModal(false);
+    // };
 
     return (
         <div css={containerStyle}>
@@ -101,7 +101,7 @@ const Home = () => {
                     setInputValue={setInputValue}
                 />
             )}
-            {isOpenGuideModal && (
+            {/* {isOpenGuideModal && (
                 <GuideModal
                     confirmText='등록하러 가기'
                     cancelText='나중에'
@@ -113,7 +113,7 @@ const Home = () => {
                 >
                     <Guide nickname={userNickName} />
                 </GuideModal>
-            )}
+            )} */}
         </div>
     );
 };

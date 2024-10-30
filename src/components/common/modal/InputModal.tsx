@@ -89,6 +89,7 @@ const inputContainer = css`
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 104px;
 
     h1 {
         text-align: center;
@@ -107,6 +108,7 @@ const baseInputStyle = css`
     width: 90%;
     height: 38px;
     outline: none;
+    margin-bottom: 13;
 `;
 
 const inputStyle = (inputValue: string) => css`

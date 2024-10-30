@@ -29,7 +29,16 @@ export const useImageUpload = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { tripId, startDate, endDate } = location.state;
+    const { startDate, endDate } = location.state;
+
+    // 압축 옵션 설정 함수
+    const getCompressionOptions = () => ({
+        maxWidthOrHeight: 846, // 원하는 너비
+        initialQuality: 0.9, // 품질 설정
+        useWebWorker: true, // WebWorker 사용
+        preserveExif: true, // EXIF 데이터 보존
+        fileType: 'image/jpeg',
+    });
 
     const handleFileUpload = async (files: FileList | null) => {
         if (!files) {
@@ -58,20 +67,24 @@ export const useImageUpload = () => {
 
             // 이미지 리사이징
             const resizeStartTime = performance.now();
-
-            const compressionOptions = {
-                maxWidthOrHeight: 846, // 원하는 너비
-                initialQuality: 0.9, // 품질 설정 (0과 1 사이)
-                useWebWorker: true, // WebWorker 사용
-                preserveExif: true, // EXIF 데이터 보존
-                fileType: 'image/jpeg', // 출력 포맷
-            };
+            const compressionOptions = getCompressionOptions();
 
             const finalProcessedImages = await Promise.all(
                 processedImages.map(async (processedImage) => {
                     try {
-                        // 이미지 리사이징
-                        const resizedFile = await imageCompression(processedImage.file, compressionOptions);
+                        const resizedBlob = await imageCompression(processedImage.file, compressionOptions);
+
+                        // Blob을 File로 변환
+                        const resizedFile = new File([resizedBlob], processedImage.file.name, {
+                            type: compressionOptions.fileType,
+                            lastModified: processedImage.file.lastModified,
+                        });
+
+                        console.log(`${processedImage.file.name} 변환 결과:`, {
+                            originalSize: `${(processedImage.file.size / (1024 * 1024)).toFixed(2)}MB`,
+                            convertedSize: `${(resizedFile.size / (1024 * 1024)).toFixed(2)}MB`,
+                            format: compressionOptions.fileType,
+                        });
 
                         return {
                             file: resizedFile,
@@ -80,14 +93,33 @@ export const useImageUpload = () => {
                         };
                     } catch (error) {
                         console.error(`Error resizing image: ${processedImage.file.name}`, error);
-                        // 리사이징 실패 시 원본 반환
-                        return processedImage;
+
+                        try {
+                            const jpegOptions = { ...compressionOptions, fileType: 'image/jpeg' };
+                            const jpegBlob = await imageCompression(processedImage.file, jpegOptions);
+
+                            // JPEG Blob을 File로 변환
+                            const jpegFile = new File([jpegBlob], processedImage.file.name, {
+                                type: 'image/jpeg',
+                                lastModified: processedImage.file.lastModified,
+                            });
+
+                            return {
+                                file: jpegFile,
+                                formattedDate: processedImage.formattedDate,
+                                location: processedImage.location,
+                            };
+                        } catch (jpegError) {
+                            console.error('JPEG 변환도 실패:', jpegError);
+                            return processedImage;
+                        }
                     }
                 }),
             );
 
             const resizeEndTime = performance.now();
             console.log(`총 ${files.length}개 이미지 리사이징 시간: ${(resizeEndTime - resizeStartTime).toFixed(2)}ms`);
+            // console.log(`이미지 포맷: ${compressionOptions.fileType}`);
 
             // startDate와 endDate 사이에 있는 이미지만 필터링
             const filteredImages = finalProcessedImages.filter((image) => {
@@ -130,8 +162,15 @@ export const useImageUpload = () => {
             setIsUploading(true);
             const images = imagesWithLocation.map((image) => image.file);
             console.log(images);
+
             if (images.length === 0) {
                 setIsGuideModalOpen(true);
+                return;
+            }
+
+            const tripId = localStorage.getItem('tripId');
+
+            if (!tripId) {
                 return;
             }
 
