@@ -16,7 +16,7 @@ export function formatDateToYYYYMMDD(date: Date): string {
     return `${year}-${month}-${day}`;
 }
 
-// 날짜를 YYYY년 MM월 DD일 형식으로 변환하는 함수
+// 날짜를 MM월 DD일 형식으로 변환하는 함수
 export function formatDateToKorean(dateString: string): string {
     const [year, month, day] = dateString.split('-');
 
@@ -25,6 +25,17 @@ export function formatDateToKorean(dateString: string): string {
     }
 
     return `${month}월 ${day}일`;
+}
+
+// 날짜를 YYYY년 MM월 DD일 형식으로 변환하는 함수
+export function formatDateToKoreanYear(dateString: string): string {
+    const [year, month, day] = dateString.split('-');
+
+    if (!year || !month || !day) {
+        throw new Error('Invalid date format. Expected YYYY-MM-DD');
+    }
+
+    return `${year}년 ${month}월 ${day}일`;
 }
 
 export const getDayNumber = (recordDate: string, startDate: string) => {

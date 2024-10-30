@@ -77,7 +77,6 @@ export const postTripImages = async (tripId: string, files: File[]) => {
     });
     try {
         const token = getToken();
-        // const response = await axios.post(`/api/trips/${tripId}/upload`, formData, {
         const response = await axios.post(`${apiBaseUrl}/api/trips/${tripId}/upload`, formData, {
             headers: {
                 accept: '*/*',

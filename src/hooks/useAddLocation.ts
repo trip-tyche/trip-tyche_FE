@@ -6,7 +6,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { postTripImages } from '@/api/trip';
 import { PATH } from '@/constants/path';
 import { useToastStore } from '@/stores/useToastStore';
-import { getUserId } from '@/utils/auth';
 import { createGpsExif, insertExifIntoJpeg, readFileAsDataURL } from '@/utils/piexif';
 
 interface ImageWithDate {
@@ -49,7 +48,8 @@ export const useAddLocation = () => {
     };
 
     const goToTripList = () => {
-        navigate(PATH.TRIP_LIST);
+        navigate(PATH.TRIP_NEW);
+        // navigate(PATH.TRIP_LIST);
     };
 
     const handleNextClick = () => {
@@ -95,12 +95,12 @@ export const useAddLocation = () => {
 
         try {
             setIsLoading(true);
-            const userId = getUserId();
-            if (!userId) {
+            const tripId = localStorage.getItem('tripId');
+            if (!tripId) {
                 return;
             }
             await postTripImages(
-                userId,
+                tripId,
                 updatedImages.map((img) => img.file),
             );
         } catch (error) {
@@ -110,7 +110,8 @@ export const useAddLocation = () => {
         }
 
         if (updatedDisplayedImages.length === 0) {
-            navigate(PATH.TRIP_LIST);
+            navigate(PATH.TRIP_NEW);
+            // navigate(PATH.TRIP_LIST);
             return;
         }
 

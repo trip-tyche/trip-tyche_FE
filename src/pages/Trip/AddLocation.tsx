@@ -80,6 +80,8 @@ const AddLocation = () => {
         return Object.entries(groups).sort(([dateA], [dateB]) => dateA.localeCompare(dateB));
     }, [displayedImages]);
 
+    console.log(groupedImages);
+
     return (
         <div css={containerStyle}>
             <div>

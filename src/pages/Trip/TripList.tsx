@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
-import axios from 'axios';
 import { TicketsPlane } from 'lucide-react';
 import { LuPlus } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
@@ -12,14 +11,14 @@ import Loading from '@/components/common/Loading';
 import Toast from '@/components/common/Toast';
 import Header from '@/components/layout/Header';
 import BorderPass from '@/components/pages/trip-list/BorderPass';
-import { ENV } from '@/constants/auth';
+// import { ENV } from '@/constants/auth';
 import { TRIP } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { BUTTON, PAGE } from '@/constants/title';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
-import { getToken } from '@/utils/auth';
+// import { getToken } from '@/utils/auth';
 import { formatTripDate } from '@/utils/date';
 
 const TripList = (): JSX.Element => {
@@ -42,7 +41,7 @@ const TripList = (): JSX.Element => {
                 console.log(tripList);
 
                 if (typeof tripList !== 'object') {
-                    showToast('일시적인 서버 문제로 로그아웃 되었습니다.');
+                    showToast('다시 로그인해주세요.');
                     navigate(PATH.LOGIN);
                     localStorage.clear();
                     return;
@@ -73,7 +72,8 @@ const TripList = (): JSX.Element => {
         const response = await createTripId();
         const { tripId } = response;
         localStorage.setItem('tripId', tripId);
-        navigate(PATH.TRIP_NEW);
+        // navigate(PATH.TRIP_NEW);
+        navigate(PATH.TRIP_UPLOAD);
     };
 
     return (
@@ -104,15 +104,17 @@ const TripList = (): JSX.Element => {
                     </div>
                     {tripCount > 0 ? (
                         <div css={tripListStyle}>
-                            {formatTripDate(tripList)?.map((trip) => (
-                                <BorderPass
-                                    key={trip.tripId}
-                                    trip={trip}
-                                    userNickname={userNickname}
-                                    setTripCount={setTripCount}
-                                    setIsDelete={setIsDelete}
-                                />
-                            ))}
+                            {formatTripDate(tripList)
+                                ?.filter((trip) => trip.tripTitle !== 'N/A')
+                                .map((trip) => (
+                                    <BorderPass
+                                        key={trip.tripId}
+                                        trip={trip}
+                                        userNickname={userNickname}
+                                        setTripCount={setTripCount}
+                                        setIsDelete={setIsDelete}
+                                    />
+                                ))}
                         </div>
                     ) : (
                         <p css={noTripListStyle}>{TRIP.NO_TRIP}</p>

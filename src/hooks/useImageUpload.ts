@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
 import imageCompression from 'browser-image-compression';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { postTripImages } from '@/api/trip';
 import { PATH } from '@/constants/path';
-import { useToastStore } from '@/stores/useToastStore';
+// import { useToastStore } from '@/stores/useToastStore';
 import { ImageWithLocationAndDate } from '@/types/image';
 import { formatDateToYYYYMMDD } from '@/utils/date';
 import { getImageLocation, extractDateFromImage } from '@/utils/piexif';
@@ -24,12 +24,12 @@ export const useImageUpload = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
-    const { showToast } = useToastStore();
+    // const { showToast } = useToastStore();
 
     const navigate = useNavigate();
-    const location = useLocation();
+    // const location = useLocation();
 
-    const { startDate, endDate } = location.state;
+    // const { startDate, endDate } = location.state;
 
     // 압축 옵션 설정 함수
     const getCompressionOptions = () => ({
@@ -62,8 +62,6 @@ export const useImageUpload = () => {
                     };
                 }),
             );
-
-            console.log(startDate, endDate);
 
             // 이미지 리사이징
             const resizeStartTime = performance.now();
@@ -122,30 +120,46 @@ export const useImageUpload = () => {
             // console.log(`이미지 포맷: ${compressionOptions.fileType}`);
 
             // startDate와 endDate 사이에 있는 이미지만 필터링
-            const filteredImages = finalProcessedImages.filter((image) => {
-                if (!image.formattedDate) return false;
-                return image.formattedDate >= startDate && image.formattedDate <= endDate;
-            });
+            // const filteredImages = finalProcessedImages.filter((image) => {
+            //     if (!image.formattedDate) return false;
+            //     return image.formattedDate >= startDate && image.formattedDate <= endDate;
+            // });
 
-            // 위치 정보가 있는 이미지
-            const imagesWithLocation = filteredImages.filter((image) => image.location);
+            // 위치와 날짜 모두 있는 이미지
+            const imagesWithLocation = finalProcessedImages.filter((image) => image.location && image.formattedDate);
+
+            const datesWithLocation = imagesWithLocation
+                .filter((img) => img.formattedDate) // 날짜가 있는 이미지만 필터링
+                .map((img) => img.formattedDate)
+                .sort();
+
+            if (datesWithLocation.length > 0) {
+                const earliestDate = datesWithLocation[0];
+                const latestDate = datesWithLocation[datesWithLocation.length - 1];
+                console.log(`${earliestDate}~${latestDate}`);
+                localStorage.setItem('earliest-date', earliestDate);
+                localStorage.setItem('latest-date', latestDate);
+            }
+
             setImagesWithLocation(imagesWithLocation);
             console.log('위치 ✅:', imagesWithLocation);
 
             // 위치 정보가 없는 이미지
-            const noLocationImages = filteredImages
-                .filter((image) => !image.location)
+            const noLocationImages = finalProcessedImages
+                .filter((image) => !image.location && image.formattedDate)
                 .map(({ file, formattedDate }) => ({
                     file,
                     formattedDate,
                 }));
+
             setImagesNoLocation(noLocationImages);
+
             console.log('위치 ⛔️:', noLocationImages);
 
             // 날짜 정보가 없는 이미지 (startDate와 endDate 범위 밖의 이미지 포함)
             const noDateImages = processedImages.filter(
-                (image) =>
-                    image.formattedDate === '' || image.formattedDate < startDate || image.formattedDate > endDate,
+                (image) => !image.formattedDate,
+                // image.formattedDate === '' || image.formattedDate < startDate || image.formattedDate > endDate,
             );
             setNoDateImagesCount(noDateImages.length);
             console.log('날짜 ⛔️:', noDateImages);
@@ -181,8 +195,9 @@ export const useImageUpload = () => {
                 return;
             }
 
-            navigate(PATH.TRIP_LIST);
-            showToast('사진이 업로드되었습니다.');
+            navigate(PATH.TRIP_NEW);
+            // navigate(PATH.TRIP_LIST);
+            // showToast('사진이 업로드되었습니다.');
         } catch (error) {
             console.error('Error post trip-images:', error);
             setIsUploading(false);
