@@ -64,6 +64,7 @@ export const postTripInfo = async ({ tripId, tripTitle, country, startDate, endD
                 },
             },
         );
+        console.log(response.data);
         return response.data;
     } catch (error) {
         console.error('Error post trip-info:', error);

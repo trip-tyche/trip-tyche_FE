@@ -188,7 +188,15 @@ export const useImageUpload = () => {
                 return;
             }
 
-            await postTripImages(tripId, images);
+            // await postTripImages(tripId, images);
+            // 비동기 업로드 시작, 결과를 기다리지 않음
+            postTripImages(tripId, images)
+                .catch((error) => {
+                    console.error('Error post trip-images:', error);
+                })
+                .finally(() => {
+                    setIsUploading(false);
+                });
 
             if (imagesNoLocation.length) {
                 setIsGuideModalOpen(true);

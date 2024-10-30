@@ -25,7 +25,9 @@ const Card = ({ trips }: CardProps): JSX.Element => {
             )}
             {uniqueCounties?.length ? (
                 <div className='home-flags'>
-                    {uniqueCounties?.map((country, index) => <span key={index}>{country.slice(0, 4)}</span>)}
+                    {uniqueCounties
+                        ?.filter((country) => country !== 'N/A')
+                        .map((country, index) => <span key={index}>{country.slice(0, 4)}</span>)}
                 </div>
             ) : (
                 <>
