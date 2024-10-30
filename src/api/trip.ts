@@ -10,8 +10,8 @@ export const getTripList = async () => {
     try {
         const token = getToken();
         // const response = await axios.get<Trips>(`${apiBaseUrl ? `/api/trips` : `${apiBaseUrl}/api/trips`}`, {
-        // const response = await axios.get<Trips>(`${apiBaseUrl}/api/trips`, {
-        const response = await axios.get<Trips>(`/api/trips`, {
+        const response = await axios.get<Trips>(`${apiBaseUrl}/api/trips`, {
+            // const response = await axios.get<Trips>(`/api/trips`, {
             headers: {
                 accept: '*/*',
                 Authorization: `Bearer ${token}`,
@@ -30,8 +30,8 @@ export const getTripData = async (tripId: string) => {
         // const response = await axios.get<TripInfo>(
         //     `${apiBaseUrl ? `/api/trips/${tripId}` : `${apiBaseUrl}/api/trips/${tripId}`}`,
         //     {
-        // const response = await axios.get<TripInfo>(`${apiBaseUrl}/api/trips/${tripId}`, {
-        const response = await axios.get<TripInfo>(`/api/trips/${tripId}`, {
+        const response = await axios.get<TripInfo>(`${apiBaseUrl}/api/trips/${tripId}`, {
+            // const response = await axios.get<TripInfo>(`/api/trips/${tripId}`, {
             headers: {
                 accept: '*/*',
                 Authorization: `Bearer ${token}`,
@@ -51,8 +51,8 @@ export const postTripInfo = async ({ tripTitle, country, startDate, endDate, has
             // const response = await axios.post(
             //     `${apiBaseUrl ? `/api/trips` : `${apiBaseUrl}/api/trips`}`,
             //     {
-            // `${apiBaseUrl}/api/trips`,
-            `/api/trips`,
+            `${apiBaseUrl}/api/trips`,
+            // `/api/trips`,
             {
                 tripTitle,
                 country,
@@ -82,8 +82,8 @@ export const postTripImages = async (tripId: string, files: File[]) => {
     });
     try {
         const token = getToken();
-        const response = await axios.post(`/api/trips/${tripId}/upload`, formData, {
-            // const response = await axios.post(`${apiBaseUrl}/api/trips/${tripId}/upload`, formData, {
+        // const response = await axios.post(`/api/trips/${tripId}/upload`, formData, {
+        const response = await axios.post(`${apiBaseUrl}/api/trips/${tripId}/upload`, formData, {
             headers: {
                 accept: '*/*',
                 Authorization: `Bearer ${token}`,
@@ -104,8 +104,8 @@ export const updateTripInfo = async (
     try {
         const token = getToken();
         const response = await axios.put(
-            `/api/trips/${tripId}`,
-            // `${apiBaseUrl}/api/trips/${tripId}`,
+            // `/api/trips/${tripId}`,
+            `${apiBaseUrl}/api/trips/${tripId}`,
             {
                 tripTitle,
                 country,
@@ -131,8 +131,8 @@ export const updateTripInfo = async (
 export const deleteTripInfo = async (tripId: string) => {
     try {
         const token = getToken();
-        const response = await axios.delete(`/api/trips/${tripId}`, {
-            // const response = await axios.delete(`${apiBaseUrl}/api/trips/${tripId}`, {
+        // const response = await axios.delete(`/api/trips/${tripId}`, {
+        const response = await axios.delete(`${apiBaseUrl}/api/trips/${tripId}`, {
             headers: {
                 accept: '*/*',
                 Authorization: `Bearer ${token}`,
@@ -147,8 +147,8 @@ export const deleteTripInfo = async (tripId: string) => {
 export const getTripMapData = async (tripId: string) => {
     try {
         const token = getToken();
-        const response = await axios.get(`/api/trips/${tripId}/info`, {
-            // const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/info`, {
+        // const response = await axios.get(`/api/trips/${tripId}/info`, {
+        const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/info`, {
             headers: {
                 accept: '*/*',
                 Authorization: `Bearer ${token}`,

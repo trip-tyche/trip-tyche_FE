@@ -15,7 +15,7 @@ const modalOverlayStyle = css`
     transform: translate(-50%, -50%);
     position: fixed;
     width: 100%;
-    min-height: 100vh;
+    min-height: 100dvh;
     background-color: rgb(0, 0, 0, 0.7);
     z-index: 999;
 `;

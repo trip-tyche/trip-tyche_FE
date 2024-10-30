@@ -11,8 +11,8 @@ export const getImagesByPinPoint = async (tripId: string, pinPoint: string) => {
         // const response = await axios.get(
         //     `${apiBaseUrl ? `/api/trips/${tripId}/pinpoints/${pinPoint}/images` : `${apiBaseUrl}/api/trips/${tripId}/pinpoints/${pinPoint}/images`}`,
         //     {
-        // const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/pinpoints/${pinPoint}/images`, {
-        const response = await axios.get(`/api/trips/${tripId}/pinpoints/${pinPoint}/images`, {
+        const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/pinpoints/${pinPoint}/images`, {
+            // const response = await axios.get(`/api/trips/${tripId}/pinpoints/${pinPoint}/images`, {
             headers: {
                 accept: '*/*',
                 Authorization: `Bearer ${token}`,
@@ -31,8 +31,8 @@ export const getImagesByDay = async (tripId: string, date: string) => {
         // const response = await axios.get(
         //     `${apiBaseUrl ? `/api/trips/${tripId}/map?date=${date}` : `${apiBaseUrl}/api/trips/${tripId}/map?date=${date}`}`,
         // {
-        // const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/map?date=${date}`, {
-        const response = await axios.get(`/api/trips/${tripId}/map?date=${date}`, {
+        const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/map?date=${date}`, {
+            // const response = await axios.get(`/api/trips/${tripId}/map?date=${date}`, {
             headers: {
                 accept: '*/*',
                 Authorization: `Bearer ${token}`,

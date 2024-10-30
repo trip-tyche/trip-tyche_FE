@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import imageCompression from 'browser-image-compression';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { postTripImages } from '@/api/trip';
@@ -30,7 +31,6 @@ export const useImageUpload = () => {
 
     const { tripId, startDate, endDate } = location.state;
 
-    // 이미지 메타데이터의 위치 정보 유무 확인
     const handleFileUpload = async (files: FileList | null) => {
         if (!files) {
             return;
@@ -46,15 +46,51 @@ export const useImageUpload = () => {
                     if (date) {
                         formattedDate = formatDateToYYYYMMDD(date);
                     }
-                    return { file, formattedDate, location };
+                    return {
+                        file,
+                        formattedDate,
+                        location,
+                    };
                 }),
             );
 
-            // console.log(processedImages);
             console.log(startDate, endDate);
 
+            // 이미지 리사이징
+            const resizeStartTime = performance.now();
+
+            const compressionOptions = {
+                maxWidthOrHeight: 846, // 원하는 너비
+                initialQuality: 0.9, // 품질 설정 (0과 1 사이)
+                useWebWorker: true, // WebWorker 사용
+                preserveExif: true, // EXIF 데이터 보존
+                fileType: 'image/jpeg', // 출력 포맷
+            };
+
+            const finalProcessedImages = await Promise.all(
+                processedImages.map(async (processedImage) => {
+                    try {
+                        // 이미지 리사이징
+                        const resizedFile = await imageCompression(processedImage.file, compressionOptions);
+
+                        return {
+                            file: resizedFile,
+                            formattedDate: processedImage.formattedDate,
+                            location: processedImage.location,
+                        };
+                    } catch (error) {
+                        console.error(`Error resizing image: ${processedImage.file.name}`, error);
+                        // 리사이징 실패 시 원본 반환
+                        return processedImage;
+                    }
+                }),
+            );
+
+            const resizeEndTime = performance.now();
+            console.log(`총 ${files.length}개 이미지 리사이징 시간: ${(resizeEndTime - resizeStartTime).toFixed(2)}ms`);
+
             // startDate와 endDate 사이에 있는 이미지만 필터링
-            const filteredImages = processedImages.filter((image) => {
+            const filteredImages = finalProcessedImages.filter((image) => {
                 if (!image.formattedDate) return false;
                 return image.formattedDate >= startDate && image.formattedDate <= endDate;
             });

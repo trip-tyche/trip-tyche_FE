@@ -60,7 +60,7 @@ const MusicVideo = () => {
 
 const containerStyle = css`
     position: relative;
-    height: 100dvh;
+    min-height: 100dvh;
 `;
 
 const backStyle = css`

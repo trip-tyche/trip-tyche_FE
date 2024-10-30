@@ -14,7 +14,7 @@ const TripEdit = (): JSX.Element => {
     if (isLoading)
         return (
             <div css={loadingStyle}>
-                <Loading />;
+                <Loading />
             </div>
         );
 

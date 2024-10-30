@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
+import axios from 'axios';
 import { TicketsPlane } from 'lucide-react';
 import { LuPlus } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
@@ -11,12 +12,14 @@ import Loading from '@/components/common/Loading';
 import Toast from '@/components/common/Toast';
 import Header from '@/components/layout/Header';
 import BorderPass from '@/components/pages/trip-list/BorderPass';
+import { ENV } from '@/constants/auth';
 import { TRIP } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { BUTTON, PAGE } from '@/constants/title';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
+import { getToken } from '@/utils/auth';
 import { formatTripDate } from '@/utils/date';
 
 const TripList = (): JSX.Element => {
@@ -67,6 +70,23 @@ const TripList = (): JSX.Element => {
         <Loading />;
     }
 
+    const handleTicketCreate = async () => {
+        // try {
+        //     const token = getToken();
+        //     const response = await axios.post(`${ENV.BASE_URL}/api/trips`, {
+        //         headers: {
+        //             accept: '*/*',
+        //             Authorization: `Bearer ${token}`,
+        //         },
+        //     });
+        //     console.log(response.data);
+        // } catch (error) {
+        //     console.error('Error fetching trip data:', error);
+        // }
+
+        navigate(PATH.TRIP_NEW);
+    };
+
     return (
         <div css={containerStyle}>
             <Header title={PAGE.TRIP_LIST} isBackButton onBack={() => navigate(PATH.HOME)} />
@@ -86,12 +106,7 @@ const TripList = (): JSX.Element => {
                         )}
 
                         <div>
-                            <Button
-                                text={BUTTON.NEW_TRIP}
-                                btnTheme='pri'
-                                size='sm'
-                                onClick={() => navigate(PATH.TRIP_NEW)}
-                            >
+                            <Button text={BUTTON.NEW_TRIP} btnTheme='pri' size='sm' onClick={handleTicketCreate}>
                                 <Button.Left>
                                     <LuPlus size={16} />
                                 </Button.Left>

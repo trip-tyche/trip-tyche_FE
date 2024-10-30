@@ -76,7 +76,7 @@ const TripForm = ({
                     value={tripTitle}
                     onChange={(e) => setTripTitle(e.target.value)}
                     leftSection={<IconPlane size={16} />}
-                    size='sm'
+                    size='md'
                     required={true}
                 />
             </Box>
@@ -93,7 +93,7 @@ const TripForm = ({
                     searchable={false}
                     nothingFoundMessage='옵션이 없습니다'
                     leftSection={<IconWorld size={16} />}
-                    size='sm'
+                    size='md'
                     required={true}
                 />
             </Box>
