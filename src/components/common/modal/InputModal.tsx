@@ -104,7 +104,7 @@ const inputContainer = css`
 const baseInputStyle = css`
     border-radius: 8px;
     padding: 12px;
-    font-size: ${theme.fontSizes.normal_14};
+    font-size: ${theme.fontSizes.large_16};
     width: 90%;
     height: 38px;
     outline: none;

@@ -107,7 +107,7 @@ const TripFileUpload = () => {
                     }
                 />
             </main>
-            {!isResizing && <ResizingSpinner earliestDate={earliestDate} latestDate={latestDate} />}
+            {isResizing && <ResizingSpinner earliestDate={earliestDate} latestDate={latestDate} />}
             {/* {isUploading && <UploadingSpinner imageCount={imagesWithLocationAndDate.length} />} */}
             {isGuideModalOpen && (
                 <GuideModal

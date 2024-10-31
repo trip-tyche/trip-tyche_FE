@@ -5,8 +5,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { postTripImages } from '@/api/trip';
 import { PATH } from '@/constants/path';
-import { createGpsExif, insertExifIntoJpeg, readFileAsDataURL } from '@/utils/piexif';
 import { GpsData, ImageModel, LocationType } from '@/types/image';
+import { createGpsExif, insertExifIntoJpeg, readFileAsDataURL } from '@/utils/piexif';
 
 export const useAddLocation = () => {
     const [displayedImages, setDisplayedImages] = useState<ImageModel[]>([]);
@@ -71,8 +71,8 @@ export const useAddLocation = () => {
         console.log('이미지에 위치가 등록되었습니다.', updatedImages);
     };
 
-    const updateImageGpsMetadata = async (images: ImageModel[], location: GpsData) => {
-        return await Promise.all(
+    const updateImageGpsMetadata = async (images: ImageModel[], location: GpsData) =>
+        await Promise.all(
             images.map(async (image) => {
                 const imageExifObj = piexif.load(await readFileAsDataURL(image.image));
                 const gpsExif = createGpsExif(location.latitude, location.longitude);
@@ -87,7 +87,6 @@ export const useAddLocation = () => {
                 };
             }),
         );
-    };
 
     const uploadImages = async (images: Omit<ImageModel, 'location'>[]) => {
         try {
