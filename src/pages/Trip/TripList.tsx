@@ -5,20 +5,18 @@ import { TicketsPlane } from 'lucide-react';
 import { LuPlus } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 
-import { createTripId, getTripList } from '@/api/trip';
+import { createTripId, deleteTripInfo, getTripList } from '@/api/trip';
 import Button from '@/components/common/button/Button';
 import Loading from '@/components/common/Loading';
 import Toast from '@/components/common/Toast';
 import Header from '@/components/layout/Header';
 import BorderPass from '@/components/pages/trip-list/BorderPass';
-// import { ENV } from '@/constants/auth';
 import { TRIP } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { BUTTON, PAGE } from '@/constants/title';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
-// import { getToken } from '@/utils/auth';
 import { formatTripDate } from '@/utils/date';
 
 const TripList = (): JSX.Element => {
@@ -38,14 +36,18 @@ const TripList = (): JSX.Element => {
                 setIsLoading(true);
                 const tripList = await getTripList();
 
-                console.log(tripList);
-
                 if (typeof tripList !== 'object') {
                     showToast('다시 로그인해주세요.');
                     navigate(PATH.LOGIN);
                     localStorage.clear();
                     return;
                 }
+
+                if (tripList?.trips.some((trip) => trip.tripTitle === 'N/A')) {
+                    await deleteInValidTrips(tripList.trips);
+                }
+
+                console.log(tripList);
 
                 setUserNickname(tripList.userNickName);
                 setTripList(tripList.trips);
@@ -63,6 +65,14 @@ const TripList = (): JSX.Element => {
 
         fetchTripList();
     }, [isDelete, showToast, navigate]);
+
+    const deleteInValidTrips = async (trips: Trip[]) => {
+        const deletePromises = trips
+            .filter((trip) => trip.tripTitle === 'N/A')
+            .map((trip) => deleteTripInfo(trip.tripId));
+
+        return await Promise.allSettled(deletePromises);
+    };
 
     if (isLoading) {
         <Loading />;

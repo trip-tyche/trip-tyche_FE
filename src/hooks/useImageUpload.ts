@@ -80,7 +80,7 @@ export const useImageUpload = () => {
                         location: extractedImage.location,
                     };
                 } catch (error) {
-                    console.error(`리사이징에 실패한 이미지: ${extractedImage.image.name}`, error);
+                    // console.error(`리사이징에 실패한 이미지: ${extractedImage.image.name}`, error);
                     return extractedImage;
                 }
             }),

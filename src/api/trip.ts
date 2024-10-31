@@ -103,22 +103,6 @@ export const updateTripInfo = async (
     }
 };
 
-export const deleteTripInfo = async (tripId: string) => {
-    try {
-        const token = getToken();
-        // const response = await axios.delete(`/api/trips/${tripId}`, {
-        const response = await axios.delete(`${apiBaseUrl}/api/trips/${tripId}`, {
-            headers: {
-                accept: '*/*',
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error delete trip-info:', error);
-    }
-};
-
 export const getTripMapData = async (tripId: string) => {
     try {
         const token = getToken();
@@ -174,5 +158,19 @@ export const postTripImages = async (tripId: string, images: File[]) => {
         return response.data;
     } catch (error) {
         console.error('이미지 업로드 중 오류 발생', error);
+    }
+};
+
+export const deleteTripInfo = async (tripId: string) => {
+    try {
+        const response = await axios.delete(`${apiBaseUrl}/api/trips/${tripId}`, {
+            headers: {
+                accept: '*/*',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error delete trip-info:', error);
     }
 };
