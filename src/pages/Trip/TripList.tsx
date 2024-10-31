@@ -5,7 +5,7 @@ import { TicketsPlane } from 'lucide-react';
 import { LuPlus } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 
-import { createTripId, deleteTripInfo, getTripList } from '@/api/trip';
+import { createTripId, getTripList } from '@/api/trip';
 import Button from '@/components/common/button/Button';
 import Loading from '@/components/common/Loading';
 import Toast from '@/components/common/Toast';
@@ -62,6 +62,8 @@ const TripList = (): JSX.Element => {
         };
 
         localStorage.removeItem('tripId');
+        localStorage.removeItem('earliest-date');
+        localStorage.removeItem('latest-date');
 
         fetchTripList();
     }, [isDelete, showToast, navigate]);

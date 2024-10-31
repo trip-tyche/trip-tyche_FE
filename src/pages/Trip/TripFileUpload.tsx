@@ -7,12 +7,14 @@ import GuideModal from '@/components/common/modal/GuideModal';
 import Toast from '@/components/common/Toast';
 import Header from '@/components/layout/Header';
 import NoDataImageContent from '@/components/pages/image-upload/NoDataImageContent';
-import UploadingSpinner from '@/components/pages/image-upload/UploadingSpinner';
+import ResizingSpinner from '@/components/pages/image-upload/ResizingSpinner';
+// import UploadingSpinner from '@/components/pages/image-upload/UploadingSpinner';
 import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import theme from '@/styles/theme';
+import { formatDateToKoreanYear } from '@/utils/date';
 
 const TripFileUpload = () => {
     const {
@@ -20,11 +22,12 @@ const TripFileUpload = () => {
         imagesWithLocationAndDate,
         imagesNoLocationWithDate,
         imagesNoDate,
-        isProcessing,
-        isUploading,
+        isResizing,
+        // isUploading,
         isGuideModalOpen,
         handleImageProcess,
         uploadImages,
+        // setIsResizing,
         setIsGuideModalOpen,
     } = useImageUpload();
 
@@ -47,15 +50,17 @@ const TripFileUpload = () => {
         navigate(PATH.TRIP_NEW);
     };
 
+    const earliestDate = formatDateToKoreanYear(localStorage.getItem('earliest-date')) || '';
+    const latestDate = formatDateToKoreanYear(localStorage.getItem('latest-date')) || '';
+
     return (
         <div css={containerStyle}>
             <Header title={PAGE.UPLOAD_IMAGES} isBackButton onBack={() => navigate(PATH.TRIP_LIST)} />
             <main css={mainStyle}>
                 <section css={sectionStyle}>
                     <h4>[사진 등록 가이드]</h4>
-                    <p>1. 여행 기간 외 사진은 등록되지 않습니다.</p>
-                    <p>2. 위치 정보가 없는 사진은 직접 위치를 등록하실 수 있습니다.</p>
-                    <p>3. 날짜 정보가 없는 사진은 등록하실 수 없습니다.</p>
+                    <p>1. 위치 정보가 없는 사진은 직접 위치를 등록하실 수 있습니다.</p>
+                    <p>2. 날짜 정보가 없는 사진은 등록하실 수 없습니다.</p>
 
                     <div css={uploadAreaStyle}>
                         <input
@@ -100,10 +105,10 @@ const TripFileUpload = () => {
                             imagesWithLocationAndDate.length === 0 &&
                             imagesNoLocationWithDate.length === 0)
                     }
-                    isLoading={isProcessing}
                 />
             </main>
-            {isUploading && <UploadingSpinner imageCount={imagesWithLocationAndDate.length} />}
+            {!isResizing && <ResizingSpinner earliestDate={earliestDate} latestDate={latestDate} />}
+            {/* {isUploading && <UploadingSpinner imageCount={imagesWithLocationAndDate.length} />} */}
             {isGuideModalOpen && (
                 <GuideModal
                     confirmText='다음'
@@ -119,6 +124,21 @@ const TripFileUpload = () => {
         </div>
     );
 };
+
+const dateModalStyle = css`
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    width: 100%;
+    margin: 20px 0;
+
+    h1 {
+        font-size: 16px;
+        font-weight: 600;
+        color: ${theme.colors.black};
+    }
+`;
 
 const countStyle = css`
     font-size: 18px;

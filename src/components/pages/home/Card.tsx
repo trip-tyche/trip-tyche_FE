@@ -9,7 +9,7 @@ interface CardProps {
 
 const Card = ({ trips }: CardProps): JSX.Element => {
     const counties = trips?.map((trip) => trip.country);
-    const uniqueCounties = [...new Set(counties)];
+    const uniqueCounties = [...new Set(counties)].filter((country) => country !== 'N/A');
 
     return (
         <div className='home-trips' css={CardStyle}>
@@ -25,9 +25,7 @@ const Card = ({ trips }: CardProps): JSX.Element => {
             )}
             {uniqueCounties?.length ? (
                 <div className='home-flags'>
-                    {uniqueCounties
-                        ?.filter((country) => country !== 'N/A')
-                        .map((country, index) => <span key={index}>{country.slice(0, 4)}</span>)}
+                    {uniqueCounties?.map((country, index) => <span key={index}>{country.slice(0, 4)}</span>)}
                 </div>
             ) : (
                 <>

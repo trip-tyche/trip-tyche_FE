@@ -31,7 +31,6 @@ const Home = () => {
     const fetchUserData = async () => {
         const token = getToken();
         const userId = getUserId();
-        console.log(token, userId);
         if (!token || !userId) {
             navigate(PATH.LOGIN);
             return;

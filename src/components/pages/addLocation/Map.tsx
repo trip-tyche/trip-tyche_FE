@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 
 import { css } from '@emotion/react';
-import { GoogleMap, LoadScript, Marker, Autocomplete } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, Marker, Autocomplete, useLoadScript, Libraries } from '@react-google-maps/api';
 import { ChevronLeft } from 'lucide-react';
 
 import Loading from '@/components/common/Loading';
@@ -18,7 +18,14 @@ interface MapProps {
     setIsMapVisible: (isMapVisible: boolean) => void;
 }
 
+const libraries: Libraries = ['places'];
+
 const Map = ({ onLocationSelect, defaultLocation, setIsMapVisible }: MapProps) => {
+    const { isLoaded, loadError } = useLoadScript({
+        googleMapsApiKey: ENV.GOOGLE_MAPS_API_KEY || '',
+        libraries, // 상수 참조
+    });
+
     const [selectedLocation, setSelectedLocation] = useState<google.maps.LatLngLiteral | null>(null);
     const [center, setCenter] = useState<google.maps.LatLngLiteral>({
         lat: defaultLocation.latitude,
@@ -35,6 +42,21 @@ const Map = ({ onLocationSelect, defaultLocation, setIsMapVisible }: MapProps) =
         rotateControl: false,
         clickableIcons: false,
     };
+
+    const markerIcon = useMemo(() => {
+        if (isLoaded) {
+            return {
+                path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
+                fillColor: '#0073bb',
+                fillOpacity: 1,
+                strokeWeight: 1,
+                rotation: 0,
+                scale: 1.5,
+                anchor: new google.maps.Point(12, 23),
+            };
+        }
+        return null;
+    }, [isLoaded]);
 
     const handleMapClick = (event: google.maps.MapMouseEvent) => {
         if (event.latLng) {
@@ -68,47 +90,43 @@ const Map = ({ onLocationSelect, defaultLocation, setIsMapVisible }: MapProps) =
         }
     };
 
-    const LoadingSpinner = () => (
-        <div css={loadingSpinnerStyle}>
-            <Loading />
-        </div>
-    );
+    if (loadError) {
+        return <div>Map cannot be loaded right now, sorry.</div>;
+    }
+
+    if (!isLoaded) {
+        return <Loading />;
+    }
 
     return (
-        <LoadScript
-            googleMapsApiKey={ENV.GOOGLE_MAPS_API_KEY || ''}
-            libraries={['places']}
-            loadingElement={<LoadingSpinner />}
-        >
-            <div css={mapContainerStyle}>
-                <div css={searchOuterContainerStyle}>
-                    <div css={searchContainerStyle}>
-                        <div css={searchWrapperStyle}>
-                            <button css={backButtonStyle} onClick={() => setIsMapVisible(false)}>
-                                <ChevronLeft size={24} />
-                            </button>
-                            <Autocomplete
-                                onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
-                                onPlaceChanged={onPlaceChanged}
-                            >
-                                <input type='text' placeholder='장소를 검색하세요' css={searchInputStyle} />
-                            </Autocomplete>
-                        </div>
+        <div css={mapContainerStyle}>
+            <div css={searchOuterContainerStyle}>
+                <div css={searchContainerStyle}>
+                    <div css={searchWrapperStyle}>
+                        <button css={backButtonStyle} onClick={() => setIsMapVisible(false)}>
+                            <ChevronLeft size={24} />
+                        </button>
+                        <Autocomplete
+                            onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
+                            onPlaceChanged={onPlaceChanged}
+                        >
+                            <input type='text' placeholder='장소를 검색하세요' css={searchInputStyle} />
+                        </Autocomplete>
                     </div>
                 </div>
-                <GoogleMap
-                    mapContainerStyle={containerStyle}
-                    center={center}
-                    zoom={12}
-                    options={mapOptions}
-                    onClick={handleMapClick}
-                    onLoad={onLoad}
-                >
-                    {selectedLocation && <Marker position={selectedLocation} />}
-                </GoogleMap>
             </div>
+            <GoogleMap
+                mapContainerStyle={containerStyle}
+                center={center}
+                zoom={12}
+                options={mapOptions}
+                onClick={handleMapClick}
+                onLoad={onLoad}
+            >
+                {selectedLocation && <Marker position={selectedLocation} icon={markerIcon || undefined} />}
+            </GoogleMap>
             <style>{autocompleteDropdownStyle}</style>
-        </LoadScript>
+        </div>
     );
 };
 

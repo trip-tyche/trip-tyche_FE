@@ -33,8 +33,8 @@ const NewTrip = () => {
 
     const navigate = useNavigate();
 
-    const earliestDate = localStorage.getItem('earliest-date');
-    const latestDate = localStorage.getItem('latest-date');
+    // const earliestDate = localStorage.getItem('earliest-date');
+    // const latestDate = localStorage.getItem('latest-date');
 
     useEffect(() => {
         if (tripTitle && country && startDate && endDate) {
@@ -46,9 +46,9 @@ const NewTrip = () => {
         setIsOpenGuideModal(false);
     };
 
-    if (!earliestDate || !latestDate) {
-        return;
-    }
+    // if (!earliestDate || !latestDate) {
+    //     return;
+    // }
 
     return (
         <div css={containerStyle}>
@@ -72,7 +72,7 @@ const NewTrip = () => {
                 </div>
                 <Button text={BUTTON.NEXT} btnTheme='pri' size='lg' onClick={handleSubmit} disabled={!isRequired} />
             </main>
-            {isOpenGuideModal && (
+            {/* {isOpenGuideModal && (
                 <GuideModal
                     confirmText='맞습니다'
                     cancelText='아닙니다'
@@ -87,7 +87,7 @@ const NewTrip = () => {
                         <h1>종료일: {formatDateToKoreanYear(latestDate)}</h1>위 정보가 맞나요?
                     </div>
                 </GuideModal>
-            )}
+            )} */}
         </div>
     );
 };

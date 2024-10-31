@@ -28,7 +28,10 @@ export function formatDateToKorean(dateString: string): string {
 }
 
 // 날짜를 YYYY년 MM월 DD일 형식으로 변환하는 함수
-export function formatDateToKoreanYear(dateString: string): string {
+export function formatDateToKoreanYear(dateString: string | null) {
+    if (!dateString) {
+        return;
+    }
     const [year, month, day] = dateString.split('-');
 
     if (!year || !month || !day) {

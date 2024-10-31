@@ -24,10 +24,8 @@ export const useAddLocation = () => {
     }, []);
 
     const toggleImageSelect = (image: ImageModel) => {
-        console.log(image);
         setSelectedImages((prev) => {
             const isSelected = prev.some((item) => item.image.name === image.image.name);
-            console.log(isSelected);
 
             if (isSelected) {
                 return prev.filter((item) => item.image.name !== image.image.name);
