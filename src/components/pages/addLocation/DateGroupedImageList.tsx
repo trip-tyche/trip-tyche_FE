@@ -1,23 +1,19 @@
 import { css } from '@emotion/react';
 
 import ImageGrid from '@/components/pages/addLocation/ImageGrid';
+import { ImageModel } from '@/types/image';
 import { formatDateToKorean } from '@/utils/date';
 
-interface ImageWithDate {
-    image: File;
-    formattedDate: string; // YYYY-MM-DD 형식
-}
-
 interface DateGroupedImageListProps {
-    groupedImages: [string, ImageWithDate[]][];
-    selectedImages: ImageWithDate[];
-    toggleImageSelection: (image: ImageWithDate) => void;
+    groupedImages: [string, ImageModel[]][];
+    selectedImages: ImageModel[];
+    toggleImageSelect: (image: ImageModel) => void;
 }
 
 const DateGroupedImageList: React.FC<DateGroupedImageListProps> = ({
     groupedImages,
     selectedImages,
-    toggleImageSelection,
+    toggleImageSelect,
 }) => (
     <div css={listContainerStyle}>
         {groupedImages.map(([date, images]) => (
@@ -26,7 +22,7 @@ const DateGroupedImageList: React.FC<DateGroupedImageListProps> = ({
                 <ImageGrid
                     displayedImages={images}
                     selectedImages={selectedImages}
-                    toggleImageSelection={toggleImageSelection}
+                    toggleImageSelect={toggleImageSelect}
                 />
             </div>
         ))}

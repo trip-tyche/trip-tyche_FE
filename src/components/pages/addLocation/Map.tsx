@@ -15,10 +15,10 @@ interface Location {
 interface MapProps {
     onLocationSelect: (lat: number, lng: number) => void;
     defaultLocation: Location;
-    setShowMap: (showMap: boolean) => void;
+    setIsMapVisible: (isMapVisible: boolean) => void;
 }
 
-const Map = ({ onLocationSelect, defaultLocation, setShowMap }: MapProps) => {
+const Map = ({ onLocationSelect, defaultLocation, setIsMapVisible }: MapProps) => {
     const [selectedLocation, setSelectedLocation] = useState<google.maps.LatLngLiteral | null>(null);
     const [center, setCenter] = useState<google.maps.LatLngLiteral>({
         lat: defaultLocation.latitude,
@@ -84,7 +84,7 @@ const Map = ({ onLocationSelect, defaultLocation, setShowMap }: MapProps) => {
                 <div css={searchOuterContainerStyle}>
                     <div css={searchContainerStyle}>
                         <div css={searchWrapperStyle}>
-                            <button css={backButtonStyle} onClick={() => setShowMap(false)}>
+                            <button css={backButtonStyle} onClick={() => setIsMapVisible(false)}>
                                 <ChevronLeft size={24} />
                             </button>
                             <Autocomplete

@@ -12,12 +12,9 @@ import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
 import { useImageUpload } from '@/hooks/useImageUpload';
-import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 
 const TripFileUpload = () => {
-    const { showToast } = useToastStore();
-
     const {
         imageCount,
         imagesWithLocationAndDate,
@@ -33,8 +30,9 @@ const TripFileUpload = () => {
 
     const navigate = useNavigate();
 
-    const goToAddLocation = async () => {
+    const navigateToImageLocation = () => {
         setIsGuideModalOpen(false);
+
         if (imagesWithLocationAndDate.length !== 0) {
             const defaultLocation = imagesWithLocationAndDate[0].location;
             navigate(PATH.TRIP_UPLOAD_ADD_LOCATION, { state: { defaultLocation, imagesNoLocationWithDate } });
@@ -43,10 +41,10 @@ const TripFileUpload = () => {
             navigate(PATH.TRIP_UPLOAD_ADD_LOCATION, { state: { defaultLocation, imagesNoLocationWithDate } });
         }
     };
-    const ignoreAddLocation = () => {
+
+    const navigateToTripInfo = () => {
         setIsGuideModalOpen(false);
-        showToast('사진이 업로드되었습니다.');
-        navigate(PATH.TRIP_LIST);
+        navigate(PATH.TRIP_NEW);
     };
 
     return (
@@ -54,7 +52,6 @@ const TripFileUpload = () => {
             <Header title={PAGE.UPLOAD_IMAGES} isBackButton onBack={() => navigate(PATH.TRIP_LIST)} />
             <main css={mainStyle}>
                 <section css={sectionStyle}>
-                    {/* <h2>{TRIP_IMAGES_UPLOAD.title}</h2> */}
                     <h4>[사진 등록 가이드]</h4>
                     <p>1. 여행 기간 외 사진은 등록되지 않습니다.</p>
                     <p>2. 위치 정보가 없는 사진은 직접 위치를 등록하실 수 있습니다.</p>
@@ -87,13 +84,8 @@ const TripFileUpload = () => {
                         <>
                             <h4>{`${imageCount} 개의 이미지 중,`}</h4>
                             <p>등록 가능 사진 : {imagesWithLocationAndDate.length} 개</p>
-                            {/* {imagesWithLocation.length !== 0 && ( */}
-                            {/* <> */}
                             <p>위치 정보 ❎ : {imagesNoLocationWithDate.length} 개 (직접 등록 가능)</p>
                             <p>날짜 정보 ❎ : {imagesNoDate.length} 개</p>
-                            {/* <p>날짜 정보 ❎ : {imagesWithLocation.length !== 0 ? noDateImagesCount : 0} 개</p> */}
-                            {/* </> */}
-                            {/* )} */}
                         </>
                     )}
                 </section>
@@ -111,18 +103,18 @@ const TripFileUpload = () => {
                     isLoading={isProcessing}
                 />
             </main>
+            {isUploading && <UploadingSpinner imageCount={imagesWithLocationAndDate.length} />}
             {isGuideModalOpen && (
                 <GuideModal
                     confirmText='다음'
                     cancelText='취소'
-                    confirmModal={goToAddLocation}
-                    closeModal={ignoreAddLocation}
+                    confirmModal={navigateToImageLocation}
+                    closeModal={navigateToTripInfo}
                     isOverlay
                 >
                     <NoDataImageContent noLocationCount={imagesNoLocationWithDate.length} />
                 </GuideModal>
             )}
-            {isUploading && <UploadingSpinner imageCount={imagesWithLocationAndDate.length} />}
             <Toast />
         </div>
     );

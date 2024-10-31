@@ -81,19 +81,15 @@ import { css } from '@emotion/react';
 import { GoCheckCircleFill } from 'react-icons/go';
 
 import Loading from '@/components/common/Loading';
-
-interface ImageWithDate {
-    image: File;
-    formattedDate: string;
-}
+import { ImageModel } from '@/types/image';
 
 interface ImageGridProps {
-    displayedImages: ImageWithDate[];
-    selectedImages: ImageWithDate[];
-    toggleImageSelection: (image: ImageWithDate) => void;
+    displayedImages: ImageModel[];
+    selectedImages: ImageModel[];
+    toggleImageSelect: (image: ImageModel) => void;
 }
 
-const ImageGrid = ({ displayedImages, selectedImages, toggleImageSelection }: ImageGridProps): JSX.Element => {
+const ImageGrid = ({ displayedImages, selectedImages, toggleImageSelect }: ImageGridProps) => {
     const [imageUrls, setImageUrls] = useState<string[]>([]);
     const [loadedImages, setLoadedImages] = useState<boolean[]>([]);
     const [allImagesLoaded, setAllImagesLoaded] = useState(false);
@@ -134,9 +130,11 @@ const ImageGrid = ({ displayedImages, selectedImages, toggleImageSelection }: Im
     return (
         <div css={gridStyle}>
             {imageUrls.map((url, index) => (
-                <div key={url} css={imageContainerStyle} onClick={() => toggleImageSelection(displayedImages[index])}>
+                <div key={url} css={imageContainerStyle} onClick={() => toggleImageSelect(displayedImages[index])}>
                     <img src={url} alt={`image-${index}`} css={imageStyle} onLoad={() => handleImageLoad(index)} />
-                    {selectedImages.some((file) => file.image.name === displayedImages[index].image.name) && (
+                    {selectedImages.some(
+                        (selectedImage) => selectedImage.image.name === displayedImages[index].image.name,
+                    ) && (
                         <div css={selectedOverlayStyle}>
                             <GoCheckCircleFill css={checkIconStyle} />
                         </div>

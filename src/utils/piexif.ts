@@ -146,6 +146,7 @@ export const createGpsExif = (lat: number, lng: number) => {
     };
 };
 
+// 이미지 파일을 DataURL 형식으로 변환
 export const readFileAsDataURL = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -154,6 +155,7 @@ export const readFileAsDataURL = (file: File): Promise<string> =>
         reader.readAsDataURL(file);
     });
 
+// 원본 이미지에 새로운 EXIF 데이터(직렬화된 문자열)를 삽입
 export const insertExifIntoJpeg = async (file: File, exifStr: string): Promise<Blob> => {
     const dataUrl = await readFileAsDataURL(file);
     const newDataUrl = piexif.insert(exifStr, dataUrl);

@@ -7,24 +7,6 @@ import { getToken } from '@/utils/auth';
 const apiBaseUrl = ENV.BASE_URL;
 const token = getToken();
 
-export const getTripList = async () => {
-    try {
-        const token = getToken();
-        // const response = await axios.get<Trips>(`${apiBaseUrl ? `/api/trips` : `${apiBaseUrl}/api/trips`}`, {
-        const response = await axios.get<Trips>(`${apiBaseUrl}/api/trips`, {
-            // const response = await axios.get<Trips>(`/api/trips`, {
-            headers: {
-                accept: '*/*',
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching trip data:', error);
-    }
-};
-
 export const getTripData = async (tripId: string) => {
     try {
         const token = getToken();
@@ -140,6 +122,22 @@ export const createTripId = async () => {
 };
 
 // ////////
+export const getTripList = async () => {
+    const token = getToken();
+    try {
+        const response = await axios.get<Trips>(`${apiBaseUrl}/api/trips`, {
+            headers: {
+                accept: '*/*',
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('여행 데이터패칭 중 오류 발생', error);
+    }
+};
+
 export const postTripImages = async (tripId: string, images: File[]) => {
     const formData = new FormData();
     images.forEach((image) => {
@@ -171,6 +169,6 @@ export const deleteTripInfo = async (tripId: string) => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error delete trip-info:', error);
+        console.error('여행 삭제 중 오류 발생', error);
     }
 };

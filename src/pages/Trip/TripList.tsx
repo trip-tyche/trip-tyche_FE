@@ -43,9 +43,9 @@ const TripList = (): JSX.Element => {
                     return;
                 }
 
-                if (tripList?.trips.some((trip) => trip.tripTitle === 'N/A')) {
-                    await deleteInValidTrips(tripList.trips);
-                }
+                // if (tripList.some((trip) => trip.tripTitle === 'N/A')) {
+                //     await deleteInValidTrips(tripList);
+                // }
 
                 console.log(tripList);
 
@@ -66,23 +66,22 @@ const TripList = (): JSX.Element => {
         fetchTripList();
     }, [isDelete, showToast, navigate]);
 
-    const deleteInValidTrips = async (trips: Trip[]) => {
-        const deletePromises = trips
-            .filter((trip) => trip.tripTitle === 'N/A')
-            .map((trip) => deleteTripInfo(trip.tripId));
+    // const deleteInValidTrips = async (trips: Trip[]) => {
+    //     const deletePromises = trips
+    //         .filter((trip) => trip.tripTitle === 'N/A')
+    //         .map((trip) => deleteTripInfo(trip.tripId));
 
-        return await Promise.allSettled(deletePromises);
-    };
+    //     return await Promise.allSettled(deletePromises);
+    // };
 
     if (isLoading) {
         <Loading />;
     }
 
     const handleTicketCreate = async () => {
-        const response = await createTripId();
-        const { tripId } = response;
+        const { tripId } = await createTripId();
         localStorage.setItem('tripId', tripId);
-        // navigate(PATH.TRIP_NEW);
+
         navigate(PATH.TRIP_UPLOAD);
     };
 

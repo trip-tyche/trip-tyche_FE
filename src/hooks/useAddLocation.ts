@@ -5,134 +5,121 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { postTripImages } from '@/api/trip';
 import { PATH } from '@/constants/path';
-import { useToastStore } from '@/stores/useToastStore';
 import { createGpsExif, insertExifIntoJpeg, readFileAsDataURL } from '@/utils/piexif';
-
-interface ImageWithDate {
-    file: File;
-    formattedDate: string; // YYYY-MM-DD 형식
-}
+import { GpsData, ImageModel, LocationType } from '@/types/image';
 
 export const useAddLocation = () => {
-    const [displayedImages, setDisplayedImages] = useState<ImageWithDate[]>([]);
-    const [selectedImages, setSelectedImages] = useState<ImageWithDate[]>([]);
-    const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
-    const [showMap, setShowMap] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-
-    const { showToast } = useToastStore();
+    const [displayedImages, setDisplayedImages] = useState<ImageModel[]>([]);
+    const [selectedImages, setSelectedImages] = useState<ImageModel[]>([]);
+    const [selectedLocation, setSelectedLocation] = useState<LocationType>(null);
+    const [isMapVisible, setIsMapVisible] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
-    const { defaultLocation, imagesNoLocationWithDate } = location.state; // 나중에 restful하게 수정하자
 
     useEffect(() => {
-        if (imagesNoLocationWithDate.length === 0) {
-            showToast('모든 사진의 위치 정보가 없습니다.');
-            navigate(PATH.TRIP_LIST, { state: { toastMessage: '모든 사진의 위치 정보가 없습니다.' } });
-            return;
-        }
+        const { imagesNoLocationWithDate } = location.state;
         setDisplayedImages(imagesNoLocationWithDate);
     }, []);
 
-    const toggleImageSelection = (image: ImageWithDate) => {
+    const toggleImageSelect = (image: ImageModel) => {
+        console.log(image);
         setSelectedImages((prev) => {
-            const isSelected = prev.some((item) => item.file.name === image.file.name);
+            const isSelected = prev.some((item) => item.image.name === image.image.name);
+            console.log(isSelected);
 
             if (isSelected) {
-                return prev.filter((item) => item.file.name !== image.file.name);
+                return prev.filter((item) => item.image.name !== image.image.name);
             } else {
                 return [...prev, image];
             }
         });
     };
 
-    const goToTripList = () => {
-        navigate(PATH.TRIP_NEW);
-        // navigate(PATH.TRIP_LIST);
+    const handleLocationSelect = (latitude: number, longitude: number) => {
+        setSelectedLocation({ latitude, longitude });
     };
 
-    const handleNextClick = () => {
-        if (selectedImages.length > 0) {
-            setShowMap(true);
-        }
-    };
-
-    const handleLocationSelect = (lat: number, lng: number) => {
-        setSelectedLocation({ lat, lng });
-    };
-
-    const handleConfirmLocation = async () => {
+    const handleImageUploadWithLocation = async () => {
         if (!selectedLocation) {
-            console.warn('Location is not selected.');
             return;
         }
 
-        console.log('Selected images:', selectedImages);
-        console.log('Selected location:', selectedLocation);
+        if (selectedImages.length === 0) {
+            setIsMapVisible(false);
+            return;
+        }
 
-        const updatedImages = await Promise.all(
-            selectedImages.map(async (image) => {
-                const exifObj = piexif.load(await readFileAsDataURL(image.file));
-                const gpsExif = createGpsExif(selectedLocation.lat, selectedLocation.lng);
-
-                const newExif = { ...exifObj, ...gpsExif };
-                const exifStr = piexif.dump(newExif);
-
-                const newImageBlob = await insertExifIntoJpeg(image.file, exifStr);
-                return {
-                    file: new File([newImageBlob], image.file.name, { type: image.file.type }),
-                    formattedDate: image.formattedDate,
-                };
-            }),
-        );
-
-        console.log('Images with updated location:', updatedImages);
+        const updatedImages = await updateImageGpsMetadata(selectedImages, selectedLocation);
+        await uploadImages(updatedImages);
 
         const updatedDisplayedImages = displayedImages.filter(
-            (image) => !selectedImages.some((selected) => selected.file.name === image.file.name),
+            (displayedImage) =>
+                !selectedImages.some((selectedImage) => selectedImage.image.name === displayedImage.image.name),
         );
-
-        try {
-            setIsLoading(true);
-            const tripId = localStorage.getItem('tripId');
-            if (!tripId) {
-                return;
-            }
-            await postTripImages(
-                tripId,
-                updatedImages.map((img) => img.file),
-            );
-        } catch (error) {
-            console.error('Error post trip-images:', error);
-        } finally {
-            setIsLoading(false);
-        }
 
         if (updatedDisplayedImages.length === 0) {
             navigate(PATH.TRIP_NEW);
-            // navigate(PATH.TRIP_LIST);
             return;
         }
 
         setDisplayedImages(updatedDisplayedImages);
         setSelectedImages([]);
+        setIsMapVisible(false);
 
-        setShowMap(false);
+        console.log('선택한 이미지:', selectedImages);
+        console.log('선택한 위치:', selectedLocation);
+        console.log('이미지에 위치가 등록되었습니다.', updatedImages);
+    };
+
+    const updateImageGpsMetadata = async (images: ImageModel[], location: GpsData) => {
+        return await Promise.all(
+            images.map(async (image) => {
+                const imageExifObj = piexif.load(await readFileAsDataURL(image.image));
+                const gpsExif = createGpsExif(location.latitude, location.longitude);
+
+                const newImageExif = { ...imageExifObj, ...gpsExif };
+                const exifStr = piexif.dump(newImageExif);
+
+                const newImageBlob = await insertExifIntoJpeg(image.image, exifStr);
+                return {
+                    image: new File([newImageBlob], image.image.name, { type: image.image.type }),
+                    formattedDate: image.formattedDate,
+                };
+            }),
+        );
+    };
+
+    const uploadImages = async (images: Omit<ImageModel, 'location'>[]) => {
+        try {
+            const tripId = localStorage.getItem('tripId');
+            if (!tripId) {
+                return;
+            }
+
+            setIsUploading(true);
+            await postTripImages(
+                tripId,
+                images.map((image) => image.image),
+            );
+        } catch (error) {
+            console.error('이미지 업로드 중 오류 발생', error);
+            setIsUploading(false);
+        } finally {
+            setIsUploading(false);
+        }
     };
 
     return {
-        defaultLocation,
         displayedImages,
         selectedImages,
         selectedLocation,
-        showMap,
-        setShowMap,
-        isLoading,
-        toggleImageSelection,
-        goToTripList,
-        handleNextClick,
+        isMapVisible,
+        isUploading,
+        toggleImageSelect,
         handleLocationSelect,
-        handleConfirmLocation,
+        handleImageUploadWithLocation,
+        setIsMapVisible,
     };
 };

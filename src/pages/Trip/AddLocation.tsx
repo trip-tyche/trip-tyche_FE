@@ -1,12 +1,15 @@
 import { useMemo } from 'react';
 
 import { css } from '@emotion/react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/button/Button';
 import Toast from '@/components/common/Toast';
 import DateGroupedImageList from '@/components/pages/addLocation/DateGroupedImageList';
 import Map from '@/components/pages/addLocation/Map';
+import { PATH } from '@/constants/path';
 import { useAddLocation } from '@/hooks/useAddLocation';
+import { ImageModel } from '@/types/image';
 
 // const AddLocation = () => {
 //     const {
@@ -43,29 +46,25 @@ import { useAddLocation } from '@/hooks/useAddLocation';
 //                                 />
 //                             </div>
 
-interface ImageWithDate {
-    file: File;
-    formattedDate: string; // YYYY-MM-DD 형식
-}
-
 const AddLocation = () => {
     const {
-        defaultLocation,
         displayedImages,
         selectedImages,
         selectedLocation,
-        showMap,
-        setShowMap,
-        isLoading,
-        toggleImageSelection,
-        goToTripList,
-        handleNextClick,
+        isMapVisible,
+        setIsMapVisible,
+        isUploading,
+        toggleImageSelect,
         handleLocationSelect,
-        handleConfirmLocation,
+        handleImageUploadWithLocation,
     } = useAddLocation();
 
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { defaultLocation } = location.state;
+
     const groupedImages = useMemo(() => {
-        const groups: Record<string, ImageWithDate[]> = displayedImages.reduce(
+        const groups: Record<string, ImageModel[]> = displayedImages.reduce(
             (acc, image) => {
                 const date = image.formattedDate;
                 if (!acc[date]) {
@@ -74,31 +73,41 @@ const AddLocation = () => {
                 acc[date].push(image);
                 return acc;
             },
-            {} as Record<string, ImageWithDate[]>,
+            {} as Record<string, ImageModel[]>,
         );
 
         return Object.entries(groups).sort(([dateA], [dateB]) => dateA.localeCompare(dateB));
     }, [displayedImages]);
 
-    console.log(groupedImages);
+    const handleSetLocationOnMap = () => {
+        if (selectedImages.length > 0) {
+            setIsMapVisible(true);
+        }
+    };
+
+    const navigateToTripInfo = () => {
+        navigate(PATH.TRIP_NEW);
+    };
+
+    // console.log(groupedImages);
 
     return (
         <div css={containerStyle}>
             <div>
-                {!showMap ? (
+                {!isMapVisible ? (
                     <section css={sectionStyle}>
                         <DateGroupedImageList
                             groupedImages={groupedImages}
                             selectedImages={selectedImages}
-                            toggleImageSelection={toggleImageSelection}
+                            toggleImageSelect={toggleImageSelect}
                         />
                         <div css={buttonWrapper}>
-                            <Button text='홈으로 가기' btnTheme='sec' size='lg' onClick={goToTripList} />
+                            <Button text='홈으로 가기' btnTheme='sec' size='lg' onClick={navigateToTripInfo} />
                             <Button
                                 text='지도에서 위치 선택하기'
                                 btnTheme='pri'
                                 size='lg'
-                                onClick={handleNextClick}
+                                onClick={handleSetLocationOnMap}
                                 disabled={selectedImages.length === 0}
                             />
                         </div>
@@ -110,16 +119,16 @@ const AddLocation = () => {
                                 text='위치 등록하기'
                                 btnTheme='pri'
                                 size='lg'
-                                onClick={handleConfirmLocation}
+                                onClick={handleImageUploadWithLocation}
                                 disabled={!selectedLocation}
-                                isLoading={isLoading}
+                                isLoading={isUploading}
                                 loadingMessage='위치를 넣는 중입니다...'
                             />
                         </div>
                         <Map
                             onLocationSelect={handleLocationSelect}
                             defaultLocation={defaultLocation}
-                            setShowMap={setShowMap}
+                            setIsMapVisible={setIsMapVisible}
                         />
                     </section>
                 )}

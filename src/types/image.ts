@@ -3,8 +3,10 @@ export interface GpsData {
     longitude: number;
 }
 
+export type LocationType = GpsData | null;
+
 export interface ImageModel {
     image: File;
     formattedDate: string;
-    location: GpsData | null;
+    location: LocationType;
 }

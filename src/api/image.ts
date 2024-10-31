@@ -4,6 +4,7 @@ import { ENV } from '@/constants/auth';
 import { getToken } from '@/utils/auth';
 
 const apiBaseUrl = ENV.BASE_URL;
+const token = getToken();
 
 export const getImagesByPinPoint = async (tripId: string, pinPoint: string) => {
     try {
@@ -26,13 +27,9 @@ export const getImagesByPinPoint = async (tripId: string, pinPoint: string) => {
 };
 
 export const getImagesByDay = async (tripId: string, date: string) => {
+    const formattedDate = date.slice(0, 10);
     try {
-        const token = getToken();
-        // const response = await axios.get(
-        //     `${apiBaseUrl ? `/api/trips/${tripId}/map?date=${date}` : `${apiBaseUrl}/api/trips/${tripId}/map?date=${date}`}`,
-        // {
-        const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/map?date=${date}`, {
-            // const response = await axios.get(`/api/trips/${tripId}/map?date=${date}`, {
+        const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/map?date=${formattedDate}`, {
             headers: {
                 accept: '*/*',
                 Authorization: `Bearer ${token}`,
@@ -41,6 +38,6 @@ export const getImagesByDay = async (tripId: string, date: string) => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error fetching pinpoint-images data:', error);
+        console.error(`${formattedDate}의 이미지를 불러오는데 실패`, error);
     }
 };

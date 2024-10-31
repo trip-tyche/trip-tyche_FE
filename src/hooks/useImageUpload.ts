@@ -62,20 +62,19 @@ export const useImageUpload = () => {
                 try {
                     const resizedBlob = await imageCompression(extractedImage.image, compressionOptions);
 
-                    // // Blob을 File로 변환
-                    // const resizedFile = new File([resizedBlob], processedImage.file.name, {
-                    // type: compressionOptions.fileType,
-                    // lastModified: processedImage.file.lastModified,
-                    // });
+                    const resizedFile = new File([resizedBlob], extractedImage.image.name, {
+                        type: compressionOptions.fileType,
+                        lastModified: extractedImage.image.lastModified,
+                    });
 
-                    // console.log(`${processedImage.file.name} 변환 결과:`, {
-                    //     originalSize: `${(processedImage.file.size / (1024 * 1024)).toFixed(2)}MB`,
+                    // console.log(`${extractedImage.image.name} 변환 결과:`, {
+                    //     originalSize: `${(extractedImage.image.size / (1024 * 1024)).toFixed(2)}MB`,
                     //     convertedSize: `${(resizedBlob.size / (1024 * 1024)).toFixed(2)}MB`,
                     //     format: compressionOptions.fileType,
                     // });
 
                     return {
-                        image: resizedBlob,
+                        image: resizedFile,
                         formattedDate: extractedImage.formattedDate,
                         location: extractedImage.location,
                     };
