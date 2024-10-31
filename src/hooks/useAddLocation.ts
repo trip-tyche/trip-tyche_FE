@@ -24,15 +24,15 @@ export const useAddLocation = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const { defaultLocation, imagesNoLocation } = location.state; // 나중에 restful하게 수정하자
+    const { defaultLocation, imagesNoLocationWithDate } = location.state; // 나중에 restful하게 수정하자
 
     useEffect(() => {
-        if (imagesNoLocation.length === 0) {
+        if (imagesNoLocationWithDate.length === 0) {
             showToast('모든 사진의 위치 정보가 없습니다.');
             navigate(PATH.TRIP_LIST, { state: { toastMessage: '모든 사진의 위치 정보가 없습니다.' } });
             return;
         }
-        setDisplayedImages(imagesNoLocation);
+        setDisplayedImages(imagesNoLocationWithDate);
     }, []);
 
     const toggleImageSelection = (image: ImageWithDate) => {

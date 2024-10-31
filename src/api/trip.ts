@@ -5,6 +5,7 @@ import { TripInfo, Trips } from '@/types/trip';
 import { getToken } from '@/utils/auth';
 
 const apiBaseUrl = ENV.BASE_URL;
+const token = getToken();
 
 export const getTripList = async () => {
     try {
@@ -68,27 +69,6 @@ export const postTripInfo = async ({ tripId, tripTitle, country, startDate, endD
         return response.data;
     } catch (error) {
         console.error('Error post trip-info:', error);
-    }
-};
-
-export const postTripImages = async (tripId: string, files: File[]) => {
-    const formData = new FormData();
-    files.forEach((file) => {
-        formData.append('files', file);
-    });
-    try {
-        const token = getToken();
-        const response = await axios.post(`${apiBaseUrl}/api/trips/${tripId}/upload`, formData, {
-            headers: {
-                accept: '*/*',
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'multipart/form-data',
-            },
-        });
-        console.log('업로드 완료', response.data);
-        return response.data;
-    } catch (error) {
-        console.error('Error post trip-images:', error);
     }
 };
 
@@ -172,5 +152,27 @@ export const createTripId = async () => {
         return response.data;
     } catch (error) {
         console.error('Error fetching trip data:', error);
+    }
+};
+
+// ////////
+export const postTripImages = async (tripId: string, images: File[]) => {
+    const formData = new FormData();
+    images.forEach((image) => {
+        formData.append('files', image);
+    });
+
+    try {
+        const response = await axios.post(`${apiBaseUrl}/api/trips/${tripId}/upload`, formData, {
+            headers: {
+                accept: '*/*',
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error('이미지 업로드 중 오류 발생', error);
     }
 };

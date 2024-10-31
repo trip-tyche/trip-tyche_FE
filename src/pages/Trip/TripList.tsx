@@ -49,7 +49,7 @@ const TripList = (): JSX.Element => {
 
                 setUserNickname(tripList.userNickName);
                 setTripList(tripList.trips);
-                setTripCount(tripList.trips?.length);
+                setTripCount(tripList.trips?.filter((trip) => trip.tripTitle !== 'N/A').length);
                 setIsDelete(false);
             } catch (error) {
                 console.error('Error fetching trip-list data:', error);

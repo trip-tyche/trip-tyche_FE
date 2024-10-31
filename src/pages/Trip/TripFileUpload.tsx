@@ -20,14 +20,14 @@ const TripFileUpload = () => {
 
     const {
         imageCount,
-        imagesWithLocation,
-        imagesNoLocation,
-        noDateImagesCount,
-        isGuideModalOpen,
-        isLoading,
+        imagesWithLocationAndDate,
+        imagesNoLocationWithDate,
+        imagesNoDate,
+        isProcessing,
         isUploading,
-        handleFileUpload,
-        uploadTripImages,
+        isGuideModalOpen,
+        handleImageProcess,
+        uploadImages,
         setIsGuideModalOpen,
     } = useImageUpload();
 
@@ -35,12 +35,12 @@ const TripFileUpload = () => {
 
     const goToAddLocation = async () => {
         setIsGuideModalOpen(false);
-        if (imagesWithLocation.length !== 0) {
-            const defaultLocation = imagesWithLocation[0].location;
-            navigate(PATH.TRIP_UPLOAD_ADD_LOCATION, { state: { defaultLocation, imagesNoLocation } });
+        if (imagesWithLocationAndDate.length !== 0) {
+            const defaultLocation = imagesWithLocationAndDate[0].location;
+            navigate(PATH.TRIP_UPLOAD_ADD_LOCATION, { state: { defaultLocation, imagesNoLocationWithDate } });
         } else {
             const defaultLocation = { latitude: 37.5665, longitude: 126.978 };
-            navigate(PATH.TRIP_UPLOAD_ADD_LOCATION, { state: { defaultLocation, imagesNoLocation } });
+            navigate(PATH.TRIP_UPLOAD_ADD_LOCATION, { state: { defaultLocation, imagesNoLocationWithDate } });
         }
     };
     const ignoreAddLocation = () => {
@@ -51,7 +51,7 @@ const TripFileUpload = () => {
 
     return (
         <div css={containerStyle}>
-            <Header title={PAGE.UPLOAD_IMAGES} isBackButton />
+            <Header title={PAGE.UPLOAD_IMAGES} isBackButton onBack={() => navigate(PATH.TRIP_LIST)} />
             <main css={mainStyle}>
                 <section css={sectionStyle}>
                     {/* <h2>{TRIP_IMAGES_UPLOAD.title}</h2> */}
@@ -65,7 +65,7 @@ const TripFileUpload = () => {
                             type='file'
                             accept='image/*,.heic'
                             multiple
-                            onChange={(e) => handleFileUpload(e.target.files)}
+                            onChange={(e) => handleImageProcess(e.target.files)}
                             css={fileInputStyle}
                             id='imageUpload'
                         />
@@ -86,11 +86,11 @@ const TripFileUpload = () => {
                     {imageCount !== 0 && (
                         <>
                             <h4>{`${imageCount} 개의 이미지 중,`}</h4>
-                            <p>등록 가능 사진 : {imagesWithLocation.length} 개</p>
+                            <p>등록 가능 사진 : {imagesWithLocationAndDate.length} 개</p>
                             {/* {imagesWithLocation.length !== 0 && ( */}
                             {/* <> */}
-                            <p>위치 정보 ❎ : {imagesNoLocation.length} 개 (직접 등록 가능)</p>
-                            <p>날짜 정보 ❎ : {noDateImagesCount} 개</p>
+                            <p>위치 정보 ❎ : {imagesNoLocationWithDate.length} 개 (직접 등록 가능)</p>
+                            <p>날짜 정보 ❎ : {imagesNoDate.length} 개</p>
                             {/* <p>날짜 정보 ❎ : {imagesWithLocation.length !== 0 ? noDateImagesCount : 0} 개</p> */}
                             {/* </> */}
                             {/* )} */}
@@ -101,14 +101,14 @@ const TripFileUpload = () => {
                     text='등록하기'
                     btnTheme='pri'
                     size='lg'
-                    onClick={uploadTripImages}
+                    onClick={uploadImages}
                     disabled={
                         imageCount === 0 ||
-                        (imagesNoLocation.length === 0 &&
-                            imagesWithLocation.length === 0 &&
-                            imagesNoLocation.length === 0)
+                        (imagesNoLocationWithDate.length === 0 &&
+                            imagesWithLocationAndDate.length === 0 &&
+                            imagesNoLocationWithDate.length === 0)
                     }
-                    isLoading={isLoading}
+                    isLoading={isProcessing}
                 />
             </main>
             {isGuideModalOpen && (
@@ -119,10 +119,10 @@ const TripFileUpload = () => {
                     closeModal={ignoreAddLocation}
                     isOverlay
                 >
-                    <NoDataImageContent noLocationCount={imagesNoLocation.length} />
+                    <NoDataImageContent noLocationCount={imagesNoLocationWithDate.length} />
                 </GuideModal>
             )}
-            {isUploading && <UploadingSpinner imageCount={imagesWithLocation.length} />}
+            {isUploading && <UploadingSpinner imageCount={imagesWithLocationAndDate.length} />}
             <Toast />
         </div>
     );

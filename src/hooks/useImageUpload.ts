@@ -5,225 +5,182 @@ import { useNavigate } from 'react-router-dom';
 
 import { postTripImages } from '@/api/trip';
 import { PATH } from '@/constants/path';
-// import { useToastStore } from '@/stores/useToastStore';
-import { ImageWithLocationAndDate } from '@/types/image';
+import { ImageModel } from '@/types/image';
 import { formatDateToYYYYMMDD } from '@/utils/date';
 import { getImageLocation, extractDateFromImage } from '@/utils/piexif';
 
-interface ImageWithDate {
-    file: File;
-    formattedDate: string; // YYYY-MM-DD 형식
-}
-
 export const useImageUpload = () => {
     const [imageCount, setImagesCount] = useState(0);
-    const [imagesWithLocation, setImagesWithLocation] = useState<ImageWithLocationAndDate[]>([]);
-    const [imagesNoLocation, setImagesNoLocation] = useState<ImageWithDate[]>([]);
-    const [noDateImagesCount, setNoDateImagesCount] = useState(0);
+    const [imagesWithLocationAndDate, setImagesWithLocationAndDate] = useState<ImageModel[]>([]);
+    const [imagesNoLocationWithDate, setImagesNoLocationWithDate] = useState<Omit<ImageModel, 'location'>[]>([]);
+    const [imagesNoDate, setImagesNoDate] = useState<ImageModel[]>([]);
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
     const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [isUploading, setIsUploading] = useState(false);
-    // const { showToast } = useToastStore();
-
     const navigate = useNavigate();
-    // const location = useLocation();
 
-    // const { startDate, endDate } = location.state;
+    const extractImageMetadata = async (images: FileList | null): Promise<ImageModel[]> => {
+        if (!images || images.length === 0) {
+            return [];
+        }
 
-    // 압축 옵션 설정 함수
-    const getCompressionOptions = () => ({
-        maxWidthOrHeight: 846, // 원하는 너비
-        initialQuality: 0.9, // 품질 설정
-        useWebWorker: true, // WebWorker 사용
-        preserveExif: true, // EXIF 데이터 보존
-        fileType: 'image/jpeg',
-    });
+        return await Promise.all(
+            Array.from(images).map(async (image) => {
+                const location = await getImageLocation(image);
+                const date = await extractDateFromImage(image);
+                let formattedDate = '';
+                if (date) {
+                    formattedDate = formatDateToYYYYMMDD(date);
+                }
+                return {
+                    image,
+                    formattedDate,
+                    location,
+                };
+            }),
+        );
+    };
 
-    const handleFileUpload = async (files: FileList | null) => {
-        if (!files) {
+    const resizeImage = async (extractedImages: ImageModel[] | null): Promise<ImageModel[]> => {
+        if (!extractedImages || extractedImages.length === 0) {
+            return [];
+        }
+
+        const compressionOptions = {
+            maxWidthOrHeight: 856,
+            initialQuality: 0.9,
+            useWebWorker: true,
+            preserveExif: true,
+            fileType: 'image/jpeg',
+        };
+
+        const resizeStartTime = performance.now();
+
+        const resizedImages = await Promise.all(
+            extractedImages.map(async (extractedImage: ImageModel) => {
+                try {
+                    const resizedBlob = await imageCompression(extractedImage.image, compressionOptions);
+
+                    // // Blob을 File로 변환
+                    // const resizedFile = new File([resizedBlob], processedImage.file.name, {
+                    // type: compressionOptions.fileType,
+                    // lastModified: processedImage.file.lastModified,
+                    // });
+
+                    // console.log(`${processedImage.file.name} 변환 결과:`, {
+                    //     originalSize: `${(processedImage.file.size / (1024 * 1024)).toFixed(2)}MB`,
+                    //     convertedSize: `${(resizedBlob.size / (1024 * 1024)).toFixed(2)}MB`,
+                    //     format: compressionOptions.fileType,
+                    // });
+
+                    return {
+                        image: resizedBlob,
+                        formattedDate: extractedImage.formattedDate,
+                        location: extractedImage.location,
+                    };
+                } catch (error) {
+                    console.error(`리사이징에 실패한 이미지: ${extractedImage.image.name}`, error);
+                    return extractedImage;
+                }
+            }),
+        );
+
+        const resizeEndTime = performance.now();
+
+        console.log(
+            `총 ${extractedImages.length}개 이미지 리사이징 시간: ${(resizeEndTime - resizeStartTime).toFixed(2)}ms`,
+        );
+
+        return resizedImages;
+    };
+
+    const handleImageProcess = async (images: FileList | null) => {
+        if (!images) {
             return;
         }
 
         try {
-            setIsLoading(true);
-            const processedImages = await Promise.all(
-                Array.from(files).map(async (file) => {
-                    const location = await getImageLocation(file);
-                    const date = await extractDateFromImage(file);
-                    let formattedDate = '';
-                    if (date) {
-                        formattedDate = formatDateToYYYYMMDD(date);
-                    }
-                    return {
-                        file,
-                        formattedDate,
-                        location,
-                    };
-                }),
-            );
+            setIsProcessing(true);
 
-            // 이미지 리사이징
-            const resizeStartTime = performance.now();
-            const compressionOptions = getCompressionOptions();
+            const extractedImages = await extractImageMetadata(images);
+            const resizedImages = await resizeImage(extractedImages);
 
-            const finalProcessedImages = await Promise.all(
-                processedImages.map(async (processedImage) => {
-                    try {
-                        const resizedBlob = await imageCompression(processedImage.file, compressionOptions);
+            const imagesWithLocationAndDate = resizedImages.filter((image) => image.location && image.formattedDate);
+            const imagesNoLocationWithDate = resizedImages.filter((image) => !image.location && image.formattedDate);
+            const imagesNoDate = resizedImages.filter((image) => !image.formattedDate);
 
-                        // Blob을 File로 변환
-                        const resizedFile = new File([resizedBlob], processedImage.file.name, {
-                            type: compressionOptions.fileType,
-                            lastModified: processedImage.file.lastModified,
-                        });
+            setImagesCount(images.length);
+            setImagesWithLocationAndDate(imagesWithLocationAndDate);
+            setImagesNoLocationWithDate(imagesNoLocationWithDate);
+            setImagesNoDate(imagesNoDate);
 
-                        console.log(`${processedImage.file.name} 변환 결과:`, {
-                            originalSize: `${(processedImage.file.size / (1024 * 1024)).toFixed(2)}MB`,
-                            convertedSize: `${(resizedFile.size / (1024 * 1024)).toFixed(2)}MB`,
-                            format: compressionOptions.fileType,
-                        });
+            console.log('위치 ✅ / 날짜 ✅:', imagesWithLocationAndDate);
+            console.log('위치 ⛔️ / 날짜 ✅:', imagesNoLocationWithDate);
+            console.log('날짜 ⛔️:', imagesNoDate);
 
-                        return {
-                            file: resizedFile,
-                            formattedDate: processedImage.formattedDate,
-                            location: processedImage.location,
-                        };
-                    } catch (error) {
-                        console.error(`Error resizing image: ${processedImage.file.name}`, error);
-
-                        try {
-                            const jpegOptions = { ...compressionOptions, fileType: 'image/jpeg' };
-                            const jpegBlob = await imageCompression(processedImage.file, jpegOptions);
-
-                            // JPEG Blob을 File로 변환
-                            const jpegFile = new File([jpegBlob], processedImage.file.name, {
-                                type: 'image/jpeg',
-                                lastModified: processedImage.file.lastModified,
-                            });
-
-                            return {
-                                file: jpegFile,
-                                formattedDate: processedImage.formattedDate,
-                                location: processedImage.location,
-                            };
-                        } catch (jpegError) {
-                            console.error('JPEG 변환도 실패:', jpegError);
-                            return processedImage;
-                        }
-                    }
-                }),
-            );
-
-            const resizeEndTime = performance.now();
-            console.log(`총 ${files.length}개 이미지 리사이징 시간: ${(resizeEndTime - resizeStartTime).toFixed(2)}ms`);
-            // console.log(`이미지 포맷: ${compressionOptions.fileType}`);
-
-            // startDate와 endDate 사이에 있는 이미지만 필터링
-            // const filteredImages = finalProcessedImages.filter((image) => {
-            //     if (!image.formattedDate) return false;
-            //     return image.formattedDate >= startDate && image.formattedDate <= endDate;
-            // });
-
-            // 위치와 날짜 모두 있는 이미지
-            const imagesWithLocation = finalProcessedImages.filter((image) => image.location && image.formattedDate);
-
-            const datesWithLocation = imagesWithLocation
-                .filter((img) => img.formattedDate) // 날짜가 있는 이미지만 필터링
-                .map((img) => img.formattedDate)
+            const sortedImagesDates = imagesWithLocationAndDate
+                .filter((image) => image.formattedDate)
+                .map((image) => image.formattedDate)
                 .sort();
 
-            if (datesWithLocation.length > 0) {
-                const earliestDate = datesWithLocation[0];
-                const latestDate = datesWithLocation[datesWithLocation.length - 1];
-                console.log(`${earliestDate}~${latestDate}`);
+            if (sortedImagesDates.length > 0) {
+                const earliestDate = sortedImagesDates[0];
+                const latestDate = sortedImagesDates[sortedImagesDates.length - 1];
+
                 localStorage.setItem('earliest-date', earliestDate);
                 localStorage.setItem('latest-date', latestDate);
+
+                console.log(`시작일: ${earliestDate} / 종료일: ${latestDate}`);
             }
 
-            setImagesWithLocation(imagesWithLocation);
-            console.log('위치 ✅:', imagesWithLocation);
-
-            // 위치 정보가 없는 이미지
-            const noLocationImages = finalProcessedImages
-                .filter((image) => !image.location && image.formattedDate)
-                .map(({ file, formattedDate }) => ({
-                    file,
-                    formattedDate,
-                }));
-
-            setImagesNoLocation(noLocationImages);
-
-            console.log('위치 ⛔️:', noLocationImages);
-
-            // 날짜 정보가 없는 이미지 (startDate와 endDate 범위 밖의 이미지 포함)
-            const noDateImages = processedImages.filter(
-                (image) => !image.formattedDate,
-                // image.formattedDate === '' || image.formattedDate < startDate || image.formattedDate > endDate,
-            );
-            setNoDateImagesCount(noDateImages.length);
-            console.log('날짜 ⛔️:', noDateImages);
-
-            setImagesCount(files.length);
-            setIsLoading(false);
+            setIsProcessing(false);
         } catch (error) {
-            console.error('Error processing files:', error);
+            console.error('이미지 처리 중 오류 발생', error);
+            setIsProcessing(false);
+        } finally {
+            setIsProcessing(false);
         }
     };
 
-    const uploadTripImages = async () => {
-        try {
-            setIsUploading(true);
-            const images = imagesWithLocation.map((image) => image.file);
-            console.log(images);
+    const uploadImages = async () => {
+        const tripId = localStorage.getItem('tripId');
 
-            if (images.length === 0) {
-                setIsGuideModalOpen(true);
-                return;
-            }
-
-            const tripId = localStorage.getItem('tripId');
-
-            if (!tripId) {
-                return;
-            }
-
-            // await postTripImages(tripId, images);
-            // 비동기 업로드 시작, 결과를 기다리지 않음
-            postTripImages(tripId, images)
-                .catch((error) => {
-                    console.error('Error post trip-images:', error);
-                })
-                .finally(() => {
-                    setIsUploading(false);
-                });
-
-            if (imagesNoLocation.length) {
-                setIsGuideModalOpen(true);
-                return;
-            }
-
-            navigate(PATH.TRIP_NEW);
-            // navigate(PATH.TRIP_LIST);
-            // showToast('사진이 업로드되었습니다.');
-        } catch (error) {
-            console.error('Error post trip-images:', error);
-            setIsUploading(false);
-        } finally {
-            setIsUploading(false);
+        if (!tripId) {
+            console.error('Trip ID가 필요합니다.');
+            return;
         }
+
+        const images = imagesWithLocationAndDate.map((image) => image.image);
+
+        setIsUploading(true);
+
+        postTripImages(tripId, images)
+            .then((message) => console.log('이미지 업로드 완료:', message))
+            .catch((error) => console.error('이미지 업로드 중 오류 발생:', error));
+
+        await new Promise<void>((resolve) => setTimeout(resolve, 1500));
+        setIsUploading(false);
+
+        if (imagesNoLocationWithDate.length) {
+            setIsGuideModalOpen(true);
+            return;
+        }
+
+        navigate(PATH.TRIP_NEW);
     };
 
     return {
         imageCount,
-        imagesWithLocation,
-        imagesNoLocation,
-        noDateImagesCount,
-        isGuideModalOpen,
-        isLoading,
+        imagesWithLocationAndDate,
+        imagesNoLocationWithDate,
+        imagesNoDate,
+        isProcessing,
         isUploading,
-        handleFileUpload,
-        uploadTripImages,
+        isGuideModalOpen,
+        handleImageProcess,
+        uploadImages,
+        setIsUploading,
         setIsGuideModalOpen,
     };
 };

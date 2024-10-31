@@ -4,7 +4,7 @@ import ImageGrid from '@/components/pages/addLocation/ImageGrid';
 import { formatDateToKorean } from '@/utils/date';
 
 interface ImageWithDate {
-    file: File;
+    image: File;
     formattedDate: string; // YYYY-MM-DD 형식
 }
 
