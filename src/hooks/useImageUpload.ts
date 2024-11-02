@@ -13,8 +13,8 @@ export const useImageUpload = () => {
     const [imagesWithLocationAndDate, setImagesWithLocationAndDate] = useState<ImageModel[]>([]);
     const [imagesNoLocationWithDate, setImagesNoLocationWithDate] = useState<ImageModel[]>([]);
     const [imagesNoDate, setImagesNoDate] = useState<ImageModel[]>([]);
-    const [isUploading, setIsUploading] = useState(false);
     const [isAlertModalOpen, setIsAlertModalModalOpen] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
     const [isInvalid, setIsInvalid] = useState(false);
     const [isAddLocationModalOpen, setIsAddLocationModalOpen] = useState(false);
 
@@ -121,7 +121,9 @@ export const useImageUpload = () => {
 
         try {
             const uniqueImages = removeDuplicateImages(images);
+            setIsProcessing(true);
             const extractedImages = await extractImageMetadata(uniqueImages);
+            setIsProcessing(false);
 
             const sortedImagesDates = extractedImages
                 .filter((image) => image.formattedDate)
@@ -140,6 +142,10 @@ export const useImageUpload = () => {
             setImagesNoLocationWithDate(imagesNoLocationWithDate);
             setImagesNoDate(imagesNoDate);
             setIsAlertModalModalOpen(true);
+
+            if (!imagesWithLocationAndDate.length && !imagesNoLocationWithDate.length) {
+                return;
+            }
 
             resizeAndUploadImages(imagesWithLocationAndDate, imagesNoLocationWithDate);
 
@@ -189,12 +195,12 @@ export const useImageUpload = () => {
         imagesWithLocationAndDate,
         imagesNoLocationWithDate,
         imagesNoDate,
+        isProcessing,
         isAlertModalOpen,
         isInvalid,
         isAddLocationModalOpen,
         setIsInvalid,
         setIsAlertModalModalOpen,
-        // isUploading,
         handleImageProcess,
         setIsAddLocationModalOpen,
     };

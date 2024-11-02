@@ -23,6 +23,7 @@ const TripFileUpload = () => {
         imagesWithLocationAndDate,
         imagesNoLocationWithDate,
         imagesNoDate,
+        isProcessing,
         isAlertModalOpen,
         isInvalid,
         isAddLocationModalOpen,
@@ -32,6 +33,8 @@ const TripFileUpload = () => {
         handleImageProcess,
         setIsAddLocationModalOpen,
     } = useImageUpload();
+
+    const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();
 
@@ -71,6 +74,7 @@ const TripFileUpload = () => {
             return;
         } else {
             setIsAlertModalModalOpen(false);
+            showToast('등록 가능한 사진이 없습니다.');
             setIsInvalid(true);
         }
     };
@@ -94,18 +98,21 @@ const TripFileUpload = () => {
                             css={fileInputStyle}
                             id='imageUpload'
                         />
-                        {!imageCount ? (
+                        {!isProcessing ? (
                             <label htmlFor='imageUpload' css={uploadLabelStyle}>
                                 <ImageUp size={32} />
                                 <span css={uploadedStyle}>{TRIP_IMAGES_UPLOAD.message}</span>
                             </label>
                         ) : (
                             <label htmlFor='imageUpload' css={uploadLabelStyle}>
-                                <Image size={32} />
-                                <h3 css={uploadedStyle}>
-                                    총 <span css={countStyle}>{imageCount}</span>개의 이미지를 선택하셨습니다.
-                                </h3>
+                                <h3 css={uploadedStyle}>사진에서 위치, 날짜 정보를 찾고 있습니다.</h3>
                             </label>
+                            // <label htmlFor='imageUpload' css={uploadLabelStyle}>
+                            //     <Image size={32} />
+                            //     <h3 css={uploadedStyle}>
+                            //         총 <span css={countStyle}>{imageCount}</span>개의 이미지를 선택하셨습니다.
+                            //     </h3>
+                            // </label>
                         )}
                     </div>
                     {/* {imageCount !== 0 && (
