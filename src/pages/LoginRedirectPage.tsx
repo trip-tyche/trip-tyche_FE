@@ -32,7 +32,7 @@ const LoginRedirectPage = () => {
 
     const setUserIdAndToken = () => {
         setLogin(JSON.parse(userId), token);
-        localStorage.setItem('lastLoginTime', new Date().getTime().toString());
+        // localStorage.setItem('lastLoginTime', new Date().getTime().toString());
         navigate(PATH.HOME, { replace: true });
     };
 

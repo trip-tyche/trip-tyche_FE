@@ -4,16 +4,14 @@ import loadingImage from '@/assets/images/flightLoading5.gif';
 import ModalOverlay from '@/components/common/modal/ModalOverlay';
 import theme from '@/styles/theme';
 
-const UPLOADING_MESSAGE = `새로운 추억의 조각들을 저장 중입니다..`;
+const UPLOADING_MESSAGE = `새로운 여행이 등록 중입니다..`;
 
-const UploadingSpinner = ({ imageCount }: { imageCount: number }) => (
+const UploadingSpinner = () => (
     <>
         <ModalOverlay />
         <div css={divStyle}>
             <img src={loadingImage} />
-            <p css={pStyle}>
-                {<span>{imageCount}</span>} 개의 {UPLOADING_MESSAGE}
-            </p>
+            <p css={pStyle}>{UPLOADING_MESSAGE}</p>
         </div>
     </>
 );
@@ -43,12 +41,6 @@ const pStyle = css`
     text-align: center;
     color: ${theme.colors.descriptionText};
     margin: 8px 0;
-
-    span {
-        font-size: 16px;
-        font-weight: 600;
-        color: ${theme.colors.primary};
-    }
 `;
 
 export default UploadingSpinner;

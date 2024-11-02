@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
 import { postTripInfo } from '@/api/trip';
 import { PATH } from '@/constants/path';
 import { useToastStore } from '@/stores/useToastStore';
+import { useUploadStore } from '@/stores/useUploadingStore';
 
 export const useTripForm = () => {
     const [tripTitle, setTripTitle] = useState('');
@@ -12,10 +13,13 @@ export const useTripForm = () => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [hashtags, setHashtags] = useState<string[]>([]);
+    const [isUploading, setIsUploading] = useState(false);
 
     const { showToast } = useToastStore();
 
     const navigate = useNavigate();
+
+    const { waitForCompletion, resetUpload } = useUploadStore();
 
     const handleSubmit = async () => {
         try {
@@ -23,27 +27,39 @@ export const useTripForm = () => {
             if (!tripId) {
                 return;
             }
-
             const response = await postTripInfo({ tripId, tripTitle, country, startDate, endDate, hashtags });
             console.log(response);
 
+            setIsUploading(true);
+
+            try {
+                await waitForCompletion(); // 업로드 완료될 때까지 대기
+            } catch (error) {
+                console.error('이미지 업로드 실패:', error);
+                return;
+            }
+
+            resetUpload();
             navigate(PATH.TRIP_LIST);
-            showToast('사진이 업로드되었습니다.');
+            showToast('새로운 여행이 등록되었습니다.');
         } catch (error) {
-            console.error('Error post trip-info:', error);
+            console.error('여행정보 등록 중 오류 발생', error);
+        } finally {
+            setIsUploading(false);
         }
     };
 
     return {
         tripTitle,
-        setTripTitle,
         country,
-        setCountry,
         startDate,
-        setStartDate,
         endDate,
-        setEndDate,
         hashtags,
+        isUploading,
+        setTripTitle,
+        setCountry,
+        setStartDate,
+        setEndDate,
         setHashtags,
         handleSubmit,
     };

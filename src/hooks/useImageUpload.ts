@@ -3,6 +3,7 @@ import { useState } from 'react';
 import imageCompression from 'browser-image-compression';
 
 import { postTripImages } from '@/api/trip';
+import { useUploadStore } from '@/stores/useUploadingStore';
 import { ImageModel } from '@/types/image';
 import { formatDateToYYYYMMDD } from '@/utils/date';
 import { getImageLocation, extractDateFromImage } from '@/utils/piexif';
@@ -16,6 +17,8 @@ export const useImageUpload = () => {
     const [isAlertModalOpen, setIsAlertModalModalOpen] = useState(false);
     const [isInvalid, setIsInvalid] = useState(false);
     const [isAddLocationModalOpen, setIsAddLocationModalOpen] = useState(false);
+
+    const setUploadStatus = useUploadStore((state) => state.setUploadStatus);
 
     const extractImageMetadata = async (images: FileList | null): Promise<ImageModel[]> => {
         if (!images || images.length === 0) {
@@ -158,8 +161,12 @@ export const useImageUpload = () => {
             return;
         }
 
-        const resizedImagesWithLocationAndDate = await resizeImage(imagesWithLocationAndDate);
-        const resizedImagesNoLocationWithDate = await resizeImage(imagesNoLocationWithDate);
+        setUploadStatus('pending');
+
+        const [resizedImagesWithLocationAndDate, resizedImagesNoLocationWithDate] = await Promise.all([
+            resizeImage(imagesWithLocationAndDate),
+            resizeImage(imagesNoLocationWithDate),
+        ]);
 
         setImagesWithLocationAndDate(resizedImagesWithLocationAndDate);
         setImagesNoLocationWithDate(resizedImagesNoLocationWithDate);
@@ -167,8 +174,14 @@ export const useImageUpload = () => {
         const images = resizedImagesWithLocationAndDate.map((image) => image.image);
 
         postTripImages(tripId, images)
-            .then((message) => console.log('이미지 업로드 완료:', message))
-            .catch((error) => console.error('이미지 업로드 중 오류 발생:', error));
+            .then((message) => {
+                console.log('이미지 업로드 완료:', message);
+                setUploadStatus('completed');
+            })
+            .catch((error) => {
+                console.error('이미지 업로드 중 오류 발생:', error);
+                setUploadStatus('error');
+            });
     };
 
     return {

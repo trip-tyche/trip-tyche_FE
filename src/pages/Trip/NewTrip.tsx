@@ -4,18 +4,16 @@ import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/button/Button';
-import GuideModal from '@/components/common/modal/GuideModal';
 import Header from '@/components/layout/Header';
+import UploadingSpinner from '@/components/pages/image-upload/UploadingSpinner';
 import TripForm from '@/components/pages/newTrip/TripForm';
 import { PATH } from '@/constants/path';
 import { BUTTON, PAGE } from '@/constants/title';
 import { useTripForm } from '@/hooks/useTripForm';
 import theme from '@/styles/theme';
-import { formatDateToKoreanYear } from '@/utils/date';
 
 const NewTrip = () => {
     const [isRequired, setIsRequired] = useState(false);
-    const [isOpenGuideModal, setIsOpenGuideModal] = useState(true);
 
     const {
         tripTitle,
@@ -23,6 +21,7 @@ const NewTrip = () => {
         startDate,
         endDate,
         hashtags,
+        isUploading,
         setTripTitle,
         setCountry,
         setStartDate,
@@ -33,22 +32,13 @@ const NewTrip = () => {
 
     const navigate = useNavigate();
 
-    // const earliestDate = localStorage.getItem('earliest-date');
-    // const latestDate = localStorage.getItem('latest-date');
+    const imageDates = localStorage.getItem('image-dates');
 
     useEffect(() => {
         if (tripTitle && country && startDate && endDate) {
             setIsRequired(true);
         }
     }, [tripTitle, country, startDate, endDate]);
-
-    const confirmGuideModal = () => {
-        setIsOpenGuideModal(false);
-    };
-
-    // if (!earliestDate || !latestDate) {
-    //     return;
-    // }
 
     return (
         <div css={containerStyle}>
@@ -72,40 +62,10 @@ const NewTrip = () => {
                 </div>
                 <Button text={BUTTON.NEXT} btnTheme='pri' size='lg' onClick={handleSubmit} disabled={!isRequired} />
             </main>
-            {/* {isOpenGuideModal && (
-                <GuideModal
-                    confirmText='맞습니다'
-                    cancelText='아닙니다'
-                    confirmModal={confirmGuideModal}
-                    closeModal={() => {
-                        setIsOpenGuideModal(false);
-                    }}
-                    isOverlay
-                >
-                    <div css={dateModalStyle}>
-                        <h1>시작일: {formatDateToKoreanYear(earliestDate)}</h1>
-                        <h1>종료일: {formatDateToKoreanYear(latestDate)}</h1>위 정보가 맞나요?
-                    </div>
-                </GuideModal>
-            )} */}
+            {isUploading && <UploadingSpinner />}
         </div>
     );
 };
-
-const dateModalStyle = css`
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-    width: 100%;
-    margin: 20px 0;
-
-    h1 {
-        font-size: 16px;
-        font-weight: 600;
-        color: ${theme.colors.black};
-    }
-`;
 
 const containerStyle = css`
     height: 100dvh;
