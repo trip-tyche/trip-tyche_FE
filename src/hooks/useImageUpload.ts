@@ -1,10 +1,8 @@
 import { useState } from 'react';
 
 import imageCompression from 'browser-image-compression';
-import { useNavigate } from 'react-router-dom';
 
 import { postTripImages } from '@/api/trip';
-import { PATH } from '@/constants/path';
 import { ImageModel } from '@/types/image';
 import { formatDateToYYYYMMDD } from '@/utils/date';
 import { getImageLocation, extractDateFromImage } from '@/utils/piexif';
@@ -12,28 +10,29 @@ import { getImageLocation, extractDateFromImage } from '@/utils/piexif';
 export const useImageUpload = () => {
     const [imageCount, setImagesCount] = useState(0);
     const [imagesWithLocationAndDate, setImagesWithLocationAndDate] = useState<ImageModel[]>([]);
-    const [imagesNoLocationWithDate, setImagesNoLocationWithDate] = useState<Omit<ImageModel, 'location'>[]>([]);
+    const [imagesNoLocationWithDate, setImagesNoLocationWithDate] = useState<ImageModel[]>([]);
     const [imagesNoDate, setImagesNoDate] = useState<ImageModel[]>([]);
-    const [isResizing, setIsResizing] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
-    const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
-
-    const navigate = useNavigate();
+    const [isAlertModalOpen, setIsAlertModalModalOpen] = useState(false);
+    const [isInvalid, setIsInvalid] = useState(false);
+    const [isAddLocationModalOpen, setIsAddLocationModalOpen] = useState(false);
 
     const extractImageMetadata = async (images: FileList | null): Promise<ImageModel[]> => {
         if (!images || images.length === 0) {
             return [];
         }
-        const extractStartTime = performance.now();
 
+        const extractStartTime = performance.now();
         const extractedImages = await Promise.all(
             Array.from(images).map(async (image) => {
                 const location = await getImageLocation(image);
                 const date = await extractDateFromImage(image);
                 let formattedDate = '';
+
                 if (date) {
                     formattedDate = formatDateToYYYYMMDD(date);
                 }
+
                 return {
                     image,
                     formattedDate,
@@ -41,6 +40,7 @@ export const useImageUpload = () => {
                 };
             }),
         );
+
         const extractEndTime = performance.now();
         console.log(`메타데이터 추출 시간: ${(extractEndTime - extractStartTime).toFixed(2)}ms`);
 
@@ -61,7 +61,6 @@ export const useImageUpload = () => {
         };
 
         const resizeStartTime = performance.now();
-
         const resizedImages = await Promise.all(
             extractedImages.map(async (extractedImage: ImageModel) => {
                 try {
@@ -96,78 +95,80 @@ export const useImageUpload = () => {
         return resizedImages;
     };
 
+    const removeDuplicateImages = (images: FileList): FileList => {
+        const imageMap = new Map();
+
+        Array.from(images).forEach((image) => {
+            imageMap.set(image.name, image);
+        });
+
+        const dataTransfer = new DataTransfer();
+
+        imageMap.values().forEach((image: File) => {
+            dataTransfer.items.add(image);
+        });
+
+        return dataTransfer.files;
+    };
+
     const handleImageProcess = async (images: FileList | null) => {
         if (!images) {
             return;
         }
 
         try {
-            const extractedImages = await extractImageMetadata(images);
+            const uniqueImages = removeDuplicateImages(images);
+            const extractedImages = await extractImageMetadata(uniqueImages);
+
             const sortedImagesDates = extractedImages
                 .filter((image) => image.formattedDate)
                 .map((image) => image.formattedDate)
                 .sort();
 
-            if (sortedImagesDates.length > 0) {
-                const earliestDate = sortedImagesDates[0];
-                const latestDate = sortedImagesDates[sortedImagesDates.length - 1];
+            const uniqueSortedImagesDates = [...new Set(sortedImagesDates)];
+            localStorage.setItem('image-date', JSON.stringify(uniqueSortedImagesDates));
 
-                localStorage.setItem('earliest-date', earliestDate);
-                localStorage.setItem('latest-date', latestDate);
-                console.log(`시작일: ${earliestDate} / 종료일: ${latestDate}`);
-            }
-
-            setIsResizing(true);
-
-            const resizedImages = await resizeImage(extractedImages);
-
-            const imagesWithLocationAndDate = resizedImages.filter((image) => image.location && image.formattedDate);
-            const imagesNoLocationWithDate = resizedImages.filter((image) => !image.location && image.formattedDate);
-            const imagesNoDate = resizedImages.filter((image) => !image.formattedDate);
+            const imagesWithLocationAndDate = extractedImages.filter((image) => image.location && image.formattedDate);
+            const imagesNoLocationWithDate = extractedImages.filter((image) => !image.location && image.formattedDate);
+            const imagesNoDate = extractedImages.filter((image) => !image.formattedDate);
 
             setImagesCount(images.length);
             setImagesWithLocationAndDate(imagesWithLocationAndDate);
             setImagesNoLocationWithDate(imagesNoLocationWithDate);
             setImagesNoDate(imagesNoDate);
+            setIsAlertModalModalOpen(true);
+
+            resizeAndUploadImages(imagesWithLocationAndDate, imagesNoLocationWithDate);
 
             console.log('위치 ✅ / 날짜 ✅:', imagesWithLocationAndDate);
             console.log('위치 ⛔️ / 날짜 ✅:', imagesNoLocationWithDate);
             console.log('날짜 ⛔️:', imagesNoDate);
-
-            setIsResizing(false);
         } catch (error) {
             console.error('이미지 처리 중 오류 발생', error);
-            setIsResizing(false);
-        } finally {
-            setIsResizing(false);
         }
     };
 
-    const uploadImages = async () => {
+    const resizeAndUploadImages = async (
+        imagesWithLocationAndDate: ImageModel[],
+        imagesNoLocationWithDate: ImageModel[],
+    ) => {
         const tripId = localStorage.getItem('tripId');
-
         if (!tripId) {
             console.error('Trip ID가 필요합니다.');
             return;
         }
 
-        const images = imagesWithLocationAndDate.map((image) => image.image);
+        const resizedImagesWithLocationAndDate = await resizeImage(imagesWithLocationAndDate);
+        const resizedImagesNoLocationWithDate = await resizeImage(imagesNoLocationWithDate);
 
-        // setIsUploading(true);
+        setImagesWithLocationAndDate(resizedImagesWithLocationAndDate);
+        setImagesNoLocationWithDate(resizedImagesNoLocationWithDate);
+
+        const images = resizedImagesWithLocationAndDate.map((image) => image.image);
 
         postTripImages(tripId, images)
             .then((message) => console.log('이미지 업로드 완료:', message))
             .catch((error) => console.error('이미지 업로드 중 오류 발생:', error));
-
-        // await new Promise<void>((resolve) => setTimeout(resolve, 1500));
-        // setIsUploading(false);
-
-        if (imagesNoLocationWithDate.length) {
-            setIsGuideModalOpen(true);
-            return;
-        }
-
-        navigate(PATH.TRIP_NEW);
     };
 
     return {
@@ -175,12 +176,13 @@ export const useImageUpload = () => {
         imagesWithLocationAndDate,
         imagesNoLocationWithDate,
         imagesNoDate,
-        isResizing,
-        isUploading,
-        isGuideModalOpen,
+        isAlertModalOpen,
+        isInvalid,
+        isAddLocationModalOpen,
+        setIsInvalid,
+        setIsAlertModalModalOpen,
+        // isUploading,
         handleImageProcess,
-        uploadImages,
-        setIsResizing,
-        setIsGuideModalOpen,
+        setIsAddLocationModalOpen,
     };
 };

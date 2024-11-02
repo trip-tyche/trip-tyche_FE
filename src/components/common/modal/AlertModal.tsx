@@ -1,38 +1,29 @@
-import React from 'react';
-
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/button/Button';
 import ModalOverlay from '@/components/common/modal/ModalOverlay';
 
-interface GuideModalProps {
-    confirmText: string;
-    cancelText: string;
-    confirmModal?: () => void;
+interface AlertModalProps {
+    buttonText: string;
     closeModal?: () => void;
     isOverlay?: boolean;
     children: React.ReactNode;
 }
 
-const GuideModal: React.FC<GuideModalProps> = ({
-    confirmText,
-    cancelText,
-    confirmModal,
-    closeModal,
-    isOverlay = false,
-    children,
-}) => (
-    <>
-        {isOverlay && <ModalOverlay />}
-        <div css={modalStyle}>
-            <div css={contentStyle}>{children}</div>
-            <div css={buttonContainer}>
-                <Button text={cancelText} btnTheme='sec' size='lg' onClick={closeModal} />
-                <Button text={confirmText} btnTheme='pri' size='lg' onClick={confirmModal} />
+const AlertModal = ({ buttonText, closeModal, isOverlay = false, children }: AlertModalProps) => {
+    const a = 1;
+    return (
+        <>
+            {isOverlay && <ModalOverlay />}
+            <div css={modalStyle}>
+                <div css={contentStyle}>{children}</div>
+                <div css={buttonContainer}>
+                    <Button text={buttonText} btnTheme='pri' size='lg' onClick={closeModal} />
+                </div>
             </div>
-        </div>
-    </>
-);
+        </>
+    );
+};
 
 const modalStyle = css`
     width: 100vw;
@@ -62,4 +53,4 @@ const buttonContainer = css`
     gap: 8px;
 `;
 
-export default GuideModal;
+export default AlertModal;

@@ -1,20 +1,21 @@
+import { useEffect } from 'react';
+
 import { css } from '@emotion/react';
 import { ImageUp, Image } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/button/Button';
+import AlertModal from '@/components/common/modal/AlertModal';
 import GuideModal from '@/components/common/modal/GuideModal';
 import Toast from '@/components/common/Toast';
 import Header from '@/components/layout/Header';
 import NoDataImageContent from '@/components/pages/image-upload/NoDataImageContent';
-import ResizingSpinner from '@/components/pages/image-upload/ResizingSpinner';
-// import UploadingSpinner from '@/components/pages/image-upload/UploadingSpinner';
 import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
 import { useImageUpload } from '@/hooks/useImageUpload';
+import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
-import { formatDateToKoreanYear } from '@/utils/date';
 
 const TripFileUpload = () => {
     const {
@@ -22,19 +23,28 @@ const TripFileUpload = () => {
         imagesWithLocationAndDate,
         imagesNoLocationWithDate,
         imagesNoDate,
-        isResizing,
+        isAlertModalOpen,
+        isInvalid,
+        isAddLocationModalOpen,
+        setIsInvalid,
+        setIsAlertModalModalOpen,
         // isUploading,
-        isGuideModalOpen,
         handleImageProcess,
-        uploadImages,
-        // setIsResizing,
-        setIsGuideModalOpen,
+        setIsAddLocationModalOpen,
     } = useImageUpload();
 
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const tripId = localStorage.getItem('tripId');
+        if (!tripId) {
+            navigate(PATH.TRIP_LIST);
+            return;
+        }
+    }, []);
+
     const navigateToImageLocation = () => {
-        setIsGuideModalOpen(false);
+        setIsAddLocationModalOpen(false);
 
         if (imagesWithLocationAndDate.length !== 0) {
             const defaultLocation = imagesWithLocationAndDate[0].location;
@@ -46,12 +56,24 @@ const TripFileUpload = () => {
     };
 
     const navigateToTripInfo = () => {
-        setIsGuideModalOpen(false);
+        setIsAddLocationModalOpen(false);
         navigate(PATH.TRIP_NEW);
     };
 
-    const earliestDate = formatDateToKoreanYear(localStorage.getItem('earliest-date')) || '';
-    const latestDate = formatDateToKoreanYear(localStorage.getItem('latest-date')) || '';
+    const closeAlertModal = () => {
+        if (imagesNoLocationWithDate.length) {
+            setIsAlertModalModalOpen(false);
+            setIsAddLocationModalOpen(true);
+            return;
+        } else if (imagesWithLocationAndDate.length) {
+            setIsAlertModalModalOpen(false);
+            navigate(PATH.TRIP_NEW);
+            return;
+        } else {
+            setIsAlertModalModalOpen(false);
+            setIsInvalid(true);
+        }
+    };
 
     return (
         <div css={containerStyle}>
@@ -61,6 +83,7 @@ const TripFileUpload = () => {
                     <h4>[사진 등록 가이드]</h4>
                     <p>1. 위치 정보가 없는 사진은 직접 위치를 등록하실 수 있습니다.</p>
                     <p>2. 날짜 정보가 없는 사진은 등록하실 수 없습니다.</p>
+                    <p>3. 중복된 사진들의 경우, 1장으로 등록됩니다.</p>
 
                     <div css={uploadAreaStyle}>
                         <input
@@ -85,16 +108,16 @@ const TripFileUpload = () => {
                             </label>
                         )}
                     </div>
-                    {imageCount !== 0 && (
+                    {/* {imageCount !== 0 && (
                         <>
                             <h4>{`${imageCount} 개의 이미지 중,`}</h4>
                             <p>등록 가능 사진 : {imagesWithLocationAndDate.length} 개</p>
                             <p>위치 정보 ❎ : {imagesNoLocationWithDate.length} 개 (직접 등록 가능)</p>
                             <p>날짜 정보 ❎ : {imagesNoDate.length} 개</p>
                         </>
-                    )}
+                    )} */}
                 </section>
-                <Button
+                {/* <Button
                     text='등록하기'
                     btnTheme='pri'
                     size='lg'
@@ -105,14 +128,23 @@ const TripFileUpload = () => {
                             imagesWithLocationAndDate.length === 0 &&
                             imagesNoLocationWithDate.length === 0)
                     }
-                />
+                /> */}
             </main>
-            {isResizing && <ResizingSpinner earliestDate={earliestDate} latestDate={latestDate} />}
-            {/* {isUploading && <UploadingSpinner imageCount={imagesWithLocationAndDate.length} />} */}
-            {isGuideModalOpen && (
+            {/* {isResizing && <ResizingSpinner earliestDate={earliestDate} latestDate={latestDate} />} */}
+            {isAlertModalOpen && (
+                <AlertModal buttonText='다음' closeModal={closeAlertModal} isOverlay>
+                    <div>
+                        <h4>{`${imageCount} 개의 이미지 중,`}</h4>
+                        <p>등록 가능 사진 : {imagesWithLocationAndDate.length} 개</p>
+                        <p>위치 정보 ❎ : {imagesNoLocationWithDate.length} 개 (직접 등록 가능)</p>
+                        <p>날짜 정보 ❎ : {imagesNoDate.length} 개</p>
+                    </div>
+                </AlertModal>
+            )}
+            {isAddLocationModalOpen && (
                 <GuideModal
-                    confirmText='다음'
-                    cancelText='취소'
+                    confirmText='등록하기'
+                    cancelText='건너뛰기'
                     confirmModal={navigateToImageLocation}
                     closeModal={navigateToTripInfo}
                     isOverlay
@@ -124,21 +156,6 @@ const TripFileUpload = () => {
         </div>
     );
 };
-
-const dateModalStyle = css`
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-    width: 100%;
-    margin: 20px 0;
-
-    h1 {
-        font-size: 16px;
-        font-weight: 600;
-        color: ${theme.colors.black};
-    }
-`;
 
 const countStyle = css`
     font-size: 18px;
