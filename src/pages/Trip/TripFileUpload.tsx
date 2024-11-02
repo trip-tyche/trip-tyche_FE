@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 
 import { css } from '@emotion/react';
-import { ImageUp, Image } from 'lucide-react';
+import { ImageUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { ClipLoader } from 'react-spinners';
 
-import Button from '@/components/common/button/Button';
 import AlertModal from '@/components/common/modal/AlertModal';
 import GuideModal from '@/components/common/modal/GuideModal';
 import Toast from '@/components/common/Toast';
 import Header from '@/components/layout/Header';
-import NoDataImageContent from '@/components/pages/image-upload/NoDataImageContent';
+import ModalContent from '@/components/pages/image-upload/ModalContent';
 import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
@@ -23,15 +23,15 @@ const TripFileUpload = () => {
         imagesWithLocationAndDate,
         imagesNoLocationWithDate,
         imagesNoDate,
-        isProcessing,
+        isExtracting,
+        isResizing,
+        resizingProgress,
         isAlertModalOpen,
-        isInvalid,
         isAddLocationModalOpen,
-        setIsInvalid,
         setIsAlertModalModalOpen,
-        // isUploading,
         handleImageProcess,
         setIsAddLocationModalOpen,
+        uploadImages,
     } = useImageUpload();
 
     const showToast = useToastStore((state) => state.showToast);
@@ -66,16 +66,17 @@ const TripFileUpload = () => {
     const closeAlertModal = () => {
         if (imagesNoLocationWithDate.length) {
             setIsAlertModalModalOpen(false);
+            uploadImages(imagesWithLocationAndDate);
             setIsAddLocationModalOpen(true);
             return;
         } else if (imagesWithLocationAndDate.length) {
             setIsAlertModalModalOpen(false);
+            uploadImages(imagesWithLocationAndDate);
             navigate(PATH.TRIP_NEW);
             return;
         } else {
             setIsAlertModalModalOpen(false);
             showToast('등록 가능한 사진이 없습니다.');
-            setIsInvalid(true);
         }
     };
 
@@ -98,71 +99,78 @@ const TripFileUpload = () => {
                             css={fileInputStyle}
                             id='imageUpload'
                         />
-                        {!isProcessing ? (
+                        {!isExtracting ? (
                             <label htmlFor='imageUpload' css={uploadLabelStyle}>
                                 <ImageUp size={32} />
                                 <span css={uploadedStyle}>{TRIP_IMAGES_UPLOAD.message}</span>
                             </label>
                         ) : (
                             <label htmlFor='imageUpload' css={uploadLabelStyle}>
+                                <ClipLoader color='#5e5e5e' size={25} speedMultiplier={0.7} />
                                 <h3 css={uploadedStyle}>사진에서 위치, 날짜 정보를 찾고 있습니다.</h3>
                             </label>
-                            // <label htmlFor='imageUpload' css={uploadLabelStyle}>
-                            //     <Image size={32} />
-                            //     <h3 css={uploadedStyle}>
-                            //         총 <span css={countStyle}>{imageCount}</span>개의 이미지를 선택하셨습니다.
-                            //     </h3>
-                            // </label>
                         )}
                     </div>
-                    {/* {imageCount !== 0 && (
-                        <>
-                            <h4>{`${imageCount} 개의 이미지 중,`}</h4>
-                            <p>등록 가능 사진 : {imagesWithLocationAndDate.length} 개</p>
-                            <p>위치 정보 ❎ : {imagesNoLocationWithDate.length} 개 (직접 등록 가능)</p>
-                            <p>날짜 정보 ❎ : {imagesNoDate.length} 개</p>
-                        </>
-                    )} */}
                 </section>
-                {/* <Button
-                    text='등록하기'
-                    btnTheme='pri'
-                    size='lg'
-                    onClick={uploadImages}
-                    disabled={
-                        imageCount === 0 ||
-                        (imagesNoLocationWithDate.length === 0 &&
-                            imagesWithLocationAndDate.length === 0 &&
-                            imagesNoLocationWithDate.length === 0)
-                    }
-                /> */}
             </main>
-            {/* {isResizing && <ResizingSpinner earliestDate={earliestDate} latestDate={latestDate} />} */}
             {isAlertModalOpen && (
-                <AlertModal buttonText='다음' closeModal={closeAlertModal} isOverlay>
-                    <div>
-                        <h4>{`${imageCount} 개의 이미지 중,`}</h4>
-                        <p>등록 가능 사진 : {imagesWithLocationAndDate.length} 개</p>
-                        <p>위치 정보 ❎ : {imagesNoLocationWithDate.length} 개 (직접 등록 가능)</p>
-                        <p>날짜 정보 ❎ : {imagesNoDate.length} 개</p>
+                <AlertModal
+                    buttonText='사진 등록하기'
+                    closeModal={closeAlertModal}
+                    isOverlay
+                    isDisable={isResizing}
+                    progress={resizingProgress}
+                >
+                    <div css={alertStyle}>
+                        <h1>
+                            총 <span css={countStyle}>{imageCount}</span> 개의 이미지를 선택했습니다.
+                        </h1>
+                        <div>
+                            <p>등록 가능한 사진 ✅ : {imagesWithLocationAndDate.length} 개</p>
+                            <p>위치정보가 없어요 ✳️ : {imagesNoLocationWithDate.length} 개</p>
+                            <p>날짜정보가 없어요 ❌ : {imagesNoDate.length} 개</p>
+                        </div>
                     </div>
                 </AlertModal>
             )}
             {isAddLocationModalOpen && (
                 <GuideModal
-                    confirmText='등록하기'
+                    confirmText='설정하기'
                     cancelText='건너뛰기'
                     confirmModal={navigateToImageLocation}
                     closeModal={navigateToTripInfo}
                     isOverlay
                 >
-                    <NoDataImageContent noLocationCount={imagesNoLocationWithDate.length} />
+                    <ModalContent noLocationImageCount={imagesNoLocationWithDate.length} />
                 </GuideModal>
             )}
             <Toast />
         </div>
     );
 };
+
+const alertStyle = css`
+    h1 {
+        text-align: center;
+        font-size: 18px;
+        font-weight: 600;
+        color: #181818;
+        margin-top: 24px;
+        margin-bottom: 20px;
+    }
+
+    div {
+        font-size: 16px;
+        margin: 0 26px 38px 26px;
+        text-align: center;
+        color: ${theme.colors.descriptionText};
+        line-height: 20px;
+    }
+
+    p {
+        margin-top: 12px;
+    }
+`;
 
 const countStyle = css`
     font-size: 18px;

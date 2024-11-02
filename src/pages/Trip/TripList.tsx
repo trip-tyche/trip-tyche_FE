@@ -140,6 +140,7 @@ const TripList = (): JSX.Element => {
 const containerStyle = css`
     position: relative;
     height: 100dvh;
+    overflow: auto;
 `;
 
 const loadingWrapper = css`

@@ -36,7 +36,7 @@ const GuideModal: React.FC<GuideModalProps> = ({
 
 const modalStyle = css`
     width: 100vw;
-    max-width: 360px;
+    max-width: 320px;
     position: fixed;
     top: 50%;
     left: 50%;

@@ -1,8 +1,8 @@
 export const PAGE = {
     TRIP_LIST: '추억 티켓',
-    NEW_TRIP: '여행 정보',
+    NEW_TRIP: '여행 정보 입력',
     TRIP_EDIT: '여행 수정',
-    UPLOAD_IMAGES: '사진 등록',
+    UPLOAD_IMAGES: '여행 사진 등록',
     ADD_LOCATION: '위치 등록',
 };
 

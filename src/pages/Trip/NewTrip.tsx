@@ -10,7 +10,6 @@ import TripForm from '@/components/pages/newTrip/TripForm';
 import { PATH } from '@/constants/path';
 import { BUTTON, PAGE } from '@/constants/title';
 import { useTripForm } from '@/hooks/useTripForm';
-import theme from '@/styles/theme';
 
 const NewTrip = () => {
     const [isRequired, setIsRequired] = useState(false);

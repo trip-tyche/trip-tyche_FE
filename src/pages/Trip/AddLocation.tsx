@@ -89,8 +89,6 @@ const AddLocation = () => {
         navigate(PATH.TRIP_NEW);
     };
 
-    // console.log(groupedImages);
-
     return (
         <div css={containerStyle}>
             <div>
@@ -102,9 +100,9 @@ const AddLocation = () => {
                             toggleImageSelect={toggleImageSelect}
                         />
                         <div css={buttonWrapper}>
-                            <Button text='홈으로 가기' btnTheme='sec' size='lg' onClick={navigateToTripInfo} />
+                            <Button text='건너뛰고 계속하기' btnTheme='sec' size='lg' onClick={navigateToTripInfo} />
                             <Button
-                                text='지도에서 위치 선택하기'
+                                text='위치 설정하기'
                                 btnTheme='pri'
                                 size='lg'
                                 onClick={handleSetLocationOnMap}
@@ -116,7 +114,7 @@ const AddLocation = () => {
                     <section css={sectionStyle}>
                         <div css={mapButtonWrapper}>
                             <Button
-                                text='위치 등록하기'
+                                text='선택한 위치 등록하기'
                                 btnTheme='pri'
                                 size='lg'
                                 onClick={handleImageUploadWithLocation}

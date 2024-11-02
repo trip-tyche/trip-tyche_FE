@@ -1,19 +1,19 @@
 import { css } from '@emotion/react';
 
-import mapImage from '@/assets/images/map-image.png';
+import mapImage from '@/assets/images/add-location-image.png';
 import theme from '@/styles/theme';
 
-interface noDataImagesCountProps {
-    noLocationCount: number;
+interface ModalContentProps {
+    noLocationImageCount: number;
 }
 
 const TITLE = ' 개의 사진이 위치 정보가 없습니다 😢';
 const DESCRIPTION = '위 사진과 같이 직접 위치를 설정할 수 있습니다.';
 
-const NoDataImageContent: React.FC<noDataImagesCountProps> = ({ noLocationCount }) => (
+const ModalContent = ({ noLocationImageCount }: ModalContentProps) => (
     <div css={contentContainer}>
         <h1 css={titleStyle}>
-            <span css={countStyle}>{noLocationCount}</span>
+            <span css={countStyle}>{noLocationImageCount}</span>
             {TITLE}
         </h1>
         <img css={imageStyle} src={mapImage} alt='map-image' />
@@ -54,4 +54,4 @@ const imageStyle = css`
     border-radius: 12px;
 `;
 
-export default NoDataImageContent;
+export default ModalContent;

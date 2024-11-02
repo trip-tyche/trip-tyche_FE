@@ -18,6 +18,6 @@ export const TRIP = {
 };
 
 export const TRIP_IMAGES_UPLOAD = {
-    title: '여행 이미지를 등록해주세요.',
-    message: '이미지를 업로드해주세요.',
+    // title: '여행 이미지를 등록해주세요.',
+    message: '사진을 업로드해주세요.',
 };

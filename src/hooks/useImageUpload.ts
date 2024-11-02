@@ -9,16 +9,36 @@ import { formatDateToYYYYMMDD } from '@/utils/date';
 import { getImageLocation, extractDateFromImage } from '@/utils/piexif';
 
 export const useImageUpload = () => {
+    const totalImages = 0;
+    const completedImages = 0;
+
     const [imageCount, setImagesCount] = useState(0);
     const [imagesWithLocationAndDate, setImagesWithLocationAndDate] = useState<ImageModel[]>([]);
     const [imagesNoLocationWithDate, setImagesNoLocationWithDate] = useState<ImageModel[]>([]);
     const [imagesNoDate, setImagesNoDate] = useState<ImageModel[]>([]);
     const [isAlertModalOpen, setIsAlertModalModalOpen] = useState(false);
-    const [isProcessing, setIsProcessing] = useState(false);
-    const [isInvalid, setIsInvalid] = useState(false);
+    const [isExtracting, setIsExtracting] = useState(false);
+    const [isResizing, setIsResizing] = useState(false);
+    const [resizingProgress, setResizingProgress] = useState(0);
     const [isAddLocationModalOpen, setIsAddLocationModalOpen] = useState(false);
 
     const setUploadStatus = useUploadStore((state) => state.setUploadStatus);
+
+    const removeDuplicateImages = (images: FileList): FileList => {
+        const imageMap = new Map();
+
+        Array.from(images).forEach((image) => {
+            imageMap.set(image.name, image);
+        });
+
+        const dataTransfer = new DataTransfer();
+
+        imageMap.values().forEach((image: File) => {
+            dataTransfer.items.add(image);
+        });
+
+        return dataTransfer.files;
+    };
 
     const extractImageMetadata = async (images: FileList | null): Promise<ImageModel[]> => {
         if (!images || images.length === 0) {
@@ -50,68 +70,112 @@ export const useImageUpload = () => {
         return extractedImages;
     };
 
-    const resizeImage = async (extractedImages: ImageModel[] | null): Promise<ImageModel[]> => {
+    // const resizeImage = async (extractedImages: ImageModel[] | null): Promise<ImageModel[]> => {
+    //     if (!extractedImages || extractedImages.length === 0) {
+    //         return [];
+    //     }
+
+    //     const compressionOptions = {
+    //         maxWidthOrHeight: 1284,
+    //         initialQuality: 0.8,
+    //         useWebWorker: true,
+    //         preserveExif: true,
+    //         fileType: 'image/jpeg',
+    //     };
+
+    //     const resizeStartTime = performance.now();
+    //     const resizedImages = await Promise.all(
+    //         extractedImages.map(async (extractedImage: ImageModel) => {
+    //             try {
+    //                 const resizedBlob = await imageCompression(extractedImage.image, compressionOptions);
+
+    //                 const resizedFile = new File([resizedBlob], extractedImage.image.name, {
+    //                     type: compressionOptions.fileType,
+    //                     lastModified: extractedImage.image.lastModified,
+    //                 });
+
+    //                 // 진행된 이미지 수 증가 및 진행률 계산
+    //                 completedImages++;
+    //                 const currentProgress = Math.round((completedImages / totalImages) * 100);
+    //                 setResizingProgress(currentProgress);
+
+    //                 // console.log(`${extractedImage.image.name} 변환 결과:`, {
+    //                 //     originalSize: `${(extractedImage.image.size / (1024 * 1024)).toFixed(2)}MB`,
+    //                 //     convertedSize: `${(resizedBlob.size / (1024 * 1024)).toFixed(2)}MB`,
+    //                 //     format: compressionOptions.fileType,
+    //                 // });
+
+    //                 return {
+    //                     image: resizedFile,
+    //                     formattedDate: extractedImage.formattedDate,
+    //                     location: extractedImage.location,
+    //                 };
+    //             } catch (error) {
+    //                 completedImages++; // 에러 시에도 진행 수 증가
+    //                 const currentProgress = Math.round((completedImages / totalImages) * 100);
+    //                 setResizingProgress(currentProgress);
+    //                 return extractedImage;
+    //                 // console.error(`리사이징에 실패한 이미지: ${extractedImage.image.name}`, error);
+    //             }
+    //         }),
+    //     );
+
+    //     const resizeEndTime = performance.now();
+    //     console.log(`리사이징 시간: ${(resizeEndTime - resizeStartTime).toFixed(2)}ms`);
+
+    //     return resizedImages;
+    // };
+    const resizeImage = async (
+        extractedImages: ImageModel[] | null,
+        progressRange: { start: number; end: number },
+    ): Promise<ImageModel[]> => {
         if (!extractedImages || extractedImages.length === 0) {
             return [];
         }
 
         const compressionOptions = {
-            maxWidthOrHeight: 856,
-            initialQuality: 0.9,
+            maxWidthOrHeight: 1284,
+            initialQuality: 0.8,
             useWebWorker: true,
             preserveExif: true,
             fileType: 'image/jpeg',
         };
 
-        const resizeStartTime = performance.now();
-        const resizedImages = await Promise.all(
-            extractedImages.map(async (extractedImage: ImageModel) => {
-                try {
-                    const resizedBlob = await imageCompression(extractedImage.image, compressionOptions);
+        const resizedImages: ImageModel[] = [];
+        const batchSize = 3;
+        const progressSpan = progressRange.end - progressRange.start;
 
-                    const resizedFile = new File([resizedBlob], extractedImage.image.name, {
-                        type: compressionOptions.fileType,
-                        lastModified: extractedImage.image.lastModified,
-                    });
+        for (let i = 0; i < extractedImages.length; i += batchSize) {
+            const batch = extractedImages.slice(i, i + batchSize);
 
-                    // console.log(`${extractedImage.image.name} 변환 결과:`, {
-                    //     originalSize: `${(extractedImage.image.size / (1024 * 1024)).toFixed(2)}MB`,
-                    //     convertedSize: `${(resizedBlob.size / (1024 * 1024)).toFixed(2)}MB`,
-                    //     format: compressionOptions.fileType,
-                    // });
+            const batchResults = await Promise.all(
+                batch.map(async (extractedImage: ImageModel) => {
+                    try {
+                        const resizedBlob = await imageCompression(extractedImage.image, compressionOptions);
+                        const resizedFile = new File([resizedBlob], extractedImage.image.name, {
+                            type: compressionOptions.fileType,
+                            lastModified: extractedImage.image.lastModified,
+                        });
 
-                    return {
-                        image: resizedFile,
-                        formattedDate: extractedImage.formattedDate,
-                        location: extractedImage.location,
-                    };
-                } catch (error) {
-                    return extractedImage;
-                    // console.error(`리사이징에 실패한 이미지: ${extractedImage.image.name}`, error);
-                }
-            }),
-        );
+                        return {
+                            image: resizedFile,
+                            formattedDate: extractedImage.formattedDate,
+                            location: extractedImage.location,
+                        };
+                    } catch (error) {
+                        return extractedImage;
+                    }
+                }),
+            );
 
-        const resizeEndTime = performance.now();
-        console.log(`리사이징 시간: ${(resizeEndTime - resizeStartTime).toFixed(2)}ms`);
+            resizedImages.push(...batchResults);
+
+            // 현재 진행률 계산
+            const batchProgress = ((i + batch.length) / extractedImages.length) * progressSpan;
+            setResizingProgress(Math.round(progressRange.start + batchProgress));
+        }
 
         return resizedImages;
-    };
-
-    const removeDuplicateImages = (images: FileList): FileList => {
-        const imageMap = new Map();
-
-        Array.from(images).forEach((image) => {
-            imageMap.set(image.name, image);
-        });
-
-        const dataTransfer = new DataTransfer();
-
-        imageMap.values().forEach((image: File) => {
-            dataTransfer.items.add(image);
-        });
-
-        return dataTransfer.files;
     };
 
     const handleImageProcess = async (images: FileList | null) => {
@@ -121,9 +185,9 @@ export const useImageUpload = () => {
 
         try {
             const uniqueImages = removeDuplicateImages(images);
-            setIsProcessing(true);
+            setIsExtracting(true);
             const extractedImages = await extractImageMetadata(uniqueImages);
-            setIsProcessing(false);
+            setIsExtracting(false);
 
             const sortedImagesDates = extractedImages
                 .filter((image) => image.formattedDate)
@@ -147,7 +211,48 @@ export const useImageUpload = () => {
                 return;
             }
 
-            resizeAndUploadImages(imagesWithLocationAndDate, imagesNoLocationWithDate);
+            // setIsResizing(true);
+            // setResizingProgress(0); // 진행률 초기화
+            // completedImages = 0; // 완료 이미지 수 초기화
+
+            // // 전체 이미지 개수 계산
+            // totalImages = (imagesWithLocationAndDate?.length || 0) + (imagesNoLocationWithDate?.length || 0);
+
+            // const [resizedImagesWithLocationAndDate, resizedImagesNoLocationWithDate] = await Promise.all([
+            //     resizeImage(imagesWithLocationAndDate),
+            //     resizeImage(imagesNoLocationWithDate),
+            // ]);
+            // setIsResizing(false);
+            // setResizingProgress(0); // 진행률 리셋
+
+            // setImagesWithLocationAndDate(resizedImagesWithLocationAndDate);
+            // setImagesNoLocationWithDate(resizedImagesNoLocationWithDate);
+
+            setIsResizing(true);
+            setResizingProgress(0);
+
+            // 존재하는 이미지 그룹에 따라 진행률 범위 설정
+            let resizedWithLocation, resizedNoLocation;
+
+            if (imagesWithLocationAndDate.length && imagesNoLocationWithDate.length) {
+                // 두 그룹 모두 있는 경우
+                [resizedWithLocation, resizedNoLocation] = await Promise.all([
+                    resizeImage(imagesWithLocationAndDate, { start: 0, end: 50 }),
+                    resizeImage(imagesNoLocationWithDate, { start: 50, end: 100 }),
+                ]);
+            } else if (imagesWithLocationAndDate.length) {
+                // 위치 있는 이미지만 있는 경우
+                resizedWithLocation = await resizeImage(imagesWithLocationAndDate, { start: 0, end: 100 });
+            } else if (imagesNoLocationWithDate.length) {
+                // 위치 없는 이미지만 있는 경우
+                resizedNoLocation = await resizeImage(imagesNoLocationWithDate, { start: 0, end: 100 });
+            }
+
+            setIsResizing(false);
+            setResizingProgress(0);
+
+            setImagesWithLocationAndDate(resizedWithLocation || []);
+            setImagesNoLocationWithDate(resizedNoLocation || []);
 
             console.log('위치 ✅ / 날짜 ✅:', imagesWithLocationAndDate);
             console.log('위치 ⛔️ / 날짜 ✅:', imagesNoLocationWithDate);
@@ -157,10 +262,7 @@ export const useImageUpload = () => {
         }
     };
 
-    const resizeAndUploadImages = async (
-        imagesWithLocationAndDate: ImageModel[],
-        imagesNoLocationWithDate: ImageModel[],
-    ) => {
+    const uploadImages = async (images: ImageModel[]) => {
         const tripId = localStorage.getItem('tripId');
         if (!tripId) {
             console.error('Trip ID가 필요합니다.');
@@ -169,17 +271,9 @@ export const useImageUpload = () => {
 
         setUploadStatus('pending');
 
-        const [resizedImagesWithLocationAndDate, resizedImagesNoLocationWithDate] = await Promise.all([
-            resizeImage(imagesWithLocationAndDate),
-            resizeImage(imagesNoLocationWithDate),
-        ]);
+        const imagesToUpload = images.map((image) => image.image);
 
-        setImagesWithLocationAndDate(resizedImagesWithLocationAndDate);
-        setImagesNoLocationWithDate(resizedImagesNoLocationWithDate);
-
-        const images = resizedImagesWithLocationAndDate.map((image) => image.image);
-
-        postTripImages(tripId, images)
+        postTripImages(tripId, imagesToUpload)
             .then((message) => {
                 console.log('이미지 업로드 완료:', message);
                 setUploadStatus('completed');
@@ -195,13 +289,14 @@ export const useImageUpload = () => {
         imagesWithLocationAndDate,
         imagesNoLocationWithDate,
         imagesNoDate,
-        isProcessing,
+        isExtracting,
+        isResizing,
+        resizingProgress,
         isAlertModalOpen,
-        isInvalid,
         isAddLocationModalOpen,
-        setIsInvalid,
         setIsAlertModalModalOpen,
         handleImageProcess,
         setIsAddLocationModalOpen,
+        uploadImages,
     };
 };
