@@ -13,6 +13,7 @@ export interface TripFormData {
     country: string;
     startDate: string;
     endDate: string;
+    imageDates?: string[];
     hashtags: string[];
 }
 

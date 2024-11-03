@@ -9,9 +9,6 @@ import { formatDateToYYYYMMDD } from '@/utils/date';
 import { getImageLocation, extractDateFromImage } from '@/utils/piexif';
 
 export const useImageUpload = () => {
-    const totalImages = 0;
-    const completedImages = 0;
-
     const [imageCount, setImagesCount] = useState(0);
     const [imagesWithLocationAndDate, setImagesWithLocationAndDate] = useState<ImageModel[]>([]);
     const [imagesNoLocationWithDate, setImagesNoLocationWithDate] = useState<ImageModel[]>([]);
@@ -33,9 +30,6 @@ export const useImageUpload = () => {
 
         const dataTransfer = new DataTransfer();
 
-        // imageMap.values().forEach((image: File) => {
-        //     dataTransfer.items.add(image);
-        // });
         Array.from(imageMap.values()).forEach((image: File) => {
             dataTransfer.items.add(image);
         });

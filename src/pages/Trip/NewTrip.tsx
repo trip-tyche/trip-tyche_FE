@@ -8,7 +8,7 @@ import Header from '@/components/layout/Header';
 import UploadingSpinner from '@/components/pages/image-upload/UploadingSpinner';
 import TripForm from '@/components/pages/newTrip/TripForm';
 import { PATH } from '@/constants/path';
-import { BUTTON, PAGE } from '@/constants/title';
+import { PAGE } from '@/constants/title';
 import { useTripForm } from '@/hooks/useTripForm';
 
 const NewTrip = () => {
@@ -31,7 +31,7 @@ const NewTrip = () => {
 
     const navigate = useNavigate();
 
-    const imageDates = localStorage.getItem('image-dates');
+    const imageDates = JSON.parse(localStorage.getItem('image-date') || '');
 
     useEffect(() => {
         if (tripTitle && country && startDate && endDate) {
@@ -51,6 +51,7 @@ const NewTrip = () => {
                         country={country}
                         startDate={startDate}
                         endDate={endDate}
+                        imageDates={imageDates}
                         hashtags={hashtags}
                         setTripTitle={setTripTitle}
                         setCountry={setCountry}
@@ -59,7 +60,7 @@ const NewTrip = () => {
                         setHashtags={setHashtags}
                     />
                 </div>
-                <Button text={BUTTON.NEXT} btnTheme='pri' size='lg' onClick={handleSubmit} disabled={!isRequired} />
+                <Button text='등록하기' btnTheme='pri' size='lg' onClick={handleSubmit} disabled={!isRequired} />
             </main>
             {isUploading && <UploadingSpinner />}
         </div>
