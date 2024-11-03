@@ -33,7 +33,10 @@ export const useImageUpload = () => {
 
         const dataTransfer = new DataTransfer();
 
-        imageMap.values().forEach((image: File) => {
+        // imageMap.values().forEach((image: File) => {
+        //     dataTransfer.items.add(image);
+        // });
+        Array.from(imageMap.values()).forEach((image: File) => {
             dataTransfer.items.add(image);
         });
 
@@ -259,6 +262,8 @@ export const useImageUpload = () => {
             console.log('날짜 ⛔️:', imagesNoDate);
         } catch (error) {
             console.error('이미지 처리 중 오류 발생', error);
+            setIsExtracting(false);
+            setIsResizing(false);
         }
     };
 
