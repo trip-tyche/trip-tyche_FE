@@ -48,6 +48,7 @@ import { ImageModel } from '@/types/image';
 
 const AddLocation = () => {
     const {
+        tripId,
         displayedImages,
         selectedImages,
         selectedLocation,
@@ -86,7 +87,7 @@ const AddLocation = () => {
     };
 
     const navigateToTripInfo = () => {
-        navigate(PATH.TRIP_NEW);
+        navigate(`${PATH.TRIP_NEW}/${tripId}`);
     };
 
     return (

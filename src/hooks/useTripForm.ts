@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { postTripInfo } from '@/api/trip';
 import { PATH } from '@/constants/path';
@@ -18,12 +18,12 @@ export const useTripForm = () => {
     const { showToast } = useToastStore();
 
     const navigate = useNavigate();
+    const { tripId } = useParams();
 
     const { waitForCompletion, resetUpload } = useUploadStore();
 
     const handleSubmit = async () => {
         try {
-            const tripId = localStorage.getItem('tripId');
             if (!tripId) {
                 return;
             }

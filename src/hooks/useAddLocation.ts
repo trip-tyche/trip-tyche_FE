@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import piexif from 'piexifjs';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { postTripImages } from '@/api/trip';
 import { PATH } from '@/constants/path';
@@ -17,6 +17,7 @@ export const useAddLocation = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
+    const { tripId } = useParams();
 
     useEffect(() => {
         const { imagesNoLocationWithDate } = location.state;
@@ -90,7 +91,6 @@ export const useAddLocation = () => {
 
     const uploadImages = async (images: Omit<ImageModel, 'location'>[]) => {
         try {
-            const tripId = localStorage.getItem('tripId');
             if (!tripId) {
                 return;
             }
@@ -109,6 +109,7 @@ export const useAddLocation = () => {
     };
 
     return {
+        tripId,
         displayedImages,
         selectedImages,
         selectedLocation,

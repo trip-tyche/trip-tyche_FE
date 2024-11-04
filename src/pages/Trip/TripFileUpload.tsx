@@ -1,8 +1,6 @@
-import { useEffect } from 'react';
-
 import { css } from '@emotion/react';
 import { ImageUp } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 
 import AlertModal from '@/components/common/modal/AlertModal';
@@ -19,6 +17,7 @@ import theme from '@/styles/theme';
 
 const TripFileUpload = () => {
     const {
+        tripId,
         imageCount,
         imagesWithLocationAndDate,
         imagesNoLocationWithDate,
@@ -38,29 +37,25 @@ const TripFileUpload = () => {
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const tripId = localStorage.getItem('tripId');
-        if (!tripId) {
-            navigate(PATH.TRIP_LIST);
-            return;
-        }
-    }, []);
-
     const navigateToImageLocation = () => {
         setIsAddLocationModalOpen(false);
 
         if (imagesWithLocationAndDate.length !== 0) {
             const defaultLocation = imagesWithLocationAndDate[0].location;
-            navigate(PATH.TRIP_UPLOAD_ADD_LOCATION, { state: { defaultLocation, imagesNoLocationWithDate } });
+            navigate(`${PATH.TRIP_UPLOAD_ADD_LOCATION}/${tripId}`, {
+                state: { defaultLocation, imagesNoLocationWithDate },
+            });
         } else {
             const defaultLocation = { latitude: 37.5665, longitude: 126.978 };
-            navigate(PATH.TRIP_UPLOAD_ADD_LOCATION, { state: { defaultLocation, imagesNoLocationWithDate } });
+            navigate(`${PATH.TRIP_UPLOAD_ADD_LOCATION}/${tripId}`, {
+                state: { defaultLocation, imagesNoLocationWithDate },
+            });
         }
     };
 
     const navigateToTripInfo = () => {
         setIsAddLocationModalOpen(false);
-        navigate(PATH.TRIP_NEW);
+        navigate(`${PATH.TRIP_NEW}/${tripId}`);
     };
 
     const closeAlertModal = () => {
@@ -72,7 +67,7 @@ const TripFileUpload = () => {
         } else if (imagesWithLocationAndDate.length) {
             setIsAlertModalModalOpen(false);
             uploadImages(imagesWithLocationAndDate);
-            navigate(PATH.TRIP_NEW);
+            navigate(`${PATH.TRIP_NEW}/${tripId}`);
             return;
         } else {
             setIsAlertModalModalOpen(false);

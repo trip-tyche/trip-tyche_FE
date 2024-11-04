@@ -82,9 +82,7 @@ const TripList = (): JSX.Element => {
 
     const handleTicketCreate = async () => {
         const { tripId } = await createTripId();
-        localStorage.setItem('tripId', tripId);
-
-        navigate(PATH.TRIP_UPLOAD);
+        navigate(`${PATH.TRIP_UPLOAD}/${tripId}`);
     };
 
     return (

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import imageCompression from 'browser-image-compression';
+import { useParams } from 'react-router-dom';
 
 import { postTripImages } from '@/api/trip';
 import { useUploadStore } from '@/stores/useUploadingStore';
@@ -20,6 +21,8 @@ export const useImageUpload = () => {
     const [isAddLocationModalOpen, setIsAddLocationModalOpen] = useState(false);
 
     const setUploadStatus = useUploadStore((state) => state.setUploadStatus);
+
+    const { tripId } = useParams();
 
     const removeDuplicateImages = (images: FileList): FileList => {
         const imageMap = new Map();
@@ -262,7 +265,6 @@ export const useImageUpload = () => {
     };
 
     const uploadImages = async (images: ImageModel[]) => {
-        const tripId = localStorage.getItem('tripId');
         if (!tripId) {
             console.error('Trip ID가 필요합니다.');
             return;
@@ -284,6 +286,7 @@ export const useImageUpload = () => {
     };
 
     return {
+        tripId,
         imageCount,
         imagesWithLocationAndDate,
         imagesNoLocationWithDate,
