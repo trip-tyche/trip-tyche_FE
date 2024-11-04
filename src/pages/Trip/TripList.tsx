@@ -43,11 +43,11 @@ const TripList = (): JSX.Element => {
                     return;
                 }
 
+                console.log(tripList.trips);
+
                 // if (tripList.some((trip) => trip.tripTitle === 'N/A')) {
                 //     await deleteInValidTrips(tripList);
                 // }
-
-                console.log(tripList);
 
                 setUserNickname(tripList.userNickName);
                 setTripList(tripList.trips);
