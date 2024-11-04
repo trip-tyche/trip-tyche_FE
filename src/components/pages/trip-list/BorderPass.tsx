@@ -11,6 +11,7 @@ import characterImg from '/public/ogami_1.png';
 
 import ConfirmModal from '@/components/common/modal/ConfirmModal';
 import { PATH } from '@/constants/path';
+import { useEditingStore } from '@/stores/useEditingStore';
 import theme from '@/styles/theme';
 import { FormattedTripDate } from '@/types/trip';
 import { formatDate } from '@/utils/date';
@@ -25,11 +26,15 @@ interface BorderPassProps {
 const BorderPass = ({ trip, userNickname, setTripCount, setIsDelete }: BorderPassProps): JSX.Element => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
+
+    const setIsEditing = useEditingStore((state) => state.setIsEditing);
+
     const navigate = useNavigate();
     const { tripId, tripTitle, country, startDate, endDate, hashtags } = trip;
 
     const handleEdit = (e: React.MouseEvent) => {
         e.stopPropagation();
+        setIsEditing(true);
         navigate(`/trips/${tripId}/edit`);
     };
 
@@ -48,17 +53,8 @@ const BorderPass = ({ trip, userNickname, setTripCount, setIsDelete }: BorderPas
 
     const goToUpload = (e: React.MouseEvent) => {
         e.stopPropagation();
-
-        const formattedStartDate = formatDate(startDate);
-        const formattedEndDate = formatDate(endDate);
-        // navigate(PATH.TRIP_UPLOAD, { state: tripId, startDate, endDate });
-        navigate(PATH.TRIP_UPLOAD, {
-            state: {
-                tripId,
-                startDate: formattedStartDate,
-                endDate: formattedEndDate,
-            },
-        });
+        setIsEditing(true);
+        navigate(`${PATH.TRIP_UPLOAD}/${tripId}`);
     };
 
     const handleCardClick = () => {

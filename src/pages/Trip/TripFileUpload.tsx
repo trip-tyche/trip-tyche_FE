@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { ImageUp } from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 
 import AlertModal from '@/components/common/modal/AlertModal';
@@ -12,6 +12,7 @@ import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
 import { useImageUpload } from '@/hooks/useImageUpload';
+import { useEditingStore } from '@/stores/useEditingStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 
@@ -34,6 +35,7 @@ const TripFileUpload = () => {
     } = useImageUpload();
 
     const showToast = useToastStore((state) => state.showToast);
+    const { isEditing, setIsEditing } = useEditingStore();
 
     const navigate = useNavigate();
 
@@ -54,8 +56,14 @@ const TripFileUpload = () => {
     };
 
     const navigateToTripInfo = () => {
-        setIsAddLocationModalOpen(false);
-        navigate(`${PATH.TRIP_NEW}/${tripId}`);
+        if (isEditing) {
+            navigate(`${PATH.TRIP_LIST}`);
+            showToast(`${imagesWithLocationAndDate.length}장의 사진이 등록되었습니다.`);
+            setIsEditing(false);
+        } else {
+            setIsAddLocationModalOpen(false);
+            navigate(`${PATH.TRIP_NEW}/${tripId}`);
+        }
     };
 
     const closeAlertModal = () => {
@@ -67,7 +75,15 @@ const TripFileUpload = () => {
         } else if (imagesWithLocationAndDate.length) {
             setIsAlertModalModalOpen(false);
             uploadImages(imagesWithLocationAndDate);
-            navigate(`${PATH.TRIP_NEW}/${tripId}`);
+
+            if (isEditing) {
+                navigate(`${PATH.TRIP_LIST}`);
+                showToast(`${imagesWithLocationAndDate.length}장의 사진이 등록되었습니다.`);
+                setIsEditing(false);
+            } else {
+                navigate(`${PATH.TRIP_NEW}/${tripId}`);
+            }
+
             return;
         } else {
             setIsAlertModalModalOpen(false);

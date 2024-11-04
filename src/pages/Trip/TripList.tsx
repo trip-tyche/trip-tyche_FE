@@ -5,7 +5,7 @@ import { TicketsPlane } from 'lucide-react';
 import { LuPlus } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 
-import { createTripId, getTripList } from '@/api/trip';
+import { createTripId, deleteTripInfo, getTripList } from '@/api/trip';
 import Button from '@/components/common/button/Button';
 import Loading from '@/components/common/Loading';
 import Toast from '@/components/common/Toast';
@@ -19,7 +19,7 @@ import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
 import { formatTripDate } from '@/utils/date';
 
-const TripList = (): JSX.Element => {
+const TripList = () => {
     const [userNickname, setUserNickname] = useState<string>('');
     const [tripList, setTripList] = useState<Trip[]>([]);
     const [tripCount, setTripCount] = useState(0);
@@ -45,9 +45,9 @@ const TripList = (): JSX.Element => {
 
                 console.log(tripList.trips);
 
-                // if (tripList.some((trip) => trip.tripTitle === 'N/A')) {
-                //     await deleteInValidTrips(tripList);
-                // }
+                if (tripList.trips.some((trip) => trip.tripTitle === 'N/A')) {
+                    await deleteInValidTrips(tripList.trips);
+                }
 
                 setUserNickname(tripList.userNickName);
                 setTripList(tripList.trips);
@@ -68,13 +68,13 @@ const TripList = (): JSX.Element => {
         fetchTripList();
     }, [isDelete, showToast, navigate]);
 
-    // const deleteInValidTrips = async (trips: Trip[]) => {
-    //     const deletePromises = trips
-    //         .filter((trip) => trip.tripTitle === 'N/A')
-    //         .map((trip) => deleteTripInfo(trip.tripId));
+    const deleteInValidTrips = async (trips: Trip[]) => {
+        const deletePromises = trips
+            .filter((trip) => trip.tripTitle === 'N/A')
+            .map((trip) => deleteTripInfo(trip.tripId));
 
-    //     return await Promise.allSettled(deletePromises);
-    // };
+        return await Promise.allSettled(deletePromises);
+    };
 
     if (isLoading) {
         <Loading />;

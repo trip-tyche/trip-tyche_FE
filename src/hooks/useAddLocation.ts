@@ -5,6 +5,8 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { postTripImages } from '@/api/trip';
 import { PATH } from '@/constants/path';
+import { useEditingStore } from '@/stores/useEditingStore';
+import { useToastStore } from '@/stores/useToastStore';
 import { GpsData, ImageModel, LocationType } from '@/types/image';
 import { createGpsExif, insertExifIntoJpeg, readFileAsDataURL } from '@/utils/piexif';
 
@@ -14,6 +16,9 @@ export const useAddLocation = () => {
     const [selectedLocation, setSelectedLocation] = useState<LocationType>(null);
     const [isMapVisible, setIsMapVisible] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
+
+    const showToast = useToastStore((state) => state.showToast);
+    const { isEditing, setIsEditing } = useEditingStore();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -59,8 +64,14 @@ export const useAddLocation = () => {
         );
 
         if (updatedDisplayedImages.length === 0) {
-            navigate(PATH.TRIP_NEW);
-            return;
+            if (isEditing) {
+                navigate(`${PATH.TRIP_LIST}`);
+                showToast(`사진이 등록되었습니다.`);
+                setIsEditing(false);
+            } else {
+                navigate(`${PATH.TRIP_NEW}/${tripId}`);
+                return;
+            }
         }
 
         setDisplayedImages(updatedDisplayedImages);

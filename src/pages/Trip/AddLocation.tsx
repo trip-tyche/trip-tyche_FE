@@ -9,6 +9,8 @@ import DateGroupedImageList from '@/components/pages/addLocation/DateGroupedImag
 import Map from '@/components/pages/addLocation/Map';
 import { PATH } from '@/constants/path';
 import { useAddLocation } from '@/hooks/useAddLocation';
+import { useEditingStore } from '@/stores/useEditingStore';
+import { useToastStore } from '@/stores/useToastStore';
 import { ImageModel } from '@/types/image';
 
 // const AddLocation = () => {
@@ -47,6 +49,9 @@ import { ImageModel } from '@/types/image';
 //                             </div>
 
 const AddLocation = () => {
+    const showToast = useToastStore((state) => state.showToast);
+    const { isEditing, setIsEditing } = useEditingStore();
+
     const {
         tripId,
         displayedImages,
@@ -87,7 +92,13 @@ const AddLocation = () => {
     };
 
     const navigateToTripInfo = () => {
-        navigate(`${PATH.TRIP_NEW}/${tripId}`);
+        if (isEditing) {
+            navigate(`${PATH.TRIP_LIST}`);
+            showToast(`사진이 등록되었습니다.`);
+            setIsEditing(false);
+        } else {
+            navigate(`${PATH.TRIP_NEW}/${tripId}`);
+        }
     };
 
     return (

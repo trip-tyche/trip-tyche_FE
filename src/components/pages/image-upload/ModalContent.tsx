@@ -7,7 +7,7 @@ interface ModalContentProps {
     noLocationImageCount: number;
 }
 
-const TITLE = ' 개의 사진이 위치 정보가 없습니다 😢';
+const TITLE = ' 장의 사진이 위치 정보가 없습니다 😢';
 const DESCRIPTION = '위 사진과 같이 직접 위치를 설정할 수 있습니다.';
 
 const ModalContent = ({ noLocationImageCount }: ModalContentProps) => (
