@@ -18,7 +18,7 @@ import useTimelineStore from '@/stores/useTimelineStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { PinPoint, TripInfo } from '@/types/trip';
-import { formatDateToKorean, getDayNumber } from '@/utils/date';
+import { getDayNumber } from '@/utils/date';
 
 const MOVE_DURATION = 3000;
 const WAIT_DURATION = 3000;
@@ -48,6 +48,7 @@ const TimelineMap = () => {
     const [currentZoom, setCurrentZoom] = useState(INITIAL_ZOOM_SCALE);
     const [selectedMarker, setSelectedMarker] = useState<PinPoint | null>(null);
     const [isMapInteractive, setIsMapInteractive] = useState(true);
+    const [mapLoaded, setMapLoaded] = useState(false);
 
     const { showToast } = useToastStore();
     const { currentPinPointId, setCurrentPinPointId } = useTimelineStore();
@@ -90,6 +91,32 @@ const TimelineMap = () => {
             setIsLoading(false);
         }
     }, [tripId, navigate]);
+
+    // 맵 로드 핸들러 추가
+    const handleMapLoad = (map: google.maps.Map) => {
+        mapRef.current = map;
+        setMapLoaded(true);
+
+        // 리사이즈 이벤트 리스너 추가
+        google.maps.event.addListener(map, 'resize', () => {
+            if (characterPosition) {
+                map.panTo(characterPosition);
+            }
+        });
+    };
+
+    // 포토카드 오프셋 계산 함수
+    const getPhotoCardOffset = useCallback(
+        (_width: number, _height: number) => {
+            if (!mapLoaded) return { x: 0, y: 0 };
+
+            return {
+                x: -PHOTO_CARD_WIDTH / 2,
+                y: -(PHOTO_CARD_HEIGHT + 75),
+            };
+        },
+        [mapLoaded],
+    );
 
     useEffect(() => {
         fetchTripMapData();
@@ -452,10 +479,11 @@ const TimelineMap = () => {
                             <OverlayView
                                 position={{ lat: point.latitude, lng: point.longitude }}
                                 mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                                getPixelPositionOffset={(_width, _height) => ({
-                                    x: -PHOTO_CARD_WIDTH / 2,
-                                    y: -(PHOTO_CARD_HEIGHT + 75),
-                                })}
+                                // getPixelPositionOffset={(_width, _height) => ({
+                                //     x: -PHOTO_CARD_WIDTH / 2,
+                                //     y: -(PHOTO_CARD_HEIGHT + 75),
+                                // })}
+                                getPixelPositionOffset={getPhotoCardOffset}
                             >
                                 <div
                                     css={photoCardStyle(index === currentPinIndex && isAtPin)}
@@ -550,9 +578,10 @@ const TimelineMap = () => {
                         center={characterPosition || undefined}
                         zoom={INITIAL_ZOOM_SCALE}
                         options={mapOptions}
-                        onLoad={(map) => {
-                            mapRef.current = map;
-                        }}
+                        // onLoad={(map) => {
+                        //     mapRef.current = map;
+                        // }}
+                        onLoad={handleMapLoad}
                         onZoomChanged={handleZoomChanged}
                         onClick={() => setSelectedMarker(null)}
                     >
