@@ -23,11 +23,9 @@ const TripList = () => {
     const [userNickname, setUserNickname] = useState<string>('');
     const [tripList, setTripList] = useState<Trip[]>([]);
     const [tripCount, setTripCount] = useState(0);
-    const [isDelete, setIsDelete] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const { showToast } = useToastStore();
-
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -49,10 +47,11 @@ const TripList = () => {
                     await deleteInValidTrips(tripList.trips);
                 }
 
+                const validTripList = tripList.trips?.filter((trip) => trip.tripTitle !== 'N/A');
+
                 setUserNickname(tripList.userNickName);
-                setTripList(tripList.trips);
-                setTripCount(tripList.trips?.filter((trip) => trip.tripTitle !== 'N/A').length);
-                setIsDelete(false);
+                setTripList(validTripList);
+                setTripCount(validTripList.length);
             } catch (error) {
                 console.error('Error fetching trip-list data:', error);
                 setIsLoading(false);
@@ -66,7 +65,7 @@ const TripList = () => {
         localStorage.removeItem('latest-date');
 
         fetchTripList();
-    }, [isDelete, showToast, navigate]);
+    }, []);
 
     const deleteInValidTrips = async (trips: Trip[]) => {
         const deletePromises = trips
@@ -75,6 +74,8 @@ const TripList = () => {
 
         return await Promise.allSettled(deletePromises);
     };
+
+    // console.log(tripCount);
 
     if (isLoading) {
         <Loading />;
@@ -113,17 +114,14 @@ const TripList = () => {
                     </div>
                     {tripCount > 0 ? (
                         <div css={tripListStyle}>
-                            {formatTripDate(tripList)
-                                ?.filter((trip) => trip.tripTitle !== 'N/A')
-                                .map((trip) => (
-                                    <BorderPass
-                                        key={trip.tripId}
-                                        trip={trip}
-                                        userNickname={userNickname}
-                                        setTripCount={setTripCount}
-                                        setIsDelete={setIsDelete}
-                                    />
-                                ))}
+                            {formatTripDate(tripList).map((trip) => (
+                                <BorderPass
+                                    key={trip.tripId}
+                                    trip={trip}
+                                    userNickname={userNickname}
+                                    setTripCount={setTripCount}
+                                />
+                            ))}
                         </div>
                     ) : (
                         <p css={noTripListStyle}>{TRIP.NO_TRIP}</p>

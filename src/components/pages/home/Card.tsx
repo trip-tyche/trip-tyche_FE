@@ -1,41 +1,35 @@
 import { css } from '@emotion/react';
 
 import theme from '@/styles/theme';
-import { Trip } from '@/types/trip';
 
 interface CardProps {
-    trips: Trip[] | undefined;
+    tripCount: number | undefined;
 }
 
-const Card = ({ trips }: CardProps): JSX.Element => {
-    const counties = trips?.map((trip) => trip.country);
-    const uniqueCounties = [...new Set(counties)].filter((country) => country !== 'N/A');
-
-    return (
-        <div className='home-trips' css={CardStyle}>
-            {uniqueCounties?.length ? (
-                <>
-                    <h3>지금까지 여행한 국가는</h3>
-                    <h3>
-                        <span>{uniqueCounties?.length}</span> 군데입니다.
-                    </h3>
-                </>
-            ) : (
-                <h3>아직 등록된 여행 국가가 없네요 😆</h3>
-            )}
-            {uniqueCounties?.length ? (
-                <div className='home-flags'>
-                    {uniqueCounties?.map((country, index) => <span key={index}>{country.slice(0, 4)}</span>)}
-                </div>
-            ) : (
-                <>
-                    <p css={subtitleStyle}>보더패스에서 새로운 여행을 등록해주세요!</p>
-                    {/* <div className='home-flags'>🇰🇷 🇯🇵 🇰🇷 🇯🇵 </div> */}
-                </>
-            )}
-        </div>
-    );
-};
+const Card = ({ tripCount }: CardProps) => (
+    <div className='home-trips' css={CardStyle}>
+        {tripCount ? (
+            <>
+                <h3>지금까지 여행한 국가는</h3>
+                <h3>
+                    <span>{tripCount}</span> 군데입니다.
+                </h3>
+            </>
+        ) : (
+            <h3>아직 등록된 여행 국가가 없네요 😆</h3>
+        )}
+    </div>
+);
+// {uniqueCounties?.length ? (
+//     <div className='home-flags'>
+//         {uniqueCounties?.map((country, index) => <span key={index}>{country.slice(0, 4)}</span>)}
+//     </div>
+// ) : (
+//     <>
+//         <p css={subtitleStyle}>보더패스에서 새로운 여행을 등록해주세요!</p>
+//         {/* <div className='home-flags'>🇰🇷 🇯🇵 🇰🇷 🇯🇵 </div> */}
+//     </>
+// )}
 
 export default Card;
 

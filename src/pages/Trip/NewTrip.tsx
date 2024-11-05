@@ -15,6 +15,7 @@ const NewTrip = () => {
     const [isRequired, setIsRequired] = useState(false);
 
     const {
+        tripId,
         tripTitle,
         country,
         startDate,
@@ -42,7 +43,7 @@ const NewTrip = () => {
     return (
         <div css={containerStyle}>
             <div>
-                <Header title={PAGE.NEW_TRIP} isBackButton onBack={() => navigate(PATH.TRIP_UPLOAD)} />
+                <Header title={PAGE.NEW_TRIP} isBackButton onBack={() => navigate(`${PATH.TRIP_UPLOAD}/${tripId}`)} />
             </div>
             <main css={mainStyle}>
                 <div css={tripFormWrapper}>

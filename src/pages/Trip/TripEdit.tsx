@@ -3,12 +3,11 @@ import { css } from '@emotion/react';
 import Button from '@/components/common/button/Button';
 import Loading from '@/components/common/Loading';
 import Header from '@/components/layout/Header';
-import TripForm from '@/components/pages/newTrip/TripForm';
 import TripEditForm from '@/components/pages/tripEdit/TripEditForm';
 import { BUTTON, PAGE } from '@/constants/title';
 import { useTripEditForm } from '@/hooks/useTripEditForm';
 
-const TripEdit = (): JSX.Element => {
+const TripEdit = () => {
     const { tripData, isLoading, handleInputChange, handleHashtagToggle, handleUpdateTripInfo } = useTripEditForm();
 
     if (isLoading)

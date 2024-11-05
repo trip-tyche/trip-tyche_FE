@@ -161,10 +161,12 @@ export const postTripImages = async (tripId: string, images: File[]) => {
 
 export const deleteTripInfo = async (tripId: string) => {
     try {
+        const token = getToken();
         const response = await axios.delete(`${apiBaseUrl}/api/trips/${tripId}`, {
             headers: {
                 accept: '*/*',
                 Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
             },
         });
         return response.data;

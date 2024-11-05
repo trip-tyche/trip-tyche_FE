@@ -20,10 +20,9 @@ interface BorderPassProps {
     trip: FormattedTripDate;
     userNickname: string;
     setTripCount: React.Dispatch<React.SetStateAction<number>>;
-    setIsDelete: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const BorderPass = ({ trip, userNickname, setTripCount, setIsDelete }: BorderPassProps): JSX.Element => {
+const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.Element => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
 
@@ -41,8 +40,6 @@ const BorderPass = ({ trip, userNickname, setTripCount, setIsDelete }: BorderPas
     const handleDelete = async () => {
         try {
             await deleteTripInfo(tripId);
-            setIsModalOpen(false);
-            setIsDelete(true);
             setTripCount((prev: number) => prev - 1);
         } catch (error) {
             console.error('Error delete trip:', error);
@@ -51,7 +48,7 @@ const BorderPass = ({ trip, userNickname, setTripCount, setIsDelete }: BorderPas
         }
     };
 
-    const goToUpload = (e: React.MouseEvent) => {
+    const navigateToImageUpload = (e: React.MouseEvent) => {
         e.stopPropagation();
         setIsEditing(true);
         navigate(`${PATH.TRIP_UPLOAD}/${tripId}`);
@@ -113,7 +110,7 @@ const BorderPass = ({ trip, userNickname, setTripCount, setIsDelete }: BorderPas
                         </div>
                     </div>
                     <div css={buttonContainer}>
-                        <button css={buttonStyle} onClick={goToUpload}>
+                        <button css={buttonStyle} onClick={navigateToImageUpload}>
                             <FiPlus /> Upload
                         </button>
                         <button css={buttonStyle} onClick={handleEdit}>

@@ -4,6 +4,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { getTripData, updateTripInfo } from '@/api/trip';
 import { PATH } from '@/constants/path';
+import { useEditingStore } from '@/stores/useEditingStore';
+import { useToastStore } from '@/stores/useToastStore';
 import { TripFormData } from '@/types/trip';
 
 export const useTripEditForm = () => {
@@ -15,6 +17,9 @@ export const useTripEditForm = () => {
         hashtags: [],
     });
     const [isLoading, setIsLoading] = useState(true);
+
+    const setIsEditing = useEditingStore((state) => state.setIsEditing);
+    const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();
     const { tripId } = useParams<{ tripId: string }>();
@@ -82,9 +87,11 @@ export const useTripEditForm = () => {
             if (tripId) {
                 await updateTripInfo(tripId, tripData);
                 navigate(PATH.TRIP_LIST);
+                showToast('여행 정보가 수정되었습니다.');
+                setIsEditing(false);
             }
         } catch (error) {
-            console.error('Error update trip data:', error);
+            console.error('여행정보 수정 중 오류', error);
         }
     };
 

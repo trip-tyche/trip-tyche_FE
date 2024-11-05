@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -27,6 +27,7 @@ export const useTripForm = () => {
             if (!tripId) {
                 return;
             }
+
             const response = await postTripInfo({ tripId, tripTitle, country, startDate, endDate, hashtags });
             console.log(response);
 
@@ -60,6 +61,7 @@ export const useTripForm = () => {
     // 위치 지도 구글맵 로딩스피너 지금 왼쪽 위
 
     return {
+        tripId,
         tripTitle,
         country,
         startDate,

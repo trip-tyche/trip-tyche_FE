@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import { css } from '@emotion/react';
 import { TextInput, Select, Button, Stack, Box, Group, Text } from '@mantine/core';
@@ -154,10 +154,11 @@ const TripForm = ({
                     onMouseLeave={handleDateMouseLeave}
                     leftSection={<IconCalendar size={16} />}
                     locale='ko'
+                    aria-hidden='false'
                     size='md'
                     valueFormat='YYYY년 MM월 DD일'
                     popoverProps={{
-                        // width: 'target',
+                        width: 'target',
                         position: 'bottom',
                     }}
                     getDayProps={(date) => ({

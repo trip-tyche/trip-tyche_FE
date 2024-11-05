@@ -1,8 +1,8 @@
-import { PinPoint, Trip } from '@/types/trip';
+import { PinPoint } from '@/types/trip';
 
 export interface UserInfo {
     readonly userId: string;
     userNickName: string;
-    trips: Trip[];
+    trips: number;
     pinPoints: PinPoint[];
 }

@@ -13,12 +13,11 @@ import Card from '@/components/pages/home/Card';
 import { NICKNAME_MODAL } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import theme from '@/styles/theme';
-import { Trip } from '@/types/trip';
 import { getToken, getUserId } from '@/utils/auth';
 
 const Home = () => {
     const [userNickName, setUserNickName] = useState<string>('TripTyche');
-    const [userTrips, setUserTrips] = useState<Trip[]>();
+    const [tripCount, setTripCount] = useState<number>();
     const [inputValue, setInputValue] = useState('');
     const [isOpenInputModal, setIsOpenInputModal] = useState(false);
 
@@ -43,7 +42,7 @@ const Home = () => {
             } else {
                 localStorage.setItem('userNickName', userNickName);
                 setUserNickName(userNickName);
-                setUserTrips(trips);
+                setTripCount(trips);
             }
         } catch (error) {
             console.error('Error fetching user data:', error);
@@ -66,7 +65,7 @@ const Home = () => {
                 <User css={userIconStyle} onClick={() => navigate(PATH.MYPAGE)} />
             </div>
             <div css={cardWrapperStyle}>
-                <Card trips={userTrips} />
+                <Card tripCount={tripCount} />
             </div>
             <div css={contentStyle}>
                 <div css={userStyle}>

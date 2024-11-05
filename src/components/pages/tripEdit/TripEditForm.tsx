@@ -182,13 +182,15 @@
 
 import React from 'react';
 
+import { css } from '@emotion/react';
 import { TextInput, Select, Button, Stack, Box, Group, Text } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { IconPlane, IconCalendar, IconWorld } from '@tabler/icons-react';
 import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
 
-import { COUNTRY_OPTIONS, HASHTAG_MENU } from '@/constants/trip';
+import { COUNTRY_OPTIONS, HASHTAG_MENU, NEW_COUNTRY } from '@/constants/trip';
+import theme from '@/styles/theme';
 import { TripInfo } from '@/types/trip';
 
 interface TripEditFormProps {
@@ -198,51 +200,60 @@ interface TripEditFormProps {
 }
 
 const TripEditForm = ({ tripData, handleInputChange, handleHashtagToggle }: TripEditFormProps): JSX.Element => {
+    const { country, endDate, startDate, tripTitle, hashtags } = tripData;
+
     const countryData = COUNTRY_OPTIONS.map((country) => ({
         value: `${country.emoji} ${country.name}`,
         label: `${country.emoji} ${country.name}`,
     }));
 
-    const handleDateChange = (dates: [Date | null, Date | null]) => {
-        const [start, end] = dates;
-        if (start) {
-            handleInputChange({
-                target: { name: 'startDate', value: dayjs(start).format('YYYY-MM-DD') },
-            } as React.ChangeEvent<HTMLInputElement>);
-        }
-        if (end) {
-            handleInputChange({
-                target: { name: 'endDate', value: dayjs(end).format('YYYY-MM-DD') },
-            } as React.ChangeEvent<HTMLInputElement>);
-        }
-    };
+    // const handleDateChange = (dates: [Date | null, Date | null]) => {
+    //     const [start, end] = dates;
+    //     if (start) {
+    //         handleInputChange({
+    //             target: { name: 'startDate', value: dayjs(start).format('YYYY-MM-DD') },
+    //         } as React.ChangeEvent<HTMLInputElement>);
+    //     }
+    //     if (end) {
+    //         handleInputChange({
+    //             target: { name: 'endDate', value: dayjs(end).format('YYYY-MM-DD') },
+    //         } as React.ChangeEvent<HTMLInputElement>);
+    //     }
+    // };
 
     return (
-        <Stack gap='xl'>
+        <Stack gap='lg'>
             <Box>
-                <Text size='sm' fw={600} mb={8}>
-                    여행 제목
-                </Text>
-                <TextInput
-                    name='tripTitle'
-                    placeholder='여행 제목을 입력하세요'
-                    value={tripData.tripTitle}
-                    onChange={handleInputChange}
-                    leftSection={<IconPlane size={16} />}
-                    size='sm'
-                    required={true}
+                <div css={dayStyle}>
+                    <Text size='sm' fw={600}>
+                        {NEW_COUNTRY.DATE}
+                    </Text>
+                    <p css={dayTextStyle}>여행 기간은 수정이 불가합니다.</p>
+                </div>
+                <DatePickerInput
+                    type='range'
+                    placeholder='여행 시작일과 종료일을 선택하세요'
+                    value={[
+                        tripData.startDate ? dayjs(tripData.startDate).toDate() : null,
+                        tripData.endDate ? dayjs(tripData.endDate).toDate() : null,
+                    ]}
+                    leftSection={<IconCalendar size={16} />}
+                    locale='ko'
+                    size='md'
+                    valueFormat='YYYY년 MM월 DD일'
+                    readOnly={true}
+                    // disabled={true}
                 />
             </Box>
 
             <Box>
                 <Text size='sm' fw={600} mb={8}>
-                    여행 국가
+                    {NEW_COUNTRY.COUNTRY}
                 </Text>
                 <Select
-                    name='country'
-                    placeholder='국가를 선택하세요'
+                    placeholder={NEW_COUNTRY.COUNTRY_DEFAULT}
                     data={countryData}
-                    value={tripData.country}
+                    value={country}
                     onChange={(value) =>
                         handleInputChange({
                             target: { name: 'country', value: value || '' },
@@ -251,27 +262,22 @@ const TripEditForm = ({ tripData, handleInputChange, handleHashtagToggle }: Trip
                     searchable={false}
                     nothingFoundMessage='옵션이 없습니다'
                     leftSection={<IconWorld size={16} />}
-                    size='sm'
+                    size='md'
                     required={true}
                 />
             </Box>
 
             <Box>
                 <Text size='sm' fw={600} mb={8}>
-                    여행 기간
+                    {NEW_COUNTRY.TITLE}
                 </Text>
-                <DatePickerInput
-                    type='range'
-                    placeholder='여행 시작일과 종료일을 선택하세요'
-                    value={[
-                        tripData.startDate ? dayjs(tripData.startDate).toDate() : null,
-                        tripData.endDate ? dayjs(tripData.endDate).toDate() : null,
-                    ]}
-                    onChange={handleDateChange}
-                    leftSection={<IconCalendar size={16} />}
-                    locale='ko'
-                    size='sm'
-                    valueFormat='YYYY년 MM월 DD일'
+                <TextInput
+                    name='tripTitle'
+                    placeholder={NEW_COUNTRY.TITLE_PLACEHOLDER}
+                    value={tripTitle}
+                    onChange={handleInputChange}
+                    leftSection={<IconPlane size={16} />}
+                    size='md'
                     required={true}
                 />
             </Box>
@@ -298,5 +304,24 @@ const TripEditForm = ({ tripData, handleInputChange, handleHashtagToggle }: Trip
         </Stack>
     );
 };
+
+const dayStyle = css`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+`;
+
+const dayTextStyle = css`
+    font-size: ${theme.fontSizes.small_12};
+    color: ${theme.colors.descriptionText};
+`;
+
+const errorStyle = css`
+    margin-top: 6px;
+    margin-left: 4px;
+    font-size: ${theme.fontSizes.small_12};
+    color: #ff0101;
+`;
 
 export default TripEditForm;
