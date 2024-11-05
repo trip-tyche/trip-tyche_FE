@@ -22,14 +22,14 @@ import { formatDateToKorean, getDayNumber } from '@/utils/date';
 const MOVE_DURATION = 3000;
 const WAIT_DURATION = 3000;
 
-const PHOTO_CARD_WIDTH = 150;
-const PHOTO_CARD_HEIGHT = 150;
+const PHOTO_CARD_WIDTH = 80;
+const PHOTO_CARD_HEIGHT = 80;
 
 const INITIAL_ZOOM_SCALE = 14;
 const SHOW_DETAILED_ZOOM = 14;
 const INDIVIDUAL_MARKER_ZOOM = 17;
 
-const TimelineMap: React.FC = () => {
+const TimelineMap = () => {
     const [tripInfo, setTripInfo] = useState<TripInfo | null>(null);
     const [pinPoints, setPinPoints] = useState<PinPoint[]>([]);
     const [mediaFiles, setMediaFiles] = useState<any[]>([]);
@@ -47,7 +47,6 @@ const TimelineMap: React.FC = () => {
     const [currentZoom, setCurrentZoom] = useState(INITIAL_ZOOM_SCALE);
     const [selectedMarker, setSelectedMarker] = useState<PinPoint | null>(null);
     const [isMapInteractive, setIsMapInteractive] = useState(true);
-    // const [photoCardPosition, setPhotoCardPosition] = useState<google.maps.LatLngLiteral | null>(null);
 
     const { showToast } = useToastStore();
 
@@ -437,8 +436,9 @@ const TimelineMap: React.FC = () => {
                             position={photoCardPosition}
                             mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                             getPixelPositionOffset={(_width, _height) => ({
-                                x: -(PHOTO_CARD_WIDTH / 2),
-                                y: -(PHOTO_CARD_HEIGHT + 65 + 40),
+                                x: -PHOTO_CARD_WIDTH / 2,
+                                y: -(PHOTO_CARD_HEIGHT + 75),
+                                // y: -PHOTO_CARD_HEIGHT,
                             })}
                         >
                             <div
@@ -447,7 +447,6 @@ const TimelineMap: React.FC = () => {
                                     navigate(`/music-video/${tripId}/${pinPoints[currentPinIndex].pinPointId}`)
                                 }
                             >
-                                <p>{formatDateToKorean(pinPoints[currentPinIndex].recordDate)}</p>
                                 <img css={imageStyle} src={pinPoints[currentPinIndex].mediaLink} alt='photo-card' />
                             </div>
                         </OverlayView>
@@ -688,11 +687,13 @@ const clusterPhotoCardStyle = css`
 
 const photoCardStyle = css`
     background-color: ${theme.colors.white};
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 150px;
+    /* border: 1px solid #ccc; */
+    /* border-radius: 4px; */
+    /* width: 150px; */
+    width: 80px;
+    border-radius: 50%;
     height: auto;
-    padding: 2px;
+    padding: 1px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -740,6 +741,7 @@ const imageStyle = css`
     aspect-ratio: 1;
     object-fit: cover;
     border-radius: 4px;
+    border-radius: 50%;
 `;
 
 export default TimelineMap;
