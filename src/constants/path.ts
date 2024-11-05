@@ -12,7 +12,7 @@ export const PATH = {
     TRIPS_EDIT: '/trips/:tripId/edit',
     TIMELINE_MAP: '/timeline-map',
     MUSIC_VIDEO: '/music-video',
-    DAY_IMAGES: '/days-images',
+    DAY_IMAGES: '/days',
 };
 
 export const PATH_TITLE = {

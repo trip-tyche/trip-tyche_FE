@@ -79,6 +79,7 @@ const backStyle = css`
 `;
 
 const carouselWrapper = css`
+    height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;

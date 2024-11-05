@@ -246,12 +246,9 @@ const TimelineMap = () => {
     const handleDayClick = useCallback(() => {
         setIsTransitioning(true);
         setTimeout(() => {
-            navigate('/days-images');
+            navigate(`/days/${tripId}`, { state: { imageDate: [tripInfo?.startDate, tripInfo?.endDate] } });
         }, 300);
-        if (currentDate) {
-            localStorage.setItem('current-date', currentDate);
-        }
-    }, [navigate, currentDate]);
+    }, [navigate, tripId, tripInfo]);
 
     const togglePlayPause = useCallback(() => {
         if (currentPinIndex === pinPoints.length - 1) {
@@ -349,7 +346,7 @@ const TimelineMap = () => {
             streetViewControl: false,
             rotateControl: false,
             clickableIcons: false,
-            minZoom: 12,
+            // minZoom: 12,
 
             draggable: isMapInteractive,
             scrollwheel: isMapInteractive,
@@ -443,7 +440,7 @@ const TimelineMap = () => {
                             <div css={dayInfoTextStyle}>
                                 <h2>날짜별로 사진보기</h2>
                             </div>
-                            <ChevronUp size={20} />
+                            <ChevronUp size={20} color={`${theme.colors.descriptionText}`} strokeWidth={2.5} />
                         </DaySection>
                     )}
                 </>

@@ -3,13 +3,15 @@ import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 import styled from '@emotion/styled';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import { ChevronDown, ImageOff, ArrowDown } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { getImagesByDay } from '@/api/image';
 import { getTripMapData } from '@/api/trip';
 import Loading from '@/components/common/Loading';
+import Toast from '@/components/common/Toast';
 import { ENV } from '@/constants/auth';
 import { PATH } from '@/constants/path';
+import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { getDayNumber } from '@/utils/date';
 
@@ -18,6 +20,7 @@ interface MediaFiles {
     longitude: number;
     mediaFileId: number;
     mediaLink: string;
+    recordDate: string;
 }
 
 const INITIAL_ZOOM_LEVEL = 16;
@@ -47,10 +50,16 @@ const DaysImages: React.FC = () => {
     const [showScrollHint, setShowScrollHint] = useState(false);
     const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-    const imageListRef = useRef<HTMLDivElement>(null);
+    const showToast = useToastStore((state) => state.showToast);
+
+    const { tripId } = useParams();
+    const location = useLocation();
 
     const navigate = useNavigate();
-    const tripId = localStorage.getItem('tripId');
+
+    const imageListRef = useRef<HTMLDivElement>(null);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
     const isFullyLoaded = isMapLoaded && isImagesLoaded && !isLoading;
 
@@ -74,8 +83,12 @@ const DaysImages: React.FC = () => {
         return null;
     }, [isLoaded]);
 
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
+    useEffect(() => {
+        const { imageDate } = location?.state || [];
+        setStartDate(imageDate[0]);
+        setEndDate(imageDate[1]);
+        setCurrentDate(imageDate[0]);
+    }, []);
 
     const handleDayClick = (day: number) => {
         if (!startDate) return;
@@ -88,6 +101,7 @@ const DaysImages: React.FC = () => {
         setTimeout(() => {
             const container = scrollContainerRef.current;
             const button = container?.querySelector(`button:nth-child(${day})`) as HTMLElement;
+
             if (container && button) {
                 const containerWidth = container.offsetWidth;
                 const buttonWidth = button.offsetWidth;
@@ -144,25 +158,32 @@ const DaysImages: React.FC = () => {
     }, [isFullyLoaded, isInitialLoad]);
 
     useEffect(() => {
-        const currentDate = localStorage.getItem('current-date');
-        if (!currentDate) {
-            navigate(-1);
-            return;
-        }
-        setCurrentDate(currentDate);
-    }, []);
+        const fetchImagesByDay = async () => {
+            if (!(tripId && currentDate)) return;
+            setIsLoading(true);
+            try {
+                const data = await getImagesByDay(tripId, currentDate);
 
-    useEffect(() => {
-        const fetchTripInfo = async () => {
-            if (!tripId) return;
-            const data = await getTripMapData(tripId);
-            const { tripInfo } = data;
-            setStartDate(tripInfo.startDate);
-            setEndDate(tripInfo.endDate);
+                if (typeof data !== 'object') {
+                    showToast('해당 날짜에 등록된 사진이 없습니다.');
+                    return;
+                }
+
+                console.log(data);
+                setImagesByDay(data.images || []);
+                setCurrentDay(getDayNumber(currentDate as string, startDate));
+                if (data.images && data.images.length > 0) {
+                    setCurrentImageLocation({ lat: data.images[0].latitude, lng: data.images[0].longitude });
+                }
+            } catch (error) {
+                console.error('Error fetching images:', error);
+                setImagesByDay([]);
+            } finally {
+                setIsLoading(false);
+            }
         };
-
-        fetchTripInfo();
-    }, [tripId]);
+        fetchImagesByDay();
+    }, [tripId, currentDate, startDate]);
 
     useEffect(() => {
         const fetchImagesByDay = async () => {
@@ -170,11 +191,18 @@ const DaysImages: React.FC = () => {
             setIsLoading(true);
             try {
                 const data = await getImagesByDay(tripId, currentDate);
+
+                if (typeof data !== 'object') {
+                    showToast('해당 날짜에 등록된 사진이 없습니다.');
+                    return;
+                }
+
                 setImagesByDay(data.images || []);
                 setCurrentDay(getDayNumber(currentDate as string, startDate));
                 if (data.images && data.images.length > 0) {
                     setCurrentImageLocation({ lat: data.images[0].latitude, lng: data.images[0].longitude });
                 }
+                setIsImagesLoaded(true);
             } catch (error) {
                 console.error('Error fetching images:', error);
                 setImagesByDay([]);
@@ -235,28 +263,6 @@ const DaysImages: React.FC = () => {
         }
     }, [isLoaded]);
 
-    useEffect(() => {
-        const fetchImagesByDay = async () => {
-            if (!(tripId && currentDate)) return;
-            setIsLoading(true);
-            try {
-                const data = await getImagesByDay(tripId, currentDate);
-                setImagesByDay(data.images || []);
-                setCurrentDay(getDayNumber(currentDate as string, startDate));
-                if (data.images && data.images.length > 0) {
-                    setCurrentImageLocation({ lat: data.images[0].latitude, lng: data.images[0].longitude });
-                }
-                setIsImagesLoaded(true);
-            } catch (error) {
-                console.error('Error fetching images:', error);
-                setImagesByDay([]);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchImagesByDay();
-    }, [tripId, currentDate, startDate]);
-
     return (
         <PageContainer isTransitioning={isTransitioning}>
             {!isFullyLoaded ? (
@@ -295,7 +301,7 @@ const DaysImages: React.FC = () => {
                                 navigate(`${PATH.TIMELINE_MAP}/${tripId}`);
                             }}
                         >
-                            <ChevronDown size={20} />
+                            <ChevronDown size={20} color={`${theme.colors.descriptionText}`} strokeWidth={2.5} />
                         </ArrowButton>
                     </DateSelectionDiv>
                     <ImageList ref={imageListRef}>
@@ -307,6 +313,7 @@ const DaysImages: React.FC = () => {
                                     data-index={index}
                                 >
                                     <img src={image.mediaLink} alt={`Image-${image.mediaFileId}`} />
+                                    <p>{image.recordDate}</p>
                                 </ImageItem>
                             ))
                         ) : (
@@ -326,6 +333,7 @@ const DaysImages: React.FC = () => {
                     )}
                 </>
             )}
+            <Toast />
         </PageContainer>
     );
 };
@@ -342,7 +350,7 @@ const DaysImages: React.FC = () => {
 // `;
 
 const PageContainer = styled.div<{ isTransitioning: boolean }>`
-    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     transition: transform 0.3s ease-in-out;
@@ -409,7 +417,7 @@ const DayScrollContainer = styled.div`
         display: none;
     }
     flex-grow: 1;
-    padding: 0 10px;
+    /* padding: 0 10px; */
 `;
 
 const DayButton = styled.button<{ isSelected: boolean }>`
@@ -435,10 +443,30 @@ const ImageList = styled.div`
     position: relative;
 `;
 const ImageItem = styled.div`
-    margin-bottom: 20px;
+    margin-bottom: 2px;
+    position: relative;
+
     img {
         width: 100%;
         border-radius: 4px;
+    }
+
+    p {
+        z-index: 2;
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        margin: 0;
+        padding: 2px 4px;
+        font-family: 'Courier New', monospace;
+        font-size: ${theme.fontSizes.large_16};
+        color: #ff9b37;
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
+        letter-spacing: 1px;
+        opacity: 0.9;
+        font-weight: 500;
+        background-color: rgba(0, 0, 0, 0.7);
+        border-radius: 2px;
     }
 `;
 
@@ -475,7 +503,6 @@ const ArrowButton = styled.button`
     background: none;
     border: none;
     cursor: pointer;
-    padding: 8px;
     display: flex;
     align-items: center;
     justify-content: center;

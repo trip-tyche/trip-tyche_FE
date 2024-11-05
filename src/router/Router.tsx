@@ -90,7 +90,7 @@ export const router = createBrowserRouter([
                     { path: PATH.TRIPS_EDIT, element: <TripEdit /> },
                     { path: `${PATH.TIMELINE_MAP}/:tripId`, element: <TimelineMap /> },
                     { path: `${PATH.MUSIC_VIDEO}/:tripId/:pinPointId`, element: <MusicVideo /> },
-                    { path: PATH.DAY_IMAGES, element: <DayImages /> },
+                    { path: `${PATH.DAY_IMAGES}/:tripId`, element: <DayImages /> },
                     { path: '/onboarding', element: <Onboarding /> },
                 ],
             },
