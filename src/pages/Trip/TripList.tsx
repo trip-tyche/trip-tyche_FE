@@ -63,6 +63,7 @@ const TripList = () => {
         localStorage.removeItem('tripId');
         localStorage.removeItem('earliest-date');
         localStorage.removeItem('latest-date');
+        localStorage.removeItem('image-date');
 
         fetchTripList();
     }, []);

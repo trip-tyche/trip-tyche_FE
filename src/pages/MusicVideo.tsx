@@ -7,6 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getImagesByPinPoint } from '@/api/image';
 import ImageCarousel from '@/components/ImageCarousel';
 import { PATH } from '@/constants/path';
+import useTimelineStore from '@/stores/useTimelineStore';
 
 type CarouselState = 'auto' | 'paused' | 'zoomed';
 
@@ -21,21 +22,23 @@ const MusicVideo = () => {
     const { tripId, pinPointId } = useParams<{ tripId: string; pinPointId: string }>();
 
     const navigate = useNavigate();
+    const setCurrentPinPointId = useTimelineStore((state) => state.setCurrentPinPointId);
 
     useEffect(() => {
         const fetchPinPointImages = async () => {
-            try {
-                if (!(tripId && pinPointId)) {
-                    return;
-                }
-                const data = await getImagesByPinPoint(tripId, pinPointId);
-                console.log(tripId, pinPointId, data);
-                const { images } = data.firstImage;
-                setDisplayedImages(images);
-            } catch (error) {
-                console.error('Error fetching pinpoint-images data:', error);
+            if (!(tripId && pinPointId)) {
+                return;
             }
+            const data = await getImagesByPinPoint(tripId, pinPointId);
+            console.log(data);
+            const { images } = data.firstImage;
+            setDisplayedImages(images);
         };
+
+        // 전역 스토어에 저장
+        setCurrentPinPointId(pinPointId);
+        // 로컬 스토리지에도 저장 (새로고침 대비)
+        localStorage.setItem('lastPinPointId', pinPointId || '');
 
         fetchPinPointImages();
     }, [tripId, pinPointId]);
@@ -44,10 +47,14 @@ const MusicVideo = () => {
         setCarouselState(newState);
     }, []);
 
+    const handleBack = () => {
+        navigate(`/timeline-map/${tripId}`);
+    };
+
     return (
         <div css={containerStyle}>
             {carouselState !== 'zoomed' && (
-                <div css={backStyle} onClick={() => navigate(`${PATH.TIMELINE_MAP}/${tripId}`)}>
+                <div css={backStyle} onClick={handleBack}>
                     <X size={24} color='#FDFDFD' />
                 </div>
             )}
@@ -60,7 +67,7 @@ const MusicVideo = () => {
 
 const containerStyle = css`
     position: relative;
-    min-height: 100dvh;
+    height: 100dvh;
 `;
 
 const backStyle = css`

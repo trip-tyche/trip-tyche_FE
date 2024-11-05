@@ -97,7 +97,7 @@ const Map = ({ onLocationSelect, defaultLocation, setIsMapVisible }: MapProps) =
     if (!isLoaded) {
         return (
             <div css={loadingSpinnerStyle}>
-                <Loading />;
+                <Loading />
             </div>
         );
     }

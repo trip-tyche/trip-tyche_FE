@@ -130,7 +130,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, onStateChange }) 
             centerMode: carouselState !== 'zoomed',
             infinite: false,
             slidesToShow: 1,
-            speed: 1500,
+            speed: 1200,
             autoplay: carouselState === 'auto',
             autoplaySpeed: 500,
             pauseOnHover: false,

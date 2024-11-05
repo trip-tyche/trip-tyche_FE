@@ -14,6 +14,7 @@ import Loading from '@/components/common/Loading';
 import Header from '@/components/layout/Header';
 import { ENV } from '@/constants/auth';
 import { PATH } from '@/constants/path';
+import useTimelineStore from '@/stores/useTimelineStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { PinPoint, TripInfo } from '@/types/trip';
@@ -49,6 +50,7 @@ const TimelineMap = () => {
     const [isMapInteractive, setIsMapInteractive] = useState(true);
 
     const { showToast } = useToastStore();
+    const { currentPinPointId, setCurrentPinPointId } = useTimelineStore();
 
     const mapRef = useRef<google.maps.Map | null>(null);
     const animationRef = useRef<number | null>(null);
@@ -99,8 +101,32 @@ const TimelineMap = () => {
             if (animationRef.current) {
                 cancelAnimationFrame(animationRef.current);
             }
+            setCurrentPinPointId(undefined);
+            localStorage.removeItem('lastPinPointId');
         };
     }, [fetchTripMapData]);
+
+    useEffect(() => {
+        if (pinPoints.length > 0) {
+            // 전역 스토어나 로컬 스토리지에서 마지막 핀포인트 ID 확인
+            const lastPinPointId = currentPinPointId || localStorage.getItem('lastPinPointId');
+
+            if (lastPinPointId) {
+                const startIndex = pinPoints.findIndex((pin) => String(pin.pinPointId) === lastPinPointId);
+                // 여기에서  String(pin.pinPointId) 안하면 -1 아마 숫자로 인식, 그런데 왜 자꾸 string이라 할까?
+                if (startIndex !== -1) {
+                    setCurrentPinIndex(startIndex);
+                    setCharacterPosition({
+                        lat: pinPoints[startIndex].latitude,
+                        lng: pinPoints[startIndex].longitude,
+                    });
+                }
+                // 사용한 후에는 초기화
+                setCurrentPinPointId(undefined);
+                localStorage.removeItem('lastPinPointId');
+            }
+        }
+    }, [pinPoints, currentPinPointId]);
 
     useEffect(() => {
         if (pinPoints.length > 0 && currentPinIndex < pinPoints.length) {
