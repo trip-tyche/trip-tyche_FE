@@ -164,10 +164,10 @@ const DaysImages: React.FC = () => {
             try {
                 const data = await getImagesByDay(tripId, currentDate);
 
-                if (typeof data !== 'object') {
-                    showToast('해당 날짜에 등록된 사진이 없습니다.');
-                    return;
-                }
+                // if (typeof data !== 'object') {
+                //     showToast('해당 날짜에 등록된 사진이 없습니다.');
+                //     return;
+                // }
 
                 console.log(data);
                 setImagesByDay(data.images || []);
@@ -192,10 +192,10 @@ const DaysImages: React.FC = () => {
             try {
                 const data = await getImagesByDay(tripId, currentDate);
 
-                if (typeof data !== 'object') {
-                    showToast('해당 날짜에 등록된 사진이 없습니다.');
-                    return;
-                }
+                // if (typeof data !== 'object') {
+                //     showToast('해당 날짜에 등록된 사진이 없습니다.');
+                //     return;
+                // }
 
                 setImagesByDay(data.images || []);
                 setCurrentDay(getDayNumber(currentDate as string, startDate));
@@ -441,10 +441,51 @@ const ImageList = styled.div`
     flex: 1;
     overflow-y: auto;
     position: relative;
+
+    // 왼쪽 필름 스트립
+    &::before {
+        content: '';
+        position: fixed;
+        left: 0;
+        top: 224px; // MapContainer(170px) + DateSelectionDiv(54px) 높이
+        bottom: 0;
+        width: 20px;
+        background-color: #000000;
+        z-index: 10;
+        box-shadow: 1px 0 3px rgba(0, 0, 0, 0.3);
+
+        // 필름 구멍 패턴
+        background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 2px, transparent 2px);
+        background-size: 20px 16px;
+        background-position: center;
+        background-repeat: repeat-y;
+    }
+
+    // 오른쪽 필름 스트립
+    &::after {
+        content: '';
+        position: fixed;
+        right: 0;
+        top: 224px; // MapContainer(170px) + DateSelectionDiv(54px) 높이
+        bottom: 0;
+        width: 20px;
+        background-color: #000000;
+        z-index: 10;
+        box-shadow: -1px 0 3px rgba(0, 0, 0, 0.3);
+
+        // 필름 구멍 패턴
+        background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 2px, transparent 2px);
+        background-size: 20px 16px;
+        background-position: center;
+        background-repeat: repeat-y;
+    }
 `;
+
 const ImageItem = styled.div`
     margin-bottom: 2px;
     position: relative;
+    padding: 0 20px; // 양쪽에 필름 스트립 공간 확보
+    width: 100%;
 
     img {
         width: 100%;
@@ -455,7 +496,7 @@ const ImageItem = styled.div`
         z-index: 2;
         position: absolute;
         bottom: 8px;
-        right: 8px;
+        right: 24px;
         margin: 0;
         padding: 2px 4px;
         font-family: 'Courier New', monospace;
