@@ -388,8 +388,7 @@ const TimelineMap = () => {
                     {isAtPin && (
                         <DaySection onClick={handleDayClick}>
                             <div css={dayInfoTextStyle}>
-                                <h2>{currentDay}</h2>
-                                <p>{currentDate && formatDateToKorean(currentDate)}</p>
+                                <h2>날짜별로 사진보기</h2>
                             </div>
                             <ChevronUp size={20} />
                         </DaySection>
@@ -418,20 +417,33 @@ const TimelineMap = () => {
             return (
                 <>
                     {renderPolyline()}
-                    {pinPoints.map((point) => (
-                        <Marker
-                            key={point.pinPointId}
-                            position={{ lat: point.latitude, lng: point.longitude }}
-                            icon={markerIcon || undefined}
-                        />
+                    {pinPoints.map((point, index) => (
+                        <React.Fragment key={point.pinPointId}>
+                            <Marker
+                                position={{ lat: point.latitude, lng: point.longitude }}
+                                icon={markerIcon || undefined}
+                            />
+                            <OverlayView
+                                position={{ lat: point.latitude, lng: point.longitude }}
+                                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                                getPixelPositionOffset={(_width, _height) => ({
+                                    x: -PHOTO_CARD_WIDTH / 2,
+                                    y: -(PHOTO_CARD_HEIGHT + 75),
+                                })}
+                            >
+                                <div
+                                    css={photoCardStyle(index === currentPinIndex && isAtPin)}
+                                    onClick={() => navigate(`/music-video/${tripId}/${point.pinPointId}`)}
+                                >
+                                    <img css={imageStyle} src={point.mediaLink} alt='photo-card' />
+                                </div>
+                            </OverlayView>
+                        </React.Fragment>
                     ))}
                     {characterPosition && (
                         <Marker position={characterPosition} icon={characterIcon || undefined} zIndex={1000} />
                     )}
-                    {/* {isAtPin && (
-                        <ControlButton onClick={togglePlayPause}>{isPlaying ? <Pause /> : <Play />}</ControlButton>
-                    )} */}
-                    {showPhotoCard && photoCardPosition && currentPinIndex < pinPoints.length && (
+                    {/* {showPhotoCard && photoCardPosition && currentPinIndex < pinPoints.length && (
                         <OverlayView
                             position={photoCardPosition}
                             mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
@@ -450,8 +462,8 @@ const TimelineMap = () => {
                                 <img css={imageStyle} src={pinPoints[currentPinIndex].mediaLink} alt='photo-card' />
                             </div>
                         </OverlayView>
-                    )}
-                    {isAtPin && (
+                    )} */}
+                    {/* {isAtPin && (
                         <DaySection onClick={handleDayClick}>
                             <div css={dayInfoTextStyle}>
                                 <h2>{currentDay}</h2>
@@ -459,7 +471,7 @@ const TimelineMap = () => {
                             </div>
                             <ChevronUp size={20} />
                         </DaySection>
-                    )}
+                    )} */}
                 </>
             );
         } else if (showIndividualMarkers) {
@@ -539,8 +551,17 @@ const DaySection = styled.div`
     cursor: pointer;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    height: 66px;
+    height: 54px;
     background-color: ${theme.colors.white};
+`;
+
+const dayInfoTextStyle = css`
+    h2 {
+        font-size: ${theme.fontSizes.large_16};
+        color: ${theme.colors.descriptionText};
+        font-weight: 600;
+        margin: 0;
+    }
 `;
 
 const loadingStyle = css`
@@ -549,24 +570,6 @@ const loadingStyle = css`
     display: flex;
     justify-content: center;
     align-items: center;
-`;
-
-const dayInfoTextStyle = css`
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-
-    h2 {
-        font-size: 20px;
-        font-weight: 600;
-        margin: 0;
-    }
-
-    p {
-        font-size: 14px;
-        color: ${theme.colors.darkGray};
-        margin: 0;
-    }
 `;
 
 const MapWrapper = styled.div`
@@ -604,9 +607,8 @@ const ControlDefaultButton = styled.button`
 
 const ControlButton = styled.button`
     position: absolute;
-    bottom: 104px;
+    bottom: 84px;
     right: 10px;
-    background-color: white;
     background-color: ${theme.colors.primary};
     color: ${theme.colors.white};
     border: none;
@@ -685,12 +687,10 @@ const clusterPhotoCardStyle = css`
     }
 `;
 
-const photoCardStyle = css`
+const photoCardStyle = (isCurrentPin: boolean) => css`
     background-color: ${theme.colors.white};
-    /* border: 1px solid #ccc; */
-    /* border-radius: 4px; */
-    /* width: 150px; */
-    width: 80px;
+    width: ${PHOTO_CARD_WIDTH}px;
+    height: ${PHOTO_CARD_HEIGHT}px;
     border-radius: 50%;
     height: auto;
     padding: 1px;
@@ -704,6 +704,11 @@ const photoCardStyle = css`
     cursor: pointer;
     transition: transform 0.2s ease;
     position: relative;
+    transition: opacity 0.3s ease;
+    opacity: ${isCurrentPin ? 1 : 0};
+    visibility: ${isCurrentPin ? 'visible' : 'hidden'};
+    pointer-events: ${isCurrentPin ? 'auto' : 'none'};
+    /* display: ${isCurrentPin ? 'block' : 'none'}; */
 
     p {
         font-size: 18px;
