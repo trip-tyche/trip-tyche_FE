@@ -254,7 +254,7 @@ SlideItem.displayName = 'SlideItem';
 
 const carouselStyle = css`
     width: 100%;
-    height: 100vh;
+    height: 100dvh;
     background-color: #090909;
     cursor: pointer;
 `;
