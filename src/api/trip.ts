@@ -7,26 +7,6 @@ import { getToken } from '@/utils/auth';
 const apiBaseUrl = ENV.BASE_URL;
 const token = getToken();
 
-export const getTripData = async (tripId: string) => {
-    try {
-        const token = getToken();
-        // const response = await axios.get<TripInfo>(
-        //     `${apiBaseUrl ? `/api/trips/${tripId}` : `${apiBaseUrl}/api/trips/${tripId}`}`,
-        //     {
-        const response = await axios.get<TripInfo>(`${apiBaseUrl}/api/trips/${tripId}`, {
-            // const response = await axios.get<TripInfo>(`/api/trips/${tripId}`, {
-            headers: {
-                accept: '*/*',
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching trip data:', error);
-    }
-};
-
 export const postTripInfo = async ({ tripId, tripTitle, country, startDate, endDate, hashtags }: TripInfo) => {
     try {
         const token = getToken();
@@ -125,6 +105,8 @@ export const postTripImages = async (tripId: string, images: File[]) => {
         formData.append('files', image);
     });
 
+    console.log('files:', formData.getAll('files'));
+
     try {
         const response = await axios.post(`${apiBaseUrl}/api/trips/${tripId}/upload`, formData, {
             headers: {
@@ -171,5 +153,22 @@ export const createTripId = async () => {
         return response.data.data.tripId;
     } catch (error) {
         console.error('새로운 tripId 생성 실패', error);
+    }
+};
+
+export const getTripData = async (tripId: string) => {
+    try {
+        const token = getToken();
+        const { data } = await axios.get(`${apiBaseUrl}/api/trips/${tripId}`, {
+            headers: {
+                accept: '*/*',
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        console.log(data);
+        return data.data;
+    } catch (error) {
+        console.error('Error fetching trip data:', error);
     }
 };

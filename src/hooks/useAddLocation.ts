@@ -69,13 +69,16 @@ export const useAddLocation = () => {
                 showToast(`사진이 등록되었습니다.`);
                 setIsEditing(false);
             } else {
+                showToast(`${updatedImages.length}장의 사진이 등록되었습니다.`);
                 navigate(`${PATH.TRIP_NEW}/${tripId}`);
                 return;
             }
         }
 
+        showToast(`${updatedImages.length}장의 사진이 등록되었습니다.`);
         setDisplayedImages(updatedDisplayedImages);
         setSelectedImages([]);
+        setSelectedLocation(null);
         setIsMapVisible(false);
 
         console.log('선택한 이미지:', selectedImages);

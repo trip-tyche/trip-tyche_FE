@@ -57,6 +57,7 @@ export const useTripEditForm = () => {
             try {
                 if (!tripId) return;
                 const fetchedTripData = await getTripData(tripId);
+                console.log(fetchedTripData);
                 if (fetchedTripData) {
                     setTripData(fetchedTripData);
                 }

@@ -66,7 +66,7 @@ const TripList = () => {
         localStorage.removeItem('image-date');
 
         fetchTripList();
-    }, []);
+    }, [tripCount]);
 
     const deleteInValidTrips = async (trips: Trip[]) => {
         const deletePromises = trips
@@ -75,8 +75,6 @@ const TripList = () => {
 
         return await Promise.allSettled(deletePromises);
     };
-
-    // console.log(tripCount);
 
     if (isLoading) {
         <Loading />;
