@@ -86,10 +86,12 @@ const DaysImages: React.FC = () => {
 
     useEffect(() => {
         const imageDates = location?.state || [];
+
+        if (!imageDates || imageDates.length === 0) return;
         setAvailableDates(imageDates);
         setStartDate(imageDates[0]);
         setCurrentDate(imageDates[0]);
-    }, []);
+    }, [location.state]);
 
     const handleDayClick = (day: number) => {
         if (!startDate) return;
@@ -158,40 +160,42 @@ const DaysImages: React.FC = () => {
         }
     }, [isFullyLoaded, isInitialLoad]);
 
+    // useEffect(() => {
+    //     const fetchImagesByDay = async () => {
+    //         if (!(tripId && currentDate)) return;
+    //         setIsLoading(true);
+    //         try {
+    //             const data = await getImagesByDay(tripId, currentDate);
+    //             console.log('Fetched data:', data);
+
+    //             // if (typeof data !== 'object') {
+    //             //     showToast('해당 날짜에 등록된 사진이 없습니다.');
+    //             //     return;
+    //             // }
+
+    //             console.log(data);
+    //             setImagesByDay(data.images || []);
+    //             setCurrentDay(getDayNumber(currentDate as string, startDate));
+    //             if (data.images && data.images.length > 0) {
+    //                 setCurrentImageLocation({ lat: data.images[0].latitude, lng: data.images[0].longitude });
+    //             }
+    //         } catch (error) {
+    //             console.error('Error fetching images:', error);
+    //             setImagesByDay([]);
+    //         } finally {
+    //             setIsLoading(false);
+    //         }
+    //     };
+    //     fetchImagesByDay();
+    // }, [tripId, currentDate, startDate]);
+
     useEffect(() => {
         const fetchImagesByDay = async () => {
             if (!(tripId && currentDate)) return;
             setIsLoading(true);
             try {
                 const data = await getImagesByDay(tripId, currentDate);
-
-                // if (typeof data !== 'object') {
-                //     showToast('해당 날짜에 등록된 사진이 없습니다.');
-                //     return;
-                // }
-
-                console.log(data);
-                setImagesByDay(data.images || []);
-                setCurrentDay(getDayNumber(currentDate as string, startDate));
-                if (data.images && data.images.length > 0) {
-                    setCurrentImageLocation({ lat: data.images[0].latitude, lng: data.images[0].longitude });
-                }
-            } catch (error) {
-                console.error('Error fetching images:', error);
-                setImagesByDay([]);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchImagesByDay();
-    }, [tripId, currentDate, startDate]);
-
-    useEffect(() => {
-        const fetchImagesByDay = async () => {
-            if (!(tripId && currentDate)) return;
-            setIsLoading(true);
-            try {
-                const data = await getImagesByDay(tripId, currentDate);
+                console.log('Fetched data:', data);
 
                 // if (typeof data !== 'object') {
                 //     showToast('해당 날짜에 등록된 사진이 없습니다.');
@@ -518,8 +522,8 @@ const ImageItem = styled.div`
     p {
         z-index: 2;
         position: absolute;
-        bottom: 8px;
-        right: 24px;
+        bottom: 4px;
+        right: 30px;
         margin: 0;
         padding: 2px 4px;
         font-family: 'Courier New', monospace;
