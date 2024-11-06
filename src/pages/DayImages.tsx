@@ -332,7 +332,7 @@ const DaysImages: React.FC = () => {
                         </ArrowButton>
                     </DateSelectionDiv>
                     <ImageList ref={imageListRef}>
-                        {imagesByDay.length > 0 ? (
+                        {/* {imagesByDay.length > 0 ? (
                             imagesByDay.map((image, index) => (
                                 <ImageItem
                                     key={image.mediaFileId}
@@ -340,9 +340,22 @@ const DaysImages: React.FC = () => {
                                     data-index={index}
                                 >
                                     <img src={image.mediaLink} alt={`Image-${image.mediaFileId}`} />
-                                    <p>`{image.recordDate.split('T')[1]}</p>
+                                    <p>{image.recordDate.split('T')[1]}</p>
                                 </ImageItem>
-                            ))
+                            )) */}
+                        {imagesByDay.length > 0 ? (
+                            [...imagesByDay]
+                                .sort((a, b) => new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime())
+                                .map((image, index) => (
+                                    <ImageItem
+                                        key={image.mediaFileId}
+                                        ref={(el) => (imageRefs.current[index] = el)}
+                                        data-index={index}
+                                    >
+                                        <img src={image.mediaLink} alt={`Image-${image.mediaFileId}`} />
+                                        <p>{image.recordDate.split('T')[1]}</p>
+                                    </ImageItem>
+                                ))
                         ) : (
                             <NoImagesContainer>
                                 <ImageOff size={40} color='#FDFDFD' />
@@ -481,13 +494,6 @@ const ImageList = styled.div`
         z-index: 10;
         box-shadow: 1px 0 3px rgba(0, 0, 0, 0.3);
 
-        /* // 필름 구멍 패턴
-        background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 4px, transparent 4px);
-        background-size: 20px 20px;
-        background-position: center;
-        background-repeat: repeat-y; */
-        // 필름 구멍 패턴
-        /* background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 4px, transparent 4px); */
         background-image: repeating-linear-gradient(
             to bottom,
             transparent 0px,
@@ -497,9 +503,6 @@ const ImageList = styled.div`
             transparent 15px,
             transparent 20px
         );
-        /* background-size: 20px 20px;
-        background-position: center;
-        background-repeat: repeat-y; */
         background-size: 12px 24px;
         background-position: center;
         background-repeat: repeat-y;
@@ -538,7 +541,7 @@ const ImageList = styled.div`
 `;
 
 const ImageItem = styled.div`
-    margin-bottom: 2px;
+    margin-bottom: 12px;
     position: relative;
     padding: 0 20px; // 양쪽에 필름 스트립 공간 확보
     width: 100%;
@@ -558,13 +561,29 @@ const ImageItem = styled.div`
         font-family: 'DS-DIGII', sans-serif;
         font-weight: bold;
         font-style: italic;
-        font-size: ${theme.fontSizes.large_16};
+        font-size: ${theme.fontSizes.xlarge_18};
         color: #ff9b37;
-        /* text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7); */
-        letter-spacing: 4px;
-        opacity: 0.9;
-        font-weight: 500;
-        border-radius: 2px;
+        letter-spacing: 2px;
+        opacity: 0.95;
+
+        text-shadow:
+            0 0 5px rgba(255, 155, 55, 0.7),
+            /* 내부 글로우 */ 0 0 10px rgba(255, 155, 55, 0.5),
+            /* 중간 글로우 */ 0 0 15px rgba(255, 155, 55, 0.3),
+            /* 외부 글로우 */ 1px 1px 2px rgba(0, 0, 0, 0.8); /* 가독성을 위한 엣지 섀도우 */
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: rgba(0, 0, 0, 0.4);
+            filter: blur(4px);
+            z-index: -1;
+            border-radius: 4px;
+        }
     }
 `;
 

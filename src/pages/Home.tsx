@@ -4,30 +4,39 @@ import { css } from '@emotion/react';
 import { User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import { getTripList } from '@/api/trip';
+import { createTripId, getTripList } from '@/api/trip';
 import { postUserNickName } from '@/api/user';
 
 import mainImage from '/public/ogami_1.png';
 
 import Button from '@/components/common/button/Button';
 import Loading from '@/components/common/Loading';
-import Card from '@/components/pages/home/Card';
+import HomeBorderPass from '@/components/pages/home/HomeBorderPass';
 import { PATH } from '@/constants/path';
+import useAuthStore from '@/stores/useAuthStore';
 import theme from '@/styles/theme';
 import { getToken, getUserId } from '@/utils/auth';
 
 const Home = () => {
-    const [userNickName, setUserNickName] = useState<string>();
     const [tripCount, setTripCount] = useState<number>();
+    const [trips, setTrips] = useState();
     const [inputValue, setInputValue] = useState('');
-    const [isOpenInputModal, setIsOpenInputModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+
+    const isLogin = useAuthStore((state) => state.isLogIn);
+    const userNickName = useAuthStore((state) => state.userNickName);
+    const setLogout = useAuthStore((state) => state.setLogout);
+    const setNickName = useAuthStore((state) => state.setNickName);
 
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (!isLogin) {
+            setLogout();
+            navigate(PATH.LOGIN);
+            return;
+        }
         fetchUserData();
-        setIsLoading(true);
     }, []);
 
     const fetchUserData = async () => {
@@ -38,28 +47,39 @@ const Home = () => {
             navigate(PATH.LOGIN);
             return;
         }
-        const { userNickName, trips } = await getTripList();
 
-        if (!userNickName) {
-            setIsOpenInputModal(true);
-        } else {
-            localStorage.setItem('userNickName', userNickName);
-            setUserNickName(userNickName);
-            setTripCount(trips.length);
-        }
+        setIsLoading(true);
+        const { userNickName, trips } = await getTripList();
+        setIsLoading(false);
+
+        console.log(trips);
+
+        localStorage.setItem('userNickName', userNickName);
+        setNickName(userNickName);
+        setTrips(trips[trips.length - 1]);
+        setTripCount(trips.length);
     };
 
     const submitUserNickName = async () => {
         try {
             await postUserNickName(inputValue);
             fetchUserData();
-            setIsOpenInputModal(false);
         } catch (error) {
-            console.error('Error post user-nickname:', error);
+            console.error('닉네임 등록이 실패하였습니다.', error);
         }
     };
 
-    if (!isLoading) {
+    const handleButtonClick = async () => {
+        if (tripCount) {
+            navigate(PATH.TRIP_LIST);
+            return;
+        }
+
+        const tripId = await createTripId();
+        navigate(`${PATH.TRIP_UPLOAD}/${tripId}`);
+    };
+
+    if (isLoading) {
         return (
             <div css={loadingSpinnerStyle}>
                 <Loading />
@@ -92,49 +112,47 @@ const Home = () => {
                     <div css={headerStyle}>
                         <User css={userIconStyle} onClick={() => navigate(PATH.MYPAGE)} />
                     </div>
-                    <div css={contentStyle}>
-                        <div css={userStyle}>
-                            <img css={imageStyle} src={mainImage} alt='main-image' />
-                            {userNickName ? (
-                                <p css={subtitleStyle}>
-                                    안녕하세요, <span css={spanStyle}>{userNickName}</span> 님
-                                </p>
-                            ) : (
-                                <p css={subtitleStyle}>닉네임을 등록해주세요.</p>
-                            )}
-                        </div>
+                    <div css={contentStyle}>{trips && <HomeBorderPass trip={trips} userNickname={userNickName} />}</div>
+                    <div css={cardStyle}>
+                        {tripCount ? (
+                            <h3>
+                                지금까지 <span>{tripCount}</span> 장의 여행 티켓이 있어요!
+                            </h3>
+                        ) : (
+                            <h3>아래 버튼을 눌러서 새 여행을 등록해주세요 </h3>
+                        )}
                     </div>
-                    <div css={cardWrapperStyle}>
-                        <Card tripCount={tripCount} />
-                    </div>
-                    {/* <div css={borderPassCardStyle} onClick={() => navigate(PATH.TRIP_LIST)}>
-                        <h2>보더 패스</h2>
-                        <p>여행 기록 시작하기</p>
-                    </div> */}
                     <div css={secondButtonContainer}>
                         <Button
-                            text='여행 등록하기'
+                            text={tripCount ? '여행 티켓 보러가기' : '새로운 여행 등록하기'}
                             btnTheme='pri'
                             size='lg'
-                            onClick={() => navigate(PATH.TRIP_LIST)}
+                            onClick={handleButtonClick}
                         />
                     </div>
                 </>
             )}
-
-            {/* {isOpenInputModal && (
-                <InputModal
-                    title={NICKNAME_MODAL.TITLE}
-                    infoMessage={NICKNAME_MODAL.INFO_MESSAGE}
-                    placeholder={NICKNAME_MODAL.PLACEHOLDER}
-                    submitModal={submitUserNickName}
-                    inputValue={inputValue}
-                    setInputValue={setInputValue}
-                />
-            )} */}
         </div>
     );
 };
+
+const cardStyle = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px;
+
+    h3 {
+        font-size: ${theme.fontSizes.normal_14};
+        color: ${theme.colors.descriptionText};
+        font-weight: bold;
+    }
+    span {
+        font-size: ${theme.fontSizes.xlarge_18};
+        color: ${theme.colors.primary};
+        font-weight: bold;
+    }
+`;
 
 const nicknameStyle = css`
     flex: 1;
@@ -142,7 +160,7 @@ const nicknameStyle = css`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 36px;
+    gap: 48px;
 `;
 
 const inputContainer = css`
@@ -176,7 +194,6 @@ const baseInputStyle = css`
     height: 38px;
     outline: none;
     margin-top: 24px;
-    margin-bottom: 13;
 `;
 
 const inputStyle = (inputValue: string) => css`
@@ -202,14 +219,13 @@ const loadingSpinnerStyle = css`
     justify-content: center;
     align-items: center;
     height: 100dvh;
-    background-color: #f0f0f0;
 `;
 
 const containerStyle = css`
     display: flex;
     flex-direction: column;
     min-height: 100dvh;
-    padding: 20px;
+    padding: 16px;
 `;
 
 const headerStyle = css`
@@ -230,58 +246,6 @@ const contentStyle = css`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    text-align: center;
-`;
-
-const userStyle = css`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 24px;
-`;
-
-const cardWrapperStyle = css`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 36px;
-`;
-
-const imageStyle = css`
-    width: 70px;
-    height: auto;
-    border-radius: 12px;
-`;
-
-const spanStyle = css`
-    font-size: ${theme.fontSizes.xxlarge_20};
-    font-weight: 600;
-    color: ${theme.colors.black};
-`;
-
-const subtitleStyle = css`
-    font-size: ${theme.fontSizes.large_16};
-    color: ${theme.colors.descriptionText};
-`;
-
-const borderPassCardStyle = css`
-    background-color: ${theme.colors.primary};
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    cursor: pointer;
-    margin-bottom: 36px;
-
-    h2 {
-        font-size: ${theme.fontSizes.xxlarge_20};
-        margin-bottom: 10px;
-    }
-
-    p {
-        font-size: ${theme.fontSizes.large_16};
-    }
 `;
 
 export default Home;

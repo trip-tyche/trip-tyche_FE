@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import { css } from '@emotion/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import Loading from '@/components/common/Loading';
@@ -32,11 +33,21 @@ const LoginRedirectPage = () => {
 
     const setUserIdAndToken = () => {
         setLogin(JSON.parse(userId), token);
-        // localStorage.setItem('lastLoginTime', new Date().getTime().toString());
         navigate(PATH.HOME, { replace: true });
     };
 
-    return <Loading />;
+    return (
+        <div css={loadingSpinnerStyle}>
+            <Loading />
+        </div>
+    );
 };
+
+const loadingSpinnerStyle = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100dvh;
+`;
 
 export default LoginRedirectPage;

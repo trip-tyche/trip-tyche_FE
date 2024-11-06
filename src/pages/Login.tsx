@@ -6,6 +6,7 @@ import imageRight from '@/assets/images/ogami_2.png';
 import SocialLoginButtons from '@/components/common/button/SocialLoginButtons';
 import Toast from '@/components/common/Toast';
 import { ENV, OAUTH_URL } from '@/constants/auth';
+import useAuthStore from '@/stores/useAuthStore';
 import theme from '@/styles/theme';
 
 const Login = (): JSX.Element => {
@@ -19,6 +20,9 @@ const Login = (): JSX.Element => {
     const handleSocialLogin = (provider: keyof typeof oauthLinks) => () => {
         window.location.href = oauthLinks[provider];
     };
+
+    const isLogin = useAuthStore((state) => state.isLogIn);
+    console.log(isLogin);
 
     return (
         <div css={containerStyle}>

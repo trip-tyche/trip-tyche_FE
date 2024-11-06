@@ -21,16 +21,6 @@ const Card = ({ tripCount }: CardProps) => (
 export default Card;
 
 const CardStyle = css`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid ${theme.colors.borderColor};
-    box-shadow: ${theme.colors.boxShadowDown} ${theme.colors.boxShadowUp};
-    padding: 16px;
-    border-radius: 16px;
-    width: 330px;
-
     h3 {
         font-size: ${theme.fontSizes.normal_14};
         color: ${theme.colors.descriptionText};

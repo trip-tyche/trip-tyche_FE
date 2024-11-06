@@ -14,6 +14,7 @@ import BorderPass from '@/components/pages/trip-list/BorderPass';
 import { TRIP } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { BUTTON, PAGE } from '@/constants/title';
+import useAuthStore from '@/stores/useAuthStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { Trip, Trips } from '@/types/trip';
@@ -26,6 +27,8 @@ const TripList = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const { showToast } = useToastStore();
+    const setLogout = useAuthStore((state) => state.setLogout);
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -36,8 +39,8 @@ const TripList = () => {
 
                 if (typeof tripList !== 'object') {
                     showToast('다시 로그인해주세요.');
+                    setLogout();
                     navigate(PATH.LOGIN);
-                    localStorage.clear();
                     return;
                 }
 
