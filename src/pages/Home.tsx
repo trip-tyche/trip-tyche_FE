@@ -4,6 +4,7 @@ import { css } from '@emotion/react';
 import { User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import { getTripList } from '@/api/trip';
 import { getUserData, postUserNickName } from '@/api/user';
 
 import mainImage from '/public/ogami_1.png';
@@ -34,18 +35,21 @@ const Home = () => {
             navigate(PATH.LOGIN);
             return;
         }
+        const { userNickName, trips } = await getTripList();
 
-        try {
-            const { userNickName, trips } = await getUserData(userId);
-            if (!userNickName) {
-                setIsOpenInputModal(true);
-            } else {
-                localStorage.setItem('userNickName', userNickName);
-                setUserNickName(userNickName);
-                setTripCount(trips);
-            }
-        } catch (error) {
-            console.error('Error fetching user data:', error);
+        // if (typeof tripList !== 'object') {
+        //     showToast('다시 로그인해주세요.');
+        //     navigate(PATH.LOGIN);
+        //     localStorage.clear();
+        //     return;
+        // }
+
+        if (!userNickName) {
+            setIsOpenInputModal(true);
+        } else {
+            localStorage.setItem('userNickName', userNickName);
+            setUserNickName(userNickName);
+            setTripCount(trips.length);
         }
     };
 

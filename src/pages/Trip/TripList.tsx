@@ -16,7 +16,7 @@ import { PATH } from '@/constants/path';
 import { BUTTON, PAGE } from '@/constants/title';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
-import { Trip } from '@/types/trip';
+import { Trip, Trips } from '@/types/trip';
 import { formatTripDate } from '@/utils/date';
 
 const TripList = () => {
@@ -32,7 +32,7 @@ const TripList = () => {
         const fetchTripList = async () => {
             try {
                 setIsLoading(true);
-                const tripList = await getTripList();
+                const tripList: Trips = await getTripList();
 
                 if (typeof tripList !== 'object') {
                     showToast('다시 로그인해주세요.');
@@ -83,7 +83,7 @@ const TripList = () => {
     }
 
     const handleTicketCreate = async () => {
-        const { tripId } = await createTripId();
+        const tripId = await createTripId();
         navigate(`${PATH.TRIP_UPLOAD}/${tripId}`);
     };
 

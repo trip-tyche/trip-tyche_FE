@@ -49,6 +49,7 @@ const DaysImages: React.FC = () => {
     const [isImagesLoaded, setIsImagesLoaded] = useState(false);
     const [showScrollHint, setShowScrollHint] = useState(false);
     const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const [availableDates, setAvailableDates] = useState<string[]>([]);
 
     const showToast = useToastStore((state) => state.showToast);
 
@@ -84,10 +85,10 @@ const DaysImages: React.FC = () => {
     }, [isLoaded]);
 
     useEffect(() => {
-        const { imageDate } = location?.state || [];
-        setStartDate(imageDate[0]);
-        setEndDate(imageDate[1]);
-        setCurrentDate(imageDate[0]);
+        const imageDates = location?.state || [];
+        setAvailableDates(imageDates);
+        setStartDate(imageDates[0]);
+        setCurrentDate(imageDates[0]);
     }, []);
 
     const handleDayClick = (day: number) => {
@@ -222,7 +223,15 @@ const DaysImages: React.FC = () => {
         }
     }, [startDate, endDate]);
 
-    const generateDayList = () => Array.from({ length: totalDays }, (_, i) => i + 1);
+    // const generateDayList = () => Array.from({ length: totalDays }, (_, i) => i + 1);
+    const generateDayList = () => {
+        if (!startDate || !availableDates.length) return [];
+
+        return availableDates.map((date) => {
+            const dayNumber = getDayNumber(date, startDate);
+            return { date, dayNumber };
+        });
+    };
 
     const observerCallback = useCallback(
         (entries: IntersectionObserverEntry[]) => {
@@ -284,7 +293,7 @@ const DaysImages: React.FC = () => {
                         </MapContainer>
                     )}
                     <DateSelectionDiv>
-                        <DayScrollContainer ref={scrollContainerRef}>
+                        {/* <DayScrollContainer ref={scrollContainerRef}>
                             {generateDayList().map((day) => (
                                 <DayButton
                                     key={day}
@@ -292,6 +301,20 @@ const DaysImages: React.FC = () => {
                                     isSelected={currentDay === `Day ${day}`}
                                 >
                                     Day {day}
+                                </DayButton>
+                            ))}
+                        </DayScrollContainer> */}
+                        <DayScrollContainer ref={scrollContainerRef}>
+                            {generateDayList().map(({ date, dayNumber }) => (
+                                <DayButton
+                                    key={date}
+                                    onClick={() => {
+                                        setCurrentDate(date);
+                                        setIsInitialLoad(false);
+                                    }}
+                                    isSelected={currentDate === date}
+                                >
+                                    {dayNumber}
                                 </DayButton>
                             ))}
                         </DayScrollContainer>
@@ -449,14 +472,14 @@ const ImageList = styled.div`
         left: 0;
         top: 224px; // MapContainer(170px) + DateSelectionDiv(54px) 높이
         bottom: 0;
-        width: 20px;
+        width: 28px;
         background-color: #000000;
         z-index: 10;
         box-shadow: 1px 0 3px rgba(0, 0, 0, 0.3);
 
         // 필름 구멍 패턴
-        background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 2px, transparent 2px);
-        background-size: 20px 16px;
+        background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 4px, transparent 4px);
+        background-size: 20px 20px;
         background-position: center;
         background-repeat: repeat-y;
     }
@@ -468,14 +491,14 @@ const ImageList = styled.div`
         right: 0;
         top: 224px; // MapContainer(170px) + DateSelectionDiv(54px) 높이
         bottom: 0;
-        width: 20px;
+        width: 28px;
         background-color: #000000;
         z-index: 10;
         box-shadow: -1px 0 3px rgba(0, 0, 0, 0.3);
 
         // 필름 구멍 패턴
-        background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 2px, transparent 2px);
-        background-size: 20px 16px;
+        background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 4px, transparent 4px);
+        background-size: 20px 20px;
         background-position: center;
         background-repeat: repeat-y;
     }

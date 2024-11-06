@@ -96,28 +96,9 @@ export const getTripMapData = async (tripId: string) => {
                 'Content-Type': 'application/json',
             },
         });
-        return response.data;
+        return response.data.data;
     } catch (error) {
         console.error('Error fetching trip-map-data:', error);
-    }
-};
-
-export const createTripId = async () => {
-    try {
-        const token = getToken();
-        const response = await axios.post(
-            `${apiBaseUrl}/api/trips`,
-            {},
-            {
-                headers: {
-                    accept: '*/*',
-                    Authorization: `Bearer ${token}`,
-                },
-            },
-        );
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching trip data:', error);
     }
 };
 
@@ -125,14 +106,14 @@ export const createTripId = async () => {
 export const getTripList = async () => {
     const token = getToken();
     try {
-        const response = await axios.get<Trips>(`${apiBaseUrl}/api/trips`, {
+        const response = await axios.get(`${apiBaseUrl}/api/trips`, {
             headers: {
                 accept: '*/*',
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         });
-        return response.data;
+        return response.data.data;
     } catch (error) {
         console.error('여행 데이터패칭 중 오류 발생', error);
     }
@@ -172,5 +153,24 @@ export const deleteTripInfo = async (tripId: string) => {
         return response.data;
     } catch (error) {
         console.error('여행 삭제 중 오류 발생', error);
+    }
+};
+
+export const createTripId = async () => {
+    try {
+        const token = getToken();
+        const response = await axios.post(
+            `${apiBaseUrl}/api/trips`,
+            {},
+            {
+                headers: {
+                    accept: '*/*',
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        );
+        return response.data.data.tripId;
+    } catch (error) {
+        console.error('새로운 tripId 생성 실패', error);
     }
 };

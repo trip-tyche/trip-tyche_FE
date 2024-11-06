@@ -59,3 +59,12 @@ export interface PinPoint {
     mediaLink: string;
     recordDate: string;
 }
+
+// 미디어파일
+export interface MediaFile {
+    latitude: number;
+    longitude: number;
+    mediaFileId: string;
+    mediaLink: string;
+    recordDate: string;
+}

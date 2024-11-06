@@ -17,7 +17,7 @@ import { PATH } from '@/constants/path';
 import useTimelineStore from '@/stores/useTimelineStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
-import { PinPoint, TripInfo } from '@/types/trip';
+import { MediaFile, PinPoint, TripInfo } from '@/types/trip';
 import { getDayNumber } from '@/utils/date';
 
 const MOVE_DURATION = 3000;
@@ -33,7 +33,7 @@ const INDIVIDUAL_MARKER_ZOOM = 17;
 const TimelineMap = () => {
     const [tripInfo, setTripInfo] = useState<TripInfo | null>(null);
     const [pinPoints, setPinPoints] = useState<PinPoint[]>([]);
-    const [mediaFiles, setMediaFiles] = useState<any[]>([]);
+    const [allImages, setAllImages] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [characterPosition, setCharacterPosition] = useState<google.maps.LatLngLiteral | null>(null);
     const [currentPinIndex, setCurrentPinIndex] = useState(0);
@@ -49,6 +49,7 @@ const TimelineMap = () => {
     const [selectedMarker, setSelectedMarker] = useState<PinPoint | null>(null);
     const [isMapInteractive, setIsMapInteractive] = useState(true);
     const [mapLoaded, setMapLoaded] = useState(false);
+    const [imageDates, setImageDates] = useState<string[]>([]);
 
     const { showToast } = useToastStore();
     const { currentPinPointId, setCurrentPinPointId } = useTimelineStore();
@@ -66,21 +67,25 @@ const TimelineMap = () => {
 
         try {
             setIsLoading(true);
-            const data = await getTripMapData(tripId);
-            console.log(data);
-            setTripInfo(data.tripInfo);
-            setMediaFiles(data.mediaFiles);
+            const { tripInfo, pinPoints, mediaFiles: images } = await getTripMapData(tripId);
+            console.log(tripInfo, pinPoints, images);
 
-            if (data.pinPoints.length === 0) {
+            if (pinPoints.length === 0) {
                 showToast('보더패스에 저장된 이미지가 없습니다.');
                 navigate(PATH.TRIP_LIST);
                 return;
             }
 
-            const sortedDataByDate = data.pinPoints.sort(
+            const sortedDataByDate = pinPoints.sort(
                 (a: PinPoint, b: PinPoint) => new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime(),
             );
 
+            const imageDates = images.map((image: MediaFile) => image.recordDate.slice(0, 10));
+            const uniqueImageDates = [...new Set<string>(imageDates)].sort((a, b) => a.localeCompare(b));
+
+            setTripInfo(tripInfo);
+            setAllImages(images);
+            setImageDates(uniqueImageDates);
             setPinPoints(sortedDataByDate);
             setCharacterPosition({ lat: sortedDataByDate[0].latitude, lng: sortedDataByDate[0].longitude });
             setIsPlaying(false);
@@ -246,7 +251,7 @@ const TimelineMap = () => {
     const handleDayClick = useCallback(() => {
         setIsTransitioning(true);
         setTimeout(() => {
-            navigate(`/days/${tripId}`, { state: { imageDate: [tripInfo?.startDate, tripInfo?.endDate] } });
+            navigate(`/days/${tripId}`, { state: imageDates });
         }, 300);
     }, [navigate, tripId, tripInfo]);
 
@@ -529,12 +534,12 @@ const TimelineMap = () => {
             return (
                 <>
                     {renderPolyline()}
-                    {mediaFiles.map((file) => (
+                    {allImages.map((image) => (
                         <Marker
-                            key={file.mediaFileId}
-                            position={{ lat: file.latitude, lng: file.longitude }}
+                            key={image.mediaFileId}
+                            position={{ lat: image.latitude, lng: image.longitude }}
                             icon={markerIcon || undefined}
-                            onClick={() => handleMarkerClick(file as PinPoint)}
+                            onClick={() => handleMarkerClick(image as PinPoint)}
                         />
                     ))}
                     {selectedMarker && renderPhotoCard(selectedMarker)}
@@ -546,10 +551,10 @@ const TimelineMap = () => {
                     {(clusterer) => (
                         <>
                             {renderPolyline()}
-                            {mediaFiles.map((file) => (
+                            {allImages.map((image) => (
                                 <Marker
-                                    key={file.mediaFileId}
-                                    position={{ lat: file.latitude, lng: file.longitude }}
+                                    key={image.mediaFileId}
+                                    position={{ lat: image.latitude, lng: image.longitude }}
                                     clusterer={clusterer}
                                     icon={markerIcon || undefined}
                                 />

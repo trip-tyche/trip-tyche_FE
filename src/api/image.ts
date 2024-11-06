@@ -20,7 +20,7 @@ export const getImagesByPinPoint = async (tripId: string, pinPoint: string) => {
                 'Content-Type': 'application/json',
             },
         });
-        return response.data;
+        return response.data.data;
     } catch (error) {
         console.error('Error fetching pinpoint-images data:', error);
     }
@@ -36,7 +36,7 @@ export const getImagesByDay = async (tripId: string, date: string) => {
                 'Content-Type': 'application/json',
             },
         });
-        return response.data;
+        return response.data.data;
     } catch (error) {
         console.error(`${formattedDate}의 이미지를 불러오는데 실패`, error);
     }
