@@ -132,7 +132,7 @@ const AddLocation = () => {
                                 onClick={handleImageUploadWithLocation}
                                 disabled={!selectedLocation}
                                 isLoading={isUploading}
-                                loadingMessage='위치를 넣는 중입니다...'
+                                loadingMessage='위치 등록 중입니다...'
                             />
                         </div>
                         <Map

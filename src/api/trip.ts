@@ -133,7 +133,6 @@ export const postTripImages = async (tripId: string, images: File[]) => {
                 'Content-Type': 'multipart/form-data',
             },
         });
-
         return response.data;
     } catch (error) {
         console.error('이미지 업로드 중 오류 발생', error);
