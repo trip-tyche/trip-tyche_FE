@@ -6,9 +6,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { createTripId, getTripList } from '@/api/trip';
 import { postUserNickName } from '@/api/user';
-
-import mainImage from '/public/ogami_1.png';
-
 import Button from '@/components/common/button/Button';
 import Loading from '@/components/common/Loading';
 import HomeBorderPass from '@/components/pages/home/HomeBorderPass';

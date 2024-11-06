@@ -13,6 +13,7 @@ import { LOGOUT_MODAL } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import useAuthStore from '@/stores/useAuthStore';
 import { useModalStore } from '@/stores/useModalStore';
+import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 
 const MyPage = () => {
@@ -21,6 +22,7 @@ const MyPage = () => {
 
     const { isModalOpen, openModal, closeModal } = useModalStore();
     const setLogout = useAuthStore((state) => state.setLogout);
+    const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();
 
@@ -36,6 +38,8 @@ const MyPage = () => {
         try {
             await postUserNickName(inputValue);
             fetchUserData();
+            showToast('닉네임이 변경되었습니다.');
+            setIsEditing(false);
         } catch (error) {
             console.error('닉네임 등록이 실패하였습니다.', error);
         }

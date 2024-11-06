@@ -570,7 +570,7 @@ const ImageItem = styled.div`
             0 0 5px rgba(255, 155, 55, 0.7),
             /* 내부 글로우 */ 0 0 10px rgba(255, 155, 55, 0.5),
             /* 중간 글로우 */ 0 0 15px rgba(255, 155, 55, 0.3),
-            /* 외부 글로우 */ 1px 1px 2px rgba(0, 0, 0, 0.8); /* 가독성을 위한 엣지 섀도우 */
+            /* 외부 글로우 */ 1px 1px 2px rgba(0, 0, 0, 0.1); /* 가독성을 위한 엣지 섀도우 */
 
         &::before {
             content: '';
@@ -579,7 +579,7 @@ const ImageItem = styled.div`
             left: -2px;
             right: -2px;
             bottom: -2px;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.05);
             filter: blur(4px);
             z-index: -1;
             border-radius: 4px;
