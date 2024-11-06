@@ -10,10 +10,7 @@ import { postUserNickName } from '@/api/user';
 import mainImage from '/public/ogami_1.png';
 
 import Button from '@/components/common/button/Button';
-import Loading from '@/components/common/Loading';
-import InputModal from '@/components/common/modal/InputModal';
 import Card from '@/components/pages/home/Card';
-import { NICKNAME_MODAL } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import theme from '@/styles/theme';
 import { getToken, getUserId } from '@/utils/auth';
@@ -69,7 +66,7 @@ const Home = () => {
 
     return (
         <div css={containerStyle}>
-            {!userNickName ? (
+            {userNickName ? (
                 <div css={nicknameStyle}>
                     <div css={inputContainer}>
                         <h1>당신만의 특별한 닉네임을 지어주세요 😀</h1>
@@ -84,13 +81,7 @@ const Home = () => {
                         {(inputValue.length === 1 || inputValue.length > 10) && <p>닉네임을 2~10자로 입력해주세요.</p>}
                     </div>
                     <div css={buttonContainer}>
-                        <Button
-                            text='완료'
-                            btnTheme='pri'
-                            size='lg'
-                            onClick={submitUserNickName}
-                            disabled={inputValue.length < 2 || inputValue.length > 10}
-                        />
+                        <Button text='완료' btnTheme='pri' size='lg' onClick={submitUserNickName} />
                     </div>
                 </div>
             ) : (
@@ -122,8 +113,7 @@ const Home = () => {
                             text='여행 등록하기'
                             btnTheme='pri'
                             size='lg'
-                            onClick={submitUserNickName}
-                            disabled={inputValue.length < 2 || inputValue.length > 10}
+                            onClick={() => navigate(PATH.TRIP_LIST)}
                         />
                     </div>
                 </>

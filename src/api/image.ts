@@ -33,7 +33,6 @@ export const getImagesByDay = async (tripId: string, date: string) => {
         const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/map?date=${formattedDate}`, {
             headers: {
                 accept: '*/*',
-                Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         });

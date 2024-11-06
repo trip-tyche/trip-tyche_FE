@@ -72,7 +72,6 @@ export const getTripMapData = async (tripId: string) => {
         const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/info`, {
             headers: {
                 accept: '*/*',
-                Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         });
@@ -90,7 +89,6 @@ export const getTripList = async () => {
         const response = await axios.get(`${apiBaseUrl}/api/trips`, {
             headers: {
                 accept: '*/*',
-                Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         });
@@ -114,7 +112,6 @@ export const postTripImages = async (tripId: string, images: File[]) => {
         const response = await axios.post(`${apiBaseUrl}/api/trips/${tripId}/upload`, formData, {
             headers: {
                 accept: '*/*',
-                Authorization: `Bearer ${token}`,
                 'Content-Type': 'multipart/form-data',
             },
         });
