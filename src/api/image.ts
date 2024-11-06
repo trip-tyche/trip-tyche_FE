@@ -27,6 +27,7 @@ export const getImagesByPinPoint = async (tripId: string, pinPoint: string) => {
 };
 
 export const getImagesByDay = async (tripId: string, date: string) => {
+    const token = getToken();
     const formattedDate = date.slice(0, 10);
     try {
         const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/map?date=${formattedDate}`, {

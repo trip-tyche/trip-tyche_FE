@@ -5,10 +5,12 @@ import { User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { getTripList } from '@/api/trip';
-import { getUserData, postUserNickName } from '@/api/user';
+import { postUserNickName } from '@/api/user';
 
 import mainImage from '/public/ogami_1.png';
 
+import Button from '@/components/common/button/Button';
+import Loading from '@/components/common/Loading';
 import InputModal from '@/components/common/modal/InputModal';
 import Card from '@/components/pages/home/Card';
 import { NICKNAME_MODAL } from '@/constants/message';
@@ -17,7 +19,7 @@ import theme from '@/styles/theme';
 import { getToken, getUserId } from '@/utils/auth';
 
 const Home = () => {
-    const [userNickName, setUserNickName] = useState<string>('TripTyche');
+    const [userNickName, setUserNickName] = useState<string>();
     const [tripCount, setTripCount] = useState<number>();
     const [inputValue, setInputValue] = useState('');
     const [isOpenInputModal, setIsOpenInputModal] = useState(false);
@@ -31,18 +33,12 @@ const Home = () => {
     const fetchUserData = async () => {
         const token = getToken();
         const userId = getUserId();
+
         if (!token || !userId) {
             navigate(PATH.LOGIN);
             return;
         }
         const { userNickName, trips } = await getTripList();
-
-        // if (typeof tripList !== 'object') {
-        //     showToast('다시 로그인해주세요.');
-        //     navigate(PATH.LOGIN);
-        //     localStorage.clear();
-        //     return;
-        // }
 
         if (!userNickName) {
             setIsOpenInputModal(true);
@@ -63,28 +59,77 @@ const Home = () => {
         }
     };
 
+    // if (!userNickName) {
+    //     return (
+    //         <div css={loadingSpinnerStyle}>
+    //             <Loading />
+    //         </div>
+    //     );
+    // }
+
     return (
         <div css={containerStyle}>
-            <div css={headerStyle}>
-                <User css={userIconStyle} onClick={() => navigate(PATH.MYPAGE)} />
-            </div>
-            <div css={cardWrapperStyle}>
-                <Card tripCount={tripCount} />
-            </div>
-            <div css={contentStyle}>
-                <div css={userStyle}>
-                    <img css={imageStyle} src={mainImage} alt='main-image' />
-                    <p css={subtitleStyle}>
-                        안녕하세요, <span css={spanStyle}>{userNickName}</span> 님
-                    </p>
+            {!userNickName ? (
+                <div css={nicknameStyle}>
+                    <div css={inputContainer}>
+                        <h1>당신만의 특별한 닉네임을 지어주세요 😀</h1>
+                        <input
+                            type='text'
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            maxLength={14}
+                            placeholder='닉네임을 입력해주세요 (최대 10자)'
+                            css={inputStyle(inputValue)}
+                        />
+                        {(inputValue.length === 1 || inputValue.length > 10) && <p>닉네임을 2~10자로 입력해주세요.</p>}
+                    </div>
+                    <div css={buttonContainer}>
+                        <Button
+                            text='완료'
+                            btnTheme='pri'
+                            size='lg'
+                            onClick={submitUserNickName}
+                            disabled={inputValue.length < 2 || inputValue.length > 10}
+                        />
+                    </div>
                 </div>
-            </div>
-            <div css={borderPassCardStyle} onClick={() => navigate(PATH.TRIP_LIST)}>
-                <h2>보더 패스</h2>
-                <p>여행 기록 시작하기</p>
-            </div>
+            ) : (
+                <>
+                    <div css={headerStyle}>
+                        <User css={userIconStyle} onClick={() => navigate(PATH.MYPAGE)} />
+                    </div>
+                    <div css={contentStyle}>
+                        <div css={userStyle}>
+                            <img css={imageStyle} src={mainImage} alt='main-image' />
+                            {userNickName ? (
+                                <p css={subtitleStyle}>
+                                    안녕하세요, <span css={spanStyle}>{userNickName}</span> 님
+                                </p>
+                            ) : (
+                                <p css={subtitleStyle}>닉네임을 등록해주세요.</p>
+                            )}
+                        </div>
+                    </div>
+                    <div css={cardWrapperStyle}>
+                        <Card tripCount={tripCount} />
+                    </div>
+                    {/* <div css={borderPassCardStyle} onClick={() => navigate(PATH.TRIP_LIST)}>
+                        <h2>보더 패스</h2>
+                        <p>여행 기록 시작하기</p>
+                    </div> */}
+                    <div css={secondButtonContainer}>
+                        <Button
+                            text='여행 등록하기'
+                            btnTheme='pri'
+                            size='lg'
+                            onClick={submitUserNickName}
+                            disabled={inputValue.length < 2 || inputValue.length > 10}
+                        />
+                    </div>
+                </>
+            )}
 
-            {isOpenInputModal && (
+            {/* {isOpenInputModal && (
                 <InputModal
                     title={NICKNAME_MODAL.TITLE}
                     infoMessage={NICKNAME_MODAL.INFO_MESSAGE}
@@ -93,23 +138,79 @@ const Home = () => {
                     inputValue={inputValue}
                     setInputValue={setInputValue}
                 />
-            )}
-            {/* {isOpenGuideModal && (
-                <GuideModal
-                    confirmText='등록하러 가기'
-                    cancelText='나중에'
-                    confirmModal={confirmGuideModal}
-                    closeModal={() => {
-                        setIsOpenGuideModal(false);
-                    }}
-                    isOverlay
-                >
-                    <Guide nickname={userNickName} />
-                </GuideModal>
             )} */}
         </div>
     );
 };
+
+const nicknameStyle = css`
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 36px;
+`;
+
+const inputContainer = css`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    height: 104px;
+    padding: 0 12px;
+
+    h1 {
+        text-align: center;
+        font-size: 18px;
+        font-weight: 600;
+        color: ${theme.colors.black};
+    }
+
+    p {
+        margin-top: 8px;
+        margin-left: 4px;
+        color: #ff0101;
+        font-size: ${theme.fontSizes.normal_14};
+    }
+`;
+
+const baseInputStyle = css`
+    border-radius: 8px;
+    padding: 12px;
+    font-size: ${theme.fontSizes.large_16};
+    width: 100%;
+    height: 38px;
+    outline: none;
+    margin-top: 24px;
+    margin-bottom: 13;
+`;
+
+const inputStyle = (inputValue: string) => css`
+    ${baseInputStyle};
+    border: 1px solid ${inputValue.length === 1 || inputValue.length > 10 ? '#ff0101' : '#DDDDDD'};
+    font-size: ${theme.fontSizes.large_16};
+`;
+
+const buttonContainer = css`
+    width: 90%;
+    padding: 0 12px;
+    margin: 24px 0 12px 0;
+`;
+
+const secondButtonContainer = css`
+    width: 100%;
+    padding: 0 12px;
+    margin: 24px 0 12px 0;
+`;
+
+const loadingSpinnerStyle = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100dvh;
+    background-color: #f0f0f0;
+`;
 
 const containerStyle = css`
     display: flex;

@@ -234,7 +234,7 @@ const loadingSpinnerStyle = css`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100dvh;
     background-color: #f0f0f0;
 `;
 

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { ENV } from '@/constants/auth';
-import { TripInfo, Trips } from '@/types/trip';
+import { TripInfo } from '@/types/trip';
 import { getToken } from '@/utils/auth';
 
 const apiBaseUrl = ENV.BASE_URL;
@@ -85,6 +85,7 @@ export const getTripMapData = async (tripId: string) => {
 // ////////
 export const getTripList = async () => {
     const token = getToken();
+    console.log(token);
     try {
         const response = await axios.get(`${apiBaseUrl}/api/trips`, {
             headers: {
@@ -105,9 +106,11 @@ export const postTripImages = async (tripId: string, images: File[]) => {
         formData.append('files', image);
     });
 
+    console.log(token);
     console.log('files:', formData.getAll('files'));
 
     try {
+        const token = getToken();
         const response = await axios.post(`${apiBaseUrl}/api/trips/${tripId}/upload`, formData, {
             headers: {
                 accept: '*/*',

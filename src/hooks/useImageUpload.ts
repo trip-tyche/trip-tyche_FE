@@ -1,9 +1,11 @@
 import { useState } from 'react';
 
 import imageCompression from 'browser-image-compression';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { postTripImages } from '@/api/trip';
+import { PATH } from '@/constants/path';
+import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
 import { ImageModel } from '@/types/image';
 import { formatDateToYYYYMMDD } from '@/utils/date';
@@ -20,8 +22,10 @@ export const useImageUpload = () => {
     const [resizingProgress, setResizingProgress] = useState(0);
     const [isAddLocationModalOpen, setIsAddLocationModalOpen] = useState(false);
 
+    const showToast = useToastStore((state) => state.showToast);
     const setUploadStatus = useUploadStore((state) => state.setUploadStatus);
 
+    const navigate = useNavigate();
     const { tripId } = useParams();
 
     const removeDuplicateImages = (images: FileList): FileList => {
@@ -280,8 +284,12 @@ export const useImageUpload = () => {
                 setUploadStatus('completed');
             })
             .catch((error) => {
-                console.error('이미지 업로드 중 오류 발생:', error);
                 setUploadStatus('error');
+                showToast('다시 로그인해주세요.');
+                navigate(PATH.LOGIN);
+                localStorage.clear();
+                console.error('이미지 업로드 중 오류 발생:', error);
+                return;
             });
     };
 

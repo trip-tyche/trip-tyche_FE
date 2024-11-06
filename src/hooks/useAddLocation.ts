@@ -56,7 +56,15 @@ export const useAddLocation = () => {
         }
 
         const updatedImages = await updateImageGpsMetadata(selectedImages, selectedLocation);
-        await uploadImages(updatedImages);
+
+        try {
+            await uploadImages(updatedImages);
+        } catch (error) {
+            showToast('다시 로그인해주세요.');
+            navigate(PATH.LOGIN);
+            localStorage.clear();
+            return;
+        }
 
         const updatedDisplayedImages = displayedImages.filter(
             (displayedImage) =>

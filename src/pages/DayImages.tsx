@@ -340,7 +340,7 @@ const DaysImages: React.FC = () => {
                                     data-index={index}
                                 >
                                     <img src={image.mediaLink} alt={`Image-${image.mediaFileId}`} />
-                                    <p>{image.recordDate}</p>
+                                    <p>`{image.recordDate.split('T')[1]}</p>
                                 </ImageItem>
                             ))
                         ) : (
@@ -481,9 +481,26 @@ const ImageList = styled.div`
         z-index: 10;
         box-shadow: 1px 0 3px rgba(0, 0, 0, 0.3);
 
-        // 필름 구멍 패턴
+        /* // 필름 구멍 패턴
         background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 4px, transparent 4px);
         background-size: 20px 20px;
+        background-position: center;
+        background-repeat: repeat-y; */
+        // 필름 구멍 패턴
+        /* background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 4px, transparent 4px); */
+        background-image: repeating-linear-gradient(
+            to bottom,
+            transparent 0px,
+            transparent 5px,
+            rgba(255, 255, 255, 0.9) 5px,
+            rgba(255, 255, 255, 0.9) 15px,
+            transparent 15px,
+            transparent 20px
+        );
+        /* background-size: 20px 20px;
+        background-position: center;
+        background-repeat: repeat-y; */
+        background-size: 12px 24px;
         background-position: center;
         background-repeat: repeat-y;
     }
@@ -501,8 +518,20 @@ const ImageList = styled.div`
         box-shadow: -1px 0 3px rgba(0, 0, 0, 0.3);
 
         // 필름 구멍 패턴
-        background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 4px, transparent 4px);
-        background-size: 20px 20px;
+        /* background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 4px, transparent 4px); */
+        background-image: repeating-linear-gradient(
+            to bottom,
+            transparent 0px,
+            transparent 5px,
+            rgba(255, 255, 255, 0.9) 5px,
+            rgba(255, 255, 255, 0.9) 15px,
+            transparent 15px,
+            transparent 20px
+        );
+        /* background-size: 20px 20px;
+        background-position: center;
+        background-repeat: repeat-y; */
+        background-size: 12px 24px;
         background-position: center;
         background-repeat: repeat-y;
     }
@@ -522,18 +551,19 @@ const ImageItem = styled.div`
     p {
         z-index: 2;
         position: absolute;
-        bottom: 4px;
+        bottom: 8px;
         right: 30px;
         margin: 0;
         padding: 2px 4px;
-        font-family: 'Courier New', monospace;
+        font-family: 'DS-DIGII', sans-serif;
+        font-weight: bold;
+        font-style: italic;
         font-size: ${theme.fontSizes.large_16};
         color: #ff9b37;
-        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
-        letter-spacing: 1px;
+        /* text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7); */
+        letter-spacing: 4px;
         opacity: 0.9;
         font-weight: 500;
-        background-color: rgba(0, 0, 0, 0.7);
         border-radius: 2px;
     }
 `;
