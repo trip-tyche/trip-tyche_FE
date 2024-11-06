@@ -84,14 +84,15 @@ export const getTripMapData = async (tripId: string) => {
 // ////////
 export const getTripList = async () => {
     const token = getToken();
-    console.log(token);
     try {
         const response = await axios.get(`${apiBaseUrl}/api/trips`, {
             headers: {
                 accept: '*/*',
+                Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         });
+
         return response.data.data;
     } catch (error) {
         console.error('여행 데이터패칭 중 오류 발생', error);
@@ -162,7 +163,7 @@ export const getTripData = async (tripId: string) => {
         const { data } = await axios.get(`${apiBaseUrl}/api/trips/${tripId}`, {
             headers: {
                 accept: '*/*',
-                Authorization: `Bearer ${token}`,
+                // Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         });

@@ -10,6 +10,7 @@ import { postUserNickName } from '@/api/user';
 import mainImage from '/public/ogami_1.png';
 
 import Button from '@/components/common/button/Button';
+import Loading from '@/components/common/Loading';
 import Card from '@/components/pages/home/Card';
 import { PATH } from '@/constants/path';
 import theme from '@/styles/theme';
@@ -20,11 +21,13 @@ const Home = () => {
     const [tripCount, setTripCount] = useState<number>();
     const [inputValue, setInputValue] = useState('');
     const [isOpenInputModal, setIsOpenInputModal] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchUserData();
+        setIsLoading(true);
     }, []);
 
     const fetchUserData = async () => {
@@ -56,17 +59,17 @@ const Home = () => {
         }
     };
 
-    // if (!userNickName) {
-    //     return (
-    //         <div css={loadingSpinnerStyle}>
-    //             <Loading />
-    //         </div>
-    //     );
-    // }
+    if (!isLoading) {
+        return (
+            <div css={loadingSpinnerStyle}>
+                <Loading />
+            </div>
+        );
+    }
 
     return (
         <div css={containerStyle}>
-            {userNickName ? (
+            {!userNickName ? (
                 <div css={nicknameStyle}>
                     <div css={inputContainer}>
                         <h1>당신만의 특별한 닉네임을 지어주세요 😀</h1>
