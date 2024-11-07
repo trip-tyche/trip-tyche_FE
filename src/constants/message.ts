@@ -14,7 +14,7 @@ export const LOGOUT_MODAL = {
 };
 
 export const TRIP = {
-    NO_TRIP: '새로운 여행을 등록해주세요:)',
+    NO_TRIP: '등록된 여행이 아직 없습니다 🥲',
 };
 
 export const TRIP_IMAGES_UPLOAD = {

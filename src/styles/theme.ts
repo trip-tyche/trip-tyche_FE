@@ -1,7 +1,7 @@
 const colors = {
     primary: '#0073bb',
-    primaryHover: '#5F2BCD',
-    secondary: '#FDFDFD',
+    primaryHover: '#005d96',
+    secondary: '#4a5b6a',
     secondaryHover: '#DCDCDC',
     tertiary: '#333334',
     tertiaryHover: '#4C4C4C',
@@ -15,11 +15,7 @@ const colors = {
     blue: '#3EA6FF',
     blueHover: '#0073D6',
     whiteText: '#FFFFFF',
-    bgBadge: '#616161', // 마이페이지 배지 배경색
-    bgSwitchOff: '#E3E5EB', // 스위치 off 배경색
     darkGray: '#8B95A1', // placeholder
-    bgMypage: '#353535', // 마이페이지 프로필 배경색
-    goldStar: '#FFC700', // 별점 색상
 
     black: '#181818',
     descriptionText: '#5e5e5e',

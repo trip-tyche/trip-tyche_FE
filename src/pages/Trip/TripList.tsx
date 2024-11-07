@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
-import { TicketsPlane } from 'lucide-react';
+import { TicketsPlane, PlaneTakeoff } from 'lucide-react';
 import { LuPlus } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 
@@ -126,7 +126,10 @@ const TripList = () => {
                             ))}
                         </div>
                     ) : (
-                        <p css={noTripListStyle}>{TRIP.NO_TRIP}</p>
+                        <div css={noTripListStyle}>
+                            <PlaneTakeoff />
+                            <p>{TRIP.NO_TRIP}</p>
+                        </div>
                     )}
                 </>
             )}
@@ -182,10 +185,15 @@ const tripListStyle = css`
 `;
 
 const noTripListStyle = css`
-    height: calc(100dvh - 108px);
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 12px;
+    height: calc(100dvh - 144px);
+    font-size: ${theme.fontSizes.normal_14};
+    font-weight: 600;
+    color: ${theme.colors.descriptionText};
 `;
 
 export default TripList;

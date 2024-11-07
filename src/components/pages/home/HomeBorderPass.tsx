@@ -15,7 +15,7 @@ interface BorderPassProps {
     userNickname: string;
 }
 
-const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element => {
+const HomeBorderPass = ({ trip, userNickname }: BorderPassProps) => {
     const { tripTitle, country, startDate, endDate, hashtags } = trip;
     const [rotation, setRotation] = useState({ x: 0, y: 0 });
     const [lastRotation, setLastRotation] = useState({ x: 0, y: 0 }); // 마지막 회전 위치 저장
@@ -126,7 +126,7 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element =>
                     <div css={contentContainer}>
                         <div css={citiesStyle}>
                             <div>인천</div>
-                            <div>✈</div>
+                            <IoAirplaneSharp />
                             <div>{country.substring(4)}</div>
                         </div>
                         <div css={titleStyle}>{tripTitle}</div>
@@ -139,15 +139,15 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element =>
                         </div>
                     </div>
                     <div css={buttonContainer}>
-                        <button css={buttonStyle}>
+                        <div css={buttonStyle}>
                             <FiPlus /> Upload
-                        </button>
-                        <button css={buttonStyle}>
+                        </div>
+                        <div css={buttonStyle}>
                             <FaPencilAlt /> Edit
-                        </button>
-                        <button css={buttonStyle}>
+                        </div>
+                        <div css={buttonStyle}>
                             <FaTrashAlt /> Delete
-                        </button>
+                        </div>
                     </div>
                 </div>
                 <div css={rightSection}>
@@ -165,7 +165,6 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element =>
                 css={[borderPassContainer, shadowStyle]}
                 style={{
                     ...cardStyle,
-                    background: `rgba(0, 0, 0, ${isTouching ? 0.08 : 0.15})`,
                 }}
             />
         </div>
@@ -178,6 +177,7 @@ const shadowStyle = css`
     left: 0;
     right: 0;
     bottom: 0;
+    background: rgba(0, 0, 0, 0.1); // 고정된 투명도 값
     filter: blur(20px);
     z-index: -1;
     pointer-events: none;
@@ -227,7 +227,7 @@ const rightSection = css`
 `;
 
 const rightTopSection = css`
-    padding: 10px 15px;
+    padding: 10px;
     background-color: ${theme.colors.primary};
     color: white;
 `;
@@ -295,6 +295,7 @@ const textStyle = css`
 `;
 
 const buttonContainer = css`
+    height: 45px;
     display: flex;
     justify-content: space-between;
     padding: 10px 15px;

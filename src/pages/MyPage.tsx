@@ -23,11 +23,11 @@ const MyPage = () => {
 
     const { isModalOpen, openModal, closeModal } = useModalStore();
     const setLogout = useAuthStore((state) => state.setLogout);
+    const setNickName = useAuthStore((state) => state.setNickName);
+    const userNickName = useAuthStore((state) => state.userNickName);
     const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();
-
-    const userNickName = localStorage.getItem('userNickName') || 'TripTyche';
 
     const confirmModal = () => {
         closeModal();
@@ -37,6 +37,7 @@ const MyPage = () => {
 
     const submitUserNickName = async () => {
         try {
+            setNickName(inputValue);
             await postUserNickName(inputValue);
             fetchUserData();
             showToast('닉네임이 변경되었습니다.');
@@ -67,7 +68,7 @@ const MyPage = () => {
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                             maxLength={14}
-                            placeholder={userNickName}
+                            placeholder={userNickName || 'Trip Tyche'}
                             css={inputStyle(inputValue)}
                         />
                         {(inputValue.length === 1 || inputValue.length > 10) && <p>닉네임을 2~10자로 입력해주세요.</p>}
@@ -136,7 +137,6 @@ const inputContainer = css`
         color: ${theme.colors.black};
         margin-top: 12px;
     }
-
     p {
         margin-top: 8px;
         margin-left: 4px;

@@ -55,6 +55,10 @@ const buttonStyle = (btnTheme: 'pri' | 'sec', size: 'lg' | 'sm') => css`
     width: ${size === 'lg' ? '100%' : 'auto'};
     height: ${size === 'lg' ? '48px' : '34px'};
     padding: ${size === 'lg' ? '0' : '0 12px'};
+
+    :hover {
+        background-color: ${btnTheme === 'pri' ? '#005d96' : '#e5e8f0'};
+    }
 `;
 
 const basicButtonStyle = css`

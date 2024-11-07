@@ -616,6 +616,7 @@ const dayInfoTextStyle = css`
     h2 {
         font-size: ${theme.fontSizes.large_16};
         color: ${theme.colors.descriptionText};
+        color: ${theme.colors.secondary};
         font-weight: 600;
         margin: 0;
     }
