@@ -53,6 +53,11 @@ export const useImageUpload = () => {
         const extractedImages = await Promise.all(
             Array.from(images).map(async (image) => {
                 const location = await getImageLocation(image);
+
+                if (location?.latitude === 0 || location?.longitude === 0) {
+                    alert('위치가 0이다...');
+                }
+
                 const date = await extractDateFromImage(image);
                 let formattedDate = '';
 
