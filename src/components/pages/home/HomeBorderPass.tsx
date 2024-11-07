@@ -16,11 +16,14 @@ interface BorderPassProps {
 }
 
 const HomeBorderPass = ({ trip, userNickname }: BorderPassProps) => {
-    const { tripTitle, country, startDate, endDate, hashtags } = trip;
     const [rotation, setRotation] = useState({ x: 0, y: 0 });
     const [lastRotation, setLastRotation] = useState({ x: 0, y: 0 }); // 마지막 회전 위치 저장
     const [isTouching, setIsTouching] = useState(false);
     const [isInteracting, setIsInteracting] = useState(false);
+
+    const { tripTitle, country, startDate: rawStartDate, endDate: rawEndDate, hashtags } = trip;
+    const startDate = new Date(rawStartDate).toLocaleDateString('ko-KR');
+    const endDate = new Date(rawEndDate).toLocaleDateString('ko-KR');
 
     const handleMove = (x: number, y: number, element: HTMLElement) => {
         const rect = element.getBoundingClientRect();

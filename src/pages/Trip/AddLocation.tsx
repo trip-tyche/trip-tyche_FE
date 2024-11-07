@@ -139,6 +139,7 @@ const AddLocation = () => {
                             onLocationSelect={handleLocationSelect}
                             defaultLocation={defaultLocation}
                             setIsMapVisible={setIsMapVisible}
+                            isUploading={isUploading}
                         />
                     </section>
                 )}

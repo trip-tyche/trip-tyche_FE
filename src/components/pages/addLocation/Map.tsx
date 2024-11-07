@@ -1,7 +1,7 @@
 import { useState, useRef, useMemo } from 'react';
 
 import { css } from '@emotion/react';
-import { GoogleMap, LoadScript, Marker, Autocomplete, useLoadScript, Libraries } from '@react-google-maps/api';
+import { GoogleMap, Marker, Autocomplete, useLoadScript, Libraries } from '@react-google-maps/api';
 import { ChevronLeft } from 'lucide-react';
 
 import Loading from '@/components/common/Loading';
@@ -17,11 +17,12 @@ interface MapProps {
     onLocationSelect: (lat: number, lng: number) => void;
     defaultLocation: Location;
     setIsMapVisible: (isMapVisible: boolean) => void;
+    isUploading: boolean;
 }
 
 const libraries: Libraries = ['places'];
 
-const Map = ({ onLocationSelect, defaultLocation, setIsMapVisible }: MapProps) => {
+const Map = ({ onLocationSelect, defaultLocation, setIsMapVisible, isUploading }: MapProps) => {
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: ENV.GOOGLE_MAPS_API_KEY || '',
         libraries, // 상수 참조
@@ -108,7 +109,7 @@ const Map = ({ onLocationSelect, defaultLocation, setIsMapVisible }: MapProps) =
             <div css={searchOuterContainerStyle}>
                 <div css={searchContainerStyle}>
                     <div css={searchWrapperStyle}>
-                        <button css={backButtonStyle} onClick={() => setIsMapVisible(false)}>
+                        <button css={backButtonStyle} onClick={() => setIsMapVisible(false)} disabled={isUploading}>
                             <ChevronLeft size={24} color={`${theme.colors.descriptionText}`} />
                         </button>
                         <Autocomplete
