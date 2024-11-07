@@ -165,7 +165,7 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps) => {
                 </div>
             </div>
             <div
-                css={[borderPassContainer, shadowStyle]}
+                css={[borderPassContainer]}
                 style={{
                     ...cardStyle,
                 }}
@@ -173,18 +173,6 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps) => {
         </div>
     );
 };
-
-const shadowStyle = css`
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.1); // 고정된 투명도 값
-    filter: blur(20px);
-    z-index: -1;
-    pointer-events: none;
-`;
 
 const borderPassContainer = css`
     width: 100%;
@@ -194,9 +182,9 @@ const borderPassContainer = css`
     position: relative;
     overflow: hidden;
     background: white;
-    /* box-shadow:
+    box-shadow:
         0 6px 8px rgba(0, 0, 0, 0.1),
-        0 1px 3px rgba(0, 0, 0, 0.08); */
+        0 1px 3px rgba(0, 0, 0, 0.08);
 `;
 
 const mainContent = css`
