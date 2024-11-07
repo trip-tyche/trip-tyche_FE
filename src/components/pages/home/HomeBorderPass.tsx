@@ -18,6 +18,7 @@ interface BorderPassProps {
 const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element => {
     const { tripTitle, country, startDate, endDate, hashtags } = trip;
     const [rotation, setRotation] = useState({ x: 0, y: 0 });
+    const [lastRotation, setLastRotation] = useState({ x: 0, y: 0 }); // 마지막 회전 위치 저장
     const [isTouching, setIsTouching] = useState(false);
     const [isInteracting, setIsInteracting] = useState(false);
 
@@ -33,6 +34,7 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element =>
         const rotateY = ((relativeX - centerX) / centerX) * 20;
 
         setRotation({ x: rotateX, y: rotateY });
+        setLastRotation({ x: rotateX, y: rotateY }); // 현재 회전 위치를 마지막 위치로 저장
     };
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -49,22 +51,27 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element =>
         handleMove(touch.clientX, touch.clientY, e.currentTarget);
     };
 
-    const handleTouchStart = () => {
+    const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
         setIsTouching(true);
         setIsInteracting(true);
+        // 터치 시작 시 마지막 위치에서 시작
+        setRotation(lastRotation);
+
+        // 터치 시작 위치에서의 회전값도 계산
+        const touch = e.touches[0];
+        handleMove(touch.clientX, touch.clientY, e.currentTarget);
     };
 
     const handleTouchEnd = () => {
         setIsTouching(false);
         setIsInteracting(false);
-        // 터치 종료시 rotation 유지
     };
 
     const handleMouseLeave = () => {
         if (!isTouching) {
             setIsInteracting(false);
-            // 마우스 이탈시 원래 위치로 복귀
             setRotation({ x: 0, y: 0 });
+            setLastRotation({ x: 0, y: 0 });
         }
     };
 
@@ -73,25 +80,10 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element =>
             setIsTouching(false);
             setIsInteracting(false);
             setRotation({ x: 0, y: 0 });
+            setLastRotation({ x: 0, y: 0 });
         },
         [],
     );
-
-    // 마우스 호버시에만 광택 효과 적용
-    const glossStyle = {
-        background: isTouching
-            ? 'none' // 터치시에는 광택 효과 없음
-            : `
-                linear-gradient(
-                    105deg,
-                    transparent 0%,
-                    rgba(255, 255, 255, 0.08) 15%,
-                    rgba(255, 255, 255, 0.15) 30%,
-                    rgba(255, 255, 255, 0.08) 45%,
-                    transparent 60%
-                )
-            `,
-    };
 
     const cardStyle = {
         transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
@@ -113,8 +105,6 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element =>
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
         >
-            <div css={[glossOverlay]} style={glossStyle} />
-
             <div css={mainContent}>
                 <div css={leftContent}>
                     <div css={topSection}>
@@ -135,8 +125,8 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element =>
                     </div>
                     <div css={contentContainer}>
                         <div css={citiesStyle}>
-                            <div>INCHEON</div>
-                            <IoAirplaneSharp />
+                            <div>인천</div>
+                            <div>✈</div>
                             <div>{country.substring(4)}</div>
                         </div>
                         <div css={titleStyle}>{tripTitle}</div>
@@ -181,17 +171,6 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element =>
         </div>
     );
 };
-
-const glossOverlay = css`
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    border-radius: 10px;
-    z-index: 2;
-`;
 
 const shadowStyle = css`
     position: absolute;
