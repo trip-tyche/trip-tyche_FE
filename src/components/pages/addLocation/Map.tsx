@@ -6,6 +6,7 @@ import { ChevronLeft } from 'lucide-react';
 
 import Loading from '@/components/common/Loading';
 import { ENV } from '@/constants/auth';
+import theme from '@/styles/theme';
 
 interface Location {
     latitude: number;
@@ -108,7 +109,7 @@ const Map = ({ onLocationSelect, defaultLocation, setIsMapVisible }: MapProps) =
                 <div css={searchContainerStyle}>
                     <div css={searchWrapperStyle}>
                         <button css={backButtonStyle} onClick={() => setIsMapVisible(false)}>
-                            <ChevronLeft size={24} />
+                            <ChevronLeft size={24} color={`${theme.colors.descriptionText}`} />
                         </button>
                         <Autocomplete
                             onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}

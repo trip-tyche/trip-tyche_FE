@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { css, keyframes } from '@emotion/react';
 import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { FiPlus } from 'react-icons/fi';
+import { IoAirplaneSharp } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
 import { deleteTripInfo } from '@/api/trip';
@@ -97,7 +98,7 @@ const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.
                     <div css={contentContainer}>
                         <div css={citiesStyle}>
                             <div>인천</div>
-                            <div>✈</div>
+                            <IoAirplaneSharp />
                             <div>{country.substring(4)}</div>
                         </div>
                         <div css={titleStyle}>{tripTitle}</div>
@@ -171,7 +172,6 @@ const borderPassContainer = css`
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); */
 `;
 
 const mainContent = css`

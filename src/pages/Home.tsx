@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { Settings } from 'lucide-react';
+import { FaArrowCircleDown } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 import { createTripId, getTripList } from '@/api/trip';
@@ -84,6 +85,15 @@ const Home = () => {
         );
     }
 
+    const exampleTrips = {
+        tripId: 'ex',
+        tripTitle: '첫 티켓이 발급되었습니다!',
+        country: '0000TRIP TYCHE',
+        startDate: '2024-00-00',
+        endDate: '2024-00-00',
+        hashtags: ['소소한두려움', '도전', '행복한시간'],
+    };
+
     return (
         <div css={containerStyle}>
             {!userNickName ? (
@@ -109,14 +119,23 @@ const Home = () => {
                     <div css={headerStyle}>
                         <Settings css={settingIconStyle} onClick={() => navigate(PATH.MYPAGE)} />
                     </div>
-                    <div css={contentStyle}>{trips && <HomeBorderPass trip={trips} userNickname={userNickName} />}</div>
+                    <div css={contentStyle}>
+                        {trips ? (
+                            <HomeBorderPass trip={trips} userNickname={userNickName} />
+                        ) : (
+                            <HomeBorderPass trip={exampleTrips} userNickname={userNickName} />
+                        )}
+                    </div>
                     <div css={cardStyle}>
                         {tripCount ? (
                             <h3>
                                 지금까지 <span>{tripCount}</span> 장의 여행 티켓이 있어요!
                             </h3>
                         ) : (
-                            <h3>아래 버튼을 눌러서 새 여행을 등록해주세요 </h3>
+                            <h3>
+                                <FaArrowCircleDown />
+                                아래 버튼을 눌러서 새 여행을 등록해주세요
+                            </h3>
                         )}
                     </div>
                     <div css={secondButtonContainer}>
@@ -140,6 +159,10 @@ const cardStyle = css`
     margin-bottom: 8px;
 
     h3 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
         font-size: ${theme.fontSizes.normal_14};
         color: ${theme.colors.descriptionText};
         font-weight: bold;

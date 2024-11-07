@@ -4,16 +4,11 @@ import { ENV } from '@/constants/auth';
 import { getToken } from '@/utils/auth';
 
 const apiBaseUrl = ENV.BASE_URL;
-const token = getToken();
 
 export const getImagesByPinPoint = async (tripId: string, pinPoint: string) => {
     try {
         const token = getToken();
-        // const response = await axios.get(
-        //     `${apiBaseUrl ? `/api/trips/${tripId}/pinpoints/${pinPoint}/images` : `${apiBaseUrl}/api/trips/${tripId}/pinpoints/${pinPoint}/images`}`,
-        //     {
         const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/pinpoints/${pinPoint}/images`, {
-            // const response = await axios.get(`/api/trips/${tripId}/pinpoints/${pinPoint}/images`, {
             headers: {
                 accept: '*/*',
                 Authorization: `Bearer ${token}`,
@@ -27,7 +22,6 @@ export const getImagesByPinPoint = async (tripId: string, pinPoint: string) => {
 };
 
 export const getImagesByDay = async (tripId: string, date: string) => {
-    const token = getToken();
     const formattedDate = date.slice(0, 10);
     try {
         const response = await axios.get(`${apiBaseUrl}/api/trips/${tripId}/map?date=${formattedDate}`, {
