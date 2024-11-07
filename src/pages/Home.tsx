@@ -251,6 +251,7 @@ const containerStyle = css`
 const headerStyle = css`
     display: flex;
     justify-content: flex-end;
+    padding-right: 4px;
 `;
 
 const settingIconStyle = css`

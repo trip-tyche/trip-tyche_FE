@@ -18,8 +18,8 @@ interface BorderPassProps {
 const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element => {
     const { tripTitle, country, startDate, endDate, hashtags } = trip;
     const [rotation, setRotation] = useState({ x: 0, y: 0 });
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [isTouching, setIsTouching] = useState(false);
+    const [isInteracting, setIsInteracting] = useState(false);
 
     const handleMove = (x: number, y: number, element: HTMLElement) => {
         const rect = element.getBoundingClientRect();
@@ -29,76 +29,58 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element =>
         const relativeX = x - rect.left;
         const relativeY = y - rect.top;
 
-        const rotateX = ((relativeY - centerY) / centerY) * -20; // 회전 각도를 약간 줄임
+        const rotateX = ((relativeY - centerY) / centerY) * -20;
         const rotateY = ((relativeX - centerX) / centerX) * 20;
 
         setRotation({ x: rotateX, y: rotateY });
-
-        // 터치가 아닐 때만 마우스 위치 업데이트
-        if (!isTouching) {
-            setMousePosition({
-                x: (relativeX / rect.width) * 100,
-                y: (relativeY / rect.height) * 100,
-            });
-        }
     };
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         if (!isTouching) {
+            setIsInteracting(true);
             handleMove(e.clientX, e.clientY, e.currentTarget);
         }
     };
 
     const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
         e.preventDefault();
+        setIsInteracting(true);
         const touch = e.touches[0];
         handleMove(touch.clientX, touch.clientY, e.currentTarget);
     };
 
     const handleTouchStart = () => {
         setIsTouching(true);
-        // 터치 시 기본 광택 효과 위치 설정
-        setMousePosition({ x: 50, y: 0 });
+        setIsInteracting(true);
     };
 
     const handleTouchEnd = () => {
         setIsTouching(false);
-        setRotation({ x: 0, y: 0 });
-        setMousePosition({ x: 50, y: 50 });
+        setIsInteracting(false);
+        // 터치 종료시 rotation 유지
     };
 
     const handleMouseLeave = () => {
         if (!isTouching) {
+            setIsInteracting(false);
+            // 마우스 이탈시 원래 위치로 복귀
             setRotation({ x: 0, y: 0 });
-            setMousePosition({ x: 50, y: 50 });
         }
     };
 
     useEffect(
         () => () => {
             setIsTouching(false);
+            setIsInteracting(false);
             setRotation({ x: 0, y: 0 });
-            setMousePosition({ x: 50, y: 50 });
         },
         [],
     );
 
-    const cardStyle = {
-        transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
-        transition: isTouching ? 'none' : 'transform 0.3s ease',
-    };
-
-    // 터치 여부에 따른 광택 스타일
+    // 마우스 호버시에만 광택 효과 적용
     const glossStyle = {
         background: isTouching
-            ? `linear-gradient(
-                105deg,
-                transparent 0%,
-                rgba(255, 255, 255, 0.08) 15%,
-                rgba(255, 255, 255, 0.15) 30%,
-                rgba(255, 255, 255, 0.08) 45%,
-                transparent 60%
-              )`
+            ? 'none' // 터치시에는 광택 효과 없음
             : `
                 linear-gradient(
                     105deg,
@@ -107,14 +89,13 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element =>
                     rgba(255, 255, 255, 0.15) 30%,
                     rgba(255, 255, 255, 0.08) 45%,
                     transparent 60%
-                ),
-                radial-gradient(
-                    circle at ${mousePosition.x}% ${mousePosition.y}%,
-                    rgba(255, 255, 255, 0.2) 0%,
-                    rgba(255, 255, 255, 0.1) 20%,
-                    transparent 50%
                 )
             `,
+    };
+
+    const cardStyle = {
+        transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
+        transition: isInteracting ? 'none' : 'transform 0.5s ease',
     };
 
     return (
@@ -132,7 +113,6 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element =>
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
         >
-            {/* 광택 효과 오버레이 */}
             <div css={[glossOverlay]} style={glossStyle} />
 
             <div css={mainContent}>
@@ -191,7 +171,6 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element =>
                     </div>
                 </div>
             </div>
-            {/* 그림자 효과 - 터치 중일 때는 더 옅은 그림자 */}
             <div
                 css={[borderPassContainer, shadowStyle]}
                 style={{
