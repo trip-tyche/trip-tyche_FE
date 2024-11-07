@@ -1,6 +1,7 @@
-import { css, keyframes } from '@emotion/react';
+import { css } from '@emotion/react';
 import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { FiPlus } from 'react-icons/fi';
+import React, { useState, useEffect } from 'react';
 
 import characterImg from '/public/ogami_1.png';
 
@@ -14,9 +15,107 @@ interface BorderPassProps {
 
 const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element => {
     const { tripTitle, country, startDate, endDate, hashtags } = trip;
+    const [rotation, setRotation] = useState({ x: 0, y: 0 });
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [isTouching, setIsTouching] = useState(false);
+
+    const handleMove = (x: number, y: number, element: HTMLElement) => {
+        const rect = element.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const relativeX = x - rect.left;
+        const relativeY = y - rect.top;
+
+        const rotateX = ((relativeY - centerY) / centerY) * -20; // 회전 각도를 약간 줄임
+        const rotateY = ((relativeX - centerX) / centerX) * 20;
+
+        setRotation({ x: rotateX, y: rotateY });
+
+        // 광택 효과를 위한 마우스 위치 계산
+        setMousePosition({
+            x: (relativeX / rect.width) * 100,
+            y: (relativeY / rect.height) * 100,
+        });
+    };
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!isTouching) {
+            handleMove(e.clientX, e.clientY, e.currentTarget);
+        }
+    };
+
+    const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        handleMove(touch.clientX, touch.clientY, e.currentTarget);
+    };
+
+    const handleTouchStart = () => {
+        setIsTouching(true);
+    };
+
+    const handleTouchEnd = () => {
+        setIsTouching(false);
+        setRotation({ x: 0, y: 0 });
+    };
+
+    const handleMouseLeave = () => {
+        if (!isTouching) {
+            setRotation({ x: 0, y: 0 });
+        }
+    };
+
+    useEffect(() => {
+        return () => {
+            setIsTouching(false);
+            setRotation({ x: 0, y: 0 });
+        };
+    }, []);
+
+    const cardStyle = {
+        transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
+        transition: isTouching ? 'none' : 'transform 0.3s ease',
+    };
 
     return (
-        <div css={borderPassContainer}>
+        <div
+            css={[
+                borderPassContainer,
+                css`
+                    touch-action: none;
+                `,
+            ]}
+            style={cardStyle}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+        >
+            {/* 광택 효과 오버레이 */}
+            <div
+                css={[glossOverlay]}
+                style={{
+                    background: `
+                    linear-gradient(
+                        105deg,
+                        transparent 0%,
+                        rgba(255, 255, 255, 0.08) 15%,
+                        rgba(255, 255, 255, 0.15) 30%,
+                        rgba(255, 255, 255, 0.08) 45%,
+                        transparent 60%
+                    ),
+                    radial-gradient(
+                        circle at ${mousePosition.x}% ${mousePosition.y}%,
+                        rgba(255, 255, 255, 0.2) 0%,
+                        rgba(255, 255, 255, 0.1) 20%,
+                        transparent 50%
+                    )
+                `,
+                }}
+            />
+
             <div css={mainContent}>
                 <div css={leftContent}>
                     <div css={topSection}>
@@ -62,7 +161,7 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element =>
                         </button>
                     </div>
                 </div>
-                <div css={[rightSection]}>
+                <div css={rightSection}>
                     <div css={rightTopSection}>
                         <div css={label}>FLIGHT</div>
                         <div css={value}>TYCHE AIR</div>
@@ -73,19 +172,46 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps): JSX.Element =>
                     </div>
                 </div>
             </div>
+            {/* 그림자 효과 */}
+            <div css={[borderPassContainer, shadowStyle]} style={cardStyle} />
         </div>
     );
 };
+
+const glossOverlay = css`
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    border-radius: 10px;
+    z-index: 2;
+`;
+
+const shadowStyle = css`
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    filter: blur(20px);
+    z-index: -1;
+    pointer-events: none;
+`;
 
 const borderPassContainer = css`
     width: 100%;
     max-width: 428px;
     border-radius: 10px;
     transition: all 0.3s ease;
-    margin-bottom: 20px;
-    cursor: pointer;
     position: relative;
     overflow: hidden;
+    background: white;
+    box-shadow:
+        0 6px 8px rgba(0, 0, 0, 0.1),
+        0 1px 3px rgba(0, 0, 0, 0.08);
 `;
 
 const mainContent = css`
@@ -199,7 +325,6 @@ const buttonStyle = css`
     border-radius: 4px;
     font-size: 12px;
     font-weight: bold;
-    cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;

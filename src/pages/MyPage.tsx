@@ -8,6 +8,7 @@ import { getTripList } from '@/api/trip';
 import { postUserNickName } from '@/api/user';
 import Button from '@/components/common/button/Button';
 import ConfirmModal from '@/components/common/modal/ConfirmModal';
+import Toast from '@/components/common/Toast';
 import Header from '@/components/layout/Header';
 import { LOGOUT_MODAL } from '@/constants/message';
 import { PATH } from '@/constants/path';
@@ -108,6 +109,7 @@ const MyPage = () => {
                     )}
                 </main>
             )}
+            <Toast />
         </div>
     );
 };

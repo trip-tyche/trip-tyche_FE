@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { User } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { createTripId, getTripList } from '@/api/trip';
@@ -107,7 +107,7 @@ const Home = () => {
             ) : (
                 <>
                     <div css={headerStyle}>
-                        <User css={userIconStyle} onClick={() => navigate(PATH.MYPAGE)} />
+                        <Settings css={settingIconStyle} onClick={() => navigate(PATH.MYPAGE)} />
                     </div>
                     <div css={contentStyle}>{trips && <HomeBorderPass trip={trips} userNickname={userNickName} />}</div>
                     <div css={cardStyle}>
@@ -228,13 +228,10 @@ const containerStyle = css`
 const headerStyle = css`
     display: flex;
     justify-content: flex-end;
-    padding: 10px;
 `;
 
-const userIconStyle = css`
+const settingIconStyle = css`
     cursor: pointer;
-    width: 24px;
-    height: 24px;
 `;
 
 const contentStyle = css`
