@@ -124,23 +124,24 @@ const Home = () => {
                     </div>
                     <div css={contentStyle}>
                         {trips ? (
-                            <HomeBorderPass trip={trips} userNickname={userNickName} />
+                            <>
+                                <h3 css={descriptionStyle}>아래 티켓을 움직여보세요</h3>
+                                <HomeBorderPass trip={trips} userNickname={userNickName} />
+                            </>
                         ) : (
                             <HomeBorderPass trip={exampleTrips} userNickname={userNickName} />
                         )}
                     </div>
-                    <div css={cardStyle}>
-                        {tripCount ? (
-                            <h3>
-                                지금까지 <span>{tripCount}</span>장의 여행 티켓을 만들었어요!
-                            </h3>
-                        ) : (
-                            <h3>
-                                <FaArrowCircleDown />
-                                아래 버튼을 눌러서 새로운 여행을 등록해주세요
-                            </h3>
-                        )}
-                    </div>
+                    {tripCount ? (
+                        <h3 css={cardStyle}>
+                            지금까지 <span>{tripCount}</span>장의 여행 티켓을 만들었어요!
+                        </h3>
+                    ) : (
+                        <h3 css={cardStyle}>
+                            <FaArrowCircleDown />
+                            아래 버튼을 눌러서 새로운 여행을 등록해주세요
+                        </h3>
+                    )}
                     <div css={secondButtonContainer}>
                         <Button
                             text={tripCount ? '여행 티켓 보러가기' : '새로운 여행 등록하기'}
@@ -160,16 +161,11 @@ const cardStyle = css`
     justify-content: center;
     align-items: center;
     margin-bottom: 8px;
+    gap: 4px;
+    font-size: ${theme.fontSizes.normal_14};
+    color: ${theme.colors.descriptionText};
+    font-weight: bold;
 
-    h3 {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 4px;
-        font-size: ${theme.fontSizes.normal_14};
-        color: ${theme.colors.descriptionText};
-        font-weight: bold;
-    }
     span {
         font-size: ${theme.fontSizes.xlarge_18};
         color: ${theme.colors.primary};
@@ -184,6 +180,13 @@ const nicknameStyle = css`
     justify-content: center;
     align-items: center;
     gap: 48px;
+`;
+
+const descriptionStyle = css`
+    font-size: ${theme.fontSizes.small_12};
+    color: ${theme.colors.descriptionText};
+    font-weight: normal;
+    margin-bottom: 24px;
 `;
 
 const inputContainer = css`
