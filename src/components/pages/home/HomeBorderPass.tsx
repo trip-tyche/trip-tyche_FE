@@ -194,9 +194,9 @@ const borderPassContainer = css`
     position: relative;
     overflow: hidden;
     background: white;
-    box-shadow:
+    /* box-shadow:
         0 6px 8px rgba(0, 0, 0, 0.1),
-        0 1px 3px rgba(0, 0, 0, 0.08);
+        0 1px 3px rgba(0, 0, 0, 0.08); */
 `;
 
 const mainContent = css`
