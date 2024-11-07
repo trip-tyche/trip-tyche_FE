@@ -563,7 +563,7 @@ const ImageItem = styled.div`
         font-style: italic;
         font-size: ${theme.fontSizes.xlarge_18};
         color: #ff9b37;
-        letter-spacing: 2px;
+        letter-spacing: 1px;
         opacity: 0.95;
 
         text-shadow:

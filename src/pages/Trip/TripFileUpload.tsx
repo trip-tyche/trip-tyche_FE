@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { ImageUp } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 
 import AlertModal from '@/components/common/modal/AlertModal';
@@ -38,6 +38,8 @@ const TripFileUpload = () => {
     const { isEditing, setIsEditing } = useEditingStore();
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const isFirstReg = location.state;
 
     const navigateToImageLocation = () => {
         setIsAddLocationModalOpen(false);
@@ -93,7 +95,11 @@ const TripFileUpload = () => {
 
     return (
         <div css={containerStyle}>
-            <Header title={PAGE.UPLOAD_IMAGES} isBackButton onBack={() => navigate(PATH.TRIP_LIST)} />
+            <Header
+                title={PAGE.UPLOAD_IMAGES}
+                isBackButton
+                onBack={isFirstReg ? () => navigate(PATH.HOME) : () => navigate(PATH.TRIP_LIST)}
+            />
             <main css={mainStyle}>
                 <section css={sectionStyle}>
                     <h4>[사진 등록 가이드]</h4>

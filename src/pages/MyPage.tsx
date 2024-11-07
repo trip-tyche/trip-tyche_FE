@@ -57,7 +57,14 @@ const MyPage = () => {
             <Header
                 title={isEditing ? '닉네임 변경' : '설정'}
                 isBackButton
-                onBack={isEditing ? () => setIsEditing(false) : () => navigate(PATH.HOME)}
+                onBack={
+                    isEditing
+                        ? () => {
+                              setIsEditing(false);
+                              setInputValue('');
+                          }
+                        : () => navigate(PATH.HOME)
+                }
             />
             {isEditing ? (
                 <div css={nicknameStyle}>

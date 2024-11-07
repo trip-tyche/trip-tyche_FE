@@ -13,11 +13,12 @@ import HomeBorderPass from '@/components/pages/home/HomeBorderPass';
 import { PATH } from '@/constants/path';
 import useAuthStore from '@/stores/useAuthStore';
 import theme from '@/styles/theme';
+import { Trip } from '@/types/trip';
 import { getToken, getUserId } from '@/utils/auth';
 
 const Home = () => {
     const [tripCount, setTripCount] = useState<number>();
-    const [trips, setTrips] = useState();
+    const [trips, setTrips] = useState(null);
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -52,10 +53,12 @@ const Home = () => {
 
         console.log(trips);
 
+        const validTripList = trips?.filter((trip: Trip) => trip.tripTitle !== 'N/A');
+
         localStorage.setItem('userNickName', userNickName);
         setNickName(userNickName);
-        setTrips(trips[trips.length - 1]);
-        setTripCount(trips.length);
+        setTrips(validTripList[validTripList.length - 1]);
+        setTripCount(validTripList.length);
     };
 
     const submitUserNickName = async () => {
@@ -74,7 +77,7 @@ const Home = () => {
         }
 
         const tripId = await createTripId();
-        navigate(`${PATH.TRIP_UPLOAD}/${tripId}`);
+        navigate(`${PATH.TRIP_UPLOAD}/${tripId}`, { state: 'first-ticket' });
     };
 
     if (isLoading) {
@@ -87,10 +90,10 @@ const Home = () => {
 
     const exampleTrips = {
         tripId: 'ex',
-        tripTitle: '첫 티켓이 발급되었습니다!',
+        tripTitle: '첫 티켓이 발급되었습니다',
         country: '0000TRIP TYCHE',
-        startDate: '2024-00-00',
-        endDate: '2024-00-00',
+        startDate: '2024.0.0',
+        endDate: '2024.0.0',
         hashtags: ['소소한두려움', '도전', '행복한시간'],
     };
 
@@ -129,12 +132,12 @@ const Home = () => {
                     <div css={cardStyle}>
                         {tripCount ? (
                             <h3>
-                                지금까지 <span>{tripCount}</span> 장의 여행 티켓이 있어요!
+                                지금까지 <span>{tripCount}</span>장의 여행 티켓을 만들었어요!
                             </h3>
                         ) : (
                             <h3>
                                 <FaArrowCircleDown />
-                                아래 버튼을 눌러서 새 여행을 등록해주세요
+                                아래 버튼을 눌러서 새로운 여행을 등록해주세요
                             </h3>
                         )}
                     </div>
@@ -162,7 +165,7 @@ const cardStyle = css`
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 6px;
+        gap: 4px;
         font-size: ${theme.fontSizes.normal_14};
         color: ${theme.colors.descriptionText};
         font-weight: bold;
