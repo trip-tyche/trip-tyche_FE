@@ -4,7 +4,6 @@ import { css } from '@emotion/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/button/Button';
-import Toast from '@/components/common/Toast';
 import DateGroupedImageList from '@/components/pages/addLocation/DateGroupedImageList';
 import Map from '@/components/pages/addLocation/Map';
 import { PATH } from '@/constants/path';
@@ -144,7 +143,6 @@ const AddLocation = () => {
                     </section>
                 )}
             </div>
-            <Toast />
         </div>
     );
 };

@@ -6,9 +6,7 @@ import { ChevronDown, ImageOff, ArrowDown } from 'lucide-react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { getImagesByDay } from '@/api/image';
-import { getTripMapData } from '@/api/trip';
 import Loading from '@/components/common/Loading';
-import Toast from '@/components/common/Toast';
 import { ENV } from '@/constants/auth';
 import { PATH } from '@/constants/path';
 import { useToastStore } from '@/stores/useToastStore';
@@ -373,7 +371,6 @@ const DaysImages: React.FC = () => {
                     )}
                 </>
             )}
-            <Toast />
         </PageContainer>
     );
 };

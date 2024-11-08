@@ -5,7 +5,6 @@ import { ClipLoader } from 'react-spinners';
 
 import AlertModal from '@/components/common/modal/AlertModal';
 import GuideModal from '@/components/common/modal/GuideModal';
-import Toast from '@/components/common/Toast';
 import Header from '@/components/layout/Header';
 import ModalContent from '@/components/pages/image-upload/ModalContent';
 import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
@@ -161,7 +160,6 @@ const TripFileUpload = () => {
                     <ModalContent noLocationImageCount={imagesNoLocationWithDate.length} />
                 </GuideModal>
             )}
-            <Toast />
         </div>
     );
 };

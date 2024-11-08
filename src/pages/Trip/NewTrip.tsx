@@ -4,7 +4,6 @@ import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/button/Button';
-import Toast from '@/components/common/Toast';
 import Header from '@/components/layout/Header';
 import UploadingSpinner from '@/components/pages/image-upload/UploadingSpinner';
 import TripForm from '@/components/pages/newTrip/TripForm';
@@ -65,7 +64,6 @@ const NewTrip = () => {
                 <Button text='등록하기' btnTheme='pri' size='lg' onClick={handleSubmit} disabled={!isRequired} />
             </main>
             {isUploading && <UploadingSpinner />}
-            <Toast />
         </div>
     );
 };

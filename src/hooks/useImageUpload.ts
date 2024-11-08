@@ -7,7 +7,7 @@ import { postTripImages } from '@/api/trip';
 import { PATH } from '@/constants/path';
 import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
-import { ImageModel } from '@/types/image';
+import { ImageModel, LocationType } from '@/types/image';
 import { formatDateToYYYYMMDD } from '@/utils/date';
 import { getImageLocation, extractDateFromImage } from '@/utils/piexif';
 
@@ -44,6 +44,9 @@ export const useImageUpload = () => {
         return dataTransfer.files;
     };
 
+    const hasValidLocation = (location: LocationType): boolean =>
+        location !== null && location.latitude === 0 && location.longitude === 0;
+
     const extractImageMetadata = async (images: FileList | null): Promise<ImageModel[]> => {
         if (!images || images.length === 0) {
             return [];
@@ -53,11 +56,6 @@ export const useImageUpload = () => {
         const extractedImages = await Promise.all(
             Array.from(images).map(async (image) => {
                 const location = await getImageLocation(image);
-
-                if (location?.latitude === 0 || location?.longitude === 0) {
-                    alert('위치가 0이다...');
-                }
-
                 const date = await extractDateFromImage(image);
                 let formattedDate = '';
 
@@ -206,8 +204,12 @@ export const useImageUpload = () => {
             const uniqueSortedImagesDates = [...new Set(sortedImagesDates)];
             localStorage.setItem('image-date', JSON.stringify(uniqueSortedImagesDates));
 
-            const imagesWithLocationAndDate = extractedImages.filter((image) => image.location && image.formattedDate);
-            const imagesNoLocationWithDate = extractedImages.filter((image) => !image.location && image.formattedDate);
+            const imagesWithLocationAndDate = extractedImages.filter(
+                (image) => image.formattedDate && hasValidLocation(image.location),
+            );
+            const imagesNoLocationWithDate = extractedImages.filter(
+                (image) => image.formattedDate && !hasValidLocation(image.location),
+            );
             const imagesNoDate = extractedImages.filter((image) => !image.formattedDate);
 
             setImagesCount(images.length);

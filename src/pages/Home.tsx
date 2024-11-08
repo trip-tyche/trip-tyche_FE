@@ -92,8 +92,8 @@ const Home = () => {
         tripId: 'ex',
         tripTitle: '첫 티켓이 발급되었습니다',
         country: '0000TRIP TYCHE',
-        startDate: '2024.0.0',
-        endDate: '2024.0.0',
+        startDate: '2024-01-01',
+        endDate: '2024-12-31',
         hashtags: ['소소한두려움', '도전', '행복한시간'],
     };
 

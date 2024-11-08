@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import { createTripId, deleteTripInfo, getTripList } from '@/api/trip';
 import Button from '@/components/common/button/Button';
 import Loading from '@/components/common/Loading';
-import Toast from '@/components/common/Toast';
 import Header from '@/components/layout/Header';
 import BorderPass from '@/components/pages/trip-list/BorderPass';
 import { TRIP } from '@/constants/message';
@@ -133,7 +132,6 @@ const TripList = () => {
                     )}
                 </>
             )}
-            <Toast />
         </div>
     );
 };

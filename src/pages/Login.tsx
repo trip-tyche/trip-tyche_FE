@@ -4,7 +4,6 @@ import imageLeft from '/public/ogami_1.png';
 
 import imageRight from '@/assets/images/ogami_2.png';
 import SocialLoginButtons from '@/components/common/button/SocialLoginButtons';
-import Toast from '@/components/common/Toast';
 import { ENV, OAUTH_URL } from '@/constants/auth';
 import useAuthStore from '@/stores/useAuthStore';
 import theme from '@/styles/theme';
@@ -42,7 +41,6 @@ const Login = (): JSX.Element => {
                     <SocialLoginButtons provider='google' handleSocialLogin={handleSocialLogin('google')} />
                 </div>
             </main>
-            <Toast />
         </div>
     );
 };

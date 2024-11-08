@@ -1,23 +1,14 @@
 import { css } from '@emotion/react';
 import { Outlet } from 'react-router-dom';
 
-// import Navbar from '@/components/layout/Navbar';
-// import { PATH } from '@/constants/path';
+import Toast from '@/components/common/Toast';
 import theme from '@/styles/theme';
 
 const RootLayout = () => (
-    // const location = useLocation();
-
-    // const showNavbar = () => {
-    //     const navbarPaths = [PATH.TRIP_LIST, PATH.MYPAGE];
-
-    //     return navbarPaths.some((path) => location.pathname === path);
-    // };
-
     <div css={containerStyle}>
-        {/* {showNavbar() && <Navbar />} */}
         <main>
             <Outlet />
+            <Toast />
         </main>
     </div>
 );
