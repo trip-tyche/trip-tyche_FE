@@ -5,7 +5,7 @@ import { TicketsPlane, PlaneTakeoff } from 'lucide-react';
 import { LuPlus } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 
-import { createTripId, deleteTripInfo, getTripList } from '@/api/trip';
+import { createTripId, deleteTripTicket, fetchTripTicketList } from '@/api/trip';
 import Button from '@/components/common/button/Button';
 import Loading from '@/components/common/Loading';
 import Header from '@/components/layout/Header';
@@ -34,7 +34,7 @@ const TripList = () => {
         const fetchTripList = async () => {
             try {
                 setIsLoading(true);
-                const tripList: Trips = await getTripList();
+                const tripList: Trips = await fetchTripTicketList();
 
                 if (typeof tripList !== 'object') {
                     showToast('다시 로그인해주세요.');
@@ -42,8 +42,6 @@ const TripList = () => {
                     navigate(PATH.LOGIN);
                     return;
                 }
-
-                console.log(tripList.trips);
 
                 if (tripList.trips.some((trip) => trip.tripTitle === 'N/A')) {
                     await deleteInValidTrips(tripList.trips);
@@ -56,7 +54,6 @@ const TripList = () => {
                 setTripCount(validTripList.length);
             } catch (error) {
                 console.error('Error fetching trip-list data:', error);
-                setIsLoading(false);
             } finally {
                 setIsLoading(false);
             }
@@ -73,7 +70,7 @@ const TripList = () => {
     const deleteInValidTrips = async (trips: Trip[]) => {
         const deletePromises = trips
             .filter((trip) => trip.tripTitle === 'N/A')
-            .map((trip) => deleteTripInfo(trip.tripId));
+            .map((trip) => deleteTripTicket(trip.tripId));
 
         return await Promise.allSettled(deletePromises);
     };

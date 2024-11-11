@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import piexif from 'piexifjs';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { postTripImages } from '@/api/trip';
+import { createTripImages } from '@/api/trip';
 import { PATH } from '@/constants/path';
 import { useEditingStore } from '@/stores/useEditingStore';
 import { useToastStore } from '@/stores/useToastStore';
@@ -118,7 +118,7 @@ export const useAddLocation = () => {
             }
 
             setIsUploading(true);
-            await postTripImages(
+            await createTripImages(
                 tripId,
                 images.map((image) => image.image),
             );

@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { getTripData, updateTripInfo } from '@/api/trip';
+import { fetchTripInfo, updateTripInfo } from '@/api/trip';
 import { PATH } from '@/constants/path';
 import { useEditingStore } from '@/stores/useEditingStore';
 import { useToastStore } from '@/stores/useToastStore';
@@ -52,12 +52,11 @@ export const useTripEditForm = () => {
     // }, [tripId]);
 
     useEffect(() => {
-        const fetchTripInfo = async () => {
+        const getTripInfoData = async () => {
             setIsLoading(true);
             try {
                 if (!tripId) return;
-                const fetchedTripData = await getTripData(tripId);
-                console.log(fetchedTripData);
+                const fetchedTripData = await fetchTripInfo(tripId);
                 if (fetchedTripData) {
                     setTripData(fetchedTripData);
                 }
@@ -68,7 +67,7 @@ export const useTripEditForm = () => {
             }
         };
 
-        fetchTripInfo();
+        getTripInfoData();
     }, [tripId]);
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

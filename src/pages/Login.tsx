@@ -5,23 +5,17 @@ import imageLeft from '/public/ogami_1.png';
 import imageRight from '@/assets/images/ogami_2.png';
 import SocialLoginButtons from '@/components/common/button/SocialLoginButtons';
 import { ENV, OAUTH_URL } from '@/constants/auth';
-import useAuthStore from '@/stores/useAuthStore';
 import theme from '@/styles/theme';
 
 const Login = (): JSX.Element => {
     const oauthLinks = {
-        // kakao: `/${OAUTH_URL}/kakao`,
         kakao: `${ENV.BASE_URL}/${OAUTH_URL}/kakao`,
-        // google: `/${OAUTH_URL}/google`,
         google: `${ENV.BASE_URL}/${OAUTH_URL}/google`,
     };
 
     const handleSocialLogin = (provider: keyof typeof oauthLinks) => () => {
         window.location.href = oauthLinks[provider];
     };
-
-    const isLogin = useAuthStore((state) => state.isLogIn);
-    console.log(isLogin);
 
     return (
         <div css={containerStyle}>

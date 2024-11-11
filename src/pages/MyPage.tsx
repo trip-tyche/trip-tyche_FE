@@ -4,8 +4,8 @@ import { css } from '@emotion/react';
 import { User, MessageCircle, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import { getTripList } from '@/api/trip';
-import { postUserNickName } from '@/api/user';
+import { fetchTripTicketList } from '@/api/trip';
+import { createUserNickName } from '@/api/user';
 import Button from '@/components/common/button/Button';
 import ConfirmModal from '@/components/common/modal/ConfirmModal';
 import Header from '@/components/layout/Header';
@@ -37,7 +37,7 @@ const MyPage = () => {
     const submitUserNickName = async () => {
         try {
             setNickName(inputValue);
-            await postUserNickName(inputValue);
+            await createUserNickName(inputValue);
             fetchUserData();
             showToast('닉네임이 변경되었습니다.');
             setIsEditing(false);
@@ -47,7 +47,7 @@ const MyPage = () => {
     };
 
     const fetchUserData = async () => {
-        const { userNickName } = await getTripList();
+        const { userNickName } = await fetchTripTicketList();
         localStorage.setItem('userNickName', userNickName);
     };
 

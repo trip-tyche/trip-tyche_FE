@@ -4,9 +4,8 @@ import { css } from '@emotion/react';
 import { X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { getImagesByPinPoint } from '@/api/image';
+import { fetchImagesByPinPoint } from '@/api/image';
 import ImageCarousel from '@/components/ImageCarousel';
-import { PATH } from '@/constants/path';
 import useTimelineStore from '@/stores/useTimelineStore';
 
 type CarouselState = 'auto' | 'paused' | 'zoomed';
@@ -29,8 +28,7 @@ const MusicVideo = () => {
             if (!(tripId && pinPointId)) {
                 return;
             }
-            const data = await getImagesByPinPoint(tripId, pinPointId);
-            console.log(data);
+            const data = await fetchImagesByPinPoint(tripId, pinPointId);
             const { images } = data.firstImage;
             setDisplayedImages(images);
         };

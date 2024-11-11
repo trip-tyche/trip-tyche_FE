@@ -3,7 +3,7 @@ import { useState } from 'react';
 import imageCompression from 'browser-image-compression';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { postTripImages } from '@/api/trip';
+import { createTripImages } from '@/api/trip';
 import { PATH } from '@/constants/path';
 import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
@@ -44,8 +44,7 @@ export const useImageUpload = () => {
         return dataTransfer.files;
     };
 
-    const hasValidLocation = (location: LocationType): boolean =>
-        location !== null && location.latitude === 0 && location.longitude === 0;
+    const hasValidLocation = (location: LocationType): boolean => location !== null;
 
     const extractImageMetadata = async (images: FileList | null): Promise<ImageModel[]> => {
         if (!images || images.length === 0) {
@@ -285,9 +284,8 @@ export const useImageUpload = () => {
 
         const imagesToUpload = images.map((image) => image.image);
 
-        postTripImages(tripId, imagesToUpload)
-            .then((message) => {
-                console.log('이미지 업로드 완료:', message);
+        createTripImages(tripId, imagesToUpload)
+            .then(() => {
                 setUploadStatus('completed');
             })
             .catch((error) => {

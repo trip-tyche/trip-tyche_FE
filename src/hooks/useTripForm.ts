@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { postTripInfo } from '@/api/trip';
+import { createTripInfo } from '@/api/trip';
 import { PATH } from '@/constants/path';
 import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
@@ -27,10 +27,7 @@ export const useTripForm = () => {
             if (!tripId) {
                 return;
             }
-
-            const response = await postTripInfo({ tripId, tripTitle, country, startDate, endDate, hashtags });
-            console.log(response);
-
+            await createTripInfo({ tripId, tripTitle, country, startDate, endDate, hashtags });
             setIsUploading(true);
 
             try {

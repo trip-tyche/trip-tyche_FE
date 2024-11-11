@@ -5,7 +5,7 @@ import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import { ChevronDown, ImageOff, ArrowDown } from 'lucide-react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { getImagesByDay } from '@/api/image';
+import { fetchImagesByDate } from '@/api/image';
 import Loading from '@/components/common/Loading';
 import { ENV } from '@/constants/auth';
 import { PATH } from '@/constants/path';
@@ -192,9 +192,7 @@ const DaysImages: React.FC = () => {
             if (!(tripId && currentDate)) return;
             setIsLoading(true);
             try {
-                const data = await getImagesByDay(tripId, currentDate);
-                console.log('Fetched data:', data);
-
+                const data = await fetchImagesByDate(tripId, currentDate);
                 // if (typeof data !== 'object') {
                 //     showToast('해당 날짜에 등록된 사진이 없습니다.');
                 //     return;

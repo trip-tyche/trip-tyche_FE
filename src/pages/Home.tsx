@@ -3,10 +3,11 @@ import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import { Settings } from 'lucide-react';
 import { FaArrowCircleDown } from 'react-icons/fa';
+import { MdWavingHand } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
-import { createTripId, getTripList } from '@/api/trip';
-import { postUserNickName } from '@/api/user';
+import { createTripId, fetchTripTicketList } from '@/api/trip';
+import { createUserNickName } from '@/api/user';
 import Button from '@/components/common/button/Button';
 import Loading from '@/components/common/Loading';
 import HomeBorderPass from '@/components/pages/home/HomeBorderPass';
@@ -48,10 +49,8 @@ const Home = () => {
         }
 
         setIsLoading(true);
-        const { userNickName, trips } = await getTripList();
+        const { userNickName, trips } = await fetchTripTicketList();
         setIsLoading(false);
-
-        console.log(trips);
 
         const validTripList = trips?.filter((trip: Trip) => trip.tripTitle !== 'N/A');
 
@@ -63,7 +62,7 @@ const Home = () => {
 
     const submitUserNickName = async () => {
         try {
-            await postUserNickName(inputValue);
+            await createUserNickName(inputValue);
             fetchUserData();
         } catch (error) {
             console.error('닉네임 등록이 실패하였습니다.', error);
@@ -123,11 +122,12 @@ const Home = () => {
                         <Settings css={settingIconStyle} onClick={() => navigate(PATH.MYPAGE)} />
                     </div>
                     <div css={contentStyle}>
+                        <div css={descriptionStyle}>
+                            <MdWavingHand />
+                            <h3>아래 티켓을 움직여보세요!</h3>
+                        </div>
                         {trips ? (
-                            <>
-                                <h3 css={descriptionStyle}>아래 티켓을 움직여보세요</h3>
-                                <HomeBorderPass trip={trips} userNickname={userNickName} />
-                            </>
+                            <HomeBorderPass trip={trips} userNickname={userNickName} />
                         ) : (
                             <HomeBorderPass trip={exampleTrips} userNickname={userNickName} />
                         )}
@@ -183,9 +183,12 @@ const nicknameStyle = css`
 `;
 
 const descriptionStyle = css`
+    display: flex;
+    justify-content: center;
+    gap: 4px;
     font-size: ${theme.fontSizes.small_12};
     color: ${theme.colors.descriptionText};
-    font-weight: normal;
+    font-weight: bold;
     margin-bottom: 24px;
 `;
 

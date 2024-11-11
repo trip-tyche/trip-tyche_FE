@@ -6,7 +6,7 @@ import { FiPlus } from 'react-icons/fi';
 import { IoAirplaneSharp } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
-import { deleteTripInfo } from '@/api/trip';
+import { deleteTripTicket } from '@/api/trip';
 
 import characterImg from '/public/ogami_1.png';
 
@@ -40,7 +40,7 @@ const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.
 
     const handleDelete = async () => {
         try {
-            await deleteTripInfo(tripId);
+            await deleteTripTicket(tripId);
             setTripCount((prev: number) => prev - 1);
         } catch (error) {
             console.error('Error delete trip:', error);
