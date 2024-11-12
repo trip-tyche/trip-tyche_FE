@@ -12,7 +12,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { tripAPI } from '@/api';
 import Loading from '@/components/common/Loading';
 import Header from '@/components/layout/Header';
-import { ENV } from '@/constants/auth';
+import { ENV } from '@/constants/api';
 import { PATH } from '@/constants/path';
 import useTimelineStore from '@/stores/useTimelineStore';
 import { useToastStore } from '@/stores/useToastStore';

@@ -1,4 +1,4 @@
-import { apiClient } from '@/api/shared/axios';
+import { apiClient } from '@/api/axios';
 import { API_ENDPOINTS } from '@/constants/api';
 import { getToken } from '@/utils/auth';
 

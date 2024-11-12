@@ -5,7 +5,7 @@ import { GoogleMap, Marker, Autocomplete, useLoadScript, Libraries } from '@reac
 import { ChevronLeft } from 'lucide-react';
 
 import Loading from '@/components/common/Loading';
-import { ENV } from '@/constants/auth';
+import { ENV } from '@/constants/api';
 import theme from '@/styles/theme';
 
 interface Location {

@@ -7,7 +7,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { tripImageAPI } from '@/api';
 import Loading from '@/components/common/Loading';
-import { ENV } from '@/constants/auth';
+import { ENV } from '@/constants/api';
 import { PATH } from '@/constants/path';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';

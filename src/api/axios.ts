@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-import { DEFAULT_HEADERS } from '@/constants/api';
-import { ENV } from '@/constants/auth';
+import { DEFAULT_HEADERS, ENV } from '@/constants/api';
 import { getToken } from '@/utils/auth';
 
 export const apiClient = axios.create({
