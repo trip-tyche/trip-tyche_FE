@@ -7,7 +7,7 @@ import TripEditForm from '@/components/pages/tripEdit/TripEditForm';
 import { BUTTON, PAGE } from '@/constants/title';
 import { useTripEditForm } from '@/hooks/useTripEditForm';
 
-const TripEdit = () => {
+const TripInfoEditPage = () => {
     const { tripData, isLoading, handleInputChange, handleHashtagToggle, handleUpdateTripInfo } = useTripEditForm();
 
     if (isLoading)
@@ -60,4 +60,4 @@ const tripFormWrapper = css`
     flex: 1;
 `;
 
-export default TripEdit;
+export default TripInfoEditPage;

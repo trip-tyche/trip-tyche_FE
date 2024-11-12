@@ -19,7 +19,7 @@ import theme from '@/styles/theme';
 import { Trip, Trips } from '@/types/trip';
 import { formatTripDate } from '@/utils/date';
 
-const TripList = () => {
+const TripTicketListPage = () => {
     const [userNickname, setUserNickname] = useState<string>('');
     const [tripList, setTripList] = useState<Trip[]>([]);
     const [tripCount, setTripCount] = useState(0);
@@ -86,7 +86,7 @@ const TripList = () => {
 
     return (
         <div css={containerStyle}>
-            <Header title={PAGE.TRIP_LIST} isBackButton onBack={() => navigate(PATH.HOME)} />
+            <Header title={PAGE.TRIP_LIST} isBackButton onBack={() => navigate(PAGE.)} />
             {isLoading ? (
                 <div css={loadingWrapper}>
                     <Loading />
@@ -191,4 +191,4 @@ const noTripListStyle = css`
     color: ${theme.colors.descriptionText};
 `;
 
-export default TripList;
+export default TripTicketListPage;

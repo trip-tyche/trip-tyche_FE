@@ -15,7 +15,7 @@ import { useModalStore } from '@/stores/useModalStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 
-const MyPage = () => {
+const SettingPage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [inputValue, setInputValue] = useState('');
 
@@ -212,4 +212,4 @@ const navItemStyle = css`
     }
 `;
 
-export default MyPage;
+export default SettingPage;

@@ -15,7 +15,7 @@ import { useEditingStore } from '@/stores/useEditingStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 
-const TripFileUpload = () => {
+const TripImageUploadPage = () => {
     const {
         tripId,
         imageCount,
@@ -261,4 +261,4 @@ const uploadedStyle = css`
     font-weight: bold;
 `;
 
-export default TripFileUpload;
+export default TripImageUploadPage;

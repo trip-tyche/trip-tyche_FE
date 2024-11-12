@@ -30,7 +30,7 @@ const INITIAL_ZOOM_SCALE = 14;
 const SHOW_DETAILED_ZOOM = 14;
 const INDIVIDUAL_MARKER_ZOOM = 17;
 
-const TimelineMap = () => {
+const TimelineMapPage = () => {
     const [tripInfo, setTripInfo] = useState<TripInfo | null>(null);
     const [pinPoints, setPinPoints] = useState<PinPoint[]>([]);
     const [allImages, setAllImages] = useState<any[]>([]);
@@ -806,4 +806,4 @@ const imageStyle = css`
     border-radius: 50%;
 `;
 
-export default TimelineMap;
+export default TimelineMapPage;

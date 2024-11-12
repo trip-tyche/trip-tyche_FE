@@ -33,7 +33,7 @@ const mapOptions: google.maps.MapOptions = {
     minZoom: 12,
 };
 
-const DaysImages: React.FC = () => {
+const TimelineDatePage: React.FC = () => {
     const [imagesByDay, setImagesByDay] = useState<MediaFiles[]>([]);
     const [currentDate, setCurrentDate] = useState<string>();
     const [currentDay, setCurrentDay] = useState<string>();
@@ -625,4 +625,4 @@ const ArrowButton = styled.button`
     justify-content: center;
 `;
 
-export default DaysImages;
+export default TimelineDatePage;

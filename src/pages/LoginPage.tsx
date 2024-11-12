@@ -8,7 +8,7 @@ import { ENV } from '@/constants/api';
 import { OAUTH_URL } from '@/constants/auth';
 import theme from '@/styles/theme';
 
-const Login = (): JSX.Element => {
+const LoginPage = (): JSX.Element => {
     const oauthLinks = {
         kakao: `${ENV.API_BASE_URL}/${OAUTH_URL}/kakao`,
         google: `${ENV.API_BASE_URL}/${OAUTH_URL}/google`,
@@ -102,4 +102,4 @@ const buttonContainerStyle = css`
     gap: 20px;
 `;
 
-export default Login;
+export default LoginPage;

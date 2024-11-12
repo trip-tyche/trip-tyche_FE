@@ -47,7 +47,7 @@ import { ImageModel } from '@/types/image';
 //                                 />
 //                             </div>
 
-const AddLocation = () => {
+const TripLocationAddPage = () => {
     const showToast = useToastStore((state) => state.showToast);
     const { isEditing, setIsEditing } = useEditingStore();
 
@@ -181,4 +181,4 @@ const mapButtonWrapper = css`
     z-index: 1000;
 `;
 
-export default AddLocation;
+export default TripLocationAddPage;

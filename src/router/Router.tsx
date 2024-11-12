@@ -3,22 +3,22 @@ import { useEffect } from 'react';
 
 import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
-import RootLayout from '../layouts/RootLayout';
-import Home from '../pages/Home';
-import Login from '../pages/Login';
-import MyPage from '../pages/MyPage';
-import PageNotFound from '../pages/PageNotFound';
-import TripList from '../pages/Trip/TripList';
 import { PATH } from '@/constants/path';
-import DayImages from '@/pages/DayImages';
+import RootLayout from '@/layouts/RootLayout';
+import LoginPage from '@/pages/LoginPage';
 import LoginRedirectPage from '@/pages/LoginRedirectPage';
-import MusicVideo from '@/pages/MusicVideo';
+import MainPage from '@/pages/MainPage';
 import Onboarding from '@/pages/Onboarding';
-import AddLocation from '@/pages/Trip/AddLocation';
-import NewTrip from '@/pages/Trip/NewTrip';
-import TimelineMap from '@/pages/Trip/TimelineMap';
-import TripEdit from '@/pages/Trip/TripEdit';
-import TripFileUpload from '@/pages/Trip/TripFileUpload';
+import PageNotFound from '@/pages/PageNotFound';
+import SettingPage from '@/pages/SettingPage';
+import TimelineDatePage from '@/pages/trips/timeline/TimelineDatePage';
+import TimelineMapPage from '@/pages/trips/timeline/TimelineMapPage';
+import TimelinePinpointPage from '@/pages/trips/timeline/TimelinePinpointPage';
+import TripImageUploadPage from '@/pages/trips/TripImageUploadPage';
+import TripInfoEditPage from '@/pages/trips/TripInfoEditPage';
+import TripInfoPage from '@/pages/trips/TripInfoPage';
+import TripLocationAddPage from '@/pages/trips/TripLocationAddPage';
+import TripTicketListPage from '@/pages/trips/TripTicketListPage';
 import { getToken, getUserId } from '@/utils/auth';
 
 const LOGIN_TIMEOUT = 60 * 60 * 1000; // 1시간
@@ -35,7 +35,7 @@ const LoginCheck = ({ children }: { children: React.ReactNode }) => {
             const lastLoginTime = localStorage.getItem('lastLoginTime');
 
             if (!userId || !token) {
-                return <Navigate to={`${PATH.LOGIN}`} replace state={pathname + search} />;
+                return <Navigate to={`${PATH.AUTH.LOGIN}`} replace state={pathname + search} />;
             }
 
             const currentTime = new Date().getTime();
@@ -46,7 +46,7 @@ const LoginCheck = ({ children }: { children: React.ReactNode }) => {
 
             if (currentTime - parseInt(lastLoginTime) > LOGIN_TIMEOUT) {
                 localStorage.clear();
-                <Navigate to={`${PATH.LOGIN}`} replace state={pathname + search} />;
+                <Navigate to={`${PATH.AUTH.LOGIN}`} replace state={pathname + search} />;
             }
         };
 
@@ -68,30 +68,42 @@ const ProtectedRoute = () => (
 
 export const router = createBrowserRouter([
     {
-        path: PATH.HOME,
+        path: PATH.MAIN,
         element: <RootLayout />,
         errorElement: <PageNotFound />,
         children: [
             { path: PATH.ONBOARDING, element: <Onboarding /> },
-            { path: PATH.LOGIN, element: <Login /> },
-            {
-                path: PATH.LOGIN_REDIRECT,
-                element: <LoginRedirectPage />,
-            },
+            { path: PATH.AUTH.LOGIN, element: <LoginPage /> },
+            { path: PATH.AUTH.LOGIN_REDIRECT, element: <LoginRedirectPage /> },
             {
                 element: <ProtectedRoute />,
                 children: [
-                    { index: true, element: <Home /> },
-                    { path: PATH.MYPAGE, element: <MyPage /> },
-                    { path: PATH.TRIP_LIST, element: <TripList /> },
-                    { path: `${PATH.TRIP_UPLOAD}/:tripId`, element: <TripFileUpload /> },
-                    { path: `${PATH.TRIP_UPLOAD_ADD_LOCATION}/:tripId`, element: <AddLocation /> },
-                    { path: `${PATH.TRIP_NEW}/:tripId`, element: <NewTrip /> },
-                    { path: PATH.TRIPS_EDIT, element: <TripEdit /> },
-                    { path: `${PATH.TIMELINE_MAP}/:tripId`, element: <TimelineMap /> },
-                    { path: `${PATH.MUSIC_VIDEO}/:tripId/:pinPointId`, element: <MusicVideo /> },
-                    { path: `${PATH.DAY_IMAGES}/:tripId`, element: <DayImages /> },
-                    { path: '/onboarding', element: <Onboarding /> },
+                    { index: true, element: <MainPage /> },
+                    { path: PATH.SETTING, element: <SettingPage /> },
+
+                    { path: PATH.TRIPS.ROOT, element: <TripTicketListPage /> },
+                    {
+                        path: 'trips/:tripId',
+                        children: [
+                            {
+                                path: 'new',
+                                children: [
+                                    { path: 'images', element: <TripImageUploadPage /> },
+                                    { path: 'locations', element: <TripLocationAddPage /> },
+                                    { path: 'info', element: <TripInfoPage /> },
+                                ],
+                            },
+                            { path: 'edit', element: <TripInfoEditPage /> },
+                        ],
+                    },
+                    {
+                        path: 'timeline',
+                        children: [
+                            { path: 'map', element: <TimelineMapPage /> },
+                            { path: 'pinpoint/:pinPointId', element: <TimelinePinpointPage /> },
+                            { path: 'date', element: <TimelineDatePage /> },
+                        ],
+                    },
                 ],
             },
             { path: '*', element: <PageNotFound /> },

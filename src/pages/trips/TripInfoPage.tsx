@@ -11,7 +11,7 @@ import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
 import { useTripForm } from '@/hooks/useTripForm';
 
-const NewTrip = () => {
+const TripInfoPage = () => {
     const [isRequired, setIsRequired] = useState(false);
 
     const {
@@ -85,4 +85,4 @@ const tripFormWrapper = css`
     flex: 1;
 `;
 
-export default NewTrip;
+export default TripInfoPage;

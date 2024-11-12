@@ -16,7 +16,7 @@ import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
 import { getToken, getUserId } from '@/utils/auth';
 
-const Home = () => {
+const MainPage = () => {
     const [tripCount, setTripCount] = useState<number>();
     const [trips, setTrips] = useState(null);
     const [inputValue, setInputValue] = useState('');
@@ -274,4 +274,4 @@ const contentStyle = css`
     align-items: center;
 `;
 
-export default Home;
+export default MainPage;

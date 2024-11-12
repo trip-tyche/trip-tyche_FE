@@ -15,7 +15,7 @@ interface ImageType {
     mediaLink: string;
 }
 
-const MusicVideo = () => {
+const TimelinePinpointPage = () => {
     const [displayedImages, setDisplayedImages] = useState<ImageType[]>([]);
     const [carouselState, setCarouselState] = useState<CarouselState>('auto');
     const { tripId, pinPointId } = useParams<{ tripId: string; pinPointId: string }>();
@@ -83,4 +83,4 @@ const carouselWrapper = css`
     justify-content: center;
 `;
 
-export default MusicVideo;
+export default TimelinePinpointPage;
