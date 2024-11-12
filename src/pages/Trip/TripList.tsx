@@ -5,7 +5,7 @@ import { TicketsPlane, PlaneTakeoff } from 'lucide-react';
 import { LuPlus } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 
-import { createTripId, deleteTripTicket, fetchTripTicketList } from '@/api/trip';
+import { tripAPI } from '@/api';
 import Button from '@/components/common/button/Button';
 import Loading from '@/components/common/Loading';
 import Header from '@/components/layout/Header';
@@ -34,7 +34,7 @@ const TripList = () => {
         const fetchTripList = async () => {
             try {
                 setIsLoading(true);
-                const tripList: Trips = await fetchTripTicketList();
+                const tripList: Trips = await tripAPI.fetchTripTicketList();
 
                 if (typeof tripList !== 'object') {
                     showToast('다시 로그인해주세요.');
@@ -70,7 +70,7 @@ const TripList = () => {
     const deleteInValidTrips = async (trips: Trip[]) => {
         const deletePromises = trips
             .filter((trip) => trip.tripTitle === 'N/A')
-            .map((trip) => deleteTripTicket(trip.tripId));
+            .map((trip) => tripAPI.deleteTripTicket(trip.tripId));
 
         return await Promise.allSettled(deletePromises);
     };
@@ -80,7 +80,7 @@ const TripList = () => {
     }
 
     const handleTicketCreate = async () => {
-        const tripId = await createTripId();
+        const tripId = await tripAPI.createTrip();
         navigate(`${PATH.TRIP_UPLOAD}/${tripId}`);
     };
 

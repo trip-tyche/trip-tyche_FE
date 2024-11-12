@@ -5,7 +5,7 @@ import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import { ChevronDown, ImageOff, ArrowDown } from 'lucide-react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { fetchImagesByDate } from '@/api/image';
+import { tripImageAPI } from '@/api';
 import Loading from '@/components/common/Loading';
 import { ENV } from '@/constants/auth';
 import { PATH } from '@/constants/path';
@@ -192,7 +192,7 @@ const DaysImages: React.FC = () => {
             if (!(tripId && currentDate)) return;
             setIsLoading(true);
             try {
-                const data = await fetchImagesByDate(tripId, currentDate);
+                const data = await tripImageAPI.fetchImagesByDate(tripId, currentDate);
                 // if (typeof data !== 'object') {
                 //     showToast('해당 날짜에 등록된 사진이 없습니다.');
                 //     return;
@@ -340,18 +340,18 @@ const DaysImages: React.FC = () => {
                                 </ImageItem>
                             )) */}
                         {imagesByDay.length > 0 ? (
-                            [...imagesByDay]
-                                .sort((a, b) => new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime())
-                                .map((image, index) => (
-                                    <ImageItem
-                                        key={image.mediaFileId}
-                                        ref={(el) => (imageRefs.current[index] = el)}
-                                        data-index={index}
-                                    >
-                                        <img src={image.mediaLink} alt={`Image-${image.mediaFileId}`} />
-                                        <p>{image.recordDate.split('T')[1]}</p>
-                                    </ImageItem>
-                                ))
+                            // [...imagesByDay]
+                            //     .sort((a, b) => new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime())
+                            imagesByDay.map((image, index) => (
+                                <ImageItem
+                                    key={image.mediaFileId}
+                                    ref={(el) => (imageRefs.current[index] = el)}
+                                    data-index={index}
+                                >
+                                    <img src={image.mediaLink} alt={`Image-${image.mediaFileId}`} />
+                                    <p>{image.recordDate.split('T')[1]}</p>
+                                </ImageItem>
+                            ))
                         ) : (
                             <NoImagesContainer>
                                 <ImageOff size={40} color='#FDFDFD' />
@@ -579,6 +579,11 @@ const ImageItem = styled.div`
             z-index: -1;
             border-radius: 4px;
         }
+    }
+
+    div {
+        color: white;
+        margin-left: 20px;
     }
 `;
 

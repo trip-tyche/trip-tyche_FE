@@ -6,16 +6,14 @@ import { FiPlus } from 'react-icons/fi';
 import { IoAirplaneSharp } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
-import { deleteTripTicket } from '@/api/trip';
-
 import characterImg from '/public/ogami_1.png';
 
+import { tripAPI } from '@/api';
 import ConfirmModal from '@/components/common/modal/ConfirmModal';
 import { PATH } from '@/constants/path';
 import { useEditingStore } from '@/stores/useEditingStore';
 import theme from '@/styles/theme';
 import { FormattedTripDate } from '@/types/trip';
-import { formatDate } from '@/utils/date';
 
 interface BorderPassProps {
     trip: FormattedTripDate;
@@ -40,7 +38,7 @@ const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.
 
     const handleDelete = async () => {
         try {
-            await deleteTripTicket(tripId);
+            await tripAPI.deleteTripTicket(tripId);
             setTripCount((prev: number) => prev - 1);
         } catch (error) {
             console.error('Error delete trip:', error);

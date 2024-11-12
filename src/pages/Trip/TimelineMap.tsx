@@ -9,7 +9,7 @@ import { Play, Pause, ChevronUp } from 'lucide-react';
 import { BsPersonWalking } from 'react-icons/bs';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { fetchTripTimeline } from '@/api/trip';
+import { tripAPI } from '@/api';
 import Loading from '@/components/common/Loading';
 import Header from '@/components/layout/Header';
 import { ENV } from '@/constants/auth';
@@ -67,7 +67,7 @@ const TimelineMap = () => {
 
         try {
             setIsLoading(true);
-            const { tripInfo, pinPoints, mediaFiles: images } = await fetchTripTimeline(tripId);
+            const { tripInfo, pinPoints, mediaFiles: images } = await tripAPI.fetchTripTimeline(tripId);
 
             if (pinPoints.length === 0) {
                 showToast('여행에 등록된 사진이 없습니다.');

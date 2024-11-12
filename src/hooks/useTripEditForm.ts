@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { fetchTripInfo, updateTripInfo } from '@/api/trip';
+import { tripAPI } from '@/api';
 import { PATH } from '@/constants/path';
 import { useEditingStore } from '@/stores/useEditingStore';
 import { useToastStore } from '@/stores/useToastStore';
@@ -56,7 +56,7 @@ export const useTripEditForm = () => {
             setIsLoading(true);
             try {
                 if (!tripId) return;
-                const fetchedTripData = await fetchTripInfo(tripId);
+                const fetchedTripData = await tripAPI.fetchTripTicketInfo(tripId);
                 if (fetchedTripData) {
                     setTripData(fetchedTripData);
                 }
@@ -85,7 +85,7 @@ export const useTripEditForm = () => {
     const handleUpdateTripInfo = async () => {
         try {
             if (tripId) {
-                await updateTripInfo(tripId, tripData);
+                await tripAPI.updateTripInfo(tripId, tripData);
                 navigate(PATH.TRIP_LIST);
                 showToast('여행 정보가 수정되었습니다.');
                 setIsEditing(false);

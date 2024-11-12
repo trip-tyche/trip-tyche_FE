@@ -3,7 +3,7 @@ import { useState } from 'react';
 import imageCompression from 'browser-image-compression';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { createTripImages } from '@/api/trip';
+import { tripAPI } from '@/api';
 import { PATH } from '@/constants/path';
 import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
@@ -263,10 +263,6 @@ export const useImageUpload = () => {
 
             setImagesWithLocationAndDate(resizedWithLocation || []);
             setImagesNoLocationWithDate(resizedNoLocation || []);
-
-            console.log('위치 ✅ / 날짜 ✅:', imagesWithLocationAndDate);
-            console.log('위치 ⛔️ / 날짜 ✅:', imagesNoLocationWithDate);
-            console.log('날짜 ⛔️:', imagesNoDate);
         } catch (error) {
             console.error('이미지 처리 중 오류 발생', error);
             setIsExtracting(false);
@@ -284,7 +280,8 @@ export const useImageUpload = () => {
 
         const imagesToUpload = images.map((image) => image.image);
 
-        createTripImages(tripId, imagesToUpload)
+        tripAPI
+            .createTripImages(tripId, imagesToUpload)
             .then(() => {
                 setUploadStatus('completed');
             })

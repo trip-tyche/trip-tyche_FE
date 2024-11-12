@@ -6,8 +6,7 @@ import { FaArrowCircleDown } from 'react-icons/fa';
 import { MdWavingHand } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
-import { createTripId, fetchTripTicketList } from '@/api/trip';
-import { createUserNickName } from '@/api/user';
+import { tripAPI, userAPI } from '@/api';
 import Button from '@/components/common/button/Button';
 import Loading from '@/components/common/Loading';
 import HomeBorderPass from '@/components/pages/home/HomeBorderPass';
@@ -49,7 +48,7 @@ const Home = () => {
         }
 
         setIsLoading(true);
-        const { userNickName, trips } = await fetchTripTicketList();
+        const { userNickName, trips } = await tripAPI.fetchTripTicketList();
         setIsLoading(false);
 
         const validTripList = trips?.filter((trip: Trip) => trip.tripTitle !== 'N/A');
@@ -62,7 +61,7 @@ const Home = () => {
 
     const submitUserNickName = async () => {
         try {
-            await createUserNickName(inputValue);
+            await userAPI.createUserNickName(inputValue);
             fetchUserData();
         } catch (error) {
             console.error('닉네임 등록이 실패하였습니다.', error);
@@ -75,7 +74,7 @@ const Home = () => {
             return;
         }
 
-        const tripId = await createTripId();
+        const tripId = await tripAPI.createTrip();
         navigate(`${PATH.TRIP_UPLOAD}/${tripId}`, { state: 'first-ticket' });
     };
 

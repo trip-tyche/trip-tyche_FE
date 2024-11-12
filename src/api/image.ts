@@ -3,7 +3,7 @@ import axios from 'axios';
 import { ENV } from '@/constants/auth';
 import { getToken } from '@/utils/auth';
 
-const apiBaseUrl = ENV.BASE_URL;
+const apiBaseUrl = ENV.API_BASE_URL;
 
 export const fetchImagesByPinPoint = async (tripId: string, pinPoint: string) => {
     try {

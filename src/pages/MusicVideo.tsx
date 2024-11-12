@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { fetchImagesByPinPoint } from '@/api/image';
+import { tripImageAPI } from '@/api';
 import ImageCarousel from '@/components/ImageCarousel';
 import useTimelineStore from '@/stores/useTimelineStore';
 
@@ -28,7 +28,7 @@ const MusicVideo = () => {
             if (!(tripId && pinPointId)) {
                 return;
             }
-            const data = await fetchImagesByPinPoint(tripId, pinPointId);
+            const data = await tripImageAPI.fetchImagesByPinPoint(tripId, pinPointId);
             const { images } = data.firstImage;
             setDisplayedImages(images);
         };
