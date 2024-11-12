@@ -14,8 +14,10 @@ const Login = (): JSX.Element => {
         google: `${ENV.API_BASE_URL}/${OAUTH_URL}/google`,
     };
 
-    const handleSocialLogin = (provider: keyof typeof oauthLinks) => () => {
-        window.location.href = oauthLinks[provider];
+    const handleSocialLogin = (provider: keyof typeof oauthLinks) => {
+        return () => {
+            window.location.href = oauthLinks[provider];
+        };
     };
 
     return (

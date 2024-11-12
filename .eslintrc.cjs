@@ -32,7 +32,12 @@ module.exports = {
             },
         ],
         // 화살표 함수 본문 스타일 지정(간결한 함수 작성을 유도하여 코드의 가독성을 높일 수 있음)
-        'arrow-body-style': ['error', 'as-needed'],
+        // 'as-needed': return문만 있을 때는 {} 와 return 생략 강제
+        // 'always': 항상 {} 와 return 사용 강제
+        // 'never': 가능한 한 {} 사용하지 않도록 강제
+        // 'arrow-body-style': ['error', 'as-needed'],
+        // 'arrow-body-style': ['error', 'always'],
+        // 'arrow-body-style': 'off',
         // 컴포넌트 이름을 PascalCase로 강제(코딩 컨벤션)
         'react/jsx-pascal-case': 'error',
         // 변수/함수명은 camelCase로 강제(코딩 컨벤션)
