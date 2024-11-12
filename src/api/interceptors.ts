@@ -1,6 +1,7 @@
 import { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 import useAuthStore from '@/stores/useAuthStore';
+import { useToastStore } from '@/stores/useToastStore';
 import { getToken } from '@/utils/auth';
 
 export const setupRequestInterceptor = (instance: AxiosInstance) => {
@@ -25,6 +26,7 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
         },
         (error) => {
             const { setLogout } = useAuthStore.getState();
+            const { showToast } = useToastStore.getState();
 
             if (error.code === 'ECONNABORTED') {
                 console.error('요청 시간이 초과되었습니다. 네트워크 상태를 확인하고 다시 시도해주세요.');
@@ -49,6 +51,11 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
                     case 404: // Not Found
                         // 요청한 리소스가 존재하지 않음
                         console.error(error.message || '요청한 리소스를 찾을 수 없습니다');
+                        break;
+                    case 409: // Conflict
+                        // 서버의 현재 상태와 요청이 충돌 (kakao계정 이메일 == google계정 이메일)
+                        showToast(error.message || '이미 가입된 이메일입니다.');
+                        console.error(error.message || '이미 가입된 이메일입니다.');
                         break;
                     case 500:
                         console.error(error.message || '서버 에러가 발생했습니다');
