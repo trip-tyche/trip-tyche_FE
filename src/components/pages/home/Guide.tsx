@@ -1,8 +1,7 @@
 import { css } from '@emotion/react';
 
-import imageLeft from '/public/ogami_1.png';
-
-import imageRight from '@/assets/images/ogami_2.png';
+import imageLeft from '@/assets/images/character-1.png';
+import imageRight from '@/assets/images/character-2.png';
 import theme from '@/styles/theme';
 
 const TITLE = ' 님의 첫 여행을 등록해주세요 🛫';

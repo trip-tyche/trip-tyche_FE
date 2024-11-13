@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import loadingImage from '@/assets/images/flightLoading5.gif';
+// import loadingImage from '@/assets/images/flightLoading5.gif';
 import ModalOverlay from '@/components/common/modal/ModalOverlay';
 import theme from '@/styles/theme';
 
@@ -10,7 +10,7 @@ const UploadingSpinner = () => (
     <>
         <ModalOverlay />
         <div css={divStyle}>
-            <img src={loadingImage} />
+            {/* <img src={loadingImage} /> */}
             <p css={pStyle}>{UPLOADING_MESSAGE}</p>
         </div>
     </>
