@@ -6,7 +6,7 @@ export const PATH = {
     ONBOARDING: '/onboarding',
     AUTH: {
         LOGIN: '/login',
-        LOGIN_REDIRECT: '/auth/redirect',
+        LOGIN_REDIRECT: '/login/redirect',
     },
     SETTING: '/setting',
     TRIPS: {
