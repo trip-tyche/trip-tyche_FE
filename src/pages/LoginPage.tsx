@@ -1,8 +1,7 @@
 import { css } from '@emotion/react';
 
-import imageLeft from '/public/ogami_1.png';
-
-import imageRight from '@/assets/images/ogami_2.png';
+import leftImage from '@/assets/images/character-1.png';
+import rightImage from '@/assets/images/character-2.png';
 import SocialLoginButtons from '@/components/common/button/SocialLoginButtons';
 import { ENV } from '@/constants/api';
 import { OAUTH_URL } from '@/constants/auth';
@@ -25,8 +24,8 @@ const LoginPage = (): JSX.Element => {
             <main css={mainStyle}>
                 <div css={contentStyle}>
                     <div css={imageContainerStyle}>
-                        <img css={imageStyle} src={imageLeft} alt='image-left' />
-                        <img css={imageStyle} src={imageRight} alt='image-right' />
+                        <img css={imageStyle} src={leftImage} alt='character-1' />
+                        <img css={imageStyle} src={rightImage} alt='character-2' />
                     </div>
                     <div>
                         <h1 css={titleStyle}>여행의 추억을 티켓으로</h1>

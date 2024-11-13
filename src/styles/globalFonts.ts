@@ -1,18 +1,15 @@
 import { css } from '@emotion/react';
 
-import digitalBold from '../assets/fonts/woff/DS-Digital-Bold.woff';
-import digitalBoldItalic from '../assets/fonts/woff/DS-Digital-BoldItalic.woff';
-import digitalItalic from '../assets/fonts/woff/DS-Digital-Italic.woff';
-import digitalNormal from '../assets/fonts/woff/DS-Digital.woff';
-import Black from '../assets/fonts/woff/Pretendard-Black.woff';
-import Bold from '../assets/fonts/woff/Pretendard-Bold.woff';
-import ExtraBold from '../assets/fonts/woff/Pretendard-ExtraBold.woff';
-import ExtraLight from '../assets/fonts/woff/Pretendard-ExtraLight.woff';
-import Light from '../assets/fonts/woff/Pretendard-Light.woff';
-import Medium from '../assets/fonts/woff/Pretendard-Medium.woff';
-import Regular from '../assets/fonts/woff/Pretendard-Regular.woff';
-import SemiBold from '../assets/fonts/woff/Pretendard-SemiBold.woff';
-import Thin from '../assets/fonts/woff/Pretendard-Thin.woff';
+import digitalBoldItalic from '@/assets/fonts/woff/DS-Digital-BoldItalic.woff';
+import Black from '@/assets/fonts/woff/Pretendard-Black.woff';
+import Bold from '@/assets/fonts/woff/Pretendard-Bold.woff';
+import ExtraBold from '@/assets/fonts/woff/Pretendard-ExtraBold.woff';
+import ExtraLight from '@/assets/fonts/woff/Pretendard-ExtraLight.woff';
+import Light from '@/assets/fonts/woff/Pretendard-Light.woff';
+import Medium from '@/assets/fonts/woff/Pretendard-Medium.woff';
+import Regular from '@/assets/fonts/woff/Pretendard-Regular.woff';
+import SemiBold from '@/assets/fonts/woff/Pretendard-SemiBold.woff';
+import Thin from '@/assets/fonts/woff/Pretendard-Thin.woff';
 
 const fontStyles = css`
     @font-face {
@@ -45,7 +42,6 @@ const fontStyles = css`
         font-weight: 500;
         font-style: normal;
     }
-
     @font-face {
         font-family: 'Pretendard';
         src: url(${Regular}) format('woff');
@@ -69,24 +65,6 @@ const fontStyles = css`
         src: url(${Thin}) format('woff');
         font-weight: 100;
         font-style: normal;
-    }
-    @font-face {
-        font-family: 'DS-DIGII';
-        src: url(${digitalNormal}) format('woff');
-        font-weight: normal;
-        font-style: normal;
-    }
-    @font-face {
-        font-family: 'DS-DIGII';
-        src: url(${digitalBold}) format('woff');
-        font-weight: bold;
-        font-style: italic;
-    }
-    @font-face {
-        font-family: 'DS-DIGII';
-        src: url(${digitalItalic}) format('woff');
-        font-weight: normal;
-        font-style: italic;
     }
     @font-face {
         font-family: 'DS-DIGII';
