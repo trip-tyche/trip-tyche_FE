@@ -50,7 +50,7 @@ const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.
     const navigateToImageUpload = (e: React.MouseEvent) => {
         e.stopPropagation();
         setIsEditing(true);
-        navigate(`${PATH.TRIP_UPLOAD}/${tripId}`);
+        navigate(`${PATH.TRIPS.NEW.IMAGES(Number(tripId) as number)}`);
     };
 
     const handleCardClick = () => {
