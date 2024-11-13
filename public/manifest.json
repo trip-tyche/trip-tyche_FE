@@ -1,7 +1,22 @@
 {
-    "name": "TripTyche",
-    "short_name": "TripTyche",
+    "name": "여행 티켓에 공간과 시간을 담다, TripTyche",
+    "short_name": "트립티케",
+    "display": "standalone",
     "theme_color": "#0073bb",
     "background_color": "#ffffff",
-    "display": "standalone"
+    "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["travel", "lifestyle"],
+  "lang": "ko",
+  "dir": "ltr"
 }

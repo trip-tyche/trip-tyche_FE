@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import mapImage from '@/assets/images/add-location-image.png';
+import mapImage from '@/assets/images/location-guide.png';
 import theme from '@/styles/theme';
 
 interface ModalContentProps {

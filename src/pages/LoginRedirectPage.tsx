@@ -24,7 +24,9 @@ const LoginRedirectPage = () => {
 
         if (userId && token) {
             setUserIdAndToken();
+            console.log('있어요!');
         } else {
+            console.log('없어요!');
             // 현재 호스트를 기반으로 로그인 URL 생성
             const loginUrl = `${window.location.origin}${PATH.AUTH.LOGIN}`;
             window.location.href = loginUrl; // 전체 페이지 리다이렉트
