@@ -49,8 +49,6 @@ const TimelineDatePage: React.FC = () => {
     const [isInitialLoad, setIsInitialLoad] = useState(true);
     const [availableDates, setAvailableDates] = useState<string[]>([]);
 
-    const showToast = useToastStore((state) => state.showToast);
-
     const { tripId } = useParams();
     const location = useLocation();
 
@@ -321,7 +319,9 @@ const TimelineDatePage: React.FC = () => {
                         <ArrowButton
                             onClick={() => {
                                 setIsTransitioning(true);
-                                navigate(`${PATH.TIMELINE_MAP}/${tripId}`);
+                                if (tripId && !isNaN(Number(tripId))) {
+                                    navigate(`${PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`);
+                                }
                             }}
                         >
                             <ChevronDown size={20} color={`${theme.colors.descriptionText}`} strokeWidth={2.5} />

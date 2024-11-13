@@ -52,8 +52,8 @@ export interface Trips {
 
 // 핀포인트
 export interface PinPoint {
-    tripId: string;
-    pinPointId: string;
+    tripId: number;
+    pinPointId: number;
     latitude: number;
     longitude: number;
     mediaLink: string;

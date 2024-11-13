@@ -21,7 +21,7 @@ const Onboarding = () => {
     }, []);
 
     if (redirect) {
-        return <Navigate to={PATH.LOGIN} replace />;
+        return <Navigate to={PATH.AUTH.LOGIN} replace />;
     }
 
     return (

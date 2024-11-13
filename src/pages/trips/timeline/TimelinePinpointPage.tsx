@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { tripImageAPI } from '@/api';
 import ImageCarousel from '@/components/ImageCarousel';
+import { PATH } from '@/constants/path';
 import useTimelineStore from '@/stores/useTimelineStore';
 
 type CarouselState = 'auto' | 'paused' | 'zoomed';
@@ -46,7 +47,7 @@ const TimelinePinpointPage = () => {
     }, []);
 
     const handleBack = () => {
-        navigate(`/timeline-map/${tripId}`);
+        navigate(`${PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`);
     };
 
     return (

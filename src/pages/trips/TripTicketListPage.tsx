@@ -39,7 +39,7 @@ const TripTicketListPage = () => {
                 if (typeof tripList !== 'object') {
                     showToast('다시 로그인해주세요.');
                     setLogout();
-                    navigate(PATH.LOGIN);
+                    navigate(PATH.AUTH.LOGIN);
                     return;
                 }
 
@@ -81,12 +81,12 @@ const TripTicketListPage = () => {
 
     const handleTicketCreate = async () => {
         const tripId = await tripAPI.createTrip();
-        navigate(`${PATH.TRIP_UPLOAD}/${tripId}`);
+        navigate(`${PATH.TRIPS.NEW.IMAGES(tripId)}`);
     };
 
     return (
         <div css={containerStyle}>
-            <Header title={PAGE.TRIP_LIST} isBackButton onBack={() => navigate(PAGE.)} />
+            <Header title={PAGE.TRIP_LIST} isBackButton onBack={() => navigate(PATH.MAIN)} />
             {isLoading ? (
                 <div css={loadingWrapper}>
                     <Loading />

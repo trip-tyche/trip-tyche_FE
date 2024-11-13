@@ -92,11 +92,11 @@ const TripLocationAddPage = () => {
 
     const navigateToTripInfo = () => {
         if (isEditing) {
-            navigate(`${PATH.TRIP_LIST}`);
+            navigate(`${PATH.TRIPS.ROOT}`);
             showToast(`사진이 등록되었습니다.`);
             setIsEditing(false);
         } else {
-            navigate(`${PATH.TRIP_NEW}/${tripId}`);
+            navigate(`${PATH.TRIPS.NEW.INFO(Number(tripId))}`);
         }
     };
 

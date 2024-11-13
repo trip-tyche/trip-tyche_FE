@@ -26,14 +26,14 @@ const LoginRedirectPage = () => {
             setUserIdAndToken();
         } else {
             // 현재 호스트를 기반으로 로그인 URL 생성
-            const loginUrl = `${window.location.origin}${PATH.LOGIN}`;
+            const loginUrl = `${window.location.origin}${PATH.AUTH.LOGIN}`;
             window.location.href = loginUrl; // 전체 페이지 리다이렉트
         }
     }, [location]);
 
     const setUserIdAndToken = () => {
         setLogin(JSON.parse(userId), token);
-        navigate(PATH.HOME, { replace: true });
+        navigate(PATH.MAIN, { replace: true });
     };
 
     return (

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { css } from '@emotion/react';
 import { User, MessageCircle, LogOut } from 'lucide-react';
@@ -30,7 +30,7 @@ const SettingPage = () => {
     const confirmModal = () => {
         closeModal();
         setLogout();
-        navigate(PATH.LOGIN);
+        navigate(PATH.AUTH.LOGIN);
     };
 
     const submitUserNickName = async () => {
@@ -61,7 +61,7 @@ const SettingPage = () => {
                               setIsEditing(false);
                               setInputValue('');
                           }
-                        : () => navigate(PATH.HOME)
+                        : () => navigate(PATH.MAIN)
                 }
             />
             {isEditing ? (

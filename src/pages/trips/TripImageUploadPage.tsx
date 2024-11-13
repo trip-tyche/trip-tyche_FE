@@ -45,12 +45,12 @@ const TripImageUploadPage = () => {
 
         if (imagesWithLocationAndDate.length !== 0) {
             const defaultLocation = imagesWithLocationAndDate[0].location;
-            navigate(`${PATH.TRIP_UPLOAD_ADD_LOCATION}/${tripId}`, {
+            navigate(`${PATH.TRIPS.NEW.LOCATIONS(Number(tripId))}`, {
                 state: { defaultLocation, imagesNoLocationWithDate },
             });
         } else {
             const defaultLocation = { latitude: 37.5665, longitude: 126.978 };
-            navigate(`${PATH.TRIP_UPLOAD_ADD_LOCATION}/${tripId}`, {
+            navigate(`${PATH.TRIPS.NEW.LOCATIONS(Number(tripId))}`, {
                 state: { defaultLocation, imagesNoLocationWithDate },
             });
         }
@@ -58,12 +58,14 @@ const TripImageUploadPage = () => {
 
     const navigateToTripInfo = () => {
         if (isEditing) {
-            navigate(`${PATH.TRIP_LIST}`);
+            navigate(`${PATH.TRIPS.ROOT}`);
             showToast(`${imagesWithLocationAndDate.length}장의 사진이 등록되었습니다.`);
             setIsEditing(false);
         } else {
             setIsAddLocationModalOpen(false);
-            navigate(`${PATH.TRIP_NEW}/${tripId}`);
+            if (tripId && !isNaN(Number(tripId))) {
+                navigate(`${PATH.TRIPS.NEW.INFO(Number(tripId))}`);
+            }
         }
     };
 
@@ -78,11 +80,11 @@ const TripImageUploadPage = () => {
             uploadImages(imagesWithLocationAndDate);
 
             if (isEditing) {
-                navigate(`${PATH.TRIP_LIST}`);
+                navigate(`${PATH.TRIPS.ROOT}`);
                 showToast(`${imagesWithLocationAndDate.length}장의 사진이 등록되었습니다.`);
                 setIsEditing(false);
             } else {
-                navigate(`${PATH.TRIP_NEW}/${tripId}`);
+                navigate(`${PATH.TRIPS.NEW.INFO(Number(tripId))}`);
             }
 
             return;
@@ -97,7 +99,7 @@ const TripImageUploadPage = () => {
             <Header
                 title={PAGE.UPLOAD_IMAGES}
                 isBackButton
-                onBack={isFirstReg ? () => navigate(PATH.HOME) : () => navigate(PATH.TRIP_LIST)}
+                onBack={isFirstReg ? () => navigate(PATH.MAIN) : () => navigate(PATH.TRIPS.ROOT)}
             />
             <main css={mainStyle}>
                 <section css={sectionStyle}>

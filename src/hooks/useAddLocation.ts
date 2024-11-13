@@ -61,7 +61,7 @@ export const useAddLocation = () => {
             await uploadImages(updatedImages);
         } catch (error) {
             showToast('다시 로그인해주세요.');
-            navigate(PATH.LOGIN);
+            navigate(PATH.AUTH.LOGIN);
             localStorage.clear();
             return;
         }
@@ -73,12 +73,14 @@ export const useAddLocation = () => {
 
         if (updatedDisplayedImages.length === 0) {
             if (isEditing) {
-                navigate(`${PATH.TRIP_LIST}`);
+                navigate(`${PATH.TRIPS.ROOT}`);
                 showToast(`사진이 등록되었습니다.`);
                 setIsEditing(false);
             } else {
                 showToast(`${updatedImages.length}장의 사진이 등록되었습니다.`);
-                navigate(`${PATH.TRIP_NEW}/${tripId}`);
+                if (tripId && !isNaN(Number(tripId))) {
+                    navigate(`${PATH.TRIPS.NEW.INFO(Number(tripId))}`);
+                }
                 return;
             }
         }

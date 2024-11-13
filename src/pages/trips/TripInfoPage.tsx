@@ -43,7 +43,11 @@ const TripInfoPage = () => {
     return (
         <div css={containerStyle}>
             <div>
-                <Header title={PAGE.NEW_TRIP} isBackButton onBack={() => navigate(`${PATH.TRIP_UPLOAD}/${tripId}`)} />
+                <Header
+                    title={PAGE.NEW_TRIP}
+                    isBackButton
+                    onBack={() => navigate(`${PATH.TRIPS.NEW.IMAGES(Number(tripId))}`)}
+                />
             </div>
             <main css={mainStyle}>
                 <div css={tripFormWrapper}>

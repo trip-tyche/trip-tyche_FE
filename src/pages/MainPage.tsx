@@ -32,7 +32,7 @@ const MainPage = () => {
     useEffect(() => {
         if (!isLogin) {
             setLogout();
-            navigate(PATH.LOGIN);
+            navigate(PATH.AUTH.LOGIN);
             return;
         }
         fetchUserData();
@@ -43,7 +43,7 @@ const MainPage = () => {
         const userId = getUserId();
 
         if (!token || !userId) {
-            navigate(PATH.LOGIN);
+            navigate(PATH.AUTH.LOGIN);
             return;
         }
 
@@ -70,12 +70,12 @@ const MainPage = () => {
 
     const handleButtonClick = async () => {
         if (tripCount) {
-            navigate(PATH.TRIP_LIST);
+            navigate(PATH.TRIPS.ROOT);
             return;
         }
 
         const tripId = await tripAPI.createTrip();
-        navigate(`${PATH.TRIP_UPLOAD}/${tripId}`, { state: 'first-ticket' });
+        navigate(`${PATH.TRIPS.NEW.IMAGES(tripId)}`, { state: 'first-ticket' });
     };
 
     if (isLoading) {
@@ -118,7 +118,7 @@ const MainPage = () => {
             ) : (
                 <>
                     <div css={headerStyle}>
-                        <Settings css={settingIconStyle} onClick={() => navigate(PATH.MYPAGE)} />
+                        <Settings css={settingIconStyle} onClick={() => navigate(PATH.SETTING)} />
                     </div>
                     <div css={contentStyle}>
                         <div css={descriptionStyle}>

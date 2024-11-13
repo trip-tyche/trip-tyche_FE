@@ -94,14 +94,14 @@ export const router = createBrowserRouter([
                                 ],
                             },
                             { path: 'edit', element: <TripInfoEditPage /> },
-                        ],
-                    },
-                    {
-                        path: 'timeline',
-                        children: [
-                            { path: 'map', element: <TimelineMapPage /> },
-                            { path: 'pinpoint/:pinPointId', element: <TimelinePinpointPage /> },
-                            { path: 'date', element: <TimelineDatePage /> },
+                            {
+                                path: 'timeline',
+                                children: [
+                                    { path: 'map', element: <TimelineMapPage /> },
+                                    { path: 'pinpoint/:pinPointId', element: <TimelinePinpointPage /> },
+                                    { path: 'date', element: <TimelineDatePage /> },
+                                ],
+                            },
                         ],
                     },
                 ],

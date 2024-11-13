@@ -71,7 +71,7 @@ const TimelineMapPage = () => {
 
             if (pinPoints.length === 0) {
                 showToast('여행에 등록된 사진이 없습니다.');
-                navigate(PATH.TRIP_LIST);
+                navigate(PATH.TRIPS.ROOT);
                 return;
             }
 
@@ -250,7 +250,7 @@ const TimelineMapPage = () => {
     const handleDayClick = useCallback(() => {
         setIsTransitioning(true);
         setTimeout(() => {
-            navigate(`/days/${tripId}`, { state: imageDates });
+            navigate(`${PATH.TRIPS.TIMELINE.DATE(Number(tripId))}`, { state: imageDates });
         }, 300);
     }, [navigate, tripId, tripInfo]);
 
@@ -488,7 +488,9 @@ const TimelineMapPage = () => {
                             >
                                 <div
                                     css={photoCardStyle(index === currentPinIndex && isAtPin)}
-                                    onClick={() => navigate(`/music-video/${tripId}/${point.pinPointId}`)}
+                                    onClick={() =>
+                                        navigate(`${PATH.TRIPS.TIMELINE.PINPOINT(Number(tripId), point.pinPointId)}`)
+                                    }
                                 >
                                     <img css={imageStyle} src={point.mediaLink} alt='photo-card' />
                                 </div>
@@ -567,7 +569,7 @@ const TimelineMapPage = () => {
 
     return (
         <PageContainer isTransitioning={isTransitioning}>
-            <Header title={tripInfo?.tripTitle || ''} isBackButton onBack={() => navigate(PATH.TRIP_LIST)} />
+            <Header title={tripInfo?.tripTitle || ''} isBackButton onBack={() => navigate(PATH.TRIPS.ROOT)} />
             <MapWrapper>
                 {isLoading ? (
                     <LoadingWrapper>

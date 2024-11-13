@@ -86,7 +86,7 @@ export const useTripEditForm = () => {
         try {
             if (tripId) {
                 await tripAPI.updateTripInfo(tripId, tripData);
-                navigate(PATH.TRIP_LIST);
+                navigate(PATH.TRIPS.ROOT);
                 showToast('여행 정보가 수정되었습니다.');
                 setIsEditing(false);
             }

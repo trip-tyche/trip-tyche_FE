@@ -288,7 +288,7 @@ export const useImageUpload = () => {
             .catch((error) => {
                 setUploadStatus('error');
                 showToast('다시 로그인해주세요.');
-                navigate(PATH.LOGIN);
+                navigate(PATH.AUTH.LOGIN);
                 localStorage.clear();
                 console.error('이미지 업로드 중 오류 발생:', error);
                 return;

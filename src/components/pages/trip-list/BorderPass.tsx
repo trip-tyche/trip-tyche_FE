@@ -64,9 +64,11 @@ const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.
         if (isAnimating) {
             const timer = setTimeout(() => {
                 localStorage.setItem('tripId', tripId);
-                navigate(`${PATH.TIMELINE_MAP}/${tripId}`, {
-                    state: { tripId: trip.tripId, tripTitle: trip.tripTitle },
-                });
+                if (tripId && !isNaN(Number(tripId))) {
+                    navigate(`${PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`, {
+                        state: { tripId: trip.tripId, tripTitle: trip.tripTitle },
+                    });
+                }
             }, 1000); // 1초 후 네비게이션
 
             return () => clearTimeout(timer);
