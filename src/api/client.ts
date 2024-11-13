@@ -6,7 +6,7 @@ import { DEFAULT_HEADERS, ENV } from '@/constants/api';
 export const apiClient = axios.create({
     baseURL: ENV.API_BASE_URL,
     headers: DEFAULT_HEADERS,
-    timeout: 5000,
+    timeout: 15000,
 });
 
 setupRequestInterceptor(apiClient);
