@@ -130,7 +130,7 @@ const TripImageUploadPage = () => {
                     </div>
                 </section>
             </main>
-            {!isAlertModalOpen && (
+            {isAlertModalOpen && (
                 <AlertModal
                     confirmText='사진 등록하기'
                     confirmModal={closeAlertModal}
@@ -149,7 +149,7 @@ const TripImageUploadPage = () => {
                     </div>
                 </AlertModal>
             )}
-            {!isAddLocationModalOpen && (
+            {isAddLocationModalOpen && (
                 <AlertModal
                     confirmText='설정하기'
                     cancelText='건너뛰기'
