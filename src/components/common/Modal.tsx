@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { css } from '@emotion/react';
+import { createPortal } from 'react-dom';
 
 import theme from '@/styles/theme';
 
@@ -10,11 +11,12 @@ interface ModalProps {
 }
 
 const Modal = ({ closeModal, children }: ModalProps) => {
-    return (
+    return createPortal(
         <React.Fragment>
             <div css={overlayStyle} onClick={closeModal}></div>
             <div css={modalStyle}>{children}</div>
-        </React.Fragment>
+        </React.Fragment>,
+        document.getElementById('portal-root') || document.body,
     );
 };
 
