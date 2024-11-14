@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 
 import AlertModal from '@/components/common/modal/AlertModal';
-import GuideModal from '@/components/common/modal/GuideModal';
 import Header from '@/components/layout/Header';
 import ModalContent from '@/components/pages/image-upload/ModalContent';
 import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
@@ -131,13 +130,12 @@ const TripImageUploadPage = () => {
                     </div>
                 </section>
             </main>
-            {isAlertModalOpen && (
+            {!isAlertModalOpen && (
                 <AlertModal
-                    buttonText='사진 등록하기'
-                    closeModal={closeAlertModal}
-                    isOverlay
-                    isDisable={isResizing}
-                    progress={resizingProgress}
+                    confirmText='사진 등록하기'
+                    confirmModal={closeAlertModal}
+                    disabled={isResizing}
+                    disabledText={`사진 등록 준비 중 ${resizingProgress}%`}
                 >
                     <div css={alertStyle}>
                         <h1>
@@ -151,16 +149,15 @@ const TripImageUploadPage = () => {
                     </div>
                 </AlertModal>
             )}
-            {isAddLocationModalOpen && (
-                <GuideModal
+            {!isAddLocationModalOpen && (
+                <AlertModal
                     confirmText='설정하기'
                     cancelText='건너뛰기'
                     confirmModal={navigateToImageLocation}
                     closeModal={navigateToTripInfo}
-                    isOverlay
                 >
                     <ModalContent noLocationImageCount={imagesNoLocationWithDate.length} />
-                </GuideModal>
+                </AlertModal>
             )}
         </div>
     );
@@ -178,7 +175,7 @@ const alertStyle = css`
 
     div {
         font-size: 16px;
-        margin: 0 26px 38px 26px;
+        margin: 0 26px 34px 26px;
         text-align: center;
         color: ${theme.colors.descriptionText};
         line-height: 20px;

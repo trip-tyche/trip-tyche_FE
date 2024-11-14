@@ -8,7 +8,7 @@ type VariantType = 'primary' | 'white';
 
 interface ButtonProps extends ComponentProps<'button'> {
     variant?: VariantType;
-    text: string;
+    text?: string;
     icon?: React.ReactNode;
     isLoading?: boolean;
     loadingText?: string;

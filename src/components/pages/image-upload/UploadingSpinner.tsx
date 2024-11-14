@@ -1,14 +1,14 @@
 import { css } from '@emotion/react';
 
 // import loadingImage from '@/assets/images/flightLoading5.gif';
-import ModalOverlay from '@/components/common/modal/ModalOverlay';
+// import ModalOverlay from '@/components/common/modal/ModalOverlay';
 import theme from '@/styles/theme';
 
 const UPLOADING_MESSAGE = `새로운 여행이 등록 중입니다..`;
 
 const UploadingSpinner = () => (
     <>
-        <ModalOverlay />
+        {/* <ModalOverlay /> */}
         <div css={divStyle}>
             {/* <img src={loadingImage} /> */}
             <p css={pStyle}>{UPLOADING_MESSAGE}</p>

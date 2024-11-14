@@ -7,17 +7,14 @@ interface ModalContentProps {
     noLocationImageCount: number;
 }
 
-const TITLE = ' 장의 사진이 위치 정보가 없습니다 😢';
-const DESCRIPTION = '위 사진과 같이 직접 위치를 설정할 수 있습니다.';
-
 const ModalContent = ({ noLocationImageCount }: ModalContentProps) => (
     <div css={contentContainer}>
         <h1 css={titleStyle}>
-            <span css={countStyle}>{noLocationImageCount}</span>
-            {TITLE}
+            현재 <span css={countStyle}>{noLocationImageCount} </span>
+            장의 사진이 위치 정보가 없습니다 😢
         </h1>
         <img css={imageStyle} src={mapImage} alt='map-image' />
-        <p css={descriptionStyle}>{DESCRIPTION}</p>
+        <p css={descriptionStyle}>위 사진과 같이 직접 위치를 설정할 수 있습니다.</p>
     </div>
 );
 

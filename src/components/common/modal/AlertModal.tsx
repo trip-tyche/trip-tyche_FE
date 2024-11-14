@@ -1,66 +1,46 @@
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/Button';
-import ModalOverlay from '@/components/common/modal/ModalOverlay';
+import Modal from '@/components/common/Modal';
 
 interface AlertModalProps {
-    buttonText: string;
-    closeModal?: () => void;
-    isOverlay?: boolean;
-    isDisable?: boolean;
-    progress?: number;
+    confirmText: string;
+    cancelText?: string;
+    disabled?: boolean;
+    disabledText?: string;
     children: React.ReactNode;
+    confirmModal?: () => void;
+    closeModal?: () => void;
 }
 
 const AlertModal = ({
-    buttonText,
-    closeModal,
-    isOverlay = false,
-    isDisable = false,
-    progress,
+    confirmText,
+    cancelText,
+    disabled = false,
+    disabledText,
     children,
+    confirmModal,
+    closeModal,
 }: AlertModalProps) => (
-    <>
-        {isOverlay && <ModalOverlay />}
-        <div css={modalStyle}>
-            <div css={contentStyle}>{children}</div>
-            <div css={buttonContainer}>
-                <Button
-                    text={isDisable ? `사진 등록 준비 중 ${progress}%` : buttonText}
-                    onClick={closeModal}
-                    disabled={isDisable}
-                />
-            </div>
+    <Modal>
+        <div css={contentContainer}>{children}</div>
+        <div css={buttonGroup}>
+            {cancelText && <Button text={cancelText} variant='white' onClick={closeModal} />}
+            <Button text={!disabled ? confirmText : disabledText} onClick={confirmModal} disabled={disabled} />
         </div>
-    </>
+    </Modal>
 );
 
-const modalStyle = css`
-    width: 100vw;
-    max-width: 320px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 16px;
-    background-color: #ffffff;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-`;
-
-const contentStyle = css`
+const contentContainer = css`
     margin-top: 12px;
 `;
 
-const buttonContainer = css`
-    width: 100%;
+const buttonGroup = css`
     display: flex;
+    gap: 8px;
+    width: 100%;
     padding: 0 12px;
     margin-bottom: 12px;
-    gap: 8px;
 `;
 
 export default AlertModal;

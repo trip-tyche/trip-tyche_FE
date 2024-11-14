@@ -4,54 +4,27 @@ import React from 'react';
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/Button';
-import ModalOverlay from '@/components/common/modal/ModalOverlay';
-import theme from '@/styles/theme';
+import Modal from '@/components/common/Modal';
 
 export interface ConfirmModalProps {
     title: string;
-    description: string;
+    description?: string;
     confirmText: string;
     cancelText: string;
     confirmModal?: () => void;
     closeModal?: () => void;
 }
 
-const ConfirmModal: React.FC<ConfirmModalProps> = ({
-    title,
-    description,
-    confirmText,
-    cancelText,
-    confirmModal,
-    closeModal,
-}) => (
-    <>
-        <ModalOverlay closeModal={closeModal} />
-        <div css={modalStyle}>
-            <h1 css={titleStyle}>{title}</h1>
-            <p css={descriptionStyle}>{description}</p>
-            <div css={buttonContainer}>
-                <Button text={cancelText} variant='white' onClick={closeModal} />
-                <Button text={confirmText} onClick={confirmModal} />
-            </div>
+const ConfirmModal = ({ title, description, confirmText, cancelText, confirmModal, closeModal }: ConfirmModalProps) => (
+    <Modal closeModal={closeModal}>
+        <h1 css={titleStyle}>{title}</h1>
+        <p css={descriptionStyle}>{description}</p>
+        <div css={buttonGroup}>
+            <Button text={cancelText} variant='white' onClick={closeModal} />
+            <Button text={confirmText} onClick={confirmModal} />
         </div>
-    </>
+    </Modal>
 );
-
-const modalStyle = css`
-    width: 100vw;
-    max-width: 360px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 16px;
-    background-color: ${theme.colors.modalBg};
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-`;
 
 const titleStyle = css`
     text-align: center;
@@ -61,6 +34,7 @@ const titleStyle = css`
     margin-top: 24px;
     margin-bottom: 20px;
 `;
+
 const descriptionStyle = css`
     font-size: 14px;
     margin: 0 26px 33px 26px;
@@ -68,7 +42,8 @@ const descriptionStyle = css`
     color: #5e5e5e;
     line-height: 20px;
 `;
-const buttonContainer = css`
+
+const buttonGroup = css`
     width: 100%;
     display: flex;
     padding: 0 12px;
