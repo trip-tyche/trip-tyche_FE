@@ -10,7 +10,7 @@ interface ButtonProps extends ComponentProps<'button'> {
     isLoading?: boolean;
     loadingMessage?: string;
     className?: string;
-    onClick: () => void;
+    onClick?: () => void;
     children?: React.ReactNode;
     text: string;
 }
