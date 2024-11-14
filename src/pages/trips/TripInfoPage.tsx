@@ -65,7 +65,7 @@ const TripInfoPage = () => {
                         setHashtags={setHashtags}
                     />
                 </div>
-                <Button text='등록하기' btnTheme='pri' size='lg' onClick={handleSubmit} disabled={!isRequired} />
+                <Button text='등록하기' onClick={handleSubmit} disabled={!isRequired} />
             </main>
             {isUploading && <UploadingSpinner />}
         </div>

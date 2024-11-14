@@ -111,11 +111,9 @@ const TripLocationAddPage = () => {
                             toggleImageSelect={toggleImageSelect}
                         />
                         <div css={buttonWrapper}>
-                            <Button text='건너뛰고 계속하기' btnTheme='sec' size='lg' onClick={navigateToTripInfo} />
+                            <Button text='건너뛰고 계속하기' variant='white' onClick={navigateToTripInfo} />
                             <Button
                                 text='위치 설정하기'
-                                btnTheme='pri'
-                                size='lg'
                                 onClick={handleSetLocationOnMap}
                                 disabled={selectedImages.length === 0}
                             />
@@ -126,12 +124,10 @@ const TripLocationAddPage = () => {
                         <div css={mapButtonWrapper}>
                             <Button
                                 text='선택한 위치 등록하기'
-                                btnTheme='pri'
-                                size='lg'
                                 onClick={handleImageUploadWithLocation}
                                 disabled={!selectedLocation}
                                 isLoading={isUploading}
-                                loadingMessage='위치 등록 중입니다...'
+                                loadingText='위치 등록 중입니다...'
                             />
                         </div>
                         <Map

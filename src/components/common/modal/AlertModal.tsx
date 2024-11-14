@@ -27,8 +27,6 @@ const AlertModal = ({
             <div css={buttonContainer}>
                 <Button
                     text={isDisable ? `사진 등록 준비 중 ${progress}%` : buttonText}
-                    btnTheme='pri'
-                    size='lg'
                     onClick={closeModal}
                     disabled={isDisable}
                 />

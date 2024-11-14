@@ -39,13 +39,7 @@ const InputModal: React.FC<InputModalProps> = ({
                 {(inputValue.length === 1 || inputValue.length > 10) && <p>{infoMessage}</p>}
             </div>
             <div css={buttonContainer}>
-                <Button
-                    text='완료'
-                    btnTheme='pri'
-                    size='lg'
-                    onClick={submitModal}
-                    disabled={inputValue.length < 2 || inputValue.length > 10}
-                />
+                <Button text='완료' onClick={submitModal} disabled={inputValue.length < 2 || inputValue.length > 10} />
             </div>
         </div>
     </>

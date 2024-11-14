@@ -27,8 +27,8 @@ const GuideModal: React.FC<GuideModalProps> = ({
         <div css={modalStyle}>
             <div css={contentStyle}>{children}</div>
             <div css={buttonContainer}>
-                <Button text={cancelText} btnTheme='sec' size='lg' onClick={closeModal} />
-                <Button text={confirmText} btnTheme='pri' size='lg' onClick={confirmModal} />
+                <Button text={cancelText} variant='white' onClick={closeModal} />
+                <Button text={confirmText} onClick={confirmModal} />
             </div>
         </div>
     </>

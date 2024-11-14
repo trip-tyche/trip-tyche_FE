@@ -79,7 +79,7 @@ const SettingPage = () => {
                         {(inputValue.length === 1 || inputValue.length > 10) && <p>닉네임을 2~10자로 입력해주세요.</p>}
                     </div>
                     <div css={buttonContainer}>
-                        <Button text='변경 완료' btnTheme='pri' size='lg' onClick={submitUserNickName} />
+                        <Button text='변경 완료' onClick={submitUserNickName} />
                     </div>
                 </div>
             ) : (

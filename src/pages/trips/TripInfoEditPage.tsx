@@ -30,7 +30,7 @@ const TripInfoEditPage = () => {
                         handleHashtagToggle={handleHashtagToggle}
                     />
                 </div>
-                <Button text={BUTTON.UPDATE_TRIP} btnTheme='pri' size='lg' onClick={handleUpdateTripInfo} />
+                <Button text={BUTTON.UPDATE_TRIP} onClick={handleUpdateTripInfo} />
             </main>
         </div>
     );

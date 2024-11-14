@@ -30,8 +30,8 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
             <h1 css={titleStyle}>{title}</h1>
             <p css={descriptionStyle}>{description}</p>
             <div css={buttonContainer}>
-                <Button text={cancelText} btnTheme='sec' size='lg' onClick={closeModal} />
-                <Button text={confirmText} btnTheme='pri' size='lg' onClick={confirmModal} />
+                <Button text={cancelText} variant='white' onClick={closeModal} />
+                <Button text={confirmText} onClick={confirmModal} />
             </div>
         </div>
     </>

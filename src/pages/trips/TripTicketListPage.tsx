@@ -103,11 +103,18 @@ const TripTicketListPage = () => {
                         )}
 
                         <div>
-                            <Button text={BUTTON.NEW_TRIP} btnTheme='pri' size='sm' onClick={handleTicketCreate}>
-                                <Button.Left>
-                                    <LuPlus size={16} />
-                                </Button.Left>
-                            </Button>
+                            <Button
+                                text={BUTTON.NEW_TRIP}
+                                onClick={handleTicketCreate}
+                                icon={<LuPlus size={16} />}
+                                css={css`
+                                    width: auto;
+                                    height: 34px;
+                                    padding: 0 12px;
+                                    border-radius: 8px;
+                                    font-size: ${theme.fontSizes.small_12};
+                                `}
+                            />
                         </div>
                     </div>
                     {tripCount > 0 ? (

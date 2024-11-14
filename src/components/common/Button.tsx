@@ -72,7 +72,7 @@ const buttonStyles = {
     },
     icon: css`
         display: flex;
-        margin-left: 4px;
+        margin-right: 4px;
         align-items: center;
     `,
 };
