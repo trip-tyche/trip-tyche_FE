@@ -1,27 +1,30 @@
+import { ComponentProps } from 'react';
+
 import { css } from '@emotion/react';
 
 import Loading from '@/components/common/Loading';
 
-export interface ButtonProps {
-    text: string;
+interface ButtonProps extends ComponentProps<'button'> {
     btnTheme: 'pri' | 'sec';
     size: 'lg' | 'sm';
-    onClick?: () => void;
-    disabled?: boolean;
     isLoading?: boolean;
     loadingMessage?: string;
+    className?: string;
+    onClick: () => void;
+    children?: React.ReactNode;
+    text: string;
 }
 
 const Button = ({
-    text,
     btnTheme,
     size,
-    onClick,
-    disabled,
     isLoading = false,
     loadingMessage,
+    disabled,
     children,
-}: ButtonProps & { children?: React.ReactNode }): JSX.Element => (
+    text,
+    onClick,
+}: ButtonProps) => (
     <button css={buttonStyle(btnTheme, size)} onClick={onClick} disabled={disabled || isLoading}>
         {isLoading && loadingMessage ? (
             <span css={spinnerStyle}>

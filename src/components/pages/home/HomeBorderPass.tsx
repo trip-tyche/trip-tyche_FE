@@ -5,8 +5,7 @@ import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { FiPlus } from 'react-icons/fi';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
-import characterImg from '/public/ogami_1.png';
-
+import characterImg from '@/assets/images/character-1.png';
 import theme from '@/styles/theme';
 import { FormattedTripDate } from '@/types/trip';
 

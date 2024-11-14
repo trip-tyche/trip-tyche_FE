@@ -6,9 +6,8 @@ import { FiPlus } from 'react-icons/fi';
 import { IoAirplaneSharp } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
-import characterImg from '/public/ogami_1.png';
-
 import { tripAPI } from '@/api';
+import characterImg from '@/assets/images/character-1.png';
 import ConfirmModal from '@/components/common/modal/ConfirmModal';
 import { PATH } from '@/constants/path';
 import { useEditingStore } from '@/stores/useEditingStore';
