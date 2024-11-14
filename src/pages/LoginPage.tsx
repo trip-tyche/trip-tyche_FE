@@ -6,7 +6,7 @@ import character3 from '@/assets/images/character-3.png';
 import character4 from '@/assets/images/character-4.png';
 import character5 from '@/assets/images/character-5.png';
 import character6 from '@/assets/images/character-6.png';
-import SocialLoginButtons from '@/components/common/button/SocialLoginButtons';
+import LoginButton from '@/components/common/button/LoginButton';
 import { ENV } from '@/constants/api';
 import { OAUTH_URL } from '@/constants/auth';
 import theme from '@/styles/theme';
@@ -45,8 +45,8 @@ const LoginPage = () => {
                     </div>
                 </div>
                 <div css={buttonContainerStyle}>
-                    <SocialLoginButtons provider='kakao' handleSocialLogin={handleSocialLogin('kakao')} />
-                    <SocialLoginButtons provider='google' handleSocialLogin={handleSocialLogin('google')} />
+                    <LoginButton provider='kakao' onClick={handleSocialLogin('kakao')} />
+                    <LoginButton provider='google' onClick={handleSocialLogin('google')} />
                 </div>
             </main>
         </div>

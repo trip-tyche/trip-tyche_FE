@@ -7,7 +7,7 @@ import { MdWavingHand } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
 import { tripAPI, userAPI } from '@/api';
-import Button from '@/components/common/button/Button';
+import Button from '@/components/common/Button';
 import Loading from '@/components/common/Loading';
 import HomeBorderPass from '@/components/pages/home/HomeBorderPass';
 import { PATH } from '@/constants/path';
@@ -112,7 +112,7 @@ const MainPage = () => {
                         {(inputValue.length === 1 || inputValue.length > 10) && <p>닉네임을 2~10자로 입력해주세요.</p>}
                     </div>
                     <div css={buttonContainer}>
-                        <Button text='완료' btnTheme='pri' size='lg' onClick={submitUserNickName} />
+                        <Button text='완료' onClick={submitUserNickName} />
                     </div>
                 </div>
             ) : (
@@ -144,8 +144,6 @@ const MainPage = () => {
                     <div css={secondButtonContainer}>
                         <Button
                             text={tripCount ? '여행 티켓 보러가기' : '새로운 여행 등록하기'}
-                            btnTheme='pri'
-                            size='lg'
                             onClick={handleButtonClick}
                         />
                     </div>

@@ -9,9 +9,6 @@ const colors = {
     disabled: '#CCCCCC', // whiteTextHover도 동일
     disabledText: '#7C7C7C',
 
-    // white: '#F1F1F1',
-    // black: '#1E1E1E',
-
     blue: '#3EA6FF',
     blueHover: '#0073D6',
     whiteText: '#FFFFFF',

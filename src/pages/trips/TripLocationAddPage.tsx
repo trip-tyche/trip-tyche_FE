@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { css } from '@emotion/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import Button from '@/components/common/button/Button';
+import Button from '@/components/common/Button';
 import DateGroupedImageList from '@/components/pages/addLocation/DateGroupedImageList';
 import Map from '@/components/pages/addLocation/Map';
 import { PATH } from '@/constants/path';

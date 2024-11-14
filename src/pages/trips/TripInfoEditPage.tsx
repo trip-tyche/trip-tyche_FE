@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import Button from '@/components/common/button/Button';
+import Button from '@/components/common/Button';
 import Loading from '@/components/common/Loading';
 import Header from '@/components/layout/Header';
 import TripEditForm from '@/components/pages/tripEdit/TripEditForm';

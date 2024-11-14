@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react';
 
 import { css } from '@emotion/react';
 
-import Button from '@/components/common/button/Button';
+import Button from '@/components/common/Button';
 import ModalOverlay from '@/components/common/modal/ModalOverlay';
 import theme from '@/styles/theme';
 
