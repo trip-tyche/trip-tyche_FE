@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { tripAPI, userAPI } from '@/api';
 import Button from '@/components/common/Button';
-import ConfirmModal from '@/components/common/modal/ConfirmModal';
-import Header from '@/components/layout/Header';
+import Header from '@/components/common/Header';
+import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import { LOGOUT_MODAL } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import useAuthStore from '@/stores/useAuthStore';

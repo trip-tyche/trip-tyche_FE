@@ -7,9 +7,9 @@ import { useNavigate } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
 import Button from '@/components/common/Button';
+import Header from '@/components/common/Header';
 import Loading from '@/components/common/Loading';
-import Header from '@/components/layout/Header';
-import BorderPass from '@/components/pages/trip-list/BorderPass';
+import BorderPass from '@/components/features/trip/BorderPass';
 import { TRIP } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { BUTTON, PAGE } from '@/constants/title';

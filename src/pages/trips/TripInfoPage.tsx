@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
-import Header from '@/components/layout/Header';
+import Header from '@/components/common/Header';
 import UploadingSpinner from '@/components/pages/image-upload/UploadingSpinner';
 import TripForm from '@/components/pages/newTrip/TripForm';
 import { PATH } from '@/constants/path';

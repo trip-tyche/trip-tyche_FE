@@ -6,21 +6,13 @@ import character3 from '@/assets/images/character-3.png';
 import character4 from '@/assets/images/character-4.png';
 import character5 from '@/assets/images/character-5.png';
 import character6 from '@/assets/images/character-6.png';
-import LoginButton from '@/components/LoginButton';
-import { ENV } from '@/constants/api';
-import { OAUTH_URL } from '@/constants/auth';
+import LoginButton from '@/components/pages/login/LoginButton';
+import { OAUTH_PATH } from '@/constants/auth';
 import theme from '@/styles/theme';
 
 const LoginPage = () => {
-    const oauthLinks = {
-        kakao: `${ENV.API_BASE_URL}/${OAUTH_URL}/kakao`,
-        google: `${ENV.API_BASE_URL}/${OAUTH_URL}/google`,
-    };
-
-    const handleSocialLogin = (provider: keyof typeof oauthLinks) => {
-        return () => {
-            window.location.href = oauthLinks[provider];
-        };
+    const handleLoginButtonClick = (provider: keyof typeof OAUTH_PATH) => {
+        window.location.href = OAUTH_PATH[provider];
     };
 
     return (
@@ -44,9 +36,9 @@ const LoginPage = () => {
                         <p css={subtitleStyle}>여러분만의 티켓을 만들어 여행을 기록하세요</p>
                     </div>
                 </div>
-                <div css={buttonContainerStyle}>
-                    <LoginButton provider='kakao' onClick={handleSocialLogin('kakao')} />
-                    <LoginButton provider='google' onClick={handleSocialLogin('google')} />
+                <div css={buttonGroup}>
+                    <LoginButton provider='kakao' onClick={() => handleLoginButtonClick('KAKAO')} />
+                    <LoginButton provider='google' onClick={() => handleLoginButtonClick('GOOGLE')} />
                 </div>
             </main>
         </div>
@@ -104,13 +96,12 @@ const subtitleStyle = css`
     color: ${theme.colors.descriptionText};
 `;
 
-const buttonContainerStyle = css`
-    width: 100%;
+const buttonGroup = css`
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+    gap: 18px;
 `;
 
 export default LoginPage;

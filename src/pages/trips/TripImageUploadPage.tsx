@@ -3,9 +3,9 @@ import { ImageUp } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 
-import AlertModal from '@/components/common/modal/AlertModal';
-import Header from '@/components/layout/Header';
-import ModalContent from '@/components/pages/image-upload/ModalContent';
+import Header from '@/components/common/Header';
+import AlertModal from '@/components/features/guide/AlertModal';
+import ModalContent from '@/components/features/guide/ModalContent';
 import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';

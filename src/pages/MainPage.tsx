@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { tripAPI, userAPI } from '@/api';
 import Button from '@/components/common/Button';
 import Loading from '@/components/common/Loading';
-import HomeBorderPass from '@/components/pages/home/HomeBorderPass';
+import HomeBorderPass from '@/components/pages/main/HomeBorderPass';
 import { PATH } from '@/constants/path';
 import useAuthStore from '@/stores/useAuthStore';
 import theme from '@/styles/theme';

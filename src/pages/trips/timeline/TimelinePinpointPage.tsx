@@ -5,7 +5,7 @@ import { X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { tripImageAPI } from '@/api';
-import ImageCarousel from '@/components/ImageCarousel';
+import ImageCarousel from '@/components/features/image/ImageCarousel';
 import { PATH } from '@/constants/path';
 import useTimelineStore from '@/stores/useTimelineStore';
 

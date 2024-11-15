@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
 import characterImg from '@/assets/images/character-1.png';
-import ConfirmModal from '@/components/common/modal/ConfirmModal';
+import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import { PATH } from '@/constants/path';
 import { useEditingStore } from '@/stores/useEditingStore';
 import theme from '@/styles/theme';

@@ -1,9 +1,9 @@
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/Button';
+import Header from '@/components/common/Header';
 import Loading from '@/components/common/Loading';
-import Header from '@/components/layout/Header';
-import TripEditForm from '@/components/pages/tripEdit/TripEditForm';
+import TripEditForm from '@/components/features/trip/TripEditForm';
 import { BUTTON, PAGE } from '@/constants/title';
 import { useTripEditForm } from '@/hooks/useTripEditForm';
 
