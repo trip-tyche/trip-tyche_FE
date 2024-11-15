@@ -4,50 +4,28 @@ import { css } from '@emotion/react';
 import { User, MessageCircle, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import { tripAPI, userAPI } from '@/api';
-import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
+import NickNameEditor from '@/components/features/user/NickNameEditor';
 import { LOGOUT_MODAL } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import useAuthStore from '@/stores/useAuthStore';
 import { useModalStore } from '@/stores/useModalStore';
-import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 
 const SettingPage = () => {
     const [isEditing, setIsEditing] = useState(false);
-    const [inputValue, setInputValue] = useState('');
 
-    const { isModalOpen, openModal, closeModal } = useModalStore();
     const setLogout = useAuthStore((state) => state.setLogout);
-    const setNickName = useAuthStore((state) => state.setNickName);
     const userNickName = useAuthStore((state) => state.userNickName);
-    const showToast = useToastStore((state) => state.showToast);
+    const { isModalOpen, openModal, closeModal } = useModalStore();
 
     const navigate = useNavigate();
 
-    const confirmModal = () => {
+    const confirmLogoutModal = () => {
         closeModal();
         setLogout();
         navigate(PATH.AUTH.LOGIN);
-    };
-
-    const submitUserNickName = async () => {
-        try {
-            setNickName(inputValue);
-            await userAPI.createUserNickName(inputValue);
-            fetchUserData();
-            showToast('닉네임이 변경되었습니다.');
-            setIsEditing(false);
-        } catch (error) {
-            console.error('닉네임 등록이 실패하였습니다.', error);
-        }
-    };
-
-    const fetchUserData = async () => {
-        const { userNickName } = await tripAPI.fetchTripTicketList();
-        localStorage.setItem('userNickName', userNickName);
     };
 
     return (
@@ -59,29 +37,12 @@ const SettingPage = () => {
                     isEditing
                         ? () => {
                               setIsEditing(false);
-                              setInputValue('');
                           }
                         : () => navigate(PATH.MAIN)
                 }
             />
             {isEditing ? (
-                <div css={nicknameStyle}>
-                    <div css={inputContainer}>
-                        <h1>새로운 닉네임을 입력해주세요</h1>
-                        <input
-                            type='text'
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            maxLength={14}
-                            placeholder={userNickName || 'Trip Tyche'}
-                            css={inputStyle(inputValue)}
-                        />
-                        {(inputValue.length === 1 || inputValue.length > 10) && <p>닉네임을 2~10자로 입력해주세요.</p>}
-                    </div>
-                    <div css={buttonContainer}>
-                        <Button text='변경 완료' onClick={submitUserNickName} />
-                    </div>
-                </div>
+                <NickNameEditor setIsEditing={setIsEditing} />
             ) : (
                 <main css={mainStyle}>
                     <div css={userInfoContainer}>
@@ -109,7 +70,7 @@ const SettingPage = () => {
                             description={LOGOUT_MODAL.MESSAGE}
                             confirmText={LOGOUT_MODAL.CONFIRM_TEXT}
                             cancelText={LOGOUT_MODAL.CANCEL_TEXT}
-                            confirmModal={confirmModal}
+                            confirmModal={confirmLogoutModal}
                             closeModal={closeModal}
                         />
                     )}

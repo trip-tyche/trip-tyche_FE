@@ -23,9 +23,9 @@ const MainPage = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const isLogin = useAuthStore((state) => state.isLogIn);
-    const userNickName = useAuthStore((state) => state.userNickName);
+    const nickName = useAuthStore((state) => state.userNickName);
     const setLogout = useAuthStore((state) => state.setLogout);
-    const setNickName = useAuthStore((state) => state.setNickName);
+    const setNickName = useAuthStore((state) => state.setUserNickName);
 
     const navigate = useNavigate();
 
@@ -97,7 +97,7 @@ const MainPage = () => {
 
     return (
         <div css={containerStyle}>
-            {!userNickName ? (
+            {!nickName ? (
                 <div css={nicknameStyle}>
                     <div css={inputContainer}>
                         <h1>당신만의 특별한 닉네임을 지어주세요 😀</h1>
@@ -126,9 +126,9 @@ const MainPage = () => {
                             <h3>아래 티켓을 움직여보세요!</h3>
                         </div>
                         {trips ? (
-                            <HomeBorderPass trip={trips} userNickname={userNickName} />
+                            <HomeBorderPass trip={trips} userNickname={nickName} />
                         ) : (
-                            <HomeBorderPass trip={exampleTrips} userNickname={userNickName} />
+                            <HomeBorderPass trip={exampleTrips} userNickname={nickName} />
                         )}
                     </div>
                     {tripCount ? (
