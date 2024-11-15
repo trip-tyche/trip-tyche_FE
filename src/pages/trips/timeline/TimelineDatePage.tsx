@@ -6,7 +6,7 @@ import { ChevronDown, ImageOff, ArrowDown } from 'lucide-react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { tripImageAPI } from '@/api';
-import Loading from '@/components/common/Loading';
+import Spinner from '@/components/common/Spinner';
 import { ENV } from '@/constants/api';
 import { PATH } from '@/constants/path';
 import { useToastStore } from '@/stores/useToastStore';
@@ -274,7 +274,7 @@ const TimelineDatePage: React.FC = () => {
         <PageContainer isTransitioning={isTransitioning}>
             {!isFullyLoaded ? (
                 <LoadingContainer>
-                    <Loading type='bgBlack' />
+                    <Spinner background='dark' />
                 </LoadingContainer>
             ) : (
                 <>

@@ -4,8 +4,8 @@ import { css } from '@emotion/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
-import DateGroupedImageList from '@/components/pages/addLocation/DateGroupedImageList';
-import Map from '@/components/pages/addLocation/Map';
+import DateGroupedImageList from '@/components/features/image/DateGroupedImageList';
+import Map from '@/components/features/trip/Map';
 import { PATH } from '@/constants/path';
 import { useAddLocation } from '@/hooks/useAddLocation';
 import { useEditingStore } from '@/stores/useEditingStore';

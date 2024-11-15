@@ -11,7 +11,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
 import Header from '@/components/common/Header';
-import Loading from '@/components/common/Loading';
+import Spinner from '@/components/common/Spinner';
 import { ENV } from '@/constants/api';
 import { PATH } from '@/constants/path';
 import useTimelineStore from '@/stores/useTimelineStore';
@@ -410,7 +410,7 @@ const TimelineMapPage = () => {
     if (!isLoaded) {
         return (
             <div css={loadingStyle}>
-                <Loading />
+                <Spinner />
             </div>
         );
     }
@@ -573,7 +573,7 @@ const TimelineMapPage = () => {
             <MapWrapper>
                 {isLoading ? (
                     <LoadingWrapper>
-                        <Loading />
+                        <Spinner />
                     </LoadingWrapper>
                 ) : (
                     <GoogleMap

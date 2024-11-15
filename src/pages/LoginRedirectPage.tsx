@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { css } from '@emotion/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import Loading from '@/components/common/Loading';
+import Loading from '@/components/common/Spinner';
 import { PATH } from '@/constants/path';
 import useAuthStore from '@/stores/useAuthStore';
 import { useToastStore } from '@/stores/useToastStore';

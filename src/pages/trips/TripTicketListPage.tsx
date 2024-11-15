@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { tripAPI } from '@/api';
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
-import Loading from '@/components/common/Loading';
+import Spinner from '@/components/common/Spinner';
 import BorderPass from '@/components/features/trip/BorderPass';
 import { TRIP } from '@/constants/message';
 import { PATH } from '@/constants/path';
@@ -76,7 +76,7 @@ const TripTicketListPage = () => {
     };
 
     if (isLoading) {
-        <Loading />;
+        <Spinner />;
     }
 
     const handleTicketCreate = async () => {
@@ -89,7 +89,7 @@ const TripTicketListPage = () => {
             <Header title={PAGE.TRIP_LIST} isBackButton onBack={() => navigate(PATH.MAIN)} />
             {isLoading ? (
                 <div css={loadingWrapper}>
-                    <Loading />
+                    <Spinner />
                 </div>
             ) : (
                 <>

@@ -9,40 +9,35 @@ interface HeaderProps {
     isBackButton?: boolean;
     onBack?: () => void;
 }
-const Header = ({ title, isBackButton, onBack }: HeaderProps): JSX.Element => {
+const Header = ({ title, isBackButton, onBack }: HeaderProps) => {
     const navigate = useNavigate();
 
-    const handleBack = () => {
-        onBack ? onBack() : navigate(-1);
-    };
+    const navigateBeforePage = () => (onBack ? onBack() : navigate(-1));
 
     return (
         <div css={headerStyle}>
             {isBackButton && (
-                <div css={backButtonStyle} onClick={handleBack}>
-                    <ChevronLeft size={24} strokeWidth={1.5} />
-                </div>
+                <ChevronLeft size={24} strokeWidth={1.5} css={backButtonStyle} onClick={navigateBeforePage} />
             )}
-            <h1>{title}</h1>
+            <h1 css={titleStyle}>{title}</h1>
         </div>
     );
 };
 
 const headerStyle = css`
-    height: ${theme.heights.tall_54};
     display: flex;
     justify-content: center;
     align-items: center;
-    border-bottom: 1px solid ${theme.colors.borderColor};
+    height: ${theme.heights.tall_54};
     position: relative;
+    border-bottom: 1px solid ${theme.colors.borderColor};
     background-color: ${theme.colors.white};
-    z-index: 800;
-    overflow: hidden;
+    z-index: 998;
+`;
 
-    h1 {
-        font-size: ${theme.fontSizes.large_16};
-        font-weight: 600;
-    }
+const titleStyle = css`
+    font-size: ${theme.fontSizes.large_16};
+    font-weight: 600;
 `;
 
 const backButtonStyle = css`

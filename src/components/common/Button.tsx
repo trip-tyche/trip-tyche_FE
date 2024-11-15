@@ -12,7 +12,7 @@ interface ButtonProps extends ComponentProps<'button'> {
     icon?: React.ReactNode;
     isLoading?: boolean;
     loadingText?: string;
-    css?: SerializedStyles | SerializedStyles;
+    css?: SerializedStyles;
 }
 
 const Button = ({

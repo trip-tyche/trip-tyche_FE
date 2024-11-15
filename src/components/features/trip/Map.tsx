@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { GoogleMap, Marker, Autocomplete, useLoadScript, Libraries } from '@react-google-maps/api';
 import { ChevronLeft } from 'lucide-react';
 
-import Loading from '@/components/common/Loading';
+import Loading from '@/components/common/Spinner';
 import { ENV } from '@/constants/api';
 import theme from '@/styles/theme';
 

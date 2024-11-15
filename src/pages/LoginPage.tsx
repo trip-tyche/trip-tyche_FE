@@ -6,7 +6,7 @@ import character3 from '@/assets/images/character-3.png';
 import character4 from '@/assets/images/character-4.png';
 import character5 from '@/assets/images/character-5.png';
 import character6 from '@/assets/images/character-6.png';
-import LoginButton from '@/components/pages/login/LoginButton';
+import LoginButton from '@/components/features/auth/LoginButton';
 import { OAUTH_PATH } from '@/constants/auth';
 import theme from '@/styles/theme';
 

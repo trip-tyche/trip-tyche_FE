@@ -80,7 +80,7 @@ import { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 import { GoCheckCircleFill } from 'react-icons/go';
 
-import Loading from '@/components/common/Loading';
+import Spinner from '@/components/common/Spinner';
 import { ImageModel } from '@/types/image';
 
 interface ImageGridProps {
@@ -122,7 +122,7 @@ const ImageGrid = ({ displayedImages, selectedImages, toggleImageSelect }: Image
     if (!allImagesLoaded) {
         return (
             <div css={loadingContainerStyle}>
-                <Loading />
+                <Spinner />
             </div>
         );
     }

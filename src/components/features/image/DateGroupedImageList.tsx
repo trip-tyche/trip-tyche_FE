@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import ImageGrid from '@/components/pages/addLocation/ImageGrid';
+import ImageGrid from '@/components/features/image/ImageGrid';
 import { ImageModel } from '@/types/image';
 import { formatDateToKorean } from '@/utils/date';
 
