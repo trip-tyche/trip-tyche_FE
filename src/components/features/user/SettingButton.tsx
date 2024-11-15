@@ -1,0 +1,33 @@
+import { css } from '@emotion/react';
+
+import theme from '@/styles/theme';
+
+interface SettingButtonProps {
+    text: string;
+    icon?: React.ReactNode;
+    onClick?: () => void;
+}
+
+const SettingButton = ({ text, icon, onClick }: SettingButtonProps) => {
+    return (
+        <button css={buttonStyle} onClick={onClick}>
+            {icon}
+            <p css={textStyle}>{text}</p>
+        </button>
+    );
+};
+
+const buttonStyle = css`
+    display: flex;
+    align-items: center;
+    border: none;
+    padding: 15px 0;
+    cursor: pointer;
+    color: ${theme.colors.black};
+`;
+
+const textStyle = css`
+    margin-left: 10px;
+`;
+
+export default SettingButton;

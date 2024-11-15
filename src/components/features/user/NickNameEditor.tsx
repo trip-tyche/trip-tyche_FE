@@ -68,9 +68,7 @@ const editorContainer = css`
 const inputContainer = css`
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: 104px;
-    padding: 0 12px;
+    padding: 0 8px;
 `;
 const titleStyle = css`
     font-size: ${theme.fontSizes.large_16};
