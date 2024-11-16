@@ -2,19 +2,15 @@ import { create } from 'zustand';
 
 interface AuthState {
     isLogIn: boolean;
-    userId: string | null;
-    token: string | null;
-    userNickName: string | null;
+    // userNickName: string | null;
     setLogin: (userId: string, token: string) => void;
     setLogout: () => void;
-    setUserNickName: (userNickName: string) => void;
+    // setUserNickName: (userNickName: string) => void;
 }
 
 const useAuthStore = create<AuthState>()((set) => ({
     isLogIn: false,
-    userId: null,
-    token: null,
-    userNickName: localStorage.getItem('userNickName') || '',
+    // userNickName: localStorage.getItem('userNickName') || '',
     setLogin: (userId, token) => {
         localStorage.setItem('userId', JSON.stringify(userId));
         localStorage.setItem('token', token);
@@ -24,12 +20,12 @@ const useAuthStore = create<AuthState>()((set) => ({
         localStorage.clear();
         set(() => ({ isLogIn: false }));
     },
-    setUserNickName: (userNickName) => {
-        localStorage.setItem('userNickName', userNickName);
-        set(() => ({
-            userNickName,
-        }));
-    },
+    // setUserNickName: (userNickName) => {
+    //     localStorage.setItem('userNickName', userNickName);
+    //     set(() => ({
+    //         userNickName,
+    //     }));
+    // },
 }));
 
 export default useAuthStore;

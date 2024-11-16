@@ -15,6 +15,7 @@ import { PATH } from '@/constants/path';
 import { BUTTON, PAGE } from '@/constants/title';
 import useAuthStore from '@/stores/useAuthStore';
 import { useToastStore } from '@/stores/useToastStore';
+import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
 import { Trip, Trips } from '@/types/trip';
 import { formatTripDate } from '@/utils/date';
@@ -22,11 +23,11 @@ import { formatTripDate } from '@/utils/date';
 const TripTicketListPage = () => {
     const [userNickname, setUserNickname] = useState<string>('');
     const [tripList, setTripList] = useState<Trip[]>([]);
-    const [tripCount, setTripCount] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
-
-    const { showToast } = useToastStore();
+    const tripTicketCount = useUserDataStore((state) => state.tripTicketCount);
     const setLogout = useAuthStore((state) => state.setLogout);
+    const setTripTicketCount = useUserDataStore((state) => state.setTripTicketCount);
+    const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();
 
@@ -51,7 +52,7 @@ const TripTicketListPage = () => {
 
                 setUserNickname(tripList.userNickName);
                 setTripList(validTripList);
-                setTripCount(validTripList.length);
+                setTripTicketCount(validTripList.length);
             } catch (error) {
                 console.error('Error fetching trip-list data:', error);
             } finally {
@@ -59,13 +60,10 @@ const TripTicketListPage = () => {
             }
         };
 
-        localStorage.removeItem('tripId');
-        localStorage.removeItem('earliest-date');
-        localStorage.removeItem('latest-date');
         localStorage.removeItem('image-date');
 
         fetchTripList();
-    }, [tripCount]);
+    }, [tripTicketCount, setTripTicketCount]);
 
     const deleteInValidTrips = async (trips: Trip[]) => {
         const deletePromises = trips
@@ -94,11 +92,11 @@ const TripTicketListPage = () => {
             ) : (
                 <>
                     <div css={addTripStyle}>
-                        {tripCount === 0 ? (
+                        {tripTicketCount === 0 ? (
                             <div css={countStyle}>아직 만든 티켓이 없어요!</div>
                         ) : (
                             <div css={countStyle}>
-                                <TicketsPlane size={20} /> <span>{tripCount}</span> 개의 티켓을 만들었어요!
+                                <TicketsPlane size={20} /> <span>{tripTicketCount}</span> 개의 티켓을 만들었어요!
                             </div>
                         )}
 
@@ -117,14 +115,14 @@ const TripTicketListPage = () => {
                             />
                         </div>
                     </div>
-                    {tripCount > 0 ? (
+                    {tripTicketCount > 0 ? (
                         <div css={tripListStyle}>
                             {formatTripDate(tripList).map((trip) => (
                                 <BorderPass
                                     key={trip.tripId}
                                     trip={trip}
                                     userNickname={userNickname}
-                                    setTripCount={setTripCount}
+                                    // setTripCount={tripTicketCount}
                                 />
                             ))}
                         </div>

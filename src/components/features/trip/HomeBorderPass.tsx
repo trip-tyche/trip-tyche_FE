@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-
 import { css } from '@emotion/react';
+import { ImagePlus } from 'lucide-react';
 import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
-import { FiPlus } from 'react-icons/fi';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
 import characterImg from '@/assets/images/character-1.png';
+import { useTicket3DEffect } from '@/hooks/useTicket3DEffect';
 import theme from '@/styles/theme';
 import { FormattedTripDate } from '@/types/trip';
 
@@ -15,97 +14,19 @@ interface BorderPassProps {
 }
 
 const HomeBorderPass = ({ trip, userNickname }: BorderPassProps) => {
-    const [rotation, setRotation] = useState({ x: 0, y: 0 });
-    const [lastRotation, setLastRotation] = useState({ x: 0, y: 0 }); // 마지막 회전 위치 저장
-    const [isTouching, setIsTouching] = useState(false);
-    const [isInteracting, setIsInteracting] = useState(false);
+    const { tripTitle, country, startDate, endDate, hashtags } = trip;
 
-    const { tripTitle, country, startDate: rawStartDate, endDate: rawEndDate, hashtags } = trip;
-    const startDate = new Date(rawStartDate).toLocaleDateString('ko-KR');
-    const endDate = new Date(rawEndDate).toLocaleDateString('ko-KR');
-
-    const handleMove = (x: number, y: number, element: HTMLElement) => {
-        const rect = element.getBoundingClientRect();
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-
-        const relativeX = x - rect.left;
-        const relativeY = y - rect.top;
-
-        const rotateX = ((relativeY - centerY) / centerY) * -20;
-        const rotateY = ((relativeX - centerX) / centerX) * 20;
-
-        setRotation({ x: rotateX, y: rotateY });
-        setLastRotation({ x: rotateX, y: rotateY }); // 현재 회전 위치를 마지막 위치로 저장
-    };
-
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!isTouching) {
-            setIsInteracting(true);
-            handleMove(e.clientX, e.clientY, e.currentTarget);
-        }
-    };
-
-    const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        setIsInteracting(true);
-        const touch = e.touches[0];
-        handleMove(touch.clientX, touch.clientY, e.currentTarget);
-    };
-
-    const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-        setIsTouching(true);
-        setIsInteracting(true);
-        // 터치 시작 시 마지막 위치에서 시작
-        setRotation(lastRotation);
-
-        // 터치 시작 위치에서의 회전값도 계산
-        const touch = e.touches[0];
-        handleMove(touch.clientX, touch.clientY, e.currentTarget);
-    };
-
-    const handleTouchEnd = () => {
-        setIsTouching(false);
-        setIsInteracting(false);
-    };
-
-    const handleMouseLeave = () => {
-        if (!isTouching) {
-            setIsInteracting(false);
-            setRotation({ x: 0, y: 0 });
-            setLastRotation({ x: 0, y: 0 });
-        }
-    };
-
-    useEffect(
-        () => () => {
-            setIsTouching(false);
-            setIsInteracting(false);
-            setRotation({ x: 0, y: 0 });
-            setLastRotation({ x: 0, y: 0 });
-        },
-        [],
-    );
-
-    const cardStyle = {
-        transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
-        transition: isInteracting ? 'none' : 'transform 0.5s ease',
-    };
+    const { ticketStyle, handlers } = useTicket3DEffect();
 
     return (
         <div
-            css={[
-                borderPassContainer,
-                css`
-                    touch-action: none;
-                `,
-            ]}
-            style={cardStyle}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+            css={[borderPassContainer, interactionTicketStyle]}
+            style={ticketStyle}
+            onMouseMove={handlers.handleMouseMove}
+            onMouseLeave={handlers.handleMouseLeave}
+            onTouchStart={handlers.handleTouchStart}
+            onTouchMove={handlers.handleTouchMove}
+            onTouchEnd={handlers.handleTouchEnd}
         >
             <div css={mainContent}>
                 <div css={leftContent}>
@@ -142,13 +63,13 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps) => {
                     </div>
                     <div css={buttonContainer}>
                         <div css={buttonStyle}>
-                            <FiPlus /> Upload
+                            <ImagePlus size={16} /> 사진등록
                         </div>
                         <div css={buttonStyle}>
-                            <FaPencilAlt /> Edit
+                            <FaPencilAlt size={12} /> 여행수정
                         </div>
                         <div css={buttonStyle}>
-                            <FaTrashAlt /> Delete
+                            <FaTrashAlt size={12} /> 여행삭제
                         </div>
                     </div>
                 </div>
@@ -163,12 +84,6 @@ const HomeBorderPass = ({ trip, userNickname }: BorderPassProps) => {
                     </div>
                 </div>
             </div>
-            <div
-                css={[borderPassContainer]}
-                style={{
-                    ...cardStyle,
-                }}
-            />
         </div>
     );
 };
@@ -181,6 +96,10 @@ const borderPassContainer = css`
     position: relative;
     overflow: hidden;
     background: white;
+`;
+
+const interactionTicketStyle = css`
+    touch-action: none;
     box-shadow:
         0 6px 8px rgba(0, 0, 0, 0.1),
         0 1px 3px rgba(0, 0, 0, 0.08);
@@ -288,7 +207,7 @@ const buttonContainer = css`
     height: 45px;
     display: flex;
     justify-content: space-between;
-    padding: 10px 15px;
+    padding: 10px;
     border-top: 1px solid ${theme.colors.borderColor};
 `;
 

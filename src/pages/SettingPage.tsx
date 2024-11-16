@@ -4,21 +4,23 @@ import { css } from '@emotion/react';
 import { User, MessageCircle, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import character from '@/assets/images/character-1.png';
 import Header from '@/components/common/Header';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
-import NickNameEditor from '@/components/features/user/NickNameEditor';
+import NickNameForm from '@/components/features/user/NickNameForm';
 import SettingButton from '@/components/features/user/SettingButton';
 import { LOGOUT_MODAL } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import useAuthStore from '@/stores/useAuthStore';
 import { useModalStore } from '@/stores/useModalStore';
+import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
 
 const SettingPage = () => {
     const [isEditing, setIsEditing] = useState(false);
 
     const setLogout = useAuthStore((state) => state.setLogout);
-    const userNickName = useAuthStore((state) => state.userNickName);
+    const userNickName = useUserDataStore((state) => state.userNickName) || '';
     const { isModalOpen, openModal, closeModal } = useModalStore();
 
     const navigate = useNavigate();
@@ -57,11 +59,20 @@ const SettingPage = () => {
         <div css={pageContainer}>
             <Header title={isEditing ? '닉네임 변경' : '설정'} isBackButton onBack={navigateBeforePage} />
             {isEditing ? (
-                <NickNameEditor setIsEditing={setIsEditing} />
+                <NickNameForm
+                    mode='edit'
+                    title='새로운 닉네임을 입력해주세요.'
+                    buttonText='변경 완료'
+                    placeholder={userNickName}
+                    setIsEditing={setIsEditing}
+                />
             ) : (
                 <main css={mainStyle}>
-                    <div css={nickNameContainer}>
-                        여행자, <span css={nickNameStyle}>{userNickName}</span>
+                    <div css={userInfoContainer}>
+                        <img css={characterStyle} src={character} alt='캐릭터' />
+                        <p css={nickNameWrapper}>
+                            여행자,<span css={nickNameStyle}>{userNickName}</span>
+                        </p>
                     </div>
                     <div css={buttonGroup}>
                         {settingButtons.map((button, index) => (
@@ -99,12 +110,23 @@ const mainStyle = css`
     padding: 20px;
 `;
 
-const nickNameContainer = css`
+const userInfoContainer = css`
     height: 38px;
     display: flex;
     align-items: center;
+    gap: 8px;
     margin-bottom: 18px;
     font-size: ${theme.fontSizes.xlarge_18};
+`;
+
+const characterStyle = css`
+    width: 30px;
+    height: auto;
+`;
+
+const nickNameWrapper = css`
+    align-self: flex-end;
+    margin-bottom: 2px;
 `;
 
 const nickNameStyle = css`

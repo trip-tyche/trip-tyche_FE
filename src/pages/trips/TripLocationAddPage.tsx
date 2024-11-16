@@ -8,8 +8,8 @@ import DateGroupedImageList from '@/components/features/image/DateGroupedImageLi
 import Map from '@/components/features/trip/Map';
 import { PATH } from '@/constants/path';
 import { useAddLocation } from '@/hooks/useAddLocation';
-import { useEditingStore } from '@/stores/useEditingStore';
 import { useToastStore } from '@/stores/useToastStore';
+import useUserDataStore from '@/stores/useUserDataStore';
 import { ImageModel } from '@/types/image';
 
 // const AddLocation = () => {
@@ -48,8 +48,9 @@ import { ImageModel } from '@/types/image';
 //                             </div>
 
 const TripLocationAddPage = () => {
+    const isEditing = useUserDataStore((state) => state.isTripInfoEditing);
+    const setIsEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
     const showToast = useToastStore((state) => state.showToast);
-    const { isEditing, setIsEditing } = useEditingStore();
 
     const {
         tripId,

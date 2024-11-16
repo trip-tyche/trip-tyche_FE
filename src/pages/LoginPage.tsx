@@ -81,7 +81,6 @@ const imageContainerStyle = css`
 const imageStyle = css`
     width: 50px;
     height: auto;
-    border-radius: 12px;
     margin-right: 8px;
 `;
 

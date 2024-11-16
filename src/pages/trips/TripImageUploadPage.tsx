@@ -10,8 +10,8 @@ import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
 import { useImageUpload } from '@/hooks/useImageUpload';
-import { useEditingStore } from '@/stores/useEditingStore';
 import { useToastStore } from '@/stores/useToastStore';
+import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
 
 const TripImageUploadPage = () => {
@@ -32,8 +32,9 @@ const TripImageUploadPage = () => {
         uploadImages,
     } = useImageUpload();
 
+    const isEditing = useUserDataStore((state) => state.isTripInfoEditing);
     const showToast = useToastStore((state) => state.showToast);
-    const { isEditing, setIsEditing } = useEditingStore();
+    const setIsEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
 
     const navigate = useNavigate();
     const location = useLocation();

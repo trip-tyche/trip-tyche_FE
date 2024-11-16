@@ -6,26 +6,28 @@ import { FaArrowCircleDown } from 'react-icons/fa';
 import { MdWavingHand } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
-import { tripAPI, userAPI } from '@/api';
+import { tripAPI } from '@/api';
 import Button from '@/components/common/Button';
+import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
 import HomeBorderPass from '@/components/features/trip/HomeBorderPass';
+import NickNameForm from '@/components/features/user/NickNameForm';
 import { PATH } from '@/constants/path';
 import useAuthStore from '@/stores/useAuthStore';
+import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
-import { getToken, getUserId } from '@/utils/auth';
+import { validateUserAuth } from '@/utils/validation';
 
 const MainPage = () => {
-    const [tripCount, setTripCount] = useState<number>();
-    const [trips, setTrips] = useState(null);
-    const [inputValue, setInputValue] = useState('');
+    const [latestTrip, setLatestTrip] = useState(null);
+    const [tripCount, setTripCount] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
 
     const isLogin = useAuthStore((state) => state.isLogIn);
-    const nickName = useAuthStore((state) => state.userNickName);
+    const userNickName = useUserDataStore((state) => state.userNickName);
     const setLogout = useAuthStore((state) => state.setLogout);
-    const setNickName = useAuthStore((state) => state.setUserNickName);
+    const setUserNickName = useUserDataStore((state) => state.setUserNickName);
 
     const navigate = useNavigate();
 
@@ -35,14 +37,13 @@ const MainPage = () => {
             navigate(PATH.AUTH.LOGIN);
             return;
         }
-        fetchUserData();
+        getUserInfoData();
     }, []);
 
-    const fetchUserData = async () => {
-        const token = getToken();
-        const userId = getUserId();
+    const getUserInfoData = async () => {
+        const isValidUser = validateUserAuth();
 
-        if (!token || !userId) {
+        if (!isValidUser) {
             navigate(PATH.AUTH.LOGIN);
             return;
         }
@@ -52,30 +53,21 @@ const MainPage = () => {
         setIsLoading(false);
 
         const validTripList = trips?.filter((trip: Trip) => trip.tripTitle !== 'N/A');
+        const latestTrip = validTripList[validTripList.length - 1];
 
-        localStorage.setItem('userNickName', userNickName);
-        setNickName(userNickName);
-        setTrips(validTripList[validTripList.length - 1]);
+        setUserNickName(userNickName);
         setTripCount(validTripList.length);
-    };
-
-    const submitUserNickName = async () => {
-        try {
-            await userAPI.createUserNickName(inputValue);
-            fetchUserData();
-        } catch (error) {
-            console.error('닉네임 등록이 실패하였습니다.', error);
-        }
+        setLatestTrip(latestTrip);
     };
 
     const handleButtonClick = async () => {
-        if (tripCount) {
+        if (latestTrip) {
             navigate(PATH.TRIPS.ROOT);
             return;
         }
 
         const tripId = await tripAPI.createTrip();
-        navigate(`${PATH.TRIPS.NEW.IMAGES(tripId)}`, { state: 'first-ticket' });
+        navigate(`${PATH.TRIPS.NEW.IMAGES(tripId)}`);
     };
 
     if (isLoading) {
@@ -87,167 +79,67 @@ const MainPage = () => {
     }
 
     const exampleTrips = {
-        tripId: 'ex',
+        tripId: '',
         tripTitle: '첫 티켓이 발급되었습니다',
         country: '0000TRIP TYCHE',
-        startDate: '2024-01-01',
-        endDate: '2024-12-31',
+        startDate: '2024.1.1',
+        endDate: '2024.12.31',
         hashtags: ['소소한두려움', '도전', '행복한시간'],
     };
 
     return (
-        <div css={containerStyle}>
-            {!nickName ? (
-                <div css={nicknameStyle}>
-                    <div css={inputContainer}>
-                        <h1>당신만의 특별한 닉네임을 지어주세요 😀</h1>
-                        <input
-                            type='text'
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            maxLength={14}
-                            placeholder='닉네임을 입력해주세요 (최대 10자)'
-                            css={inputStyle(inputValue)}
-                        />
-                        {(inputValue.length === 1 || inputValue.length > 10) && <p>닉네임을 2~10자로 입력해주세요.</p>}
-                    </div>
-                    <div css={buttonContainer}>
-                        <Button text='완료' onClick={submitUserNickName} />
-                    </div>
-                </div>
+        <>
+            {!userNickName ? (
+                <main css={nickNameFormContainer}>
+                    <Header title='닉네임 등록' />
+                    <NickNameForm
+                        mode='create'
+                        title='반가워요! 새로운 닉네임을 등록해주세요. 😀'
+                        buttonText='등록 완료'
+                        getUserInfoData={getUserInfoData}
+                    />
+                </main>
             ) : (
-                <>
+                <main css={mainStyle}>
                     <div css={headerStyle}>
                         <Settings css={settingIconStyle} onClick={() => navigate(PATH.SETTING)} />
                     </div>
-                    <div css={contentStyle}>
-                        <div css={descriptionStyle}>
+                    <div css={ticketContainerStyle}>
+                        <p css={dragGuideStyle}>
                             <MdWavingHand />
-                            <h3>아래 티켓을 움직여보세요!</h3>
-                        </div>
-                        {trips ? (
-                            <HomeBorderPass trip={trips} userNickname={nickName} />
-                        ) : (
-                            <HomeBorderPass trip={exampleTrips} userNickname={nickName} />
-                        )}
+                            아래 티켓을 움직여보세요!
+                        </p>
+                        <HomeBorderPass trip={latestTrip || exampleTrips} userNickname={userNickName} />
                     </div>
                     {tripCount ? (
-                        <h3 css={cardStyle}>
-                            지금까지 <span>{tripCount}</span>장의 여행 티켓을 만들었어요!
-                        </h3>
+                        <p css={ticketGuideStyle}>
+                            지금까지 <span css={tripCountStyle}>{tripCount}</span>장의 여행 티켓을 만들었어요!
+                        </p>
                     ) : (
-                        <h3 css={cardStyle}>
+                        <p css={ticketGuideStyle}>
                             <FaArrowCircleDown />
                             아래 버튼을 눌러서 새로운 여행을 등록해주세요
-                        </h3>
+                        </p>
                     )}
-                    <div css={secondButtonContainer}>
+                    <div css={buttonWrapper}>
                         <Button
-                            text={tripCount ? '여행 티켓 보러가기' : '새로운 여행 등록하기'}
+                            text={latestTrip ? '여행 티켓 보러가기' : '새로운 여행 등록하기'}
                             onClick={handleButtonClick}
                         />
                     </div>
-                </>
+                </main>
             )}
-        </div>
+        </>
     );
 };
 
-const cardStyle = css`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 8px;
-    gap: 4px;
-    font-size: ${theme.fontSizes.normal_14};
-    color: ${theme.colors.descriptionText};
-    font-weight: bold;
-
-    span {
-        font-size: ${theme.fontSizes.xlarge_18};
-        color: ${theme.colors.primary};
-        font-weight: bold;
-    }
-`;
-
-const nicknameStyle = css`
-    flex: 1;
+const nickNameFormContainer = css`
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 48px;
-`;
-
-const descriptionStyle = css`
-    display: flex;
-    justify-content: center;
-    gap: 4px;
-    font-size: ${theme.fontSizes.small_12};
-    color: ${theme.colors.descriptionText};
-    font-weight: bold;
-    margin-bottom: 24px;
-`;
-
-const inputContainer = css`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 90%;
-    height: 104px;
-    padding: 0 12px;
-
-    h1 {
-        text-align: center;
-        font-size: 18px;
-        font-weight: 600;
-        color: ${theme.colors.black};
-    }
-
-    p {
-        margin-top: 8px;
-        margin-left: 4px;
-        color: #ff0101;
-        font-size: ${theme.fontSizes.normal_14};
-    }
-`;
-
-const baseInputStyle = css`
-    border-radius: 8px;
-    padding: 12px;
-    font-size: ${theme.fontSizes.large_16};
-    width: 100%;
-    height: 38px;
-    outline: none;
-    margin-top: 24px;
-`;
-
-const inputStyle = (inputValue: string) => css`
-    ${baseInputStyle};
-    border: 1px solid ${inputValue.length === 1 || inputValue.length > 10 ? '#ff0101' : '#DDDDDD'};
-    font-size: ${theme.fontSizes.large_16};
-`;
-
-const buttonContainer = css`
-    width: 90%;
-    padding: 0 12px;
-    margin: 24px 0 12px 0;
-`;
-
-const secondButtonContainer = css`
-    width: 100%;
-    padding: 0 12px;
-    margin: 24px 0 12px 0;
-`;
-
-const loadingSpinnerStyle = css`
-    display: flex;
-    justify-content: center;
-    align-items: center;
     height: 100dvh;
 `;
 
-const containerStyle = css`
+const mainStyle = css`
     display: flex;
     flex-direction: column;
     min-height: 100dvh;
@@ -264,12 +156,49 @@ const settingIconStyle = css`
     cursor: pointer;
 `;
 
-const contentStyle = css`
+const ticketContainerStyle = css`
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+`;
+
+const dragGuideStyle = css`
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: ${theme.fontSizes.small_12};
+    color: ${theme.colors.descriptionText};
+    font-weight: bold;
+    margin-bottom: 24px;
+`;
+
+const ticketGuideStyle = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    font-size: ${theme.fontSizes.normal_14};
+    font-weight: bold;
+    color: ${theme.colors.descriptionText};
+`;
+
+const tripCountStyle = css`
+    font-size: ${theme.fontSizes.xlarge_18};
+    color: ${theme.colors.primary};
+`;
+
+const buttonWrapper = css`
+    padding: 0 4px;
+    margin: 24px 0 12px 0;
+`;
+
+const loadingSpinnerStyle = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100dvh;
 `;
 
 export default MainPage;

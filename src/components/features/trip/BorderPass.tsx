@@ -1,78 +1,26 @@
-import React, { useState, useEffect } from 'react';
-
 import { css, keyframes } from '@emotion/react';
 import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { FiPlus } from 'react-icons/fi';
 import { IoAirplaneSharp } from 'react-icons/io5';
-import { useNavigate } from 'react-router-dom';
 
-import { tripAPI } from '@/api';
 import characterImg from '@/assets/images/character-1.png';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
-import { PATH } from '@/constants/path';
-import { useEditingStore } from '@/stores/useEditingStore';
+import { useTicketHandler } from '@/hooks/useTicketHandler';
+import { useTicketNavigation } from '@/hooks/useTicketNavigation';
 import theme from '@/styles/theme';
 import { FormattedTripDate } from '@/types/trip';
 
 interface BorderPassProps {
     trip: FormattedTripDate;
     userNickname: string;
-    setTripCount: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.Element => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isAnimating, setIsAnimating] = useState(false);
-
-    const setIsEditing = useEditingStore((state) => state.setIsEditing);
-
-    const navigate = useNavigate();
+const BorderPass = ({ trip, userNickname }: BorderPassProps) => {
     const { tripId, tripTitle, country, startDate, endDate, hashtags } = trip;
 
-    const handleEdit = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setIsEditing(true);
-        navigate(`/trips/${tripId}/edit`);
-    };
-
-    const handleDelete = async () => {
-        try {
-            await tripAPI.deleteTripTicket(tripId);
-            setTripCount((prev: number) => prev - 1);
-        } catch (error) {
-            console.error('Error delete trip:', error);
-        } finally {
-            setIsModalOpen(false);
-        }
-    };
-
-    const navigateToImageUpload = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setIsEditing(true);
-        navigate(`${PATH.TRIPS.NEW.IMAGES(Number(tripId) as number)}`);
-    };
-
-    const handleCardClick = () => {
-        // 이 한줄로 삭제버튼을 누르면 타임라인으로 넘어가는 버그 해결
-        if (!isModalOpen) {
-            setIsAnimating(true);
-        }
-    };
-
-    useEffect(() => {
-        if (isAnimating) {
-            const timer = setTimeout(() => {
-                localStorage.setItem('tripId', tripId);
-                if (tripId && !isNaN(Number(tripId))) {
-                    navigate(`${PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`, {
-                        state: { tripId: trip.tripId, tripTitle: trip.tripTitle },
-                    });
-                }
-            }, 1000); // 1초 후 네비게이션
-
-            return () => clearTimeout(timer);
-        }
-    }, [isAnimating, navigate, tripId, trip.tripId, trip.tripTitle]);
+    const { isModalOpen, handleImageUpload, handleTripEdit, handleTripDelete, deleteTrip, closeModal } =
+        useTicketHandler(tripId);
+    const { isAnimating, handleCardClick } = useTicketNavigation(tripId, isModalOpen);
 
     return (
         <div css={borderPassContainer} onClick={handleCardClick}>
@@ -110,19 +58,13 @@ const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.
                         </div>
                     </div>
                     <div css={buttonContainer}>
-                        <button css={buttonStyle} onClick={navigateToImageUpload}>
+                        <button css={buttonStyle} onClick={handleImageUpload}>
                             <FiPlus /> Upload
                         </button>
-                        <button css={buttonStyle} onClick={handleEdit}>
+                        <button css={buttonStyle} onClick={handleTripEdit}>
                             <FaPencilAlt /> Edit
                         </button>
-                        <button
-                            css={buttonStyle}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setIsModalOpen(true);
-                            }}
-                        >
+                        <button css={buttonStyle} onClick={handleTripDelete}>
                             <FaTrashAlt /> Delete
                         </button>
                     </div>
@@ -145,8 +87,8 @@ const BorderPass = ({ trip, userNickname, setTripCount }: BorderPassProps): JSX.
                     description='보더패스를 삭제하면 해당 여행의 정보와 사진들은 다시 복구할 수 없어요. 그래도 삭제하시겠습니까?'
                     confirmText='삭제'
                     cancelText='취소'
-                    confirmModal={handleDelete}
-                    closeModal={() => setIsModalOpen(false)}
+                    confirmModal={deleteTrip}
+                    closeModal={closeModal}
                 />
             )}
         </div>

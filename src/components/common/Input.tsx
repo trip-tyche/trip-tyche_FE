@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import { TextInput, TextInputProps } from '@mantine/core';
 
-import useAuthStore from '@/stores/useAuthStore';
 import theme from '@/styles/theme';
 import { validateUserNickName } from '@/utils/validation';
 
@@ -18,8 +17,6 @@ interface InputProps extends Omit<TextInputProps, 'value' | 'onChange'> {
 
 const Input = ({ value, onChange, variant = 'default', setIsInvalid, ...props }: InputProps) => {
     const [errorMessage, setErrorMessage] = useState('');
-
-    const userNickName = useAuthStore((state) => state.userNickName) || '';
 
     useEffect(() => {
         if (variant === 'error' && setIsInvalid) {
@@ -43,7 +40,6 @@ const Input = ({ value, onChange, variant = 'default', setIsInvalid, ...props }:
         <React.Fragment>
             <TextInput
                 size='md'
-                placeholder={userNickName}
                 value={value}
                 onChange={handleInputChange}
                 styles={{

@@ -5,8 +5,8 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
 import { PATH } from '@/constants/path';
-import { useEditingStore } from '@/stores/useEditingStore';
 import { useToastStore } from '@/stores/useToastStore';
+import useUserDataStore from '@/stores/useUserDataStore';
 import { GpsData, ImageModel, LocationType } from '@/types/image';
 import { createGpsExif, insertExifIntoJpeg, readFileAsDataURL } from '@/utils/piexif';
 
@@ -17,8 +17,9 @@ export const useAddLocation = () => {
     const [isMapVisible, setIsMapVisible] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
 
+    const isEditing = useUserDataStore((state) => state.isTripInfoEditing);
+    const setIsEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
     const showToast = useToastStore((state) => state.showToast);
-    const { isEditing, setIsEditing } = useEditingStore();
 
     const navigate = useNavigate();
     const location = useLocation();
