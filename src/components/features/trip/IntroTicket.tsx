@@ -50,7 +50,10 @@ const IntroTicket = ({ trip, userNickname }: IntroTicketProps) => {
                         <IoAirplaneSharp />
                         <span>{country.substring(4)}</span>
                     </div>
-                    <h2 css={titleStyle}>{tripTitle}</h2>
+                    <div css={titleStyle}>
+                        <h3 css={titleLabelStyle}>Title</h3>
+                        <h2 css={titleValueStyle}>{tripTitle}</h2>
+                    </div>
                     <div css={hashtagGroup}>
                         {hashtags.map((tag, index) => (
                             <span key={index} css={hashtagStyle}>
@@ -59,18 +62,6 @@ const IntroTicket = ({ trip, userNickname }: IntroTicketProps) => {
                         ))}
                     </div>
                 </main>
-
-                <div css={buttonGroup}>
-                    <div css={buttonStyle}>
-                        <ImagePlus size={16} /> 사진등록
-                    </div>
-                    <div css={buttonStyle}>
-                        <FaPencilAlt size={12} /> 여행수정
-                    </div>
-                    <div css={buttonStyle}>
-                        <FaTrashAlt size={12} /> 여행삭제
-                    </div>
-                </div>
             </section>
 
             <aside css={rightSection}>
@@ -80,7 +71,7 @@ const IntroTicket = ({ trip, userNickname }: IntroTicketProps) => {
                 </div>
                 <div css={rightContent}>
                     <img css={imageStyle} src={characterImg} alt='캐릭터' />
-                    <p css={textStyle}>Click Ticket!</p>
+                    <p css={textStyle}>Click Ticket</p>
                 </div>
             </aside>
         </article>
@@ -134,7 +125,7 @@ const valueStyle = css`
 `;
 
 const contentContainer = css`
-    padding: 12px 12px 10px 12px;
+    padding: 12px;
 `;
 
 const citiesStyle = css`
@@ -145,7 +136,18 @@ const citiesStyle = css`
 `;
 
 const titleStyle = css`
-    margin: 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 18px 0 22px 2px;
+`;
+
+const titleLabelStyle = css`
+    font-size: ${theme.fontSizes.small_12};
+    font-weight: bold;
+`;
+
+const titleValueStyle = css`
     font-weight: bold;
 `;
 
@@ -161,28 +163,6 @@ const hashtagStyle = css`
     padding: 5px 10px;
     border-radius: 15px;
     font-size: ${theme.fontSizes.small_12};
-`;
-
-const buttonGroup = css`
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 15px;
-    border-top: 1px solid ${theme.colors.borderColor};
-`;
-
-const buttonStyle = css`
-    display: flex;
-    align-items: center;
-    padding: 6px 8px;
-    border: none;
-    border-radius: 4px;
-    font-size: ${theme.fontSizes.small_12};
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    gap: 4px;
-    background-color: ${theme.colors.darkGray};
-    color: ${theme.colors.white};
 `;
 
 const rightSection = css`
@@ -202,7 +182,7 @@ const rightContent = css`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 24px;
+    gap: 16px;
     background: ${theme.colors.modalBg};
 `;
 

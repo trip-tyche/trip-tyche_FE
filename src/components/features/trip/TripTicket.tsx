@@ -46,7 +46,10 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
                         <IoAirplaneSharp />
                         <span>{country.substring(4)}</span>
                     </div>
-                    <h2 css={titleStyle}>{tripTitle}</h2>
+                    <div css={titleStyle}>
+                        <h3 css={titleLabelStyle}>Title</h3>
+                        <h2 css={titleValueStyle}>{tripTitle}</h2>
+                    </div>
                     <div css={hashtagGroup}>
                         {hashtags.map((tag, index) => (
                             <span key={index} css={hashtagStyle}>
@@ -76,7 +79,7 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
                 </header>
                 <div css={rightContent}>
                     <img css={imageStyle} src={characterImg} alt='캐릭터' />
-                    <p css={textStyle}>Click Ticket!</p>
+                    <p css={textStyle}>Click Ticket</p>
                 </div>
             </aside>
 
@@ -105,9 +108,6 @@ const ticketContainer = css`
     cursor: pointer;
     transition: all 0.3s ease;
     background: transparent;
-    box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.1),
-        0 1px 3px rgba(0, 0, 0, 0.08);
 `;
 
 const leftContent = css`
@@ -137,7 +137,7 @@ const valueStyle = css`
 `;
 
 const contentContainer = css`
-    padding: 12px 12px 10px 12px;
+    padding: 12px;
 `;
 
 const citiesStyle = css`
@@ -148,7 +148,18 @@ const citiesStyle = css`
 `;
 
 const titleStyle = css`
-    margin: 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 18px 0 22px 2px;
+`;
+
+const titleLabelStyle = css`
+    font-size: ${theme.fontSizes.small_12};
+    font-weight: bold;
+`;
+
+const titleValueStyle = css`
     font-weight: bold;
 `;
 
@@ -180,6 +191,7 @@ const buttonStyle = css`
     border: none;
     border-radius: 4px;
     font-size: ${theme.fontSizes.small_12};
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     gap: 4px;
@@ -228,7 +240,7 @@ const slideRight = keyframes`
     `;
 
 const animateRight = css`
-    animation: ${slideRight} 1s forwards;
+    animation: ${slideRight} 0.8s forwards;
 `;
 
 export default TripTicket;

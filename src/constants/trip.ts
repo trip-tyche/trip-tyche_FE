@@ -67,5 +67,5 @@ export const WELCOME_TICKET_DATA = {
     country: '0000TRIP TYCHE',
     startDate: '2024.1.1',
     endDate: '2024.12.31',
-    hashtags: ['소소한두려움', '도전', '행복한시간'],
+    hashtags: ['패밀리', '버킷리스트', '계획무시'],
 };

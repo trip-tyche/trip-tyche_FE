@@ -13,7 +13,7 @@ export const useTicketNavigation = (tripId: string, isModalOpen: boolean) => {
         if (isAnimating) {
             const timer = setTimeout(() => {
                 navigate(`${PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`);
-            }, 1000);
+            }, 800);
 
             return () => clearTimeout(timer);
         }
