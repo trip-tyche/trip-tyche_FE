@@ -159,7 +159,7 @@ const dragGuideStyle = css`
     font-size: ${theme.fontSizes.small_12};
     color: ${theme.colors.descriptionText};
     font-weight: bold;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
 `;
 
 const ticketGuideStyle = css`

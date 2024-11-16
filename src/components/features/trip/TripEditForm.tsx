@@ -7,7 +7,7 @@ import { IconPlane, IconCalendar, IconWorld } from '@tabler/icons-react';
 import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
 
-import { COUNTRY_OPTIONS, HASHTAG_MENU, TRIP_FROM } from '@/constants/trip';
+import { COUNTRY_OPTIONS, HASHTAG_MENU, TRIP_FORM } from '@/constants/trip';
 import theme from '@/styles/theme';
 import { TripInfo } from '@/types/trip';
 
@@ -44,7 +44,7 @@ const TripEditForm = ({ tripData, handleInputChange, handleHashtagToggle }: Trip
             <Box>
                 <div css={dayStyle}>
                     <Text size='sm' fw={600}>
-                        {TRIP_FROM.DATE}
+                        {TRIP_FORM.DATE}
                     </Text>
                     <p css={dayTextStyle}>여행 기간은 수정이 불가합니다.</p>
                 </div>
@@ -66,10 +66,10 @@ const TripEditForm = ({ tripData, handleInputChange, handleHashtagToggle }: Trip
 
             <Box>
                 <Text size='sm' fw={600} mb={8}>
-                    {TRIP_FROM.COUNTRY}
+                    {TRIP_FORM.COUNTRY}
                 </Text>
                 <Select
-                    placeholder={TRIP_FROM.COUNTRY_DEFAULT}
+                    placeholder={TRIP_FORM.COUNTRY_DEFAULT}
                     data={countryData}
                     value={country}
                     onChange={(value) =>
@@ -87,11 +87,11 @@ const TripEditForm = ({ tripData, handleInputChange, handleHashtagToggle }: Trip
 
             <Box>
                 <Text size='sm' fw={600} mb={8}>
-                    {TRIP_FROM.TITLE}
+                    {TRIP_FORM.TITLE}
                 </Text>
                 <TextInput
                     name='tripTitle'
-                    placeholder={TRIP_FROM.TITLE_PLACEHOLDER}
+                    placeholder={TRIP_FORM.TITLE_PLACEHOLDER}
                     value={tripTitle}
                     onChange={handleInputChange}
                     leftSection={<IconPlane size={16} />}

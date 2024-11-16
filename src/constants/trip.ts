@@ -52,7 +52,7 @@ export const COUNTRY_OPTIONS = [
     { emoji: '🇵🇹', name: '포르투갈' },
 ];
 
-export const TRIP_FROM = {
+export const TRIP_FORM = {
     DATE: '여행 기간 *',
     COUNTRY: '여행 국가 *',
     COUNTRY_DEFAULT: '여행 국가를 선택해주세요',

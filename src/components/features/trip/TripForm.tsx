@@ -1,13 +1,14 @@
 import { useState } from 'react';
 
 import { css } from '@emotion/react';
-import { TextInput, Select, Button, Stack, Box, Group, Text } from '@mantine/core';
+import { Select, Button, Stack, Box, Group, Text } from '@mantine/core';
 import { DatePickerInput, DateValue } from '@mantine/dates';
 import { IconPlane, IconCalendar, IconWorld } from '@tabler/icons-react';
 import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
 
-import { COUNTRY_OPTIONS, HASHTAG_MENU, TRIP_FROM } from '@/constants/trip';
+import Input from '@/components/common/Input';
+import { COUNTRY_OPTIONS, HASHTAG_MENU, TRIP_FORM } from '@/constants/trip';
 import theme from '@/styles/theme';
 import { TripFormProps } from '@/types/trip';
 import { formatDateToKoreanYear } from '@/utils/date';
@@ -23,8 +24,6 @@ const TripForm = ({
     setEndDate,
     setHashtags,
 }: TripFormProps) => {
-    // const defaultStartDate = imageDates[0] ? new Date(imageDates[0]) : null;
-    // const defaultEndDate = imageDates[imageDates.length - 1] ? new Date(imageDates[imageDates.length - 1]) : null;
     const defaultStartDate = imageDates[0] || null;
     const defaultEndDate = imageDates[imageDates.length - 1] || null;
 
@@ -35,15 +34,9 @@ const TripForm = ({
     const [isSelectMode, setIsSelectMode] = useState(false);
     const [isError, setIsError] = useState(false);
 
-    // useEffect(() => {
-    //     if (defaultStartDate && defaultEndDate) {
-    //         handleDateChange([defaultStartDate, defaultEndDate]);
-    //     }
-    // }, []);
-
     const countryData = COUNTRY_OPTIONS.map((country) => ({
-        value: `${country.emoji} ${country.name}`,
-        label: `${country.emoji} ${country.name}`,
+        value: `${country.name}`,
+        label: `${country.name}`,
     }));
 
     const toggleHashtag = (tag: string) => {
@@ -140,14 +133,13 @@ const TripForm = ({
             <Box>
                 <div css={dayStyle}>
                     <Text size='sm' fw={600}>
-                        {TRIP_FROM.DATE}
+                        {TRIP_FORM.DATE}
                     </Text>
                     <p css={dayTextStyle}>사진이 있는 날짜는 파란점으로 표시됩니다.</p>
                 </div>
                 <DatePickerInput
                     type='range'
                     placeholder={`${formatDateToKoreanYear(defaultStartDate)} ~ ${formatDateToKoreanYear(defaultEndDate)}`}
-                    required={true}
                     value={dateRange}
                     defaultDate={imageDates[0] ? new Date(imageDates[0]) : undefined} // 이 부분 추가
                     onChange={handleDateChange}
@@ -156,9 +148,10 @@ const TripForm = ({
                     locale='ko'
                     aria-hidden='false'
                     size='md'
+                    radius='md'
                     valueFormat='YYYY년 MM월 DD일'
                     popoverProps={{
-                        width: 'target',
+                        // width: 'target',
                         position: 'bottom',
                     }}
                     getDayProps={(date) => ({
@@ -205,32 +198,33 @@ const TripForm = ({
 
             <Box>
                 <Text size='sm' fw={600} mb={8}>
-                    {TRIP_FROM.COUNTRY}
+                    {TRIP_FORM.COUNTRY}
                 </Text>
                 <Select
-                    placeholder={TRIP_FROM.COUNTRY_DEFAULT}
+                    placeholder={TRIP_FORM.COUNTRY_DEFAULT}
                     data={countryData}
                     value={country}
                     onChange={(value) => setCountry(value || '')}
-                    searchable={false}
-                    nothingFoundMessage='옵션이 없습니다'
+                    searchable
+                    nothingFoundMessage='검색하신 국가를 찾을 수 없습니다.'
+                    checkIconPosition='right'
                     leftSection={<IconWorld size={16} />}
                     size='md'
-                    required={true}
+                    radius='md'
+                    comboboxProps={{ transitionProps: { transition: 'pop', duration: 200 }, dropdownPadding: 6 }}
                 />
             </Box>
 
             <Box>
                 <Text size='sm' fw={600} mb={8}>
-                    {TRIP_FROM.TITLE}
+                    {TRIP_FORM.TITLE}
                 </Text>
-                <TextInput
-                    placeholder={TRIP_FROM.TITLE_PLACEHOLDER}
+                <Input
                     value={tripTitle}
-                    onChange={(e) => setTripTitle(e.target.value)}
+                    onChange={setTripTitle}
+                    placeholder='최대 12자까지 입력할 수 있습니다'
+                    maxLength={12}
                     leftSection={<IconPlane size={16} />}
-                    size='md'
-                    required={true}
                 />
             </Box>
 
@@ -243,7 +237,7 @@ const TripForm = ({
                         <Button
                             key={tag}
                             variant={hashtags.includes(tag) ? 'filled' : 'light'}
-                            color={hashtags.includes(tag) ? 'blue' : 'gray'}
+                            color={hashtags.includes(tag) ? `${theme.colors.primary}` : 'gray'}
                             onClick={() => toggleHashtag(tag)}
                             size='xs'
                             px='sm'

@@ -90,7 +90,7 @@ const ticketContainer = css`
     position: relative;
     display: flex;
     border-radius: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     overflow: hidden;
     cursor: pointer;
     transition: all 0.3s ease;

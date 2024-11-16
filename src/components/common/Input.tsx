@@ -40,6 +40,7 @@ const Input = ({ value, onChange, variant = 'default', setIsInvalid, ...props }:
         <React.Fragment>
             <TextInput
                 size='md'
+                radius='md'
                 value={value}
                 onChange={handleInputChange}
                 styles={{

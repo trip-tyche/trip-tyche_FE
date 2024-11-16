@@ -8,6 +8,8 @@ import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
 
 export const useTripForm = () => {
+    const imageDates = JSON.parse(localStorage.getItem('image-date') || '');
+
     const [tripTitle, setTripTitle] = useState('');
     const [country, setCountry] = useState('');
     const [startDate, setStartDate] = useState('');
@@ -59,6 +61,7 @@ export const useTripForm = () => {
     // 위치 지도 구글맵 로딩스피너 지금 왼쪽 위
 
     return {
+        imageDates,
         tripId,
         tripTitle,
         country,
