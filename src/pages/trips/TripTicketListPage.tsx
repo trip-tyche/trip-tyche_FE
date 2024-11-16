@@ -175,7 +175,7 @@ const countStyle = css`
 const tripListStyle = css`
     display: flex;
     flex-direction: column;
-    margin: 0 8px;
+    margin: 0 12px;
     padding-bottom: 10px;
 `;
 

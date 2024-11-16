@@ -105,6 +105,9 @@ const ticketContainer = css`
     cursor: pointer;
     transition: all 0.3s ease;
     background: transparent;
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.1),
+        0 1px 3px rgba(0, 0, 0, 0.08);
 `;
 
 const leftContent = css`
@@ -156,7 +159,7 @@ const hashtagGroup = css`
 `;
 
 const hashtagStyle = css`
-    background-color: #f0f0f0;
+    background-color: ${theme.colors.white};
     color: ${theme.colors.black};
     padding: 5px 10px;
     border-radius: 15px;
@@ -177,12 +180,11 @@ const buttonStyle = css`
     border: none;
     border-radius: 4px;
     font-size: ${theme.fontSizes.small_12};
-    font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
     gap: 4px;
-    background-color: ${theme.colors.darkGray};
-    color: ${theme.colors.white};
+    background-color: ${theme.colors.white};
+    color: ${theme.colors.black};
 `;
 
 const rightSection = css`
@@ -202,7 +204,7 @@ const rightContent = css`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 24px;
+    gap: 28px;
     background: ${theme.colors.modalBg};
 `;
 
