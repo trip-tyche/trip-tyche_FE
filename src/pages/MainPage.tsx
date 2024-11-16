@@ -10,9 +10,10 @@ import { tripAPI } from '@/api';
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
-import HomeBorderPass from '@/components/features/trip/HomeBorderPass';
+import IntroTicket from '@/components/features/trip/IntroTicket';
 import NickNameForm from '@/components/features/user/NickNameForm';
 import { PATH } from '@/constants/path';
+import { WELCOME_TICKET_DATA } from '@/constants/trip';
 import useAuthStore from '@/stores/useAuthStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
@@ -78,15 +79,6 @@ const MainPage = () => {
         );
     }
 
-    const exampleTrips = {
-        tripId: '',
-        tripTitle: '첫 티켓이 발급되었습니다',
-        country: '0000TRIP TYCHE',
-        startDate: '2024.1.1',
-        endDate: '2024.12.31',
-        hashtags: ['소소한두려움', '도전', '행복한시간'],
-    };
-
     return (
         <>
             {!userNickName ? (
@@ -109,7 +101,7 @@ const MainPage = () => {
                             <MdWavingHand />
                             아래 티켓을 움직여보세요!
                         </p>
-                        <HomeBorderPass trip={latestTrip || exampleTrips} userNickname={userNickName} />
+                        <IntroTicket trip={latestTrip || WELCOME_TICKET_DATA} userNickname={userNickName} />
                     </div>
                     {tripCount ? (
                         <p css={ticketGuideStyle}>

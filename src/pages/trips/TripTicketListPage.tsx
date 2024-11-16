@@ -9,7 +9,7 @@ import { tripAPI } from '@/api';
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
-import BorderPass from '@/components/features/trip/BorderPass';
+import TripTicket from '@/components/features/trip/TripTicket';
 import { TRIP } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { BUTTON, PAGE } from '@/constants/title';
@@ -118,12 +118,7 @@ const TripTicketListPage = () => {
                     {tripTicketCount > 0 ? (
                         <div css={tripListStyle}>
                             {formatTripDate(tripList).map((trip) => (
-                                <BorderPass
-                                    key={trip.tripId}
-                                    trip={trip}
-                                    userNickname={userNickname}
-                                    // setTripCount={tripTicketCount}
-                                />
+                                <TripTicket key={trip.tripId} trip={trip} userNickname={userNickname} />
                             ))}
                         </div>
                     ) : (

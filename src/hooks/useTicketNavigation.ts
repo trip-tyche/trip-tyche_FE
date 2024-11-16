@@ -12,9 +12,7 @@ export const useTicketNavigation = (tripId: string, isModalOpen: boolean) => {
     useEffect(() => {
         if (isAnimating) {
             const timer = setTimeout(() => {
-                if (tripId && !isNaN(Number(tripId))) {
-                    navigate(`${PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`);
-                }
+                navigate(`${PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`);
             }, 1000);
 
             return () => clearTimeout(timer);
