@@ -9,6 +9,7 @@ import { useTicketHandler } from '@/hooks/useTicketHandler';
 import { useTicketNavigation } from '@/hooks/useTicketNavigation';
 import theme from '@/styles/theme';
 import { FormattedTripDate } from '@/types/trip';
+import { formatDateToDot } from '@/utils/date';
 
 interface TripTicketProps {
     trip: FormattedTripDate;
@@ -32,11 +33,11 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
                     </div>
                     <div>
                         <h3 css={labelStyle}>DATE</h3>
-                        <p css={valueStyle}>{startDate}</p>
+                        <p css={valueStyle}>{formatDateToDot(startDate)}</p>
                     </div>
                     <div>
                         <h3 css={labelStyle}>DATE</h3>
-                        <p css={valueStyle}>{endDate}</p>
+                        <p css={valueStyle}>{formatDateToDot(endDate)}</p>
                     </div>
                 </header>
 

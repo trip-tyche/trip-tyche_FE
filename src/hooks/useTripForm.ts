@@ -40,6 +40,7 @@ export const useTripForm = () => {
             resetUpload();
             navigate(PATH.TRIPS.ROOT);
             showToast('새로운 여행이 등록되었습니다.');
+            // localStorage.removeItem('image-date');
         } catch (error) {
             console.error('여행정보 등록 중 오류 발생', error);
         } finally {

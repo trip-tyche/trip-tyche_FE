@@ -68,15 +68,11 @@ const MainPage = () => {
         }
 
         const tripId = await tripAPI.createTrip();
-        navigate(`${PATH.TRIPS.NEW.IMAGES(tripId)}`);
+        navigate(`${PATH.TRIPS.NEW.IMAGES(tripId)}`, { state: 'first-ticket' });
     };
 
     if (isLoading) {
-        return (
-            <div css={loadingSpinnerStyle}>
-                <Spinner />
-            </div>
-        );
+        return <Spinner />;
     }
 
     return (
@@ -92,7 +88,7 @@ const MainPage = () => {
                     />
                 </main>
             ) : (
-                <main css={mainStyle}>
+                <main css={pageContainer}>
                     <div css={headerStyle}>
                         <Settings css={settingIconStyle} onClick={() => navigate(PATH.SETTING)} />
                     </div>
@@ -131,7 +127,7 @@ const nickNameFormContainer = css`
     height: 100dvh;
 `;
 
-const mainStyle = css`
+const pageContainer = css`
     display: flex;
     flex-direction: column;
     min-height: 100dvh;
@@ -163,7 +159,7 @@ const dragGuideStyle = css`
     font-size: ${theme.fontSizes.small_12};
     color: ${theme.colors.descriptionText};
     font-weight: bold;
-    margin-bottom: 24px;
+    margin-bottom: 32px;
 `;
 
 const ticketGuideStyle = css`
@@ -187,10 +183,10 @@ const buttonWrapper = css`
 `;
 
 const loadingSpinnerStyle = css`
+    height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100dvh;
 `;
 
 export default MainPage;

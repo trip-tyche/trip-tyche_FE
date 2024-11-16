@@ -8,6 +8,8 @@ export const formatTripDate = (tripsList: Trip[]): FormattedTripDate[] =>
         endDate: new Date(trip.endDate).toLocaleDateString('ko-KR'),
     }));
 
+export const formatDateToDot = (date: string) => new Date(date).toLocaleDateString('ko-KR');
+
 // 날짜를 YYYY-MM-DD 형식으로 변환하는 함수
 export function formatDateToYYYYMMDD(date: Date): string {
     const year = date.getFullYear();

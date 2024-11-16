@@ -32,13 +32,13 @@ const TripImageUploadPage = () => {
         uploadImages,
     } = useImageUpload();
 
-    const isEditing = useUserDataStore((state) => state.isTripInfoEditing);
+    const isTripInfoEditing = useUserDataStore((state) => state.isTripInfoEditing);
+    const setIsTripInfoEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
     const showToast = useToastStore((state) => state.showToast);
-    const setIsEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
 
     const navigate = useNavigate();
     const location = useLocation();
-    const isFirstReg = location.state;
+    const isFirstTicket = Boolean(location.state);
 
     const navigateToImageLocation = () => {
         setIsAddLocationModalOpen(false);
@@ -57,16 +57,21 @@ const TripImageUploadPage = () => {
     };
 
     const navigateToTripInfo = () => {
-        if (isEditing) {
+        if (isTripInfoEditing) {
             navigate(`${PATH.TRIPS.ROOT}`);
             showToast(`${imagesWithLocationAndDate.length}장의 사진이 등록되었습니다.`);
-            setIsEditing(false);
+            setIsTripInfoEditing(false);
         } else {
             setIsAddLocationModalOpen(false);
             if (tripId && !isNaN(Number(tripId))) {
                 navigate(`${PATH.TRIPS.NEW.INFO(Number(tripId))}`);
             }
         }
+    };
+
+    const navigateBeforePage = () => {
+        isTripInfoEditing && setIsTripInfoEditing(false);
+        navigate(isFirstTicket ? PATH.MAIN : PATH.TRIPS.ROOT);
     };
 
     const closeAlertModal = () => {
@@ -79,10 +84,10 @@ const TripImageUploadPage = () => {
             setIsAlertModalModalOpen(false);
             uploadImages(imagesWithLocationAndDate);
 
-            if (isEditing) {
+            if (isTripInfoEditing) {
                 navigate(`${PATH.TRIPS.ROOT}`);
                 showToast(`${imagesWithLocationAndDate.length}장의 사진이 등록되었습니다.`);
-                setIsEditing(false);
+                setIsTripInfoEditing(false);
             } else {
                 navigate(`${PATH.TRIPS.NEW.INFO(Number(tripId))}`);
             }
@@ -96,11 +101,7 @@ const TripImageUploadPage = () => {
 
     return (
         <div css={containerStyle}>
-            <Header
-                title={PAGE.UPLOAD_IMAGES}
-                isBackButton
-                onBack={isFirstReg ? () => navigate(PATH.MAIN) : () => navigate(PATH.TRIPS.ROOT)}
-            />
+            <Header title={PAGE.UPLOAD_IMAGES} isBackButton onBack={navigateBeforePage} />
             <main css={mainStyle}>
                 <section css={sectionStyle}>
                     <h4>[사진 등록 가이드]</h4>

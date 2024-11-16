@@ -1,12 +1,11 @@
 import { css } from '@emotion/react';
-import { ImagePlus } from 'lucide-react';
-import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
 import characterImg from '@/assets/images/character-1.png';
 import { useTicket3DEffect } from '@/hooks/useTicket3DEffect';
 import theme from '@/styles/theme';
 import { FormattedTripDate } from '@/types/trip';
+import { formatDateToDot } from '@/utils/date';
 
 interface IntroTicketProps {
     trip: FormattedTripDate;
@@ -36,11 +35,11 @@ const IntroTicket = ({ trip, userNickname }: IntroTicketProps) => {
                     </div>
                     <div>
                         <div css={labelStyle}>DATE</div>
-                        <div css={valueStyle}>{startDate}</div>
+                        <p css={valueStyle}>{formatDateToDot(startDate)}</p>
                     </div>
                     <div>
                         <div css={labelStyle}>DATE</div>
-                        <div css={valueStyle}>{endDate}</div>
+                        <p css={valueStyle}>{formatDateToDot(endDate)}</p>
                     </div>
                 </header>
 
