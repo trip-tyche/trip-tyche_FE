@@ -21,6 +21,7 @@ const buttonStyle = css`
     display: flex;
     align-items: center;
     border: none;
+    background-color: transparent;
     padding: 15px 0;
     cursor: pointer;
     color: ${theme.colors.black};

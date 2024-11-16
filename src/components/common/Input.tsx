@@ -25,7 +25,7 @@ const Input = ({ value, onChange, variant = 'default', setIsInvalid, ...props }:
         if (variant === 'error' && setIsInvalid) {
             if (value.length === 0) {
                 setErrorMessage('');
-                setIsInvalid(false);
+                setIsInvalid(true);
             } else {
                 const error = validateUserNickName(value);
                 setErrorMessage(error || '');

@@ -121,9 +121,9 @@ const nickNameStyle = css`
         left: 0;
         bottom: 0;
         width: 100%;
-        height: 50%;
+        height: 40%;
         background-color: ${theme.colors.primary};
-        opacity: 0.4;
+        opacity: 0.3;
         border-radius: 2px;
         z-index: -1;
     }
