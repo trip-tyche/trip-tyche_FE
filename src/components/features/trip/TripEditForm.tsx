@@ -21,8 +21,8 @@ const TripEditForm = ({ tripData, handleInputChange, handleHashtagToggle }: Trip
     const { country, endDate, startDate, tripTitle, hashtags } = tripData;
 
     const countryData = COUNTRY_OPTIONS.map((country) => ({
-        value: `${country.emoji} ${country.name}`,
-        label: `${country.emoji} ${country.name}`,
+        value: `${country.value}`,
+        label: `${country.emoji} ${country.nameKo}`,
     }));
 
     // const handleDateChange = (dates: [Date | null, Date | null]) => {
