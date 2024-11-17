@@ -1,14 +1,15 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
 import { css } from '@emotion/react';
-import { Select, Button, Stack, Box, Group, Text } from '@mantine/core';
-import { DatePickerInput, DateValue } from '@mantine/dates';
+import { Select } from '@mantine/core';
+import { DatePickerInput } from '@mantine/dates';
 import { IconPlane, IconCalendar, IconWorld } from '@tabler/icons-react';
 import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
 
 import Input from '@/components/common/Input';
 import { COUNTRY_OPTIONS, HASHTAG_MENU, TRIP_FORM } from '@/constants/trip';
+import { useTripDateRange } from '@/hooks/useTripDateRange';
 import theme from '@/styles/theme';
 import { TripInfoModel } from '@/types/trip';
 import { formatDateToKoreanYear } from '@/utils/date';
@@ -21,18 +22,23 @@ interface TripFormProps {
 
 const TripForm = ({ imageDates = [], tripInfo, setTripInfo }: TripFormProps) => {
     const { tripTitle, country, hashtags } = tripInfo;
-
     const defaultStartDate = imageDates[0] || null;
     const defaultEndDate = imageDates[imageDates.length - 1] || null;
 
-    // dateRange의 초기값으로 설정
-    const [dateRange, setDateRange] = useState<[DateValue, DateValue]>([null, null]);
-    const [isInitialized, setIsInitialized] = useState(true); // 초기에는 true로 설정
-    const [hoveredDate, setHoveredDate] = useState<Date | null>(null);
-    const [isSelectMode, setIsSelectMode] = useState(false);
-    const [isError, setIsError] = useState(false);
+    const {
+        dateRange,
+        isError,
+        handleDateChange,
+        handleDateMouseEnter,
+        handleDateMouseLeave,
+        isInRange,
+        isStartOrEndDate,
+    } = useTripDateRange({
+        imageDates,
+        setTripInfo,
+    });
 
-    const toggleHashtag = (tag: string) => {
+    const handleHashtagToggle = (tag: string) => {
         setTripInfo((prev: TripInfoModel) => {
             if (prev.hashtags.includes(tag)) {
                 return { ...prev, hashtags: prev.hashtags.filter((hashtag) => hashtag !== tag) };
@@ -46,106 +52,17 @@ const TripForm = ({ imageDates = [], tripInfo, setTripInfo }: TripFormProps) => 
         });
     };
 
-    console.log(hashtags);
-    const handleDateChange = (value: [DateValue, DateValue]) => {
-        setDateRange(value);
-
-        // 처음으로 날짜를 선택할 때 초기화 상태 해제
-        if (isInitialized && value[0]) {
-            setIsInitialized(false);
-        }
-
-        // 초기화 상태가 해제된 후에만 선택 로직 실행
-        if (!isInitialized) {
-            if (value[0] && !value[1]) {
-                const startDateString = dayjs(value[0]).format('YYYY-MM-DD');
-                setTripInfo({ ...tripInfo, startDate: startDateString });
-                setIsSelectMode(true);
-                setIsError(false);
-            } else if (value[0] && value[1]) {
-                const date1 = dayjs(value[0]);
-                const date2 = dayjs(value[1]);
-
-                const startDateString = date1.isBefore(date2) ? date1.format('YYYY-MM-DD') : date2.format('YYYY-MM-DD');
-                const endDateString = date1.isBefore(date2) ? date2.format('YYYY-MM-DD') : date1.format('YYYY-MM-DD');
-
-                setTripInfo({ ...tripInfo, startDate: startDateString, endDate: endDateString });
-                // setStartDate(startDateString);
-                // setEndDate(endDateString);
-                setIsSelectMode(false);
-
-                const hasOutsideImages = imageDates.some((imageDate) => {
-                    const date = dayjs(imageDate);
-                    return date.isBefore(startDateString) || date.isAfter(endDateString);
-                });
-
-                setIsError(hasOutsideImages);
-            }
-        }
-    };
-
-    const handleDateMouseEnter = (date: Date) => {
-        if (isInitialized) return; // 초기화 상태에서는 호버 효과 없음
-        if (isStartOrEndDate(date)) {
-            return;
-        }
-        if (isSelectMode) {
-            setHoveredDate(date);
-        }
-    };
-
-    const handleDateMouseLeave = () => {
-        if (isSelectMode) {
-            setHoveredDate(null);
-        }
-    };
-
-    const isInRange = (date: Date) => {
-        if (!dateRange[0]) return false;
-
-        // 시작일 또는 종료일인 경우 범위에서 제외
-        if (dateRange[0] && date.getTime() === dateRange[0].getTime()) return false;
-        if (dateRange[1] && date.getTime() === dateRange[1].getTime()) return false;
-
-        // 선택 모드일 때는 첫 선택과 호버 사이의 범위
-        if (isSelectMode && hoveredDate) {
-            const start = dateRange[0].getTime();
-            const end = hoveredDate.getTime();
-            const current = date.getTime();
-            return (current >= start && current <= end) || (current <= start && current >= end);
-        }
-
-        // 선택 모드가 아닐 때는 선택된 두 날짜 사이의 범위
-        if (!isSelectMode && dateRange[1]) {
-            const start = dateRange[0].getTime();
-            const end = dateRange[1].getTime();
-            const current = date.getTime();
-            return current > start && current < end;
-        }
-
-        return false;
-    };
-
-    const isStartOrEndDate = (date: Date) =>
-        // dateRange뿐만 아니라 defaultStartDate, defaultEndDate도 체크
-        (dateRange[0] && date.getTime() === dateRange[0].getTime()) ||
-        (dateRange[1] && date.getTime() === dateRange[1].getTime());
-    // (defaultStartDate && date.getTime() === defaultStartDate.getTime()) ||
-    // (defaultEndDate && date.getTime() === defaultEndDate.getTime());
-
     const countryData = COUNTRY_OPTIONS.map((country) => ({
         value: `${country.value}`,
         label: `${country.emoji} ${country.nameKo}`,
     }));
 
     return (
-        <Stack gap='lg'>
-            <Box>
-                <div css={dayStyle}>
-                    <Text size='sm' fw={600}>
-                        {TRIP_FORM.DATE}
-                    </Text>
-                    <p css={dayTextStyle}>사진이 있는 날짜는 파란점으로 표시됩니다.</p>
+        <div css={tripInfoFormContainer}>
+            <div>
+                <div css={titleStyle}>
+                    <h2>{TRIP_FORM.DATE}</h2>
+                    <p css={descriptionStyle}>사진이 있는 날짜는 파란점으로 표시됩니다.</p>
                 </div>
                 <DatePickerInput
                     type='range'
@@ -201,17 +118,14 @@ const TripForm = ({ imageDates = [], tripInfo, setTripInfo }: TripFormProps) => 
                 {isError && (
                     <p css={errorStyle}>선택하신 여행 기간 외에도 사진이 있습니다. 기간을 다시 확인해 주세요.</p>
                 )}
-            </Box>
+            </div>
 
-            <Box>
-                <Text size='sm' fw={600} mb={8}>
-                    {TRIP_FORM.COUNTRY}
-                </Text>
+            <div>
+                <h2 css={titleStyle}>{TRIP_FORM.COUNTRY}</h2>
                 <Select
                     placeholder={TRIP_FORM.COUNTRY_DEFAULT}
                     data={countryData}
                     value={country}
-                    // onChange={(value) => setCountry(value || '')}
                     onChange={(value) => setTripInfo({ ...tripInfo, country: value || '' })}
                     searchable
                     nothingFoundMessage='검색하신 국가를 찾을 수 없습니다.'
@@ -221,12 +135,10 @@ const TripForm = ({ imageDates = [], tripInfo, setTripInfo }: TripFormProps) => 
                     radius='md'
                     comboboxProps={{ transitionProps: { transition: 'pop', duration: 200 }, dropdownPadding: 6 }}
                 />
-            </Box>
+            </div>
 
-            <Box>
-                <Text size='sm' fw={600} mb={8}>
-                    {TRIP_FORM.TITLE}
-                </Text>
+            <div>
+                <h2 css={titleStyle}>{TRIP_FORM.TITLE}</h2>
                 <Input
                     value={tripTitle}
                     onChange={(value) => setTripInfo({ ...tripInfo, tripTitle: value })}
@@ -234,51 +146,87 @@ const TripForm = ({ imageDates = [], tripInfo, setTripInfo }: TripFormProps) => 
                     maxLength={12}
                     leftSection={<IconPlane size={16} />}
                 />
-            </Box>
+            </div>
 
-            <Box>
-                <div css={dayStyle}>
-                    <Text size='sm' fw={600}>
-                        {TRIP_FORM.HASHTAG}
-                    </Text>
-                    <p css={dayTextStyle}>해시태그는 최대 3개까지 선택할 수 있습니다.</p>
+            <div>
+                <div css={titleStyle}>
+                    <h2>{TRIP_FORM.HASHTAG}</h2>
+                    <p css={descriptionStyle}>최대 3개까지 선택할 수 있습니다.</p>
                 </div>
-                <Group gap='sm'>
+                <div css={hashtagGroup}>
                     {HASHTAG_MENU.map((tag) => (
-                        <Button
+                        <button
                             key={tag}
-                            variant={hashtags.includes(tag) ? 'filled' : 'light'}
-                            color={hashtags.includes(tag) ? `${theme.colors.primary}` : 'gray'}
-                            onClick={() => toggleHashtag(tag)}
-                            size='xs'
-                            px='sm'
+                            css={[buttonBaseStyle, hashtags.includes(tag) ? selectedButtonStyle : defaultButtonStyle]}
+                            onClick={() => handleHashtagToggle(tag)}
                         >
                             {tag}
-                        </Button>
+                        </button>
                     ))}
-                </Group>
-            </Box>
-        </Stack>
+                </div>
+            </div>
+        </div>
     );
 };
 
-const dayStyle = css`
+const tripInfoFormContainer = css`
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+`;
+
+const titleStyle = css`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    font-size: ${theme.fontSizes.normal_14};
+    font-weight: bold;
+    color: ${theme.colors.black};
+    margin-bottom: 12px;
 `;
 
-const dayTextStyle = css`
+const descriptionStyle = css`
     font-size: ${theme.fontSizes.small_12};
+    font-weight: normal;
     color: ${theme.colors.descriptionText};
+`;
+
+const hashtagGroup = css`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+`;
+
+const buttonBaseStyle = css`
+    padding: 0 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 0;
+    height: 28px;
+    font-weight: 600;
+
+    &:active {
+        transform: translateY(1px);
+    }
+`;
+
+const selectedButtonStyle = css`
+    background-color: ${theme.colors.primary};
+    color: ${theme.colors.white};
+`;
+
+const defaultButtonStyle = css`
+    background-color: #868e961a;
+    color: #868e96;
 `;
 
 const errorStyle = css`
     margin-top: 6px;
     margin-left: 4px;
     font-size: ${theme.fontSizes.small_12};
-    color: #ff0101;
+    color: ${theme.colors.error};
 `;
 
 export default TripForm;

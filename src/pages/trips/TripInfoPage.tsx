@@ -54,7 +54,7 @@ const mainStyle = css`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 20px;
+    padding: 16px;
 `;
 
 export default TripInfoPage;
