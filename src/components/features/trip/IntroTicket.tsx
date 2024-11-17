@@ -70,7 +70,7 @@ const IntroTicket = ({ trip, userNickname }: IntroTicketProps) => {
                 </div>
                 <div css={rightContent}>
                     <img css={imageStyle} src={characterImg} alt='캐릭터' />
-                    <p css={textStyle}>Click Ticket</p>
+                    <p css={textStyle}>Move Ticket</p>
                 </div>
             </aside>
         </article>

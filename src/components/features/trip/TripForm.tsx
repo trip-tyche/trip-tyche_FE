@@ -150,10 +150,7 @@ const TripForm = ({
                     size='md'
                     radius='md'
                     valueFormat='YYYY년 MM월 DD일'
-                    popoverProps={{
-                        // width: 'target',
-                        position: 'bottom',
-                    }}
+                    popoverProps={{ position: 'bottom' }}
                     getDayProps={(date) => ({
                         onMouseEnter: () => handleDateMouseEnter(date),
                         style: {

@@ -24,103 +24,111 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
     const { isAnimating, handleCardClick } = useTicketNavigation(tripId, isModalOpen);
 
     return (
-        <article css={ticketContainer} onClick={handleCardClick}>
-            <section css={leftContent}>
-                <header css={leftTopSection}>
-                    <div>
-                        <h3 css={labelStyle}>PASSENGER</h3>
-                        <p css={valueStyle}>{userNickname}</p>
-                    </div>
-                    <div>
-                        <h3 css={labelStyle}>DATE</h3>
-                        <p css={valueStyle}>{formatDateToDot(startDate)}</p>
-                    </div>
-                    <div>
-                        <h3 css={labelStyle}>DATE</h3>
-                        <p css={valueStyle}>{formatDateToDot(endDate)}</p>
-                    </div>
-                </header>
+        <div css={ticketContainer}>
+            <article css={ticketStyle} onClick={handleCardClick}>
+                <section css={leftSection}>
+                    <header css={leftTopSection}>
+                        <div>
+                            <h3 css={labelStyle}>PASSENGER</h3>
+                            <p css={valueStyle}>{userNickname}</p>
+                        </div>
+                        <div>
+                            <h3 css={labelStyle}>DATE</h3>
+                            <p css={valueStyle}>{formatDateToDot(startDate)}</p>
+                        </div>
+                        <div>
+                            <h3 css={labelStyle}>DATE</h3>
+                            <p css={valueStyle}>{formatDateToDot(endDate)}</p>
+                        </div>
+                    </header>
 
-                <main css={contentContainer}>
-                    <div css={citiesStyle}>
-                        <span>INCHEON</span>
-                        <IoAirplaneSharp />
-                        <span>{country.substring(4)}</span>
-                    </div>
-                    <div css={titleStyle}>
-                        <h3 css={titleLabelStyle}>Title</h3>
-                        <h2 css={titleValueStyle}>{tripTitle}</h2>
-                    </div>
-                    <div css={hashtagGroup}>
-                        {hashtags.map((tag, index) => (
-                            <span key={index} css={hashtagStyle}>
-                                # {tag}
-                            </span>
-                        ))}
-                    </div>
-                </main>
+                    <main css={contentContainer}>
+                        <div css={citiesStyle}>
+                            <span>INCHEON</span>
+                            <IoAirplaneSharp />
+                            <span>{country.substring(4)}</span>
+                        </div>
+                        <div css={titleStyle}>
+                            <h3 css={titleLabelStyle}>Title</h3>
+                            <h2 css={titleValueStyle}>{tripTitle}</h2>
+                        </div>
+                        <div css={hashtagGroup}>
+                            {hashtags.map((tag, index) => (
+                                <span key={index} css={hashtagStyle}>
+                                    # {tag}
+                                </span>
+                            ))}
+                        </div>
+                    </main>
+                </section>
 
-                <div css={buttonGroup}>
-                    <button css={buttonStyle} onClick={handleImageUpload}>
-                        <ImagePlus size={16} /> 사진등록
-                    </button>
-                    <button css={buttonStyle} onClick={handleTripEdit}>
-                        <FaPencilAlt size={12} /> 여행수정
-                    </button>
-                    <button css={buttonStyle} onClick={handleTripDelete}>
-                        <FaTrashAlt size={12} /> 여행삭제
-                    </button>
-                </div>
-            </section>
+                <aside css={[rightSection, isAnimating && animateRight]}>
+                    <header css={rightTopSection}>
+                        <h3 css={labelStyle}>FLIGHT</h3>
+                        <p css={valueStyle}>TYCHE AIR</p>
+                    </header>
+                    <div css={rightContent}>
+                        <img css={imageStyle} src={characterImg} alt='캐릭터' />
+                        <p css={textStyle}>Click Ticket</p>
+                    </div>
+                </aside>
 
-            <aside css={[rightSection, isAnimating && animateRight]}>
-                <header css={rightTopSection}>
-                    <h3 css={labelStyle}>FLIGHT</h3>
-                    <p css={valueStyle}>TYCHE AIR</p>
-                </header>
-                <div css={rightContent}>
-                    <img css={imageStyle} src={characterImg} alt='캐릭터' />
-                    <p css={textStyle}>Click Ticket</p>
-                </div>
-            </aside>
+                {isModalOpen && (
+                    <ConfirmModal
+                        title='보더패스를 삭제하시겠습니까?'
+                        description='보더패스를 삭제하면 해당 여행의 정보와 사진들은 다시 복구할 수 없어요. 그래도 삭제하시겠습니까?'
+                        confirmText='삭제'
+                        cancelText='취소'
+                        confirmModal={deleteTrip}
+                        closeModal={closeModal}
+                    />
+                )}
+            </article>
 
-            {isModalOpen && (
-                <ConfirmModal
-                    title='보더패스를 삭제하시겠습니까?'
-                    description='보더패스를 삭제하면 해당 여행의 정보와 사진들은 다시 복구할 수 없어요. 그래도 삭제하시겠습니까?'
-                    confirmText='삭제'
-                    cancelText='취소'
-                    confirmModal={deleteTrip}
-                    closeModal={closeModal}
-                />
-            )}
-        </article>
+            <footer css={buttonGroup}>
+                <button css={buttonStyle} onClick={handleImageUpload}>
+                    <ImagePlus size={16} /> 사진 추가
+                </button>
+                <button css={buttonStyle} onClick={handleTripEdit}>
+                    <FaPencilAlt size={12} /> 여행 수정
+                </button>
+                <button css={buttonStyle} onClick={handleTripDelete}>
+                    <FaTrashAlt size={12} /> 여행 삭제
+                </button>
+            </footer>
+        </div>
     );
 };
 
 const ticketContainer = css`
+    border-bottom: 1px solid ${theme.colors.borderColor};
+    margin-bottom: 12px;
+`;
+
+const ticketStyle = css`
     width: 100%;
     max-width: 428px;
     position: relative;
     display: flex;
     border-radius: 10px;
-    margin-bottom: 20px;
-    overflow: hidden;
     cursor: pointer;
     transition: all 0.3s ease;
-    background: transparent;
 `;
 
-const leftContent = css`
+const leftSection = css`
     width: 75%;
     background: ${theme.colors.modalBg};
-    background: white;
     border-right: 1px solid ${theme.colors.borderColor};
+    border-radius: 10px 0 0 10px;
+    box-shadow:
+        -6px 6px 8px rgba(0, 0, 0, 0.1),
+        -1px 1px 3px rgba(0, 0, 0, 0.08);
 `;
 
 const leftTopSection = css`
     display: flex;
     justify-content: space-between;
+    border-radius: 10px 0 0 0;
     background-color: ${theme.colors.primary};
     color: ${theme.colors.modalBg};
     padding: 10px 12px;
@@ -178,36 +186,19 @@ const hashtagStyle = css`
     font-size: ${theme.fontSizes.small_12};
 `;
 
-const buttonGroup = css`
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 15px;
-    border-top: 1px solid ${theme.colors.borderColor};
-`;
-
-const buttonStyle = css`
-    display: flex;
-    align-items: center;
-    padding: 6px 8px;
-    border: none;
-    border-radius: 4px;
-    font-size: ${theme.fontSizes.small_12};
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    gap: 4px;
-    background-color: ${theme.colors.white};
-    color: ${theme.colors.black};
-`;
-
 const rightSection = css`
     width: 25%;
-    background: ${theme.colors.modalBg};
+    background-color: ${theme.colors.white};
+    border-radius: 0 10px 10px 0;
+    box-shadow:
+        6px 6px 8px rgba(0, 0, 0, 0.1),
+        1px 1px 3px rgba(0, 0, 0, 0.08);
 `;
 
 const rightTopSection = css`
     padding: 10px 12px;
     background-color: ${theme.colors.primary};
+    border-radius: 0 10px 0 0;
     color: ${theme.colors.modalBg};
 `;
 
@@ -219,6 +210,7 @@ const rightContent = css`
     align-items: center;
     gap: 28px;
     background: ${theme.colors.modalBg};
+    border-radius: 0 0 10px 0;
 `;
 
 const imageStyle = css`
@@ -242,6 +234,27 @@ const slideRight = keyframes`
 
 const animateRight = css`
     animation: ${slideRight} 0.8s forwards;
+`;
+
+const buttonGroup = css`
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 18px;
+`;
+
+const buttonStyle = css`
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: ${theme.fontSizes.small_12};
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    gap: 4px;
+    background: transparent;
+    color: ${theme.colors.black};
 `;
 
 export default TripTicket;
