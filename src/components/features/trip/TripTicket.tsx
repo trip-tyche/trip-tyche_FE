@@ -44,13 +44,16 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
 
                     <main css={contentContainer}>
                         <div css={citiesStyle}>
-                            <span>INCHEON</span>
+                            <p>INCHEON</p>
                             <IoAirplaneSharp />
-                            <span>{country.substring(4)}</span>
+                            <p>{country.substring(4)}</p>
                         </div>
-                        <div css={titleStyle}>
-                            <h3 css={titleLabelStyle}>Title</h3>
-                            <h2 css={titleValueStyle}>{tripTitle}</h2>
+                        <div css={contentStyle}>
+                            <div css={titleStyle}>
+                                <p css={titleLabelStyle}>Title</p>
+                                <p css={titleValueStyle}>{tripTitle}</p>
+                            </div>
+                            <p css={flagStyle}>{country.slice(0, 4)}</p>
                         </div>
                         <div css={hashtagGroup}>
                             {hashtags.map((tag, index) => (
@@ -101,7 +104,7 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
 };
 
 const ticketContainer = css`
-    border-bottom: 1px solid ${theme.colors.borderColor};
+    /* border-bottom: 1px solid ${theme.colors.borderColor}; */
     margin-bottom: 12px;
 `;
 
@@ -156,11 +159,16 @@ const citiesStyle = css`
     font-weight: bold;
 `;
 
+const contentStyle = css`
+    margin: 18px 0 22px 2px;
+    display: flex;
+    justify-content: space-between;
+`;
+
 const titleStyle = css`
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin: 18px 0 22px 2px;
 `;
 
 const titleLabelStyle = css`
@@ -170,6 +178,13 @@ const titleLabelStyle = css`
 
 const titleValueStyle = css`
     font-weight: bold;
+`;
+
+const flagStyle = css`
+    display: flex;
+    align-items: center;
+    margin-right: 4px;
+    font-size: ${theme.fontSizes.xlarge_18};
 `;
 
 const hashtagGroup = css`

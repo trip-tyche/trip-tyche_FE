@@ -64,7 +64,7 @@ export const TRIP_FORM = {
 export const WELCOME_TICKET_DATA = {
     tripId: '',
     tripTitle: '첫 티켓이 발급되었습니다',
-    country: '0000TRIP TYCHE',
+    country: '🇰🇷 TRIP TYCHE',
     startDate: '2024-01-01',
     endDate: '2024-12-31',
     hashtags: ['패밀리', '버킷리스트', '계획무시'],
