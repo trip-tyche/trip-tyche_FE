@@ -35,8 +35,8 @@ const TripForm = ({
     const [isError, setIsError] = useState(false);
 
     const countryData = COUNTRY_OPTIONS.map((country) => ({
-        value: `${country.emoji} ${country.name}`,
-        label: `${country.emoji} ${country.name}`,
+        value: `${country.value}`,
+        label: `${country.emoji} ${country.nameKo}`,
     }));
 
     const toggleHashtag = (tag: string) => {

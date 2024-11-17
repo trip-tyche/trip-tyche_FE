@@ -44,16 +44,16 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
 
                     <main css={contentContainer}>
                         <div css={citiesStyle}>
-                            <p>INCHEON</p>
+                            <p>대한민국</p>
                             <IoAirplaneSharp />
-                            <p>{country.substring(4)}</p>
+                            <p>{country.split('/')[1]}</p>
                         </div>
                         <div css={contentStyle}>
                             <div css={titleStyle}>
                                 <p css={titleLabelStyle}>Title</p>
                                 <p css={titleValueStyle}>{tripTitle}</p>
                             </div>
-                            <p css={flagStyle}>{country.slice(0, 4)}</p>
+                            <p css={flagStyle}>{country.split('/')[0]}</p>
                         </div>
                         <div css={hashtagGroup}>
                             {hashtags.map((tag, index) => (
@@ -104,7 +104,6 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
 };
 
 const ticketContainer = css`
-    /* border-bottom: 1px solid ${theme.colors.borderColor}; */
     margin-bottom: 12px;
 `;
 
@@ -254,7 +253,7 @@ const animateRight = css`
 const buttonGroup = css`
     display: flex;
     justify-content: space-between;
-    padding: 8px 18px;
+    padding: 12px 18px 8px 18px;
 `;
 
 const buttonStyle = css`

@@ -66,6 +66,7 @@ const TripTicketListPage = () => {
     return (
         <div css={pageContainer}>
             <Header title={PAGE.TRIP_LIST} isBackButton onBack={() => navigate(PATH.MAIN)} />
+
             <div css={listHeaderStyle}>
                 <div css={listSummaryStyle}>
                     <TicketsPlane size={20} />
@@ -91,6 +92,8 @@ const TripTicketListPage = () => {
                 />
             </div>
 
+            <p css={guideStyle}>* 티켓을 클릭하시면 해당 여행의 타임라인으로 이동합니다.</p>
+
             {tripTicketCount > 0 ? (
                 <div css={tripListStyle}>
                     {tripList.map((trip) => (
@@ -115,8 +118,7 @@ const pageContainer = css`
 const listHeaderStyle = css`
     display: flex;
     justify-content: space-between;
-    margin-bottom: 16px;
-    padding: 12px;
+    padding: 12px 12px 0 12px;
 `;
 
 const listSummaryStyle = css`
@@ -134,6 +136,13 @@ const listCountStyle = css`
     font-size: ${theme.fontSizes.xlarge_18};
     font-weight: bold;
     color: ${theme.colors.primary};
+`;
+
+const guideStyle = css`
+    font-size: ${theme.fontSizes.small_12};
+    color: ${theme.colors.descriptionText};
+    padding: 24px 12px 8px 16px;
+    margin-bottom: 12px;
 `;
 
 const tripListStyle = css`

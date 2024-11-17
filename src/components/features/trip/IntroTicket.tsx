@@ -45,16 +45,16 @@ const IntroTicket = ({ trip, userNickname }: IntroTicketProps) => {
 
                 <main css={contentContainer}>
                     <div css={citiesStyle}>
-                        <span>INCHEON</span>
+                        <p>대한민국</p>
                         <IoAirplaneSharp />
-                        <span>{country.substring(4)}</span>
+                        <p>{country.split('/')[1]}</p>
                     </div>
                     <div css={contentStyle}>
                         <div css={titleStyle}>
                             <p css={titleLabelStyle}>Title</p>
                             <p css={titleValueStyle}>{tripTitle}</p>
                         </div>
-                        <p css={flagStyle}>{country.slice(0, 4)}</p>
+                        <p css={flagStyle}>{country.split('/')[0]}</p>
                     </div>
                     <div css={hashtagGroup}>
                         {hashtags.map((tag, index) => (

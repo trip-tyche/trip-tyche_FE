@@ -182,11 +182,4 @@ const buttonWrapper = css`
     margin: 24px 0 12px 0;
 `;
 
-const loadingSpinnerStyle = css`
-    height: 100dvh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`;
-
 export default MainPage;
