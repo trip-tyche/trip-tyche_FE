@@ -22,12 +22,9 @@ const TripInfoEditPage = () => {
         navigate(PATH.TRIPS.ROOT);
     };
 
-    if (isLoading)
-        return (
-            <div css={loadingStyle}>
-                <Spinner />
-            </div>
-        );
+    if (isLoading) {
+        return <Spinner />;
+    }
 
     return (
         <div css={containerStyle}>
@@ -47,13 +44,6 @@ const TripInfoEditPage = () => {
         </div>
     );
 };
-
-const loadingStyle = css`
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-`;
 
 const containerStyle = css`
     height: 100dvh;

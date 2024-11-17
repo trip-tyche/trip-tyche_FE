@@ -1,46 +1,32 @@
 import { css } from '@emotion/react';
 
-// import loadingImage from '@/assets/images/flightLoading5.gif';
-// import ModalOverlay from '@/components/common/modal/ModalOverlay';
+import upLoadingImage from '@/assets/images/loading.gif';
+import Modal from '@/components/common/Modal';
 import theme from '@/styles/theme';
 
-const UPLOADING_MESSAGE = `새로운 여행이 등록 중입니다..`;
-
 const UploadingSpinner = () => (
-    <>
-        {/* <ModalOverlay /> */}
-        <div css={divStyle}>
-            {/* <img src={loadingImage} /> */}
-            <p css={pStyle}>{UPLOADING_MESSAGE}</p>
+    <Modal>
+        <div css={uploadingContainer}>
+            <img src={upLoadingImage} />
+            <p css={textStyle}>새로운 여행이 등록 중입니다...</p>
         </div>
-    </>
+    </Modal>
 );
 
-const divStyle = css`
-    width: 80vw;
-    max-width: 360px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
-    background-color: #fff;
-
+const uploadingContainer = css`
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    background-color: ${theme.colors.white};
     border-radius: 14px;
-    z-index: 1000;
-    border: 2px solid #ccc;
+    border: 2px solid ${theme.colors.white};
     overflow: hidden;
 `;
 
-const pStyle = css`
-    font-size: 14px;
+const textStyle = css`
     font-weight: 600;
     text-align: center;
     color: ${theme.colors.descriptionText};
-    margin: 8px 0;
+    margin: 16px 0;
 `;
 
 export default UploadingSpinner;
