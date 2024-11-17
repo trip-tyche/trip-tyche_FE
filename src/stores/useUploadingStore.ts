@@ -14,13 +14,11 @@ export const useUploadStore = create<UploadingStore>((set, get) => ({
     setUploadStatus: (status) => set({ uploadStatus: status }),
     resetUpload: () => set({ uploadStatus: 'idle' }),
     waitForCompletion: () =>
-        new Promise((resolve, reject) => {
+        new Promise((resolve) => {
             const checkStatus = () => {
                 const status = get().uploadStatus;
-                if (status === 'completed') {
+                if (status === 'completed' || status === 'error') {
                     resolve();
-                } else if (status === 'error') {
-                    reject(new Error('사진 업로드가 실패하였습니다.'));
                 } else {
                     setTimeout(checkStatus, 500);
                 }

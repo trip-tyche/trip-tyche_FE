@@ -79,6 +79,7 @@ export const tripAPI = {
             return data;
         } catch (error) {
             console.error('여행사진 등록에 실패하였습니다', error);
+            throw error;
         }
     },
     updateTripInfo: async (tripId: string, tripInfo: TripInfo) => {
