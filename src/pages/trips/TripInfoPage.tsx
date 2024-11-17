@@ -14,30 +14,18 @@ import { useTripForm } from '@/hooks/useTripForm';
 const TripInfoPage = () => {
     const [isFormComplete, setIsFormComplete] = useState(false);
 
-    const {
-        imageDates,
-        tripId,
-        tripTitle,
-        country,
-        startDate,
-        endDate,
-        hashtags,
-        isUploading,
-        setTripTitle,
-        setCountry,
-        setStartDate,
-        setEndDate,
-        setHashtags,
-        handleSubmit,
-    } = useTripForm();
+    const { imageDates, tripId, tripInfo, isUploading, setTripInfo, handleSubmit } = useTripForm();
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (tripTitle && country && startDate && endDate) {
+        const { tripTitle, country, startDate, endDate, hashtags } = tripInfo;
+        if (hashtags.length > 0 && tripTitle && country && startDate && endDate) {
             setIsFormComplete(true);
+            return;
         }
-    }, [tripTitle, country, startDate, endDate]);
+        setIsFormComplete(false);
+    }, [tripInfo]);
 
     return (
         <div css={pageContainer}>
@@ -47,20 +35,8 @@ const TripInfoPage = () => {
                 onBack={() => navigate(`${PATH.TRIPS.NEW.IMAGES(Number(tripId))}`)}
             />
             <main css={mainStyle}>
-                <TripForm
-                    tripTitle={tripTitle}
-                    country={country}
-                    startDate={startDate}
-                    endDate={endDate}
-                    imageDates={imageDates}
-                    hashtags={hashtags}
-                    setTripTitle={setTripTitle}
-                    setCountry={setCountry}
-                    setStartDate={setStartDate}
-                    setEndDate={setEndDate}
-                    setHashtags={setHashtags}
-                />
-                <Button text='등록하기' onClick={handleSubmit} disabled={!isFormComplete} />
+                <TripForm imageDates={imageDates} tripInfo={tripInfo} setTripInfo={setTripInfo} />
+                <Button text='여행 등록하기' onClick={handleSubmit} disabled={!isFormComplete} />
             </main>
             {isUploading && <UploadingSpinner />}
         </div>

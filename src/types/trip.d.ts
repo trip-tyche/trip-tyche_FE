@@ -9,11 +9,11 @@ export interface TripInfo {
 }
 
 export interface TripFormData {
+    imageDates?: string[];
     tripTitle: string;
     country: string;
     startDate: string;
     endDate: string;
-    imageDates?: string[];
     hashtags: string[];
 }
 
@@ -67,4 +67,13 @@ export interface MediaFile {
     mediaFileId: string;
     mediaLink: string;
     recordDate: string;
+}
+
+// ////////////////
+export interface TripInfoModel {
+    tripTitle: string;
+    country: string;
+    startDate: string;
+    endDate: string;
+    hashtags: string[];
 }

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import { Settings } from 'lucide-react';
 import { FaArrowCircleDown } from 'react-icons/fa';
-import { MdWavingHand } from 'react-icons/md';
+import { GiRapidshareArrow } from 'react-icons/gi';
 import { useNavigate } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
@@ -94,7 +94,7 @@ const MainPage = () => {
                     </div>
                     <div css={ticketContainerStyle}>
                         <p css={dragGuideStyle}>
-                            <MdWavingHand />
+                            <GiRapidshareArrow />
                             아래 티켓을 움직여보세요!
                         </p>
                         <IntroTicket trip={latestTrip || WELCOME_TICKET_DATA} userNickname={userNickName} />

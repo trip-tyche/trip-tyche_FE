@@ -1,6 +1,6 @@
 import { apiClient } from '@/api/client';
 import { API_ENDPOINTS } from '@/constants/api';
-import { TripInfo } from '@/types/trip';
+import { TripInfo, TripInfoModel } from '@/types/trip';
 import { getToken } from '@/utils/auth';
 
 export const tripAPI = {
@@ -49,24 +49,14 @@ export const tripAPI = {
             console.error('tripId 등록에 실패하였습니다', error);
         }
     },
-    createTripInfo: async ({ tripId, tripTitle, country, startDate, endDate, hashtags }: TripInfo) => {
+    createTripInfo: async (tripId: string, tripInfo: TripInfoModel) => {
         try {
             const token = getToken();
-            const data = await apiClient.post(
-                `${API_ENDPOINTS.TRIPS}/${tripId}/info`,
-                {
-                    tripTitle,
-                    country,
-                    startDate,
-                    endDate,
-                    hashtags,
+            const data = await apiClient.post(`${API_ENDPOINTS.TRIPS}/${tripId}/info`, tripInfo, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
                 },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                },
-            );
+            });
             console.log('여행정보가 등록되었습니다', data.data);
             return data;
         } catch (error) {
@@ -91,24 +81,14 @@ export const tripAPI = {
             console.error('여행사진 등록에 실패하였습니다', error);
         }
     },
-    updateTripInfo: async (tripId: string, { tripTitle, country, startDate, endDate, hashtags }: TripInfo) => {
+    updateTripInfo: async (tripId: string, tripInfo: TripInfo) => {
         try {
             const token = getToken();
-            const data = await apiClient.put(
-                `${API_ENDPOINTS.TRIPS}/${tripId}`,
-                {
-                    tripTitle,
-                    country,
-                    startDate,
-                    endDate,
-                    hashtags,
+            const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripId}`, tripInfo, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
                 },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                },
-            );
+            });
             console.log('여행정보가 수정되었습니다', data);
             return data;
         } catch (error) {

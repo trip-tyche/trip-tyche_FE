@@ -37,6 +37,7 @@ export const useTicketHandler = (tripId: string) => {
         try {
             await tripAPI.deleteTripTicket(tripId);
             deleteTripTicket();
+            showToast('여행이 삭제되었습니다.');
         } catch (error) {
             showToast('여행 삭제에 실패했습니다. 다시 시도해주세요.');
         } finally {

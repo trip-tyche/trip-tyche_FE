@@ -18,7 +18,7 @@ interface TripEditFormProps {
 }
 
 const TripEditForm = ({ tripData, handleInputChange, handleHashtagToggle }: TripEditFormProps): JSX.Element => {
-    const { country, endDate, startDate, tripTitle, hashtags } = tripData;
+    const { country, tripTitle } = tripData;
 
     const countryData = COUNTRY_OPTIONS.map((country) => ({
         value: `${country.value}`,

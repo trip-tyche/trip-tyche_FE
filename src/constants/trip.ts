@@ -630,7 +630,7 @@ export const TRIP_FORM = {
     COUNTRY_DEFAULT: '여행 국가를 선택해주세요',
     TITLE: '여행 제목 *',
     TITLE_PLACEHOLDER: '여행 제목을 입력해주세요',
-    HASHTAG: '해시태그',
+    HASHTAG: '해시태그 *',
 };
 
 export const WELCOME_TICKET_DATA = {

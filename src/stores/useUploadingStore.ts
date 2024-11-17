@@ -20,9 +20,9 @@ export const useUploadStore = create<UploadingStore>((set, get) => ({
                 if (status === 'completed') {
                     resolve();
                 } else if (status === 'error') {
-                    reject(new Error('Upload failed'));
+                    reject(new Error('사진 업로드가 실패하였습니다.'));
                 } else {
-                    setTimeout(checkStatus, 500); // 500ms마다 상태 체크
+                    setTimeout(checkStatus, 500);
                 }
             };
             checkStatus();

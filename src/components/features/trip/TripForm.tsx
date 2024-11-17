@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { Select, Button, Stack, Box, Group, Text } from '@mantine/core';
@@ -10,20 +10,18 @@ import dayjs from 'dayjs';
 import Input from '@/components/common/Input';
 import { COUNTRY_OPTIONS, HASHTAG_MENU, TRIP_FORM } from '@/constants/trip';
 import theme from '@/styles/theme';
-import { TripFormProps } from '@/types/trip';
+import { TripInfoModel } from '@/types/trip';
 import { formatDateToKoreanYear } from '@/utils/date';
 
-const TripForm = ({
-    tripTitle,
-    imageDates = [],
-    country,
-    hashtags,
-    setTripTitle,
-    setCountry,
-    setStartDate,
-    setEndDate,
-    setHashtags,
-}: TripFormProps) => {
+interface TripFormProps {
+    imageDates: string[];
+    tripInfo: TripInfoModel;
+    setTripInfo: Dispatch<SetStateAction<TripInfoModel>>;
+}
+
+const TripForm = ({ imageDates = [], tripInfo, setTripInfo }: TripFormProps) => {
+    const { tripTitle, country, hashtags } = tripInfo;
+
     const defaultStartDate = imageDates[0] || null;
     const defaultEndDate = imageDates[imageDates.length - 1] || null;
 
@@ -34,15 +32,21 @@ const TripForm = ({
     const [isSelectMode, setIsSelectMode] = useState(false);
     const [isError, setIsError] = useState(false);
 
-    const countryData = COUNTRY_OPTIONS.map((country) => ({
-        value: `${country.value}`,
-        label: `${country.emoji} ${country.nameKo}`,
-    }));
-
     const toggleHashtag = (tag: string) => {
-        setHashtags((prev: string[]) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
+        setTripInfo((prev: TripInfoModel) => {
+            if (prev.hashtags.includes(tag)) {
+                return { ...prev, hashtags: prev.hashtags.filter((hashtag) => hashtag !== tag) };
+            }
+
+            if (prev.hashtags.length >= 3) {
+                return prev;
+            }
+
+            return { ...prev, hashtags: [...prev.hashtags, tag] };
+        });
     };
 
+    console.log(hashtags);
     const handleDateChange = (value: [DateValue, DateValue]) => {
         setDateRange(value);
 
@@ -55,7 +59,7 @@ const TripForm = ({
         if (!isInitialized) {
             if (value[0] && !value[1]) {
                 const startDateString = dayjs(value[0]).format('YYYY-MM-DD');
-                setStartDate(startDateString);
+                setTripInfo({ ...tripInfo, startDate: startDateString });
                 setIsSelectMode(true);
                 setIsError(false);
             } else if (value[0] && value[1]) {
@@ -65,8 +69,9 @@ const TripForm = ({
                 const startDateString = date1.isBefore(date2) ? date1.format('YYYY-MM-DD') : date2.format('YYYY-MM-DD');
                 const endDateString = date1.isBefore(date2) ? date2.format('YYYY-MM-DD') : date1.format('YYYY-MM-DD');
 
-                setStartDate(startDateString);
-                setEndDate(endDateString);
+                setTripInfo({ ...tripInfo, startDate: startDateString, endDate: endDateString });
+                // setStartDate(startDateString);
+                // setEndDate(endDateString);
                 setIsSelectMode(false);
 
                 const hasOutsideImages = imageDates.some((imageDate) => {
@@ -127,6 +132,11 @@ const TripForm = ({
         (dateRange[1] && date.getTime() === dateRange[1].getTime());
     // (defaultStartDate && date.getTime() === defaultStartDate.getTime()) ||
     // (defaultEndDate && date.getTime() === defaultEndDate.getTime());
+
+    const countryData = COUNTRY_OPTIONS.map((country) => ({
+        value: `${country.value}`,
+        label: `${country.emoji} ${country.nameKo}`,
+    }));
 
     return (
         <Stack gap='lg'>
@@ -201,7 +211,8 @@ const TripForm = ({
                     placeholder={TRIP_FORM.COUNTRY_DEFAULT}
                     data={countryData}
                     value={country}
-                    onChange={(value) => setCountry(value || '')}
+                    // onChange={(value) => setCountry(value || '')}
+                    onChange={(value) => setTripInfo({ ...tripInfo, country: value || '' })}
                     searchable
                     nothingFoundMessage='검색하신 국가를 찾을 수 없습니다.'
                     checkIconPosition='right'
@@ -218,7 +229,7 @@ const TripForm = ({
                 </Text>
                 <Input
                     value={tripTitle}
-                    onChange={setTripTitle}
+                    onChange={(value) => setTripInfo({ ...tripInfo, tripTitle: value })}
                     placeholder='최대 12자까지 입력할 수 있습니다'
                     maxLength={12}
                     leftSection={<IconPlane size={16} />}
@@ -226,9 +237,12 @@ const TripForm = ({
             </Box>
 
             <Box>
-                <Text size='sm' fw={600} mb={12}>
-                    해시태그
-                </Text>
+                <div css={dayStyle}>
+                    <Text size='sm' fw={600}>
+                        {TRIP_FORM.HASHTAG}
+                    </Text>
+                    <p css={dayTextStyle}>해시태그는 최대 3개까지 선택할 수 있습니다.</p>
+                </div>
                 <Group gap='sm'>
                     {HASHTAG_MENU.map((tag) => (
                         <Button
