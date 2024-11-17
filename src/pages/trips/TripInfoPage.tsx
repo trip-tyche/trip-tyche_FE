@@ -14,7 +14,7 @@ import { useTripForm } from '@/hooks/useTripForm';
 const TripInfoPage = () => {
     const [isFormComplete, setIsFormComplete] = useState(false);
 
-    const { imageDates, tripId, tripInfo, isUploading, setTripInfo, handleSubmit } = useTripForm();
+    const { imageDates, tripId, tripInfo, isUploading, setTripInfo, handleTripInfoSubmit } = useTripForm();
 
     const navigate = useNavigate();
 
@@ -36,7 +36,7 @@ const TripInfoPage = () => {
             />
             <main css={mainStyle}>
                 <TripForm imageDates={imageDates} tripInfo={tripInfo} setTripInfo={setTripInfo} />
-                <Button text='여행 등록하기' onClick={handleSubmit} disabled={!isFormComplete} />
+                <Button text='여행 등록하기' onClick={handleTripInfoSubmit} disabled={!isFormComplete} />
             </main>
             {isUploading && <UploadingSpinner />}
         </div>

@@ -7,11 +7,11 @@ import Spinner from '@/components/common/Spinner';
 import TripEditForm from '@/components/features/trip/TripEditForm';
 import { PATH } from '@/constants/path';
 import { BUTTON, PAGE } from '@/constants/title';
-import { useTripEditForm } from '@/hooks/useTripEditForm';
+import { useTripEdit } from '@/hooks/useTripEdit';
 import useUserDataStore from '@/stores/useUserDataStore';
 
 const TripInfoEditPage = () => {
-    const { tripData, isLoading, handleInputChange, handleHashtagToggle, handleUpdateTripInfo } = useTripEditForm();
+    const { tripInfo, isLoading, setTripInfo, handleTripInfoUpdate } = useTripEdit();
 
     const setIsTripInfoEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
 
@@ -27,25 +27,19 @@ const TripInfoEditPage = () => {
     }
 
     return (
-        <div css={containerStyle}>
+        <div css={pageContainer}>
             <div>
                 <Header title={PAGE.TRIP_EDIT} isBackButton onBack={navigateBeforePage} />
             </div>
             <main css={mainStyle}>
-                <div css={tripFormWrapper}>
-                    <TripEditForm
-                        tripData={tripData}
-                        handleInputChange={handleInputChange}
-                        handleHashtagToggle={handleHashtagToggle}
-                    />
-                </div>
-                <Button text={BUTTON.UPDATE_TRIP} onClick={handleUpdateTripInfo} />
+                <TripEditForm tripInfo={tripInfo} setTripInfo={setTripInfo} />
+                <Button text={BUTTON.UPDATE_TRIP} onClick={handleTripInfoUpdate} />
             </main>
         </div>
     );
 };
 
-const containerStyle = css`
+const pageContainer = css`
     height: 100dvh;
     display: flex;
     flex-direction: column;
@@ -55,11 +49,8 @@ const mainStyle = css`
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 20px;
-`;
-
-const tripFormWrapper = css`
-    flex: 1;
+    justify-content: space-between;
+    padding: 16px;
 `;
 
 export default TripInfoEditPage;

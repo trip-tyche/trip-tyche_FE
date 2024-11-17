@@ -15,15 +15,17 @@ import { TripInfoModel } from '@/types/trip';
 import { formatDateToKoreanYear } from '@/utils/date';
 
 interface TripFormProps {
-    imageDates: string[];
+    imageDates?: string[];
     tripInfo: TripInfoModel;
     setTripInfo: Dispatch<SetStateAction<TripInfoModel>>;
 }
 
 const TripForm = ({ imageDates = [], tripInfo, setTripInfo }: TripFormProps) => {
-    const { tripTitle, country, hashtags } = tripInfo;
-    const defaultStartDate = imageDates[0] || null;
-    const defaultEndDate = imageDates[imageDates.length - 1] || null;
+    // const { tripTitle, country, hashtags } = tripInfo;
+    const { tripTitle, country, startDate, endDate, hashtags } = tripInfo;
+
+    const defaultStartDate = imageDates[0] || startDate || null;
+    const defaultEndDate = imageDates[imageDates.length - 1] || endDate || null;
 
     const {
         dateRange,
@@ -68,7 +70,7 @@ const TripForm = ({ imageDates = [], tripInfo, setTripInfo }: TripFormProps) => 
                     type='range'
                     placeholder={`${formatDateToKoreanYear(defaultStartDate)} ~ ${formatDateToKoreanYear(defaultEndDate)}`}
                     value={dateRange}
-                    defaultDate={imageDates[0] ? new Date(imageDates[0]) : undefined} // 이 부분 추가
+                    defaultDate={imageDates[0] ? new Date(imageDates[0]) : undefined}
                     onChange={handleDateChange}
                     onMouseLeave={handleDateMouseLeave}
                     leftSection={<IconCalendar size={16} />}

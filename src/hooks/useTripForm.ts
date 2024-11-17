@@ -27,7 +27,7 @@ export const useTripForm = () => {
     const { tripId } = useParams();
     const navigate = useNavigate();
 
-    const handleSubmit = async () => {
+    const handleTripInfoSubmit = async () => {
         if (!tripId) {
             return;
         }
@@ -54,6 +54,6 @@ export const useTripForm = () => {
         isUploading,
         tripInfo,
         setTripInfo,
-        handleSubmit,
+        handleTripInfoSubmit,
     };
 };

@@ -1,145 +1,233 @@
-import React from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
 import { css } from '@emotion/react';
-import { TextInput, Select, Button, Stack, Box, Group, Text } from '@mantine/core';
+import { Select } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { IconPlane, IconCalendar, IconWorld } from '@tabler/icons-react';
 import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
 
+import Input from '@/components/common/Input';
 import { COUNTRY_OPTIONS, HASHTAG_MENU, TRIP_FORM } from '@/constants/trip';
+import { useTripDateRange } from '@/hooks/useTripDateRange';
 import theme from '@/styles/theme';
-import { TripInfo } from '@/types/trip';
+import { TripInfoModel } from '@/types/trip';
+import { formatDateToKoreanYear } from '@/utils/date';
 
 interface TripEditFormProps {
-    tripData: TripInfo;
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-    handleHashtagToggle: (tag: string) => void;
+    tripInfo: TripInfoModel;
+    setTripInfo: Dispatch<SetStateAction<TripInfoModel>>;
 }
 
-const TripEditForm = ({ tripData, handleInputChange, handleHashtagToggle }: TripEditFormProps): JSX.Element => {
-    const { country, tripTitle } = tripData;
+const TripEditForm = ({ tripInfo, setTripInfo }: TripEditFormProps) => {
+    const { tripTitle, country, startDate, endDate, hashtags } = tripInfo;
+
+    const imageDates = [startDate, endDate];
+    const defaultStartDate = imageDates[0] || null;
+    const defaultEndDate = imageDates[imageDates.length - 1] || null;
+
+    const {
+        dateRange,
+        isError,
+        handleDateChange,
+        handleDateMouseEnter,
+        handleDateMouseLeave,
+        isInRange,
+        isStartOrEndDate,
+    } = useTripDateRange({
+        imageDates,
+        setTripInfo,
+    });
+
+    const handleHashtagToggle = (tag: string) => {
+        setTripInfo((prev: TripInfoModel) => {
+            if (prev.hashtags.includes(tag)) {
+                return { ...prev, hashtags: prev.hashtags.filter((hashtag) => hashtag !== tag) };
+            }
+
+            if (prev.hashtags.length >= 3) {
+                return prev;
+            }
+
+            return { ...prev, hashtags: [...prev.hashtags, tag] };
+        });
+    };
 
     const countryData = COUNTRY_OPTIONS.map((country) => ({
         value: `${country.value}`,
         label: `${country.emoji} ${country.nameKo}`,
     }));
 
-    // const handleDateChange = (dates: [Date | null, Date | null]) => {
-    //     const [start, end] = dates;
-    //     if (start) {
-    //         handleInputChange({
-    //             target: { name: 'startDate', value: dayjs(start).format('YYYY-MM-DD') },
-    //         } as React.ChangeEvent<HTMLInputElement>);
-    //     }
-    //     if (end) {
-    //         handleInputChange({
-    //             target: { name: 'endDate', value: dayjs(end).format('YYYY-MM-DD') },
-    //         } as React.ChangeEvent<HTMLInputElement>);
-    //     }
-    // };
-
     return (
-        <Stack gap='lg'>
-            <Box>
-                <div css={dayStyle}>
-                    <Text size='sm' fw={600}>
-                        {TRIP_FORM.DATE}
-                    </Text>
-                    <p css={dayTextStyle}>여행 기간은 수정이 불가합니다.</p>
+        <div css={tripInfoFormContainer}>
+            <div>
+                <div css={titleStyle}>
+                    <h2>{TRIP_FORM.DATE}</h2>
+                    <p css={descriptionStyle}>사진이 있는 날짜는 파란점으로 표시됩니다.</p>
                 </div>
                 <DatePickerInput
                     type='range'
-                    placeholder='여행 시작일과 종료일을 선택하세요'
-                    value={[
-                        tripData.startDate ? dayjs(tripData.startDate).toDate() : null,
-                        tripData.endDate ? dayjs(tripData.endDate).toDate() : null,
-                    ]}
+                    placeholder={`${formatDateToKoreanYear(defaultStartDate)} ~ ${formatDateToKoreanYear(defaultEndDate)}`}
+                    value={dateRange}
+                    defaultDate={imageDates[0] ? new Date(imageDates[0]) : undefined}
+                    onChange={handleDateChange}
+                    onMouseLeave={handleDateMouseLeave}
                     leftSection={<IconCalendar size={16} />}
                     locale='ko'
+                    aria-hidden='false'
                     size='md'
+                    radius='md'
                     valueFormat='YYYY년 MM월 DD일'
-                    readOnly={true}
-                    // disabled={true}
-                />
-            </Box>
+                    popoverProps={{ position: 'bottom' }}
+                    getDayProps={(date) => ({
+                        onMouseEnter: () => handleDateMouseEnter(date),
+                        style: {
+                            ...(isStartOrEndDate(date)
+                                ? { backgroundColor: theme.colors.primary, color: 'white' }
+                                : isInRange(date)
+                                  ? { backgroundColor: '#3d4e8117' }
+                                  : {}),
+                        },
+                    })}
+                    renderDay={(date) => {
+                        const isImage = imageDates.some(
+                            (imageDate) => dayjs(imageDate).format('YYYY-MM-DD') === dayjs(date).format('YYYY-MM-DD'),
+                        );
 
-            <Box>
-                <Text size='sm' fw={600} mb={8}>
-                    {TRIP_FORM.COUNTRY}
-                </Text>
+                        return (
+                            <div style={{ position: 'relative' }}>
+                                {date.getDate()}
+                                {isImage && (
+                                    <div
+                                        style={{
+                                            position: 'absolute',
+                                            bottom: '20px',
+                                            left: '50%',
+                                            transform: 'translateX(-50%)',
+                                            width: '5px',
+                                            height: '5px',
+                                            backgroundColor: isStartOrEndDate(date) ? 'white' : theme.colors.primary,
+                                            borderRadius: '50%',
+                                            zIndex: 2,
+                                        }}
+                                    />
+                                )}
+                            </div>
+                        );
+                    }}
+                />
+                {isError && (
+                    <p css={errorStyle}>선택하신 여행 기간 외에도 사진이 있습니다. 기간을 다시 확인해 주세요.</p>
+                )}
+            </div>
+
+            <div>
+                <h2 css={titleStyle}>{TRIP_FORM.COUNTRY}</h2>
                 <Select
                     placeholder={TRIP_FORM.COUNTRY_DEFAULT}
                     data={countryData}
                     value={country}
-                    onChange={(value) =>
-                        handleInputChange({
-                            target: { name: 'country', value: value || '' },
-                        } as React.ChangeEvent<HTMLSelectElement>)
-                    }
-                    searchable={false}
-                    nothingFoundMessage='옵션이 없습니다'
+                    onChange={(value) => setTripInfo({ ...tripInfo, country: value || '' })}
+                    searchable
+                    nothingFoundMessage='검색하신 국가를 찾을 수 없습니다.'
+                    checkIconPosition='right'
                     leftSection={<IconWorld size={16} />}
                     size='md'
-                    required={true}
+                    radius='md'
+                    comboboxProps={{ transitionProps: { transition: 'pop', duration: 200 }, dropdownPadding: 6 }}
                 />
-            </Box>
+            </div>
 
-            <Box>
-                <Text size='sm' fw={600} mb={8}>
-                    {TRIP_FORM.TITLE}
-                </Text>
-                <TextInput
-                    name='tripTitle'
-                    placeholder={TRIP_FORM.TITLE_PLACEHOLDER}
+            <div>
+                <h2 css={titleStyle}>{TRIP_FORM.TITLE}</h2>
+                <Input
                     value={tripTitle}
-                    onChange={handleInputChange}
+                    onChange={(value) => setTripInfo({ ...tripInfo, tripTitle: value })}
+                    placeholder='최대 12자까지 입력할 수 있습니다'
+                    maxLength={12}
                     leftSection={<IconPlane size={16} />}
-                    size='md'
-                    required={true}
                 />
-            </Box>
+            </div>
 
-            <Box>
-                <Text size='sm' fw={600} mb={12}>
-                    해시태그
-                </Text>
-                <Group gap='sm'>
+            <div>
+                <div css={titleStyle}>
+                    <h2>{TRIP_FORM.HASHTAG}</h2>
+                    <p css={descriptionStyle}>최대 3개까지 선택할 수 있습니다.</p>
+                </div>
+                <div css={hashtagGroup}>
                     {HASHTAG_MENU.map((tag) => (
-                        <Button
+                        <button
                             key={tag}
-                            variant={tripData.hashtags.includes(tag) ? 'filled' : 'light'}
-                            color={tripData.hashtags.includes(tag) ? 'blue' : 'gray'}
+                            css={[buttonBaseStyle, hashtags.includes(tag) ? selectedButtonStyle : defaultButtonStyle]}
                             onClick={() => handleHashtagToggle(tag)}
-                            size='xs'
-                            px='sm'
                         >
                             {tag}
-                        </Button>
+                        </button>
                     ))}
-                </Group>
-            </Box>
-        </Stack>
+                </div>
+            </div>
+        </div>
     );
 };
 
-const dayStyle = css`
+const tripInfoFormContainer = css`
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+`;
+
+const titleStyle = css`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    font-size: ${theme.fontSizes.normal_14};
+    font-weight: bold;
+    color: ${theme.colors.black};
+    margin-bottom: 12px;
 `;
 
-const dayTextStyle = css`
+const descriptionStyle = css`
     font-size: ${theme.fontSizes.small_12};
+    font-weight: normal;
     color: ${theme.colors.descriptionText};
+`;
+
+const hashtagGroup = css`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+`;
+
+const buttonBaseStyle = css`
+    padding: 0 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 0;
+    height: 28px;
+    font-weight: 600;
+
+    &:active {
+        transform: translateY(1px);
+    }
+`;
+
+const selectedButtonStyle = css`
+    background-color: ${theme.colors.primary};
+    color: ${theme.colors.white};
+`;
+
+const defaultButtonStyle = css`
+    background-color: #868e961a;
+    color: #868e96;
 `;
 
 const errorStyle = css`
     margin-top: 6px;
     margin-left: 4px;
     font-size: ${theme.fontSizes.small_12};
-    color: #ff0101;
+    color: ${theme.colors.error};
 `;
 
 export default TripEditForm;
