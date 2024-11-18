@@ -23,6 +23,7 @@ const TripEditForm = ({ tripInfo, setTripInfo }: TripEditFormProps) => {
     const { tripTitle, country, startDate, endDate, hashtags } = tripInfo;
 
     const imageDates = [startDate, endDate];
+    const defaultCountry = country.split('/')[1];
     const defaultStartDate = imageDates[0] || null;
     const defaultEndDate = imageDates[imageDates.length - 1] || null;
 
@@ -81,7 +82,7 @@ const TripEditForm = ({ tripInfo, setTripInfo }: TripEditFormProps) => {
             <div>
                 <h2 css={titleStyle}>{TRIP_FORM.COUNTRY}</h2>
                 <Select
-                    placeholder={TRIP_FORM.COUNTRY_DEFAULT}
+                    placeholder={defaultCountry}
                     data={countryData}
                     value={country}
                     onChange={(value) => setTripInfo({ ...tripInfo, country: value || '' })}
@@ -156,13 +157,12 @@ const hashtagGroup = css`
 `;
 
 const buttonBaseStyle = css`
-    padding: 0 12px;
+    padding: 8px 12px;
     border-radius: 4px;
     font-size: 12px;
     cursor: pointer;
     transition: all 0.2s ease;
     border: 0;
-    height: 28px;
     font-weight: 600;
 
     &:active {
@@ -178,13 +178,6 @@ const selectedButtonStyle = css`
 const defaultButtonStyle = css`
     background-color: #868e961a;
     color: #868e96;
-`;
-
-const errorStyle = css`
-    margin-top: 6px;
-    margin-left: 4px;
-    font-size: ${theme.fontSizes.small_12};
-    color: ${theme.colors.error};
 `;
 
 export default TripEditForm;

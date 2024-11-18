@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,11 +13,22 @@ import { useTripEdit } from '@/hooks/useTripEdit';
 import useUserDataStore from '@/stores/useUserDataStore';
 
 const TripInfoEditPage = () => {
-    const { tripInfo, isLoading, setTripInfo, handleTripInfoUpdate } = useTripEdit();
+    const [isFormComplete, setIsFormComplete] = useState(false);
 
     const setIsTripInfoEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
 
+    const { tripInfo, isLoading, setTripInfo, handleTripInfoUpdate } = useTripEdit();
+
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const { tripTitle, country, startDate, endDate, hashtags } = tripInfo;
+        if (hashtags.length > 0 && tripTitle && country && startDate && endDate) {
+            setIsFormComplete(true);
+            return;
+        }
+        setIsFormComplete(false);
+    }, [tripInfo]);
 
     const navigateBeforePage = () => {
         setIsTripInfoEditing(false);
@@ -33,7 +46,7 @@ const TripInfoEditPage = () => {
             </div>
             <main css={mainStyle}>
                 <TripEditForm tripInfo={tripInfo} setTripInfo={setTripInfo} />
-                <Button text={BUTTON.UPDATE_TRIP} onClick={handleTripInfoUpdate} />
+                <Button text={BUTTON.UPDATE_TRIP} onClick={handleTripInfoUpdate} disabled={!isFormComplete} />
             </main>
         </div>
     );

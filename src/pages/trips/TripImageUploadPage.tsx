@@ -58,7 +58,7 @@ const TripImageUploadPage = () => {
 
     const navigateToTripInfo = () => {
         if (imagesWithLocationAndDate.length === 0) {
-            showToast('등뢱된 사진이 없습니다. 여행 등록하고 추가해주세요');
+            showToast('등록된 사진이 없습니다. 여행 등록하고 추가해주세요');
         }
 
         if (isTripInfoEditing) {

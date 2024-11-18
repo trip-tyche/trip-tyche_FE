@@ -200,13 +200,12 @@ const hashtagGroup = css`
 `;
 
 const buttonBaseStyle = css`
-    padding: 0 12px;
+    padding: 8px 12px;
     border-radius: 4px;
     font-size: 12px;
     cursor: pointer;
     transition: all 0.2s ease;
     border: 0;
-    height: 28px;
     font-weight: 600;
 
     &:active {
