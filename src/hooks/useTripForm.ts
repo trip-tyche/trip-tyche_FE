@@ -22,7 +22,7 @@ export const useTripForm = () => {
     const [isUploading, setIsUploading] = useState(false);
 
     const { showToast } = useToastStore();
-    const { uploadStatus, waitForCompletion, resetUpload } = useUploadStore();
+    const { uploadStatus, waitForCompletion } = useUploadStore();
 
     const { tripId } = useParams();
     const navigate = useNavigate();
@@ -37,7 +37,6 @@ export const useTripForm = () => {
 
         await waitForCompletion();
 
-        resetUpload();
         localStorage.removeItem('image-date');
         setIsUploading(false);
         navigate(PATH.TRIPS.ROOT);

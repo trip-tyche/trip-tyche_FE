@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { css } from '@emotion/react';
 import { ImageUp } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -6,15 +8,25 @@ import { ClipLoader } from 'react-spinners';
 import Header from '@/components/common/Header';
 import AlertModal from '@/components/features/guide/AlertModal';
 import ModalContent from '@/components/features/guide/ModalContent';
+import UploadingSpinner from '@/components/features/guide/UploadingSpinner';
 import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useToastStore } from '@/stores/useToastStore';
+import { useUploadStore } from '@/stores/useUploadingStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
 
 const TripImageUploadPage = () => {
+    const [isUploading, setIsUploading] = useState(false);
+
+    const waitForCompletion = useUploadStore((state) => state.waitForCompletion);
+    const resetUpload = useUploadStore((state) => state.resetUpload);
+    const isTripInfoEditing = useUserDataStore((state) => state.isTripInfoEditing);
+    const setIsTripInfoEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
+    const showToast = useToastStore((state) => state.showToast);
+
     const {
         tripId,
         imageCount,
@@ -32,13 +44,13 @@ const TripImageUploadPage = () => {
         uploadImages,
     } = useImageUpload();
 
-    const isTripInfoEditing = useUserDataStore((state) => state.isTripInfoEditing);
-    const setIsTripInfoEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
-    const showToast = useToastStore((state) => state.showToast);
-
     const navigate = useNavigate();
     const location = useLocation();
     const isFirstTicket = Boolean(location.state);
+
+    useEffect(() => {
+        resetUpload();
+    }, []);
 
     const navigateToImageLocation = () => {
         setIsAddLocationModalOpen(false);
@@ -72,13 +84,12 @@ const TripImageUploadPage = () => {
             }
         }
     };
-
     const navigateBeforePage = () => {
         isTripInfoEditing && setIsTripInfoEditing(false);
         navigate(isFirstTicket ? PATH.MAIN : PATH.TRIPS.ROOT);
     };
 
-    const closeAlertModal = () => {
+    const closeAlertModal = async () => {
         if (imagesNoLocationWithDate.length) {
             setIsAlertModalModalOpen(false);
             uploadImages(imagesWithLocationAndDate);
@@ -86,9 +97,13 @@ const TripImageUploadPage = () => {
             return;
         } else if (imagesWithLocationAndDate.length) {
             setIsAlertModalModalOpen(false);
+
             uploadImages(imagesWithLocationAndDate);
 
             if (isTripInfoEditing) {
+                setIsUploading(true);
+                await waitForCompletion();
+                setIsUploading(true);
                 navigate(`${PATH.TRIPS.ROOT}`);
                 showToast(`${imagesWithLocationAndDate.length}장의 사진이 등록되었습니다.`);
                 setIsTripInfoEditing(false);
@@ -165,6 +180,7 @@ const TripImageUploadPage = () => {
                     <ModalContent noLocationImageCount={imagesNoLocationWithDate.length} />
                 </AlertModal>
             )}
+            {isUploading && <UploadingSpinner />}
         </div>
     );
 };
