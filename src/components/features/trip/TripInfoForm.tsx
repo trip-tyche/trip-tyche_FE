@@ -2,23 +2,36 @@ import { Dispatch, SetStateAction } from 'react';
 
 import { css } from '@emotion/react';
 import { Select } from '@mantine/core';
-import { DatePickerInput } from '@mantine/dates';
+import { DatePickerInput, DayProps } from '@mantine/dates';
 import { IconPlane, IconCalendar, IconWorld } from '@tabler/icons-react';
 import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
 
 import Input from '@/components/common/Input';
 import { COUNTRY_OPTIONS, HASHTAG_MENU, TRIP_FORM } from '@/constants/trip';
+import { useTripDateRange } from '@/hooks/useTripDateRange';
 import theme from '@/styles/theme';
 import { TripInfoModel } from '@/types/trip';
+import { formatDateToKoreanYear } from '@/utils/date';
 
-interface TripEditFormProps {
+interface TripInfoFormProps {
+    mode: 'create' | 'edit';
     tripInfo: TripInfoModel;
     setTripInfo: Dispatch<SetStateAction<TripInfoModel>>;
 }
 
-const TripEditForm = ({ tripInfo, setTripInfo }: TripEditFormProps) => {
+const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
     const { tripTitle, country, startDate, endDate, hashtags } = tripInfo;
+
+    const isEditing = mode === 'edit';
+    const imageDates = isEditing ? [] : (JSON.parse(localStorage.getItem('image-date') || '[]') as string[]);
+    const [defaultStartDate, defaultEndDate] = imageDates;
+
+    const datePickerProps = useTripDateRange({
+        imageDates,
+        setTripInfo,
+        isEditing,
+    });
 
     const handleHashtagToggle = (tag: string) => {
         setTripInfo((prev: TripInfoModel) => {
@@ -34,6 +47,37 @@ const TripEditForm = ({ tripInfo, setTripInfo }: TripEditFormProps) => {
         });
     };
 
+    const renderCustomDay = (date: Date) => {
+        if (isEditing) {
+            return date.getDate();
+        }
+
+        const isImage = imageDates.some(
+            (imageDate) => dayjs(imageDate).format('YYYY-MM-DD') === dayjs(date).format('YYYY-MM-DD'),
+        );
+
+        return (
+            <div style={{ position: 'relative' }}>
+                {date.getDate()}
+                {isImage && (
+                    <div
+                        style={{
+                            position: 'absolute',
+                            bottom: '20px',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            width: '5px',
+                            height: '5px',
+                            backgroundColor: datePickerProps?.isStartOrEndDate(date) ? 'white' : theme.colors.primary,
+                            borderRadius: '50%',
+                            zIndex: 2,
+                        }}
+                    />
+                )}
+            </div>
+        );
+    };
+
     const countryData = COUNTRY_OPTIONS.map((country) => ({
         value: `${country.value}`,
         label: `${country.emoji} ${country.nameKo}`,
@@ -44,18 +88,49 @@ const TripEditForm = ({ tripInfo, setTripInfo }: TripEditFormProps) => {
             <div>
                 <div css={titleStyle}>
                     <h2>{TRIP_FORM.DATE}</h2>
-                    <p css={descriptionStyle}>여행 기간은 수정이 불가합니다</p>
+                    <p css={descriptionStyle}>
+                        {isEditing ? '여행 기간은 수정이 불가합니다' : '사진이 있는 날짜는 파란점으로 표시됩니다'}
+                    </p>
                 </div>
                 <DatePickerInput
                     type='range'
-                    value={[startDate ? dayjs(startDate).toDate() : null, endDate ? dayjs(endDate).toDate() : null]}
+                    placeholder={
+                        isEditing
+                            ? undefined
+                            : `${formatDateToKoreanYear(defaultStartDate)} ~ ${formatDateToKoreanYear(defaultEndDate)}`
+                    }
+                    value={
+                        isEditing
+                            ? [startDate ? dayjs(startDate).toDate() : null, endDate ? dayjs(endDate).toDate() : null]
+                            : datePickerProps?.dateRange
+                    }
                     leftSection={<IconCalendar size={16} />}
                     locale='ko'
                     size='md'
                     radius='md'
                     valueFormat='YYYY년 MM월 DD일'
-                    disabled
+                    defaultDate={isEditing ? undefined : imageDates[0] ? new Date(imageDates[0]) : undefined}
+                    onChange={isEditing ? undefined : datePickerProps?.handleDateChange}
+                    onMouseLeave={isEditing ? undefined : datePickerProps?.handleDateMouseLeave}
+                    popoverProps={{ position: 'bottom' }}
+                    getDayProps={(date: Date) => {
+                        const defaultProps: Omit<Partial<DayProps>, 'classNames' | 'styles' | 'vars'> = {
+                            disabled: false,
+                            onMouseEnter: () => {},
+                            selected: false,
+                        };
+
+                        return isEditing
+                            ? defaultProps
+                            : (datePickerProps?.getCustomDayProps(date, datePickerProps.handleDateMouseEnter) ??
+                                  defaultProps);
+                    }}
+                    renderDay={(date) => renderCustomDay(date)}
+                    disabled={isEditing}
                 />
+                {!isEditing && datePickerProps?.isError && (
+                    <p css={errorStyle}>선택하신 여행 기간 외에도 사진이 있습니다. 기간을 다시 확인해 주세요.</p>
+                )}
             </div>
 
             <div>
@@ -157,4 +232,11 @@ const defaultButtonStyle = css`
     color: #868e96;
 `;
 
-export default TripEditForm;
+const errorStyle = css`
+    margin-top: 6px;
+    margin-left: 4px;
+    font-size: ${theme.fontSizes.small_12};
+    color: ${theme.colors.error};
+`;
+
+export default TripInfoForm;
