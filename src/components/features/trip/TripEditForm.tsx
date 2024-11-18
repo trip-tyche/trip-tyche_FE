@@ -9,10 +9,8 @@ import dayjs from 'dayjs';
 
 import Input from '@/components/common/Input';
 import { COUNTRY_OPTIONS, HASHTAG_MENU, TRIP_FORM } from '@/constants/trip';
-import { useTripDateRange } from '@/hooks/useTripDateRange';
 import theme from '@/styles/theme';
 import { TripInfoModel } from '@/types/trip';
-import { formatDateToKoreanYear } from '@/utils/date';
 
 interface TripEditFormProps {
     tripInfo: TripInfoModel;
@@ -21,24 +19,6 @@ interface TripEditFormProps {
 
 const TripEditForm = ({ tripInfo, setTripInfo }: TripEditFormProps) => {
     const { tripTitle, country, startDate, endDate, hashtags } = tripInfo;
-
-    const imageDates = [startDate, endDate];
-    const defaultCountry = country.split('/')[1];
-    const defaultStartDate = imageDates[0] || null;
-    const defaultEndDate = imageDates[imageDates.length - 1] || null;
-
-    const {
-        dateRange,
-        isError,
-        handleDateChange,
-        handleDateMouseEnter,
-        handleDateMouseLeave,
-        isInRange,
-        isStartOrEndDate,
-    } = useTripDateRange({
-        imageDates,
-        setTripInfo,
-    });
 
     const handleHashtagToggle = (tag: string) => {
         setTripInfo((prev: TripInfoModel) => {
@@ -64,17 +44,16 @@ const TripEditForm = ({ tripInfo, setTripInfo }: TripEditFormProps) => {
             <div>
                 <div css={titleStyle}>
                     <h2>{TRIP_FORM.DATE}</h2>
-                    <p css={descriptionStyle}>여행 기간은 수정이 불가합니다.</p>
+                    <p css={descriptionStyle}>여행 기간은 수정이 불가합니다</p>
                 </div>
                 <DatePickerInput
                     type='range'
-                    placeholder='여행 시작일과 종료일을 선택하세요'
                     value={[startDate ? dayjs(startDate).toDate() : null, endDate ? dayjs(endDate).toDate() : null]}
                     leftSection={<IconCalendar size={16} />}
                     locale='ko'
                     size='md'
+                    radius='md'
                     valueFormat='YYYY년 MM월 DD일'
-                    readOnly={true}
                     disabled
                 />
             </div>
@@ -82,12 +61,10 @@ const TripEditForm = ({ tripInfo, setTripInfo }: TripEditFormProps) => {
             <div>
                 <h2 css={titleStyle}>{TRIP_FORM.COUNTRY}</h2>
                 <Select
-                    placeholder={defaultCountry}
+                    placeholder={TRIP_FORM.COUNTRY_DEFAULT}
                     data={countryData}
                     value={country}
                     onChange={(value) => setTripInfo({ ...tripInfo, country: value || '' })}
-                    searchable
-                    nothingFoundMessage='검색하신 국가를 찾을 수 없습니다.'
                     checkIconPosition='right'
                     leftSection={<IconWorld size={16} />}
                     size='md'
@@ -110,7 +87,7 @@ const TripEditForm = ({ tripInfo, setTripInfo }: TripEditFormProps) => {
             <div>
                 <div css={titleStyle}>
                     <h2>{TRIP_FORM.HASHTAG}</h2>
-                    <p css={descriptionStyle}>최대 3개까지 선택할 수 있습니다.</p>
+                    <p css={descriptionStyle}>최대 3개까지 선택할 수 있습니다</p>
                 </div>
                 <div css={hashtagGroup}>
                     {HASHTAG_MENU.map((tag) => (

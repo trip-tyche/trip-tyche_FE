@@ -4,14 +4,16 @@ import { DateValue } from '@mantine/dates';
 import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
 
+import theme from '@/styles/theme';
 import { TripInfoModel } from '@/types/trip';
 
 interface UseTripDateRangeProps {
     imageDates: string[];
     setTripInfo: Dispatch<SetStateAction<TripInfoModel>>;
+    isEditing: boolean;
 }
 
-export const useTripDateRange = ({ imageDates, setTripInfo }: UseTripDateRangeProps) => {
+export const useTripDateRange = ({ imageDates, setTripInfo, isEditing }: UseTripDateRangeProps) => {
     const [dateRange, setDateRange] = useState<[DateValue, DateValue]>([null, null]);
     const [isInitialized, setIsInitialized] = useState(true); // 초기에는 true로 설정
     const [hoveredDate, setHoveredDate] = useState<Date | null>(null);
@@ -104,16 +106,30 @@ export const useTripDateRange = ({ imageDates, setTripInfo }: UseTripDateRangePr
     // (defaultStartDate && date.getTime() === defaultStartDate.getTime()) ||
     // (defaultEndDate && date.getTime() === defaultEndDate.getTime());
 
-    return {
-        dateRange,
-        hoveredDate,
-        isSelectMode,
-        isError,
-        isInitialized,
-        handleDateChange,
-        handleDateMouseEnter,
-        handleDateMouseLeave,
-        isInRange,
-        isStartOrEndDate,
-    };
+    const getCustomDayProps = (date: Date, handleDateMouseEnter: (date: Date) => void) => ({
+        onMouseEnter: () => handleDateMouseEnter(date),
+        style: {
+            ...(isStartOrEndDate(date)
+                ? { backgroundColor: theme.colors.primary, color: 'white' }
+                : isInRange(date)
+                  ? { backgroundColor: '#3d4e8117' }
+                  : {}),
+        },
+    });
+
+    return isEditing
+        ? null
+        : {
+              dateRange,
+              hoveredDate,
+              isSelectMode,
+              isError,
+              isInitialized,
+              handleDateChange,
+              handleDateMouseEnter,
+              handleDateMouseLeave,
+              isInRange,
+              isStartOrEndDate,
+              getCustomDayProps,
+          };
 };

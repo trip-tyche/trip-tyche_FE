@@ -34,6 +34,7 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
             }
 
             if (error.response) {
+                // 서버가 응답은 했지만 에러 상태코드를 반환한 경우
                 switch (error.response.status) {
                     case 400: // Bad Request
                         // 클라이언트의 잘못된 요청
@@ -62,8 +63,10 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
                         break;
                 }
             } else if (error.request) {
-                console.error('서버로부터 응답이 없습니다');
+                // 요청은 보냈지만 서버로부터 아무 응답도 받지 못한 경우 (timeout, 네트워크 끊김 등)
+                console.error('서버로부터 응답이 없습니다', error.message);
             } else {
+                // 요청 자체를 보내기 전에 발생한 에러 (잘못된 설정, URL 등)
                 console.error('요청 설정 중 에러가 발생했습니다:', error.message);
             }
 

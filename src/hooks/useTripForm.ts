@@ -9,8 +9,6 @@ import { useUploadStore } from '@/stores/useUploadingStore';
 import { TripInfoModel } from '@/types/trip';
 
 export const useTripForm = () => {
-    const imageDates = JSON.parse(localStorage.getItem('image-date') || '[]');
-
     const [tripInfo, setTripInfo] = useState<TripInfoModel>({
         tripTitle: '',
         country: '',
@@ -48,7 +46,6 @@ export const useTripForm = () => {
     };
 
     return {
-        imageDates,
         tripId,
         isUploading,
         tripInfo,
