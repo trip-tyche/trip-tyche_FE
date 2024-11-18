@@ -109,6 +109,7 @@ const ticketContainer = css`
 
 const ticketStyle = css`
     width: 100%;
+    height: 192px;
     max-width: 428px;
     position: relative;
     display: flex;
@@ -119,6 +120,7 @@ const ticketStyle = css`
 
 const leftSection = css`
     width: 75%;
+    height: 100%;
     background: ${theme.colors.modalBg};
     border-right: 1px solid ${theme.colors.borderColor};
     border-radius: 10px 0 0 10px;
@@ -128,6 +130,7 @@ const leftSection = css`
 `;
 
 const leftTopSection = css`
+    height: 48px;
     display: flex;
     justify-content: space-between;
     border-radius: 10px 0 0 0;
@@ -202,6 +205,7 @@ const hashtagStyle = css`
 
 const rightSection = css`
     width: 25%;
+    height: 100%;
     background-color: ${theme.colors.white};
     border-radius: 0 10px 10px 0;
     box-shadow:
@@ -210,6 +214,7 @@ const rightSection = css`
 `;
 
 const rightTopSection = css`
+    height: 48px;
     padding: 10px 12px;
     background-color: ${theme.colors.primary};
     border-radius: 0 10px 0 0;
