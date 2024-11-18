@@ -57,9 +57,13 @@ const TripImageUploadPage = () => {
     };
 
     const navigateToTripInfo = () => {
+        if (imagesWithLocationAndDate.length === 0) {
+            showToast('등뢱된 사진이 없습니다. 여행 등록하고 추가해주세요');
+        }
+
         if (isTripInfoEditing) {
             navigate(`${PATH.TRIPS.ROOT}`);
-            showToast(`${imagesWithLocationAndDate.length}장의 사진이 등록되었습니다.`);
+            showToast(`${imagesWithLocationAndDate.length}장의 사진이 등록되었습니다`);
             setIsTripInfoEditing(false);
         } else {
             setIsAddLocationModalOpen(false);

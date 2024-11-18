@@ -280,14 +280,18 @@ export const useImageUpload = () => {
 
         const imagesToUpload = images.map((image) => image.image);
 
-        tripAPI
-            .createTripImages(tripId, imagesToUpload)
-            .then(() => {
-                setUploadStatus('completed');
-            })
-            .catch(() => {
-                setUploadStatus('error');
-            });
+        if (imagesToUpload.length > 0) {
+            tripAPI
+                .createTripImages(tripId, imagesToUpload)
+                .then(() => {
+                    setUploadStatus('completed');
+                })
+                .catch(() => {
+                    setUploadStatus('error');
+                });
+        } else {
+            setUploadStatus('completed');
+        }
     };
 
     return {

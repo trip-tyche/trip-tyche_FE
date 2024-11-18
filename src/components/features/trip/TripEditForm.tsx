@@ -63,62 +63,19 @@ const TripEditForm = ({ tripInfo, setTripInfo }: TripEditFormProps) => {
             <div>
                 <div css={titleStyle}>
                     <h2>{TRIP_FORM.DATE}</h2>
-                    <p css={descriptionStyle}>사진이 있는 날짜는 파란점으로 표시됩니다.</p>
+                    <p css={descriptionStyle}>여행 기간은 수정이 불가합니다.</p>
                 </div>
                 <DatePickerInput
                     type='range'
-                    placeholder={`${formatDateToKoreanYear(defaultStartDate)} ~ ${formatDateToKoreanYear(defaultEndDate)}`}
-                    value={dateRange}
-                    defaultDate={imageDates[0] ? new Date(imageDates[0]) : undefined}
-                    onChange={handleDateChange}
-                    onMouseLeave={handleDateMouseLeave}
+                    placeholder='여행 시작일과 종료일을 선택하세요'
+                    value={[startDate ? dayjs(startDate).toDate() : null, endDate ? dayjs(endDate).toDate() : null]}
                     leftSection={<IconCalendar size={16} />}
                     locale='ko'
-                    aria-hidden='false'
                     size='md'
-                    radius='md'
                     valueFormat='YYYY년 MM월 DD일'
-                    popoverProps={{ position: 'bottom' }}
-                    getDayProps={(date) => ({
-                        onMouseEnter: () => handleDateMouseEnter(date),
-                        style: {
-                            ...(isStartOrEndDate(date)
-                                ? { backgroundColor: theme.colors.primary, color: 'white' }
-                                : isInRange(date)
-                                  ? { backgroundColor: '#3d4e8117' }
-                                  : {}),
-                        },
-                    })}
-                    renderDay={(date) => {
-                        const isImage = imageDates.some(
-                            (imageDate) => dayjs(imageDate).format('YYYY-MM-DD') === dayjs(date).format('YYYY-MM-DD'),
-                        );
-
-                        return (
-                            <div style={{ position: 'relative' }}>
-                                {date.getDate()}
-                                {isImage && (
-                                    <div
-                                        style={{
-                                            position: 'absolute',
-                                            bottom: '20px',
-                                            left: '50%',
-                                            transform: 'translateX(-50%)',
-                                            width: '5px',
-                                            height: '5px',
-                                            backgroundColor: isStartOrEndDate(date) ? 'white' : theme.colors.primary,
-                                            borderRadius: '50%',
-                                            zIndex: 2,
-                                        }}
-                                    />
-                                )}
-                            </div>
-                        );
-                    }}
+                    readOnly={true}
+                    disabled
                 />
-                {isError && (
-                    <p css={errorStyle}>선택하신 여행 기간 외에도 사진이 있습니다. 기간을 다시 확인해 주세요.</p>
-                )}
             </div>
 
             <div>
@@ -195,7 +152,7 @@ const descriptionStyle = css`
 const hashtagGroup = css`
     display: flex;
     flex-wrap: wrap;
-    gap: 14px;
+    gap: 10px;
 `;
 
 const buttonBaseStyle = css`

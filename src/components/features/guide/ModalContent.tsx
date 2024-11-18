@@ -24,7 +24,7 @@ const contentContainer = css`
     justify-content: center;
     align-items: center;
     gap: 20px;
-    margin-top: 12px;
+    margin-top: 8px;
 `;
 
 const titleStyle = css`
@@ -42,13 +42,11 @@ const countStyle = css`
 const descriptionStyle = css`
     font-size: 12px;
     color: ${theme.colors.descriptionText};
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 `;
 
 const imageStyle = css`
-    width: 75%;
-    border: 1px solid ${theme.colors.borderColor};
-    border-radius: 12px;
+    width: 100%;
 `;
 
 export default ModalContent;

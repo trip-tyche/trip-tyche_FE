@@ -196,7 +196,7 @@ const descriptionStyle = css`
 const hashtagGroup = css`
     display: flex;
     flex-wrap: wrap;
-    gap: 14px;
+    gap: 10px;
 `;
 
 const buttonBaseStyle = css`
