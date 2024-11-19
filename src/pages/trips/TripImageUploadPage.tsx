@@ -172,7 +172,7 @@ const TripImageUploadPage = () => {
             )}
             {isAddLocationModalOpen && (
                 <AlertModal
-                    confirmText='설정하기'
+                    confirmText='직접 위치 선택하기'
                     cancelText='건너뛰기'
                     confirmModal={navigateToImageLocation}
                     closeModal={navigateToTripInfo}

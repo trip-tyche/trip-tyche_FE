@@ -119,13 +119,15 @@ const ImageGrid = ({ displayedImages, selectedImages, toggleImageSelect }: Image
         });
     };
 
-    if (!allImagesLoaded) {
-        return (
-            <div css={loadingContainerStyle}>
-                <Spinner />
-            </div>
-        );
-    }
+    console.log(!allImagesLoaded);
+
+    // if (!allImagesLoaded) {
+    //     return (
+    //         <div css={loadingContainerStyle}>
+    //             <Spinner />
+    //         </div>
+    //     );
+    // }
 
     return (
         <div css={gridStyle}>

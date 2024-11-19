@@ -4,7 +4,8 @@ import { css } from '@emotion/react';
 import { GoogleMap, Marker, Autocomplete, useLoadScript, Libraries } from '@react-google-maps/api';
 import { ChevronLeft } from 'lucide-react';
 
-import Loading from '@/components/common/Spinner';
+import Button from '@/components/common/Button';
+import Spinner from '@/components/common/Spinner';
 import { ENV } from '@/constants/api';
 import theme from '@/styles/theme';
 
@@ -18,11 +19,18 @@ interface MapProps {
     defaultLocation: Location;
     setIsMapVisible: (isMapVisible: boolean) => void;
     isUploading: boolean;
+    handleImageUploadWithLocation: () => void;
 }
 
 const libraries: Libraries = ['places'];
 
-const Map = ({ onLocationSelect, defaultLocation, setIsMapVisible, isUploading }: MapProps) => {
+const Map = ({
+    onLocationSelect,
+    defaultLocation,
+    setIsMapVisible,
+    isUploading,
+    handleImageUploadWithLocation,
+}: MapProps) => {
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: ENV.GOOGLE_MAPS_API_KEY || '',
         libraries, // 상수 참조
@@ -99,7 +107,7 @@ const Map = ({ onLocationSelect, defaultLocation, setIsMapVisible, isUploading }
     if (!isLoaded) {
         return (
             <div css={loadingSpinnerStyle}>
-                <Loading />
+                <Spinner />
             </div>
         );
     }
@@ -121,6 +129,7 @@ const Map = ({ onLocationSelect, defaultLocation, setIsMapVisible, isUploading }
                     </div>
                 </div>
             </div>
+            <style>{autocompleteDropdownStyle}</style>
             <GoogleMap
                 mapContainerStyle={containerStyle}
                 center={center}
@@ -131,14 +140,22 @@ const Map = ({ onLocationSelect, defaultLocation, setIsMapVisible, isUploading }
             >
                 {selectedLocation && <Marker position={selectedLocation} icon={markerIcon || undefined} />}
             </GoogleMap>
-            <style>{autocompleteDropdownStyle}</style>
+            <div css={buttonWrapper}>
+                <Button
+                    text='위치 등록하기'
+                    onClick={handleImageUploadWithLocation}
+                    disabled={!selectedLocation}
+                    isLoading={isUploading}
+                    loadingText='위치를 등록하고 있습니다'
+                />
+            </div>
         </div>
     );
 };
 
 const containerStyle = {
     width: '100%',
-    height: '100vh',
+    height: 'calc(100vh + 30px)',
 };
 
 const mapContainerStyle = css`
@@ -238,6 +255,16 @@ const loadingSpinnerStyle = css`
     align-items: center;
     height: 100dvh;
     background-color: #f0f0f0;
+`;
+
+const buttonWrapper = css`
+    position: fixed;
+    width: 100vw;
+    border-radius: 20px 20px 0 0;
+    max-width: 428px;
+    bottom: 0;
+    padding: 16px;
+    z-index: 1000;
 `;
 
 export default Map;

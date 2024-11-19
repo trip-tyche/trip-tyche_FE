@@ -26,7 +26,7 @@ export const useAddLocation = () => {
     const { tripId } = useParams();
 
     useEffect(() => {
-        const { imagesNoLocationWithDate } = location.state;
+        const imagesNoLocationWithDate = location.state?.imagesNoLocationWithDate;
         setDisplayedImages(imagesNoLocationWithDate);
     }, []);
 

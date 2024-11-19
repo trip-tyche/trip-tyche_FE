@@ -69,7 +69,6 @@ export const useImageUpload = () => {
                 };
             }),
         );
-        console.log(extractedImages);
         const extractEndTime = performance.now();
         console.log(`메타데이터 추출 시간: ${(extractEndTime - extractStartTime).toFixed(2)}ms`);
 
