@@ -5,16 +5,11 @@ import '@mantine/dates/styles.css';
 import '@mantine/core/styles.css';
 
 import { router } from './router/Router';
-// import useViewportHeight from '@/hooks/useViewportHeight';
 
-const App = () => {
-    // useViewportHeight();
-
-    return (
-        <MantineProvider>
-            <RouterProvider router={router} />
-        </MantineProvider>
-    );
-};
+const App = () => (
+    <MantineProvider>
+        <RouterProvider router={router} />
+    </MantineProvider>
+);
 
 export default App;

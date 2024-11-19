@@ -11,11 +11,10 @@ interface UserDataState {
 }
 
 const useUserDataStore = create<UserDataState>((set) => ({
-    userNickName: localStorage.getItem('userNickName') || '',
+    userNickName: null,
     tripTicketCount: 0,
     isTripInfoEditing: false,
     setUserNickName: (userNickName) => {
-        localStorage.setItem('userNickName', userNickName);
         set({ userNickName });
     },
     setTripTicketCount: (tripTicketCount) => {

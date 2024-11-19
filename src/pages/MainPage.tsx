@@ -15,6 +15,7 @@ import NickNameForm from '@/components/features/user/NickNameForm';
 import { PATH } from '@/constants/path';
 import { WELCOME_TICKET_DATA } from '@/constants/trip';
 import useAuthStore from '@/stores/useAuthStore';
+import { useToastStore } from '@/stores/useToastStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
@@ -23,12 +24,13 @@ import { validateUserAuth } from '@/utils/validation';
 const MainPage = () => {
     const [latestTrip, setLatestTrip] = useState(null);
     const [tripCount, setTripCount] = useState(0);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isInitializing, setIsInitializing] = useState(true);
 
     const isLogin = useAuthStore((state) => state.isLogIn);
     const userNickName = useUserDataStore((state) => state.userNickName);
     const setLogout = useAuthStore((state) => state.setLogout);
     const setUserNickName = useUserDataStore((state) => state.setUserNickName);
+    const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();
 
@@ -38,7 +40,17 @@ const MainPage = () => {
             navigate(PATH.AUTH.LOGIN);
             return;
         }
-        getUserInfoData();
+        const initializeMainPage = async () => {
+            try {
+                await getUserInfoData();
+            } catch (error) {
+                navigate(PATH.AUTH.LOGIN);
+                showToast('오류가 발생했습니다. 다시 시도해주세요.');
+            } finally {
+                setIsInitializing(false);
+            }
+        };
+        initializeMainPage();
     }, []);
 
     const getUserInfoData = async () => {
@@ -48,10 +60,7 @@ const MainPage = () => {
             navigate(PATH.AUTH.LOGIN);
             return;
         }
-
-        setIsLoading(true);
         const { userNickName, trips } = await tripAPI.fetchTripTicketList();
-        setIsLoading(false);
 
         const validTripList = trips?.filter((trip: Trip) => trip.tripTitle !== 'N/A');
         const latestTrip = validTripList[validTripList.length - 1];
@@ -71,7 +80,7 @@ const MainPage = () => {
         navigate(`${PATH.TRIPS.NEW.IMAGES(tripId)}`, { state: 'first-ticket' });
     };
 
-    if (isLoading) {
+    if (isInitializing) {
         return <Spinner />;
     }
 
