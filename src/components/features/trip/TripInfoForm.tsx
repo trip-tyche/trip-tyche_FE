@@ -14,8 +14,10 @@ import theme from '@/styles/theme';
 import { TripInfoModel } from '@/types/trip';
 import { formatDateToKoreanYear } from '@/utils/date';
 
+type ModeType = 'create' | 'edit';
+
 interface TripInfoFormProps {
-    mode: 'create' | 'edit';
+    mode: ModeType;
     tripInfo: TripInfoModel;
     setTripInfo: Dispatch<SetStateAction<TripInfoModel>>;
 }
@@ -215,7 +217,7 @@ const buttonBaseStyle = css`
     cursor: pointer;
     transition: all 0.2s ease;
     border: 0;
-    font-weight: 600;
+    font-weight: bolds;
 
     &:active {
         transform: translateY(1px);

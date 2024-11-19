@@ -5,11 +5,11 @@ import Header from '@/components/common/Header';
 import UploadingSpinner from '@/components/features/guide/UploadingSpinner';
 import TripInfoForm from '@/components/features/trip/TripInfoForm';
 import { PAGE } from '@/constants/title';
-import { useTripForm } from '@/hooks/useTripForm';
+import { useTripInfoForm } from '@/hooks/useTripInfoForm';
 
 const TripInfoPage = () => {
     const { tripInfo, setTripInfo, isUploading, isFormComplete, handleTripInfoSubmit, navigateBeforePage } =
-        useTripForm('create');
+        useTripInfoForm('create');
 
     return (
         <div css={pageContainer}>

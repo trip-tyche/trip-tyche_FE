@@ -11,7 +11,7 @@ import { TripInfoModel } from '@/types/trip';
 
 type ModeType = 'create' | 'edit';
 
-export const useTripForm = (mode: ModeType) => {
+export const useTripInfoForm = (mode: ModeType) => {
     const initialState = {
         tripTitle: '',
         country: '',
@@ -52,9 +52,8 @@ export const useTripForm = (mode: ModeType) => {
                 setIsLoading(true);
                 const tripInfo = await tripAPI.fetchTripTicketInfo(tripId);
                 const { tripId: _, ...rest } = tripInfo;
-
-                setIsLoading(false);
                 setTripInfo(rest);
+                setIsLoading(false);
             } catch (error) {
                 showToast('오류가 발생했습니다. 다시 시도해주세요.');
             }
@@ -72,12 +71,12 @@ export const useTripForm = (mode: ModeType) => {
 
         if (mode === 'create') {
             await tripAPI.createTripInfo(tripId, tripInfo);
-            setIsUploading(true);
 
+            setIsUploading(true);
             await waitForCompletion();
+            setIsUploading(false);
 
             localStorage.removeItem('image-date');
-            setIsUploading(false);
             navigate(PATH.TRIPS.ROOT);
             showToast(
                 uploadStatus === 'error'

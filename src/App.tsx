@@ -5,10 +5,10 @@ import '@mantine/dates/styles.css';
 import '@mantine/core/styles.css';
 
 import { router } from './router/Router';
-import useViewportHeight from '@/hooks/useViewportHeight';
+// import useViewportHeight from '@/hooks/useViewportHeight';
 
 const App = () => {
-    useViewportHeight();
+    // useViewportHeight();
 
     return (
         <MantineProvider>

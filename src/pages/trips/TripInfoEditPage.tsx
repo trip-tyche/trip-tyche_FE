@@ -6,11 +6,11 @@ import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
 import TripInfoForm from '@/components/features/trip/TripInfoForm';
 import { BUTTON, PAGE } from '@/constants/title';
-import { useTripForm } from '@/hooks/useTripForm';
+import { useTripInfoForm } from '@/hooks/useTripInfoForm';
 
 const TripInfoEditPage = () => {
     const { tripInfo, setTripInfo, isLoading, isFormComplete, handleTripInfoSubmit, navigateBeforePage } =
-        useTripForm('edit');
+        useTripInfoForm('edit');
 
     if (isLoading) {
         return <Spinner />;
