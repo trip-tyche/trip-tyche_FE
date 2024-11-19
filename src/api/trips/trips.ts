@@ -7,7 +7,7 @@ export const tripAPI = {
     fetchTripTicketInfo: async (tripId: string) => {
         try {
             const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}`);
-            console.log('여행정보 데이터', data.data);
+            console.log('여행정보 데이터', data);
             return data.data;
         } catch (error) {
             console.error('여행정보 데이터패칭에 실패하였습니다.');
@@ -16,7 +16,7 @@ export const tripAPI = {
     fetchTripTicketList: async () => {
         try {
             const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}`);
-            console.log('여행티켓리스트 데이터', data.data);
+            console.log('여행티켓리스트 데이터', data);
             return data.data;
         } catch (error) {
             console.error('여행티켓리스트 데이터패칭에 실패하였습니다.');
@@ -25,7 +25,7 @@ export const tripAPI = {
     fetchTripTimeline: async (tripId: string) => {
         try {
             const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/info`, {});
-            console.log('타임라인 데이터', data.data);
+            console.log('타임라인 데이터', data);
             return data.data;
         } catch (error) {
             console.error('타임라인 데이터패칭에 실패하였습니다.', error);
@@ -57,7 +57,7 @@ export const tripAPI = {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log('여행정보가 등록되었습니다', data.data);
+            console.log('여행정보가 등록되었습니다', data);
             return data;
         } catch (error) {
             console.error('여행정보 등록에 실패하였습니다', error);
@@ -104,7 +104,7 @@ export const tripAPI = {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log(data.data);
+            console.log(data);
             return data;
         } catch (error) {
             console.error('여행티켓 삭제에 실패하였습니다.', error);

@@ -12,7 +12,7 @@ export const userAPI = {
                     'Content-Type': 'text/plain',
                 },
             });
-            console.log(data.data);
+            console.log(data);
             return data;
         } catch (error) {
             console.error('사용자 닉네임 등록에 실패하였습니다', error);
