@@ -83,8 +83,8 @@ const gridStyle = (imageSize: number) => css`
     grid-template-columns: ${imageSize === 1
         ? '100%'
         : imageSize === 3
-          ? 'repeat(3, calc(33.333% - 4px))'
-          : 'repeat(5, calc(20% - 4px))'};
+          ? 'repeat(3, calc(33.333% - 2px))'
+          : 'repeat(5, calc(20% - 2px))'};
     gap: 2px;
     padding: 2px;
 `;

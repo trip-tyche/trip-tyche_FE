@@ -31,32 +31,10 @@ const Map = ({ onLocationSelect, setIsMapVisible, isUploading, uploadImagesWithL
         lat: defaultLocation.latitude,
         lng: defaultLocation.longitude,
     });
+
     const [map, setMap] = useState<google.maps.Map | null>(null);
+
     const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-
-    const mapOptions: google.maps.MapOptions = {
-        mapTypeControl: false,
-        fullscreenControl: false,
-        zoomControl: false,
-        streetViewControl: false,
-        rotateControl: false,
-        clickableIcons: false,
-    };
-
-    const markerIcon = useMemo(() => {
-        if (isLoaded) {
-            return {
-                path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
-                fillColor: '#0073bb',
-                fillOpacity: 1,
-                strokeWeight: 1,
-                rotation: 0,
-                scale: 1.5,
-                anchor: new google.maps.Point(12, 23),
-            };
-        }
-        return null;
-    }, [isLoaded]);
 
     const handleMapClick = (event: google.maps.MapMouseEvent) => {
         if (event.latLng) {
@@ -74,6 +52,7 @@ const Map = ({ onLocationSelect, setIsMapVisible, isUploading, uploadImagesWithL
         setMap(mapInstance);
     };
 
+    // AutoComplete
     const onPlaceChanged = () => {
         if (autocompleteRef.current !== null) {
             const place = autocompleteRef.current.getPlace();
@@ -90,6 +69,29 @@ const Map = ({ onLocationSelect, setIsMapVisible, isUploading, uploadImagesWithL
         }
     };
 
+    const markerIcon = {
+        path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
+        fillColor: '#0073bb',
+        fillOpacity: 1,
+        strokeWeight: 1,
+        rotation: 0,
+        scale: 1.5,
+        anchor: new google.maps.Point(12, 23),
+    };
+
+    const containerStyle = {
+        height: 'calc(100vh + 30px)',
+    };
+
+    const mapOptions: google.maps.MapOptions = {
+        mapTypeControl: false,
+        fullscreenControl: false,
+        zoomControl: false,
+        streetViewControl: false,
+        rotateControl: true,
+        clickableIcons: false,
+    };
+
     if (loadError) {
         return <div>Map cannot be loaded right now, sorry.</div>;
     }
@@ -100,27 +102,24 @@ const Map = ({ onLocationSelect, setIsMapVisible, isUploading, uploadImagesWithL
 
     return (
         <div css={locationMapContainer}>
-            <div css={searchOuterContainerStyle}>
-                <div css={searchContainerStyle}>
-                    <div css={searchWrapperStyle}>
-                        <button css={backButtonStyle} onClick={() => setIsMapVisible(false)} disabled={isUploading}>
-                            <ChevronLeft size={24} color={`${theme.colors.descriptionText}`} />
-                        </button>
-                        <Autocomplete
-                            onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
-                            onPlaceChanged={onPlaceChanged}
-                        >
-                            <input type='text' placeholder='장소를 검색하세요' css={searchInputStyle} />
-                        </Autocomplete>
-                    </div>
-                </div>
+            <div css={inputContainer}>
+                <button css={backButtonStyle} onClick={() => setIsMapVisible(false)} disabled={isUploading}>
+                    <ChevronLeft size={24} color={`${theme.colors.descriptionText}`} />
+                </button>
+                <Autocomplete
+                    onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
+                    onPlaceChanged={onPlaceChanged}
+                    css={inputWrapper}
+                >
+                    <input type='text' placeholder='장소를 검색하세요' css={inputStyle} />
+                </Autocomplete>
+                <style>{autocompleteDropdownStyle}</style>
             </div>
-            <style>{autocompleteDropdownStyle}</style>
             <GoogleMap
-                mapContainerStyle={containerStyle}
-                center={center}
                 zoom={12}
+                center={center}
                 options={mapOptions}
+                mapContainerStyle={containerStyle}
                 onClick={handleMapClick}
                 onLoad={onLoad}
             >
@@ -139,60 +138,48 @@ const Map = ({ onLocationSelect, setIsMapVisible, isUploading, uploadImagesWithL
     );
 };
 
-const containerStyle = {
-    height: 'calc(100vh + 30px)',
-};
-
 const locationMapContainer = css`
     position: relative;
 `;
 
-const searchOuterContainerStyle = css`
+const inputContainer = css`
+    width: 90%;
+    max-width: 428px;
+    height: 54px;
     position: absolute;
     top: 20px;
-    left: 0;
-    width: 100%;
-    z-index: 10;
-`;
-
-const searchContainerStyle = css`
-    width: 90%;
-    max-width: 600px;
-    margin: 0 auto;
-`;
-
-const searchWrapperStyle = css`
+    left: 5%;
+    z-index: 1;
     display: flex;
-    height: 54px;
-    background-color: white;
+    background-color: ${theme.colors.modalBg};
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+`;
+
+const inputWrapper = css`
+    width: 100%;
+`;
+
+const inputStyle = css`
+    width: 100%;
+    height: 100%;
+    padding: 0 20px 0 12px;
+    border: 0;
 `;
 
 const backButtonStyle = css`
     width: 54px;
-    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: transparent;
     border: 0;
-    border-radius: 10px 0 0 10px;
     cursor: pointer;
 
     &:hover {
         background-color: #f0f0f0;
     }
-`;
-
-const searchInputStyle = css`
-    flex-grow: 1;
-    height: 100%;
-    padding: 0 20px;
-    border: 0;
-    border-radius: 0 10px 10px 0;
-    font-size: 16px;
-    outline: none;
 `;
 
 const autocompleteDropdownStyle = `

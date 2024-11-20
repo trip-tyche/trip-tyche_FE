@@ -54,7 +54,7 @@ const ImageSizeRadio = ({ imageSize, setImageSize }: ImageSizeRadioProps) => {
 };
 
 const sizeOptionContainer = css`
-    padding: 12px;
+    padding: 16px;
     display: flex;
     justify-content: end;
     align-items: center;

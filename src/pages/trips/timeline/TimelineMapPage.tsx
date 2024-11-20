@@ -348,7 +348,7 @@ const TimelineMapPage = () => {
             fullscreenControl: false,
             zoomControl: false,
             streetViewControl: false,
-            rotateControl: false,
+            rotateControl: true,
             clickableIcons: false,
             // minZoom: 12,
 
