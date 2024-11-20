@@ -3,38 +3,28 @@ import { useState, useRef, useMemo } from 'react';
 import { css } from '@emotion/react';
 import { GoogleMap, Marker, Autocomplete, useLoadScript, Libraries } from '@react-google-maps/api';
 import { ChevronLeft } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Spinner from '@/components/common/Spinner';
 import { ENV } from '@/constants/api';
 import theme from '@/styles/theme';
 
-interface Location {
-    latitude: number;
-    longitude: number;
-}
-
 interface MapProps {
     onLocationSelect: (lat: number, lng: number) => void;
-    defaultLocation: Location;
     setIsMapVisible: (isMapVisible: boolean) => void;
     isUploading: boolean;
-    handleImageUploadWithLocation: () => void;
+    uploadImagesWithLocation: () => void;
 }
 
 const libraries: Libraries = ['places'];
 
-const Map = ({
-    onLocationSelect,
-    defaultLocation,
-    setIsMapVisible,
-    isUploading,
-    handleImageUploadWithLocation,
-}: MapProps) => {
+const Map = ({ onLocationSelect, setIsMapVisible, isUploading, uploadImagesWithLocation }: MapProps) => {
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: ENV.GOOGLE_MAPS_API_KEY || '',
         libraries, // 상수 참조
     });
+    const { defaultLocation } = useLocation().state;
 
     const [selectedLocation, setSelectedLocation] = useState<google.maps.LatLngLiteral | null>(null);
     const [center, setCenter] = useState<google.maps.LatLngLiteral>({
@@ -143,7 +133,7 @@ const Map = ({
             <div css={buttonWrapper}>
                 <Button
                     text='위치 등록하기'
-                    onClick={handleImageUploadWithLocation}
+                    onClick={uploadImagesWithLocation}
                     disabled={!selectedLocation}
                     isLoading={isUploading}
                     loadingText='위치를 등록하고 있습니다'

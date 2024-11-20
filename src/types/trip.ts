@@ -17,22 +17,6 @@ export interface TripFormData {
     hashtags: string[];
 }
 
-export interface TripFormHandlers {
-    setTripTitle: Dispatch<SetStateAction<string>>;
-    setCountry: Dispatch<SetStateAction<string>>;
-    setStartDate: Dispatch<SetStateAction<string>>;
-    setEndDate: Dispatch<SetStateAction<string>>;
-    setHashtags: Dispatch<SetStateAction<string[]>>;
-}
-
-export interface TripFormProps extends TripFormData, TripFormHandlers {}
-
-export interface TripEditFormProps extends TripFormData, TripFormHandlers {
-    handleInputChange: () => void;
-    handleHashtagToggle: () => void;
-    handleUpdateTripInfo: () => void;
-}
-
 // 여행
 export interface Trip extends TripInfo {
     readonly tripId: string;

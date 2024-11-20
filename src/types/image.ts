@@ -10,3 +10,5 @@ export interface ImageModel {
     formattedDate: string;
     location: LocationType;
 }
+
+type ImageGroupByDateType = Record<string, ImageModel[]>;

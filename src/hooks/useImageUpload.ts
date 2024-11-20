@@ -271,10 +271,8 @@ export const useImageUpload = () => {
 
     const uploadImages = async (images: ImageModel[]) => {
         if (!tripId) {
-            console.error('Trip ID가 필요합니다.');
             return;
         }
-
         setUploadStatus('pending');
 
         const imagesToUpload = images.map((image) => image.image);

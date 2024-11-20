@@ -1,6 +1,6 @@
 import piexif from 'piexifjs';
 
-import { GpsData } from '@/types/image';
+import { GpsData, ImageModel } from '@/types/image';
 // EXIF 데이터의 타입 정의
 interface ExifData {
     '0th'?: {
@@ -125,49 +125,6 @@ export const getImageLocation = async (file: File): Promise<GpsData | null> => {
     }
 };
 
-// 아래부분이 위치 추가
-export const createGpsExif = (lat: number, lng: number) => {
-    const latRef = lat >= 0 ? 'N' : 'S';
-    const lngRef = lng >= 0 ? 'E' : 'W';
-
-    const latDeg = Math.abs(lat);
-    const lngDeg = Math.abs(lng);
-
-    const latDMS = piexif.GPSHelper.degToDmsRational(latDeg);
-    const lngDMS = piexif.GPSHelper.degToDmsRational(lngDeg);
-
-    return {
-        GPS: {
-            [piexif.GPSIFD.GPSLatitudeRef]: latRef,
-            [piexif.GPSIFD.GPSLatitude]: latDMS,
-            [piexif.GPSIFD.GPSLongitudeRef]: lngRef,
-            [piexif.GPSIFD.GPSLongitude]: lngDMS,
-        },
-    };
-};
-
-// 이미지 파일을 DataURL 형식으로 변환
-export const readFileAsDataURL = (file: File): Promise<string> =>
-    new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target?.result as string);
-        reader.onerror = (e) => reject(e);
-        reader.readAsDataURL(file);
-    });
-
-// 원본 이미지에 새로운 EXIF 데이터(직렬화된 문자열)를 삽입
-export const insertExifIntoJpeg = async (file: File, exifStr: string): Promise<Blob> => {
-    const dataUrl = await readFileAsDataURL(file);
-    const newDataUrl = piexif.insert(exifStr, dataUrl);
-    const base64 = newDataUrl.split(',')[1];
-    const binary = atob(base64);
-    const array = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-        array[i] = binary.charCodeAt(i);
-    }
-    return new Blob([array], { type: file.type });
-};
-
 // 이미지에서 날짜 추출
 export const extractDateFromImage = async (file: File): Promise<Date | null> => {
     try {
@@ -195,3 +152,66 @@ export const extractDateFromImage = async (file: File): Promise<Date | null> => 
         return null;
     }
 };
+
+// ///////////////////////////////////////
+// 메타데이터 업데이트
+export const addGpsMetadataToImages = async (imagesToUpdate: ImageModel[], gpsLocation: GpsData) =>
+    await Promise.all(
+        imagesToUpdate.map(async (image) => {
+            const currentExifData = piexif.load(await readFileAsDataURL(image.image));
+            const gpsExifData = createGpsExif(gpsLocation.latitude, gpsLocation.longitude);
+
+            const mergedExifData = { ...currentExifData, ...gpsExifData };
+            const serializedExif = piexif.dump(mergedExifData);
+
+            const imageBlobWithGps = await insertExifIntoJpeg(image.image, serializedExif);
+            return {
+                image: new File([imageBlobWithGps], image.image.name, { type: image.image.type }),
+                formattedDate: image.formattedDate,
+                location: image.location,
+            };
+        }),
+    );
+
+// 원본 이미지에 새로운 EXIF 데이터(직렬화된 문자열)를 삽입
+const insertExifIntoJpeg = async (file: File, exifStr: string): Promise<Blob> => {
+    const dataUrl = await readFileAsDataURL(file);
+    const newDataUrl = piexif.insert(exifStr, dataUrl);
+    const base64 = newDataUrl.split(',')[1];
+    const binary = atob(base64);
+    const array = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        array[i] = binary.charCodeAt(i);
+    }
+    return new Blob([array], { type: file.type });
+};
+
+// 아래부분이 위치 추가
+const createGpsExif = (lat: number, lng: number) => {
+    const latRef = lat >= 0 ? 'N' : 'S';
+    const lngRef = lng >= 0 ? 'E' : 'W';
+
+    const latDeg = Math.abs(lat);
+    const lngDeg = Math.abs(lng);
+
+    const latDMS = piexif.GPSHelper.degToDmsRational(latDeg);
+    const lngDMS = piexif.GPSHelper.degToDmsRational(lngDeg);
+
+    return {
+        GPS: {
+            [piexif.GPSIFD.GPSLatitudeRef]: latRef,
+            [piexif.GPSIFD.GPSLatitude]: latDMS,
+            [piexif.GPSIFD.GPSLongitudeRef]: lngRef,
+            [piexif.GPSIFD.GPSLongitude]: lngDMS,
+        },
+    };
+};
+
+// 이미지 파일을 DataURL 형식으로 변환
+const readFileAsDataURL = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target?.result as string);
+        reader.onerror = (e) => reject(e);
+        reader.readAsDataURL(file);
+    });

@@ -1,14 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import piexif from 'piexifjs';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
 import { PATH } from '@/constants/path';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserDataStore from '@/stores/useUserDataStore';
-import { GpsData, ImageModel, LocationType } from '@/types/image';
-import { createGpsExif, insertExifIntoJpeg, readFileAsDataURL } from '@/utils/piexif';
+import { ImageGroupByDateType, ImageModel, LocationType } from '@/types/image';
+import { addGpsMetadataToImages } from '@/utils/piexif';
 
 export const useAddLocation = () => {
     const [displayedImages, setDisplayedImages] = useState<ImageModel[]>([]);
@@ -26,123 +25,108 @@ export const useAddLocation = () => {
     const { tripId } = useParams();
 
     useEffect(() => {
-        const imagesNoLocationWithDate = location.state?.imagesNoLocationWithDate;
+        const { imagesNoLocationWithDate } = location.state;
         setDisplayedImages(imagesNoLocationWithDate);
     }, []);
 
-    const toggleImageSelect = (image: ImageModel) => {
-        setSelectedImages((prev) => {
-            const isSelected = prev.some((item) => item.image.name === image.image.name);
-
+    // 그리드: 사진 토글 함수
+    const toggleImageSelection = (image: ImageModel) => {
+        setSelectedImages((selectedImages) => {
+            const isSelected = selectedImages.some((selectedImage) => selectedImage.image.name === image.image.name);
             if (isSelected) {
-                return prev.filter((item) => item.image.name !== image.image.name);
+                return selectedImages.filter((selectedImage) => selectedImage.image.name !== image.image.name);
             } else {
-                return [...prev, image];
+                return [...selectedImages, image];
             }
         });
     };
 
-    const handleLocationSelect = (latitude: number, longitude: number) => {
+    // 지도: 위치 선택 함수
+    const handleMapLocationSelect = (latitude: number, longitude: number) => {
         setSelectedLocation({ latitude, longitude });
     };
 
-    const handleImageUploadWithLocation = async () => {
-        if (!selectedLocation) {
-            return;
-        }
-
-        if (selectedImages.length === 0) {
-            setIsMapVisible(false);
-            return;
-        }
-
-        const updatedImages = await updateImageGpsMetadata(selectedImages, selectedLocation);
-
-        try {
-            await uploadImages(updatedImages);
-        } catch (error) {
-            showToast('다시 로그인해주세요.');
-            navigate(PATH.AUTH.LOGIN);
-            localStorage.clear();
-            return;
-        }
-
-        const updatedDisplayedImages = displayedImages.filter(
-            (displayedImage) =>
-                !selectedImages.some((selectedImage) => selectedImage.image.name === displayedImage.image.name),
-        );
+    // 이미지 업데이트
+    const updateDisplayedImages = () => {
+        const updatedDisplayedImages = displayedImages.filter((displayedImage) => {
+            const isSelected = selectedImages.some(
+                (selectedImage) => selectedImage.image.name === displayedImage.image.name,
+            );
+            return !isSelected;
+        });
 
         if (updatedDisplayedImages.length === 0) {
             if (isEditing) {
                 navigate(`${PATH.TRIPS.ROOT}`);
-                showToast(`사진이 등록되었습니다.`);
                 setIsEditing(false);
             } else {
-                showToast(`${updatedImages.length}장의 사진이 등록되었습니다.`);
-                if (tripId && !isNaN(Number(tripId))) {
-                    navigate(`${PATH.TRIPS.NEW.INFO(Number(tripId))}`);
-                }
+                navigate(`${PATH.TRIPS.NEW.INFO(Number(tripId))}`);
                 return;
             }
         }
 
-        showToast(`${updatedImages.length}장의 사진이 등록되었습니다.`);
         setDisplayedImages(updatedDisplayedImages);
         setSelectedImages([]);
         setSelectedLocation(null);
         setIsMapVisible(false);
-
-        console.log('선택한 이미지:', selectedImages);
-        console.log('선택한 위치:', selectedLocation);
-        console.log('이미지에 위치가 등록되었습니다.', updatedImages);
     };
 
-    const updateImageGpsMetadata = async (images: ImageModel[], location: GpsData) =>
-        await Promise.all(
-            images.map(async (image) => {
-                const imageExifObj = piexif.load(await readFileAsDataURL(image.image));
-                const gpsExif = createGpsExif(location.latitude, location.longitude);
-
-                const newImageExif = { ...imageExifObj, ...gpsExif };
-                const exifStr = piexif.dump(newImageExif);
-
-                const newImageBlob = await insertExifIntoJpeg(image.image, exifStr);
-                return {
-                    image: new File([newImageBlob], image.image.name, { type: image.image.type }),
-                    formattedDate: image.formattedDate,
-                };
-            }),
-        );
-
-    const uploadImages = async (images: Omit<ImageModel, 'location'>[]) => {
+    // 이미지 업로드
+    const uploadImages = async (images: ImageModel[]) => {
         try {
             if (!tripId) {
                 return;
             }
+            const imagesToUpload = images.map((image) => image.image);
 
             setIsUploading(true);
-            await tripAPI.createTripImages(
-                tripId,
-                images.map((image) => image.image),
-            );
+            await tripAPI.createTripImages(tripId, imagesToUpload);
         } catch (error) {
-            console.error('이미지 업로드 중 오류 발생', error);
-            setIsUploading(false);
+            showToast('다시 로그인해주세요.');
+            navigate(PATH.AUTH.LOGIN);
+            localStorage.clear();
         } finally {
             setIsUploading(false);
         }
     };
 
+    // 지도: 메타데이터 업데이트 및 이미지 업로드
+    const uploadImagesWithLocation = async () => {
+        if (!selectedLocation) {
+            return;
+        }
+
+        const updatedImages = await addGpsMetadataToImages(selectedImages, selectedLocation);
+        await uploadImages(updatedImages);
+
+        updateDisplayedImages();
+
+        showToast(`${updatedImages.length}장의 사진이 등록되었습니다.`);
+        console.log('이미지에 위치가 등록되었습니다.', updatedImages, '선택한 위치:', selectedLocation);
+    };
+
+    const imageGroupByDate = useMemo(() => {
+        const groups: ImageGroupByDateType = displayedImages.reduce((acc, image) => {
+            const date = image.formattedDate;
+            if (!acc[date]) {
+                acc[date] = [];
+            }
+            acc[date].push(image);
+            return acc;
+        }, {} as ImageGroupByDateType);
+        return Object.entries(groups).sort(([dateA], [dateB]) => dateA.localeCompare(dateB));
+    }, []);
+
     return {
         tripId,
-        displayedImages,
+        imageGroupByDate,
         selectedImages,
         selectedLocation,
         isMapVisible,
         isUploading,
-        toggleImageSelect,
-        handleLocationSelect,
-        handleImageUploadWithLocation,
+        toggleImageSelection,
+        handleMapLocationSelect,
+        uploadImagesWithLocation,
         setIsMapVisible,
     };
 };

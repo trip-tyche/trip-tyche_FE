@@ -8,10 +8,9 @@ import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import { TripInfoModel } from '@/types/trip';
+import { FormModeType } from '@/types/user';
 
-type ModeType = 'create' | 'edit';
-
-export const useTripInfoForm = (mode: ModeType) => {
+export const useTripInfoForm = (mode: FormModeType) => {
     const initialState = {
         tripTitle: '',
         country: '',

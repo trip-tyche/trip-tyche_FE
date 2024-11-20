@@ -12,12 +12,11 @@ import { COUNTRY_OPTIONS, HASHTAG_MENU, TRIP_FORM } from '@/constants/trip';
 import { useTripDateRange } from '@/hooks/useTripDateRange';
 import theme from '@/styles/theme';
 import { TripInfoModel } from '@/types/trip';
+import { FormModeType } from '@/types/user';
 import { formatDateToKoreanYear } from '@/utils/date';
 
-type ModeType = 'create' | 'edit';
-
 interface TripInfoFormProps {
-    mode: ModeType;
+    mode: FormModeType;
     tripInfo: TripInfoModel;
     setTripInfo: Dispatch<SetStateAction<TripInfoModel>>;
 }

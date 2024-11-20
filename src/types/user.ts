@@ -6,3 +6,5 @@ export interface UserInfo {
     trips: number;
     pinPoints: PinPoint[];
 }
+
+export type FormModeType = 'create' | 'edit';
