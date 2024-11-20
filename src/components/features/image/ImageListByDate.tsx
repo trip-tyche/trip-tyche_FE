@@ -1,8 +1,11 @@
+import { Fragment, useState } from 'react';
+
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import ImageGrid from '@/components/features/image/ImageGrid';
+import ImageSizeRadio from '@/components/features/image/ImageSizeRadio';
 import { PATH } from '@/constants/path';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserDataStore from '@/stores/useUserDataStore';
@@ -11,20 +14,22 @@ import { ImageModel } from '@/types/image';
 import { formatDateToKorean } from '@/utils/date';
 
 interface ImageListByDateProps {
+    tripId: string | undefined;
     imageGroupByDate: [string, ImageModel[]][];
     selectedImages: ImageModel[];
-    toggleImageSelect: (image: ImageModel) => void;
+    onHashtagSelect: (image: ImageModel) => void;
     setIsMapVisible: (isMapVisible: boolean) => void;
-    tripId: string | undefined;
 }
 
 const ImageListByDate = ({
     imageGroupByDate,
     selectedImages,
-    toggleImageSelect,
+    onHashtagSelect,
     setIsMapVisible,
     tripId,
 }: ImageListByDateProps) => {
+    const [imageSize, setImageSize] = useState(3);
+
     const isEditing = useUserDataStore((state) => state.isTripInfoEditing);
     const setIsEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
     const showToast = useToastStore((state) => state.showToast);
@@ -48,16 +53,18 @@ const ImageListByDate = ({
 
     return (
         <>
-            <div css={listContainerStyle}>
+            <ImageSizeRadio imageSize={imageSize} setImageSize={setImageSize} />
+            <div css={imageListContainer}>
                 {imageGroupByDate.map(([date, images]) => (
-                    <div key={date} css={dateGroupStyle}>
-                        <h2 css={dateHeaderStyle}>{formatDateToKorean(date)}</h2>
+                    <Fragment key={date}>
+                        <h2 css={dateStyle}>{formatDateToKorean(date)}</h2>
                         <ImageGrid
+                            imageSize={imageSize}
                             displayedImages={images}
                             selectedImages={selectedImages}
-                            toggleImageSelect={toggleImageSelect}
+                            onHashtagSelect={onHashtagSelect}
                         />
-                    </div>
+                    </Fragment>
                 ))}
             </div>
             <div css={buttonGroup}>
@@ -67,25 +74,18 @@ const ImageListByDate = ({
         </>
     );
 };
-
-const listContainerStyle = css`
+const imageListContainer = css`
     overflow-y: auto;
-    max-height: calc(100vh - 60px);
+    height: calc(100vh - 110px);
 `;
 
-const dateGroupStyle = css`
-    margin-bottom: 20px;
-`;
-
-const dateHeaderStyle = css`
-    font-size: 18px;
-    font-weight: 600;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    padding-left: 8px;
+const dateStyle = css`
+    font-size: ${theme.fontSizes.xlarge_18};
+    font-weight: bold;
+    padding: 12px 0 12px 12px;
     background-color: #eee;
-    border: 1px solid #ccc;
+    border-bottom: 1px solid ${theme.colors.borderColor};
+    border-top: 1px solid ${theme.colors.borderColor};
 `;
 
 const buttonGroup = css`

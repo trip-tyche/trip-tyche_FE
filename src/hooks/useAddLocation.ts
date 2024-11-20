@@ -30,7 +30,7 @@ export const useAddLocation = () => {
     }, []);
 
     // 그리드: 사진 토글 함수
-    const toggleImageSelection = (image: ImageModel) => {
+    const handleHashtagSelect = (image: ImageModel) => {
         setSelectedImages((selectedImages) => {
             const isSelected = selectedImages.some((selectedImage) => selectedImage.image.name === image.image.name);
             if (isSelected) {
@@ -115,7 +115,7 @@ export const useAddLocation = () => {
             return acc;
         }, {} as ImageGroupByDateType);
         return Object.entries(groups).sort(([dateA], [dateB]) => dateA.localeCompare(dateB));
-    }, []);
+    }, [displayedImages]);
 
     return {
         tripId,
@@ -124,7 +124,7 @@ export const useAddLocation = () => {
         selectedLocation,
         isMapVisible,
         isUploading,
-        toggleImageSelection,
+        handleHashtagSelect,
         handleMapLocationSelect,
         uploadImagesWithLocation,
         setIsMapVisible,

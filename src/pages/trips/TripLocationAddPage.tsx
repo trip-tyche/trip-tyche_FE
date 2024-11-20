@@ -10,7 +10,7 @@ const TripLocationAddPage = () => {
         isMapVisible,
         setIsMapVisible,
         isUploading,
-        toggleImageSelection,
+        handleHashtagSelect,
         handleMapLocationSelect,
         uploadImagesWithLocation,
     } = useAddLocation();
@@ -19,7 +19,7 @@ const TripLocationAddPage = () => {
         <ImageListByDate
             imageGroupByDate={imageGroupByDate}
             selectedImages={selectedImages}
-            toggleImageSelect={toggleImageSelection}
+            onHashtagSelect={handleHashtagSelect}
             setIsMapVisible={setIsMapVisible}
             tripId={tripId}
         />

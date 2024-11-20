@@ -34,7 +34,7 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
         isEditing,
     });
 
-    const handleHashtagToggle = (tag: string) => {
+    const handleHashtagSelect = (tag: string) => {
         setTripInfo((prev: TripInfoModel) => {
             if (prev.hashtags.includes(tag)) {
                 return { ...prev, hashtags: prev.hashtags.filter((hashtag) => hashtag !== tag) };
@@ -170,7 +170,7 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
                         <button
                             key={tag}
                             css={[buttonBaseStyle, hashtags.includes(tag) ? selectedButtonStyle : defaultButtonStyle]}
-                            onClick={() => handleHashtagToggle(tag)}
+                            onClick={() => handleHashtagSelect(tag)}
                         >
                             {tag}
                         </button>

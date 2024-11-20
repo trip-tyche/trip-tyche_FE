@@ -4,35 +4,42 @@ import { css } from '@emotion/react';
 import { GoCheckCircleFill } from 'react-icons/go';
 
 import Spinner from '@/components/common/Spinner';
+import theme from '@/styles/theme';
 import { ImageModel } from '@/types/image';
 
 interface ImageGridProps {
+    imageSize: number;
     displayedImages: ImageModel[];
     selectedImages: ImageModel[];
-    toggleImageSelect: (image: ImageModel) => void;
+    onHashtagSelect: (image: ImageModel) => void;
 }
 
-const ImageGrid = ({ displayedImages, selectedImages, toggleImageSelect }: ImageGridProps) => {
+const ImageGrid = ({ imageSize, displayedImages, selectedImages, onHashtagSelect }: ImageGridProps) => {
     const [imageUrls, setImageUrls] = useState<string[]>([]);
-    const [loadedImages, setLoadedImages] = useState<boolean[]>([]);
     const [allImagesLoaded, setAllImagesLoaded] = useState(false);
 
+    const [loadedImages, setLoadedImages] = useState<boolean[]>([]);
+
     useEffect(() => {
-        const urls = displayedImages.map((image) => URL.createObjectURL(image.image));
-        setImageUrls(urls);
-        setLoadedImages(new Array(urls.length).fill(false));
+        setAllImagesLoaded(false);
+    }, []);
+
+    useEffect(() => {
+        const blobUrls = displayedImages.map((image) => URL.createObjectURL(image.image));
+        setImageUrls(blobUrls);
+        setLoadedImages(new Array(blobUrls.length).fill(false));
         setAllImagesLoaded(false);
 
         return () => {
-            urls.forEach((url) => URL.revokeObjectURL(url));
+            blobUrls.forEach((blobUrl) => URL.revokeObjectURL(blobUrl));
         };
-    }, [displayedImages]);
+    }, [displayedImages, setAllImagesLoaded]);
 
     useEffect(() => {
         if (loadedImages.every((loaded) => loaded)) {
             setAllImagesLoaded(true);
         }
-    }, [loadedImages]);
+    }, [loadedImages, setAllImagesLoaded]);
 
     const handleImageLoad = (index: number) => {
         setLoadedImages((prev) => {
@@ -42,24 +49,27 @@ const ImageGrid = ({ displayedImages, selectedImages, toggleImageSelect }: Image
         });
     };
 
-    // if (!allImagesLoaded) {
-    //     return (
-    //         <div css={loadingContainerStyle}>
-    //             <Spinner />
-    //         </div>
-    //     );
-    // }
+    if (!allImagesLoaded) {
+        return <Spinner containerStyle={spinnerStyle} />;
+    }
 
     return (
-        <div css={gridStyle}>
-            {imageUrls.map((url, index) => (
-                <div key={url} css={imageContainerStyle} onClick={() => toggleImageSelect(displayedImages[index])}>
-                    <img src={url} alt={`image-${index}`} css={imageStyle} onLoad={() => handleImageLoad(index)} />
+        <div css={gridStyle(imageSize)}>
+            {imageUrls.map((imageUrl, index) => (
+                <div key={imageUrl} css={imageContainerStyle} onClick={() => onHashtagSelect(displayedImages[index])}>
+                    <img
+                        src={imageUrl}
+                        alt={`이미지-${index}`}
+                        onLoad={() => handleImageLoad(index)}
+                        css={imageStyle}
+                    />
                     {selectedImages.some(
                         (selectedImage) => selectedImage.image.name === displayedImages[index].image.name,
                     ) && (
                         <div css={selectedOverlayStyle}>
-                            <GoCheckCircleFill css={checkIconStyle} />
+                            <span css={checkIconStyle}>
+                                <GoCheckCircleFill size={24} color={theme.colors.primary} />
+                            </span>
                         </div>
                     )}
                 </div>
@@ -68,24 +78,26 @@ const ImageGrid = ({ displayedImages, selectedImages, toggleImageSelect }: Image
     );
 };
 
-const gridStyle = css`
+const gridStyle = (imageSize: number) => css`
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(32%, 1fr));
-    gap: 4px;
-    padding: 4px;
+    grid-template-columns: repeat(${imageSize}, 1fr);
+    gap: 2px;
+    padding: 2px;
+    margin-bottom: 24px;
 `;
 
 const imageContainerStyle = css`
     position: relative;
-    aspect-ratio: 1;
     cursor: pointer;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1;
 `;
 
 const imageStyle = css`
     width: 100%;
-    aspect-ratio: 1;
+    height: 100%;
     object-fit: cover;
-    border-radius: 8px;
 `;
 
 const selectedOverlayStyle = css`
@@ -96,27 +108,20 @@ const selectedOverlayStyle = css`
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
+    align-items: end;
+    justify-content: end;
+    padding: 12px;
 `;
 
 const checkIconStyle = css`
-    color: white;
-    font-size: 24px;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    background-color: white;
 `;
 
-const loadingContainerStyle = css`
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f0f0;
+const spinnerStyle = css`
+    height: calc(100dvh - 154px);
 `;
 
 export default ImageGrid;

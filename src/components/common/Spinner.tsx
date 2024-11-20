@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css, SerializedStyles } from '@emotion/react';
 import { ClipLoader } from 'react-spinners';
 
 import theme from '@/styles/theme';
@@ -6,10 +6,11 @@ import theme from '@/styles/theme';
 type BackgroundType = 'light' | 'dark';
 interface SpinnerProps {
     background?: BackgroundType;
+    containerStyle?: SerializedStyles;
 }
 
-const Spinner = ({ background = 'light' }: SpinnerProps) => (
-    <div css={loadingSpinnerStyle}>
+const Spinner = ({ background = 'light', containerStyle }: SpinnerProps) => (
+    <div css={[loadingSpinnerStyle, containerStyle]}>
         <ClipLoader
             color={background === 'light' ? theme.colors.black : theme.colors.modalBg}
             size={30}
