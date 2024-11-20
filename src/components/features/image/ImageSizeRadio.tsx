@@ -26,7 +26,7 @@ const ImageSizeRadio = ({ imageSize, setImageSize }: ImageSizeRadioProps) => {
                         checked={imageSize === 1}
                         onChange={handleImageSizeChange}
                     />
-                    작게
+                    크게
                 </label>
                 <label css={labelStyle}>
                     <input
@@ -46,7 +46,7 @@ const ImageSizeRadio = ({ imageSize, setImageSize }: ImageSizeRadioProps) => {
                         checked={imageSize === 5}
                         onChange={handleImageSizeChange}
                     />
-                    크게
+                    작게
                 </label>
             </>
         </div>

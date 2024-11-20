@@ -95,15 +95,11 @@ const Map = ({ onLocationSelect, setIsMapVisible, isUploading, uploadImagesWithL
     }
 
     if (!isLoaded) {
-        return (
-            <div css={loadingSpinnerStyle}>
-                <Spinner />
-            </div>
-        );
+        return <Spinner />;
     }
 
     return (
-        <div css={mapContainerStyle}>
+        <div css={locationMapContainer}>
             <div css={searchOuterContainerStyle}>
                 <div css={searchContainerStyle}>
                     <div css={searchWrapperStyle}>
@@ -144,13 +140,11 @@ const Map = ({ onLocationSelect, setIsMapVisible, isUploading, uploadImagesWithL
 };
 
 const containerStyle = {
-    width: '100%',
     height: 'calc(100vh + 30px)',
 };
 
-const mapContainerStyle = css`
+const locationMapContainer = css`
     position: relative;
-    width: 100%;
 `;
 
 const searchOuterContainerStyle = css`
@@ -237,14 +231,6 @@ const autocompleteDropdownStyle = `
     .pac-icon {
         display:none;
     }
-`;
-
-const loadingSpinnerStyle = css`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100dvh;
-    background-color: #f0f0f0;
 `;
 
 const buttonWrapper = css`

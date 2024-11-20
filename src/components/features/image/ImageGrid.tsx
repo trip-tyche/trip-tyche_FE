@@ -80,10 +80,9 @@ const ImageGrid = ({ imageSize, displayedImages, selectedImages, onHashtagSelect
 
 const gridStyle = (imageSize: number) => css`
     display: grid;
-    grid-template-columns: repeat(${imageSize}, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(calc(100% / ${imageSize}), 1fr));
     gap: 2px;
     padding: 2px;
-    margin-bottom: 24px;
 `;
 
 const imageContainerStyle = css`
