@@ -34,7 +34,7 @@ const TripTicketListPage = () => {
         setIsLoading(true);
         const tripList: Trips = await tripAPI.fetchTripTicketList();
         const inValidTripList = tripList.trips.filter((trip) => trip.tripTitle === 'N/A');
-        const validTripList = tripList.trips?.filter((trip) => trip.tripTitle !== 'N/A');
+        const validTripList = tripList.trips?.filter((trip) => trip.tripTitle !== 'N/A').reverse();
 
         if (inValidTripList.length > 3) {
             await deleteInValidTrips(tripList.trips);

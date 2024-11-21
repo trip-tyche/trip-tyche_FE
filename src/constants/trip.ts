@@ -463,12 +463,6 @@ export const COUNTRY_OPTIONS: CountryOption[] = [
         value: '🇹🇷/터키/TURKEY',
     },
     {
-        emoji: '🇹🇹',
-        nameKo: '트리니다드 토바고',
-        nameEn: 'TRINIDAD AND TOBAGO',
-        value: '🇹🇹/트리니다드 토바고/TRINIDAD AND TOBAGO',
-    },
-    {
         emoji: '🇵🇦',
         nameKo: '파나마',
         nameEn: 'PANAMA',

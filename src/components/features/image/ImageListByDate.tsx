@@ -76,7 +76,8 @@ const ImageListByDate = ({
 };
 const imageListContainer = css`
     overflow-y: auto;
-    height: calc(100vh - 110px);
+    height: calc(100vh - 46px);
+    padding-bottom: 76px;
 `;
 
 const dateStyle = css`
