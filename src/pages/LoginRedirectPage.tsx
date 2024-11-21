@@ -80,6 +80,8 @@ const LoginRedirectPage = () => {
 
         if (userId && token) {
             try {
+                const currentTime = new Date().getTime();
+                localStorage.setItem('lastLoginTime', String(currentTime));
                 setLogin(JSON.parse(userId), token);
                 navigate(PATH.MAIN, { replace: true });
             } catch (e) {
@@ -95,18 +97,7 @@ const LoginRedirectPage = () => {
         }
     }, [location, setLogin, navigate, showToast]);
 
-    return (
-        <div css={loadingSpinnerStyle}>
-            <Loading />
-        </div>
-    );
+    return <Loading />;
 };
-
-const loadingSpinnerStyle = css`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100dvh;
-`;
 
 export default LoginRedirectPage;

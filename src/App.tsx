@@ -1,9 +1,8 @@
-// import { StrictMode } from 'react';
 import { ThemeProvider } from '@emotion/react';
 import { MantineProvider } from '@mantine/core';
 import { RouterProvider } from 'react-router-dom';
 
-import { router } from './router/Router';
+import router from '@/router/Router';
 import GlobalStyle from '@/styles/GlobalStyle';
 import { GoogleMapsStyles } from '@/styles/googleMaps';
 import theme from '@/styles/theme';

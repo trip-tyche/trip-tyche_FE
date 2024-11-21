@@ -1,7 +1,6 @@
-// import { createBrowserRouter, Outlet } from 'react-router-dom';
 import { useEffect } from 'react';
 
-import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { createBrowserRouter, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { PATH } from '@/constants/path';
 import RootLayout from '@/layouts/RootLayout';
@@ -19,34 +18,40 @@ import TripInfoEditPage from '@/pages/trips/TripInfoEditPage';
 import TripInfoPage from '@/pages/trips/TripInfoPage';
 import TripLocationAddPage from '@/pages/trips/TripLocationAddPage';
 import TripTicketListPage from '@/pages/trips/TripTicketListPage';
-import { getToken, getUserId } from '@/utils/auth';
+import { useToastStore } from '@/stores/useToastStore';
+import { validateUserAuth } from '@/utils/validation';
 
-const LOGIN_TIMEOUT = 60 * 60 * 1000; // 1시간
-const LOGIN_CHECK = 5 * 60 * 1000; // 5분
+const LOGIN_TIMEOUT = 10 * 60 * 1000; // 10분
+const LOGIN_CHECK = 1 * 60 * 1000; // 1분
 
-const LoginCheck = ({ children }: { children: React.ReactNode }) => {
+const LoginCheck = ({ children }: { children: JSX.Element }) => {
     const navigate = useNavigate();
     const { pathname, search } = useLocation();
+    const showToast = useToastStore((state) => state.showToast);
 
     useEffect(() => {
         const checkLoginStatus = () => {
-            const userId = getUserId();
-            const token = getToken();
-            const lastLoginTime = localStorage.getItem('lastLoginTime');
+            const isValid = validateUserAuth();
+            const lastLoginTime = localStorage.getItem('lastLoginTime') || '';
 
-            if (!userId || !token) {
-                return <Navigate to={`${PATH.AUTH.LOGIN}`} replace state={pathname + search} />;
-            }
-
-            const currentTime = new Date().getTime();
-
-            if (!lastLoginTime) {
+            if (!isValid || !lastLoginTime) {
+                navigate(PATH.AUTH.LOGIN, {
+                    replace: true,
+                    state: pathname + search,
+                });
                 return;
             }
 
-            if (currentTime - parseInt(lastLoginTime) > LOGIN_TIMEOUT) {
+            const currentTime = new Date().getTime();
+            const isTimeout = currentTime - parseInt(lastLoginTime) > LOGIN_TIMEOUT;
+
+            if (isTimeout) {
                 localStorage.clear();
-                <Navigate to={`${PATH.AUTH.LOGIN}`} replace state={pathname + search} />;
+                navigate(PATH.AUTH.LOGIN, {
+                    replace: true,
+                    state: pathname + search,
+                });
+                showToast('자동 로그아웃되었습니다. 다시 로그인해 주세요.');
             }
         };
 
@@ -55,7 +60,7 @@ const LoginCheck = ({ children }: { children: React.ReactNode }) => {
         const intervalId = setInterval(checkLoginStatus, LOGIN_CHECK);
 
         return () => clearInterval(intervalId);
-    }, [navigate, pathname, search]);
+    }, [navigate, pathname, search, showToast]);
 
     return <>{children}</>;
 };
@@ -66,7 +71,7 @@ const ProtectedRoute = () => (
     </LoginCheck>
 );
 
-export const router = createBrowserRouter([
+const router = createBrowserRouter([
     {
         path: PATH.MAIN,
         element: <RootLayout />,
@@ -110,3 +115,5 @@ export const router = createBrowserRouter([
         ],
     },
 ]);
+
+export default router;

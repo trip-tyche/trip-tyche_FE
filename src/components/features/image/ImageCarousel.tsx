@@ -291,7 +291,7 @@ const imageStyle = (isZoomed: boolean) => css`
     width: 100%;
     height: ${isZoomed && '100%'};
     aspect-ratio: 1;
-    border-radius: 10px;
+    border-radius: 8px;
     object-fit: ${isZoomed ? 'contain' : 'cover'};
 `;
 
