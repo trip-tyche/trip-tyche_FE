@@ -245,7 +245,7 @@ interface SlideItemProps {
 const SlideItem: React.FC<SlideItemProps> = React.memo(({ image, isCurrent, isZoomed }) => (
     <div css={[slideItemStyle, isCurrent && centerSlideStyle, isZoomed && zoomedStyle]}>
         <div css={imageWrapper}>
-            <img src={image.mediaLink} alt={`Slide ${image.mediaFileId}`} css={imageStyle} />
+            <img src={image.mediaLink} alt={`Slide ${image.mediaFileId}`} css={imageStyle(isZoomed)} />
         </div>
     </div>
 ));
@@ -268,26 +268,31 @@ const slideItemStyle = css`
 `;
 
 const centerSlideStyle = css`
-    transform: scale(1);
+    transform: scale(1.1);
     opacity: 1;
 `;
 
 const zoomedStyle = css`
-    transform: scale(1.2);
+    transform: scale(1);
     opacity: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 `;
 
 const imageWrapper = css`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100dvh;
 `;
 
-const imageStyle = css`
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+const imageStyle = (isZoomed: boolean) => css`
+    width: 100%;
+    height: ${isZoomed && '100%'};
+    aspect-ratio: 1;
+    border-radius: 10px;
+    object-fit: ${isZoomed ? 'contain' : 'cover'};
 `;
 
 export default ImageCarousel;

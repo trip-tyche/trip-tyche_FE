@@ -1,12 +1,4 @@
 // 여행정보
-export interface TripInfo {
-    tripId?: string;
-    tripTitle: string;
-    country: string;
-    startDate: string;
-    endDate: string;
-    hashtags: string[];
-}
 
 export interface TripFormData {
     imageDates?: string[];
@@ -60,4 +52,19 @@ export interface TripInfoModel {
     startDate: string;
     endDate: string;
     hashtags: string[];
+}
+
+export interface TripInfo {
+    tripTitle: string;
+    country: string;
+    startDate: string;
+    endDate: string;
+    hashtags: string[];
+}
+
+export interface CountryOptionModel {
+    emoji: string;
+    nameKo: string;
+    nameEn: string;
+    value: string;
 }
