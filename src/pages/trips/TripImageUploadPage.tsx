@@ -55,18 +55,12 @@ const TripImageUploadPage = () => {
 
     const navigateToImageLocation = () => {
         setIsAddLocationModalOpen(false);
+        const defaultLocation =
+            imagesWithLocationAndDate.length !== 0 ? imagesWithLocationAndDate[0].location : GOOGLE_MAPS_DEFAULT_CENTER;
 
-        if (imagesWithLocationAndDate.length !== 0) {
-            const defaultLocation = imagesWithLocationAndDate[0].location;
-            navigate(`${PATH.TRIPS.NEW.LOCATIONS(Number(tripId))}`, {
-                state: { defaultLocation, imagesNoLocationWithDate },
-            });
-        } else {
-            const defaultLocation = GOOGLE_MAPS_DEFAULT_CENTER;
-            navigate(`${PATH.TRIPS.NEW.LOCATIONS(Number(tripId))}`, {
-                state: { defaultLocation, imagesNoLocationWithDate },
-            });
-        }
+        navigate(`${PATH.TRIPS.NEW.LOCATIONS(Number(tripId))}`, {
+            state: { defaultLocation, imagesNoLocationWithDate },
+        });
     };
 
     const navigateToTripInfo = () => {
@@ -85,6 +79,7 @@ const TripImageUploadPage = () => {
             }
         }
     };
+
     const navigateBeforePage = () => {
         isTripInfoEditing && setIsTripInfoEditing(false);
         navigate(isFirstTicket ? PATH.MAIN : PATH.TRIPS.ROOT);
