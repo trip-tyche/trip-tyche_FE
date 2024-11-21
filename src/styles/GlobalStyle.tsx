@@ -102,6 +102,7 @@ const baseStyles = css`
         color: ${theme.colors.black};
         background-color: #eee;
         letter-spacing: -0.14px;
+        overflow: hidden;
     }
 
     input,

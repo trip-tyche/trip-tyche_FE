@@ -9,7 +9,7 @@ import useUserDataStore from '@/stores/useUserDataStore';
 import { ImageGroupByDateType, ImageModel, LocationType } from '@/types/image';
 import { addGpsMetadataToImages } from '@/utils/piexif';
 
-export const useAddLocation = () => {
+export const useLocationAdd = () => {
     const [displayedImages, setDisplayedImages] = useState<ImageModel[]>([]);
     const [selectedImages, setSelectedImages] = useState<ImageModel[]>([]);
     const [selectedLocation, setSelectedLocation] = useState<LocationType>(null);

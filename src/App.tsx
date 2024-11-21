@@ -1,15 +1,24 @@
+// import { StrictMode } from 'react';
+import { ThemeProvider } from '@emotion/react';
 import { MantineProvider } from '@mantine/core';
 import { RouterProvider } from 'react-router-dom';
+
+import { router } from './router/Router';
+import GlobalStyle from '@/styles/GlobalStyle';
+import { GoogleMapsStyles } from '@/styles/googleMaps';
+import theme from '@/styles/theme';
 
 import '@mantine/dates/styles.css';
 import '@mantine/core/styles.css';
 
-import { router } from './router/Router';
-
 const App = () => (
-    <MantineProvider>
-        <RouterProvider router={router} />
-    </MantineProvider>
+    <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        <GoogleMapsStyles />
+        <MantineProvider>
+            <RouterProvider router={router} />
+        </MantineProvider>
+    </ThemeProvider>
 );
 
 export default App;

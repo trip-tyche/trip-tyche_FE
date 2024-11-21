@@ -1,6 +1,6 @@
 import ImageListByDate from '@/components/features/image/ImageListByDate';
-import Map from '@/components/features/trip/Map';
-import { useAddLocation } from '@/hooks/useAddLocation';
+import LocationAddMap from '@/components/features/trip/LocationSelectorMap';
+import { useLocationAdd } from '@/hooks/useLocationAdd';
 
 const TripLocationAddPage = () => {
     const {
@@ -13,7 +13,7 @@ const TripLocationAddPage = () => {
         handleHashtagSelect,
         handleMapLocationSelect,
         uploadImagesWithLocation,
-    } = useAddLocation();
+    } = useLocationAdd();
 
     return !isMapVisible ? (
         <ImageListByDate
@@ -24,7 +24,7 @@ const TripLocationAddPage = () => {
             tripId={tripId}
         />
     ) : (
-        <Map
+        <LocationAddMap
             onLocationSelect={handleMapLocationSelect}
             setIsMapVisible={setIsMapVisible}
             isUploading={isUploading}

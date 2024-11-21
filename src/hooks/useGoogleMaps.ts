@@ -8,7 +8,7 @@ export const useGoogleMaps = () => {
     const { isLoaded, loadError } = useLoadScript(GOOGLE_MAPS_CONFIG);
 
     const markerIcon = useMemo(() => {
-        if (!isLoaded || !window.google) {
+        if (!isLoaded) {
             return;
         }
         return {

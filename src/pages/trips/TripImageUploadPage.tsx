@@ -9,6 +9,7 @@ import Header from '@/components/common/Header';
 import AlertModal from '@/components/features/guide/AlertModal';
 import ModalContent from '@/components/features/guide/ModalContent';
 import UploadingSpinner from '@/components/features/guide/UploadingSpinner';
+import { GOOGLE_MAPS_DEFAULT_CENTER } from '@/constants/googleMaps';
 import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
@@ -61,7 +62,7 @@ const TripImageUploadPage = () => {
                 state: { defaultLocation, imagesNoLocationWithDate },
             });
         } else {
-            const defaultLocation = { latitude: 37.5665, longitude: 126.978 };
+            const defaultLocation = GOOGLE_MAPS_DEFAULT_CENTER;
             navigate(`${PATH.TRIPS.NEW.LOCATIONS(Number(tripId))}`, {
                 state: { defaultLocation, imagesNoLocationWithDate },
             });

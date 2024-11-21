@@ -216,7 +216,6 @@ const buttonBaseStyle = css`
     cursor: pointer;
     transition: all 0.2s ease;
     border: 0;
-    font-weight: bolds;
 
     &:active {
         transform: translateY(1px);
@@ -224,6 +223,7 @@ const buttonBaseStyle = css`
 `;
 
 const selectedButtonStyle = css`
+    font-weight: bold;
     background-color: ${theme.colors.primary};
     color: ${theme.colors.white};
 `;

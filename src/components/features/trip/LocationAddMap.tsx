@@ -1,33 +1,41 @@
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef } from 'react';
 
 import { css } from '@emotion/react';
-import { GoogleMap, Marker, Autocomplete, useLoadScript, Libraries } from '@react-google-maps/api';
+import { GoogleMap, Marker, Autocomplete } from '@react-google-maps/api';
 import { ChevronLeft } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Spinner from '@/components/common/Spinner';
-import { GOOGLE_MAPS_CONFIG, GOOGLE_MAPS_OPTIONS, MARKER_ICON_CONFIG } from '@/constants/googleMaps';
+import { GOOGLE_MAPS_DEFAULT_ZOOM, GOOGLE_MAPS_OPTIONS } from '@/constants/googleMaps';
+import { useGoogleMaps } from '@/hooks/useGoogleMaps';
+import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
-import { LatLngLiteralType, MapMouseEventType, MapsType, PlacesAutocompleteType } from '@/types/googleMaps';
+import { LatLngLiteralType, MapMouseEventType, PlacesAutocompleteType } from '@/types/googleMaps';
 
-interface MapProps {
+interface LocationAddMapProps {
     onLocationSelect: (lat: number, lng: number) => void;
     setIsMapVisible: (isMapVisible: boolean) => void;
     isUploading: boolean;
     uploadImagesWithLocation: () => void;
 }
 
-const Map = ({ onLocationSelect, setIsMapVisible, isUploading, uploadImagesWithLocation }: MapProps) => {
-    const { isLoaded, loadError } = useLoadScript(GOOGLE_MAPS_CONFIG);
-
+const LocationAddMap = ({
+    onLocationSelect,
+    setIsMapVisible,
+    isUploading,
+    uploadImagesWithLocation,
+}: LocationAddMapProps) => {
     const {
         defaultLocation: { latitude: lat, longitude: lng },
     } = useLocation().state;
 
     const [center, setCenter] = useState<LatLngLiteralType>({ lat, lng });
     const [selectedLocation, setSelectedLocation] = useState<LatLngLiteralType | null>(null);
-    const [map, setMap] = useState<MapsType>(null);
+
+    const showToast = useToastStore((state) => state.showToast);
+
+    const { isLoaded, loadError, markerIcon } = useGoogleMaps();
 
     const autocompleteRef = useRef<PlacesAutocompleteType>(null);
 
@@ -43,12 +51,7 @@ const Map = ({ onLocationSelect, setIsMapVisible, isUploading, uploadImagesWithL
         }
     };
 
-    const onLoad = (mapInstance: MapsType) => {
-        setMap(mapInstance);
-    };
-
-    // AutoComplete
-    const onPlaceChanged = () => {
+    const handlePlaceChanged = () => {
         if (autocompleteRef.current !== null) {
             const place = autocompleteRef.current.getPlace();
             if (place.geometry && place.geometry.location) {
@@ -59,23 +62,13 @@ const Map = ({ onLocationSelect, setIsMapVisible, isUploading, uploadImagesWithL
                 setCenter(newLocation);
                 setSelectedLocation(newLocation);
                 onLocationSelect(newLocation.lat, newLocation.lng);
-                map?.panTo(newLocation);
             }
         }
     };
 
-    const markerIcon = useMemo(() => {
-        if (!isLoaded || !window.google) {
-            return;
-        }
-        return {
-            ...MARKER_ICON_CONFIG,
-            anchor: new window.google.maps.Point(12, 23),
-        };
-    }, [isLoaded]);
-
     if (loadError) {
-        return <div>지도 불러오는 중 에러!!</div>;
+        setIsMapVisible(false);
+        showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
     }
 
     if (!isLoaded) {
@@ -90,20 +83,18 @@ const Map = ({ onLocationSelect, setIsMapVisible, isUploading, uploadImagesWithL
                 </button>
                 <Autocomplete
                     onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
-                    onPlaceChanged={onPlaceChanged}
+                    onPlaceChanged={handlePlaceChanged}
                     css={inputWrapper}
                 >
-                    <input type='text' placeholder='장소를 검색하세요' css={inputStyle} />
+                    <input type='text' placeholder='장소를 검색해주세요' css={inputStyle} />
                 </Autocomplete>
-                <style>{autocompleteDropdownStyle}</style>
             </div>
             <GoogleMap
-                zoom={12}
+                zoom={GOOGLE_MAPS_DEFAULT_ZOOM}
                 center={center}
                 options={GOOGLE_MAPS_OPTIONS}
                 mapContainerStyle={{ height: 'calc(100vh + 30px)' }}
                 onClick={handleMapClick}
-                onLoad={onLoad}
             >
                 {selectedLocation && <Marker position={selectedLocation} icon={markerIcon || undefined} />}
             </GoogleMap>
@@ -125,12 +116,12 @@ const locationMapContainer = css`
 `;
 
 const inputContainer = css`
-    width: 90%;
+    width: calc(100% - 32px);
     max-width: 428px;
     height: 54px;
     position: absolute;
-    top: 20px;
-    left: 5%;
+    top: 16px;
+    left: 16px;
     z-index: 1;
     display: flex;
     background-color: ${theme.colors.modalBg};
@@ -164,52 +155,13 @@ const backButtonStyle = css`
     }
 `;
 
-const autocompleteDropdownStyle = `
-    .pac-container {
-        border-radius: 10px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        border: none;
-        font-family: Arial, sans-serif;
-        margin-top: -20px;
-        width: 90% !important;
-        max-width: calc(428px * 0.9);
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        margin-top: 4px;
-    }
-
-    .pac-item {
-        padding: 10px 15px;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-
-    .pac-item:hover {
-        background-color: #f0f0f0;
-    }
-
-    .pac-item-query {
-        font-size: 16px;
-        color: #333;
-    }
-
-    .pac-matched {
-        font-weight: bold;
-    }
-
-    .pac-icon {
-        display:none;
-    }
-`;
-
 const buttonWrapper = css`
-    position: fixed;
     width: 100vw;
-    border-radius: 20px 20px 0 0;
     max-width: 428px;
+    position: fixed;
     bottom: 0;
     padding: 16px;
-    z-index: 1000;
+    z-index: 1;
 `;
 
-export default Map;
+export default LocationAddMap;
