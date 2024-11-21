@@ -1,5 +1,5 @@
 import ImageListByDate from '@/components/features/image/ImageListByDate';
-import LocationAddMap from '@/components/features/trip/LocationSelectorMap';
+import LocationAddMap from '@/components/features/trip/LocationAddMap';
 import { useLocationAdd } from '@/hooks/useLocationAdd';
 
 const TripLocationAddPage = () => {

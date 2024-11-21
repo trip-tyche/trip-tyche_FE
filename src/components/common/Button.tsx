@@ -41,11 +41,11 @@ const buttonStyles = {
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: ${theme.fontSizes.normal_14};
+        font-weight: bold;
         border: 0;
         border-radius: 16px;
         width: 100%;
-        height: 48px;
+        height: 54px;
         cursor: pointer;
         transition: all 0.2s ease-in-out;
         &:active {
