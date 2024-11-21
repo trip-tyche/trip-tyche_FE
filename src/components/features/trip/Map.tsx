@@ -7,8 +7,9 @@ import { useLocation } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Spinner from '@/components/common/Spinner';
-import { ENV } from '@/constants/api';
+import { GOOGLE_MAPS_CONFIG, GOOGLE_MAPS_OPTIONS, MARKER_ICON_CONFIG } from '@/constants/googleMaps';
 import theme from '@/styles/theme';
+import { LatLngLiteralType, MapMouseEventType, MapsType, PlacesAutocompleteType } from '@/types/googleMaps';
 
 interface MapProps {
     onLocationSelect: (lat: number, lng: number) => void;
@@ -17,26 +18,20 @@ interface MapProps {
     uploadImagesWithLocation: () => void;
 }
 
-const libraries: Libraries = ['places'];
-
 const Map = ({ onLocationSelect, setIsMapVisible, isUploading, uploadImagesWithLocation }: MapProps) => {
-    const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey: ENV.GOOGLE_MAPS_API_KEY || '',
-        libraries, // 상수 참조
-    });
-    const { defaultLocation } = useLocation().state;
+    const { isLoaded, loadError } = useLoadScript(GOOGLE_MAPS_CONFIG);
 
-    const [selectedLocation, setSelectedLocation] = useState<google.maps.LatLngLiteral | null>(null);
-    const [center, setCenter] = useState<google.maps.LatLngLiteral>({
-        lat: defaultLocation.latitude,
-        lng: defaultLocation.longitude,
-    });
+    const {
+        defaultLocation: { latitude: lat, longitude: lng },
+    } = useLocation().state;
 
-    const [map, setMap] = useState<google.maps.Map | null>(null);
+    const [center, setCenter] = useState<LatLngLiteralType>({ lat, lng });
+    const [selectedLocation, setSelectedLocation] = useState<LatLngLiteralType | null>(null);
+    const [map, setMap] = useState<MapsType>(null);
 
-    const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+    const autocompleteRef = useRef<PlacesAutocompleteType>(null);
 
-    const handleMapClick = (event: google.maps.MapMouseEvent) => {
+    const handleMapClick = (event: MapMouseEventType) => {
         if (event.latLng) {
             const newLocation = {
                 lat: event.latLng.lat(),
@@ -48,7 +43,7 @@ const Map = ({ onLocationSelect, setIsMapVisible, isUploading, uploadImagesWithL
         }
     };
 
-    const onLoad = (mapInstance: google.maps.Map) => {
+    const onLoad = (mapInstance: MapsType) => {
         setMap(mapInstance);
     };
 
@@ -69,31 +64,18 @@ const Map = ({ onLocationSelect, setIsMapVisible, isUploading, uploadImagesWithL
         }
     };
 
-    const markerIcon = {
-        path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
-        fillColor: '#0073bb',
-        fillOpacity: 1,
-        strokeWeight: 1,
-        rotation: 0,
-        scale: 1.5,
-        anchor: new google.maps.Point(12, 23),
-    };
-
-    const containerStyle = {
-        height: 'calc(100vh + 30px)',
-    };
-
-    const mapOptions: google.maps.MapOptions = {
-        mapTypeControl: false,
-        fullscreenControl: false,
-        zoomControl: false,
-        streetViewControl: false,
-        rotateControl: true,
-        clickableIcons: false,
-    };
+    const markerIcon = useMemo(() => {
+        if (!isLoaded || !window.google) {
+            return;
+        }
+        return {
+            ...MARKER_ICON_CONFIG,
+            anchor: new window.google.maps.Point(12, 23),
+        };
+    }, [isLoaded]);
 
     if (loadError) {
-        return <div>Map cannot be loaded right now, sorry.</div>;
+        return <div>지도 불러오는 중 에러!!</div>;
     }
 
     if (!isLoaded) {
@@ -118,8 +100,8 @@ const Map = ({ onLocationSelect, setIsMapVisible, isUploading, uploadImagesWithL
             <GoogleMap
                 zoom={12}
                 center={center}
-                options={mapOptions}
-                mapContainerStyle={containerStyle}
+                options={GOOGLE_MAPS_OPTIONS}
+                mapContainerStyle={{ height: 'calc(100vh + 30px)' }}
                 onClick={handleMapClick}
                 onLoad={onLoad}
             >
