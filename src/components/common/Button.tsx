@@ -1,4 +1,4 @@
-import React, { ComponentProps } from 'react';
+import React, { ComponentPropsWithoutRef } from 'react';
 
 import { css, SerializedStyles } from '@emotion/react';
 
@@ -6,7 +6,7 @@ import theme from '@/styles/theme';
 
 type VariantType = 'primary' | 'white';
 
-interface ButtonProps extends ComponentProps<'button'> {
+interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
     variant?: VariantType;
     text?: string;
     icon?: React.ReactNode;
