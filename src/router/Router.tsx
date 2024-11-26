@@ -52,6 +52,7 @@ const LoginCheck = ({ children }: { children: JSX.Element }) => {
                     state: pathname + search,
                 });
                 showToast('자동 로그아웃되었습니다. 다시 로그인해 주세요.');
+                console.log('자동 로그아웃되었습니다. 다시 로그인해 주세요.');
             }
         };
 
