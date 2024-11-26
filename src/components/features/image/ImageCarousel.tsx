@@ -73,21 +73,16 @@ const ImageCarousel = ({ images, carouselState, setCarouselState }: ImageCarouse
 
     const handleTouchStart = useCallback(() => {
         touchStartTimeRef.current = Date.now();
-        if (carouselState === 'auto') {
-            setCarouselState('paused');
-        }
-    }, [carouselState, setCarouselState]);
+    }, []);
 
     const handleTouchEnd = useCallback(
         (event: React.TouchEvent) => {
             if (touchStartTimeRef.current && Date.now() - touchStartTimeRef.current < 200) {
                 handleSlideClick(event);
-            } else {
-                setCarouselState('auto');
             }
             touchStartTimeRef.current = null;
         },
-        [handleSlideClick, setCarouselState],
+        [handleSlideClick],
     );
 
     const carouselOptions = useMemo(
