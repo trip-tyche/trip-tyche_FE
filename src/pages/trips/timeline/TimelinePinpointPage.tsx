@@ -8,68 +8,58 @@ import { tripImageAPI } from '@/api';
 import ImageCarousel from '@/components/features/image/ImageCarousel';
 import { PATH } from '@/constants/path';
 import useTimelineStore from '@/stores/useTimelineStore';
-
-type CarouselState = 'auto' | 'paused' | 'zoomed';
-
-interface ImageType {
-    mediaFileId: string;
-    mediaLink: string;
-}
+import theme from '@/styles/theme';
+import { ImageCarouselModel, CarouselState } from '@/types/image';
 
 const TimelinePinpointPage = () => {
-    const [displayedImages, setDisplayedImages] = useState<ImageType[]>([]);
+    const [carouselImages, setCarouselImages] = useState<ImageCarouselModel[]>([]);
     const [carouselState, setCarouselState] = useState<CarouselState>('auto');
-    const { tripId, pinPointId } = useParams<{ tripId: string; pinPointId: string }>();
 
-    const navigate = useNavigate();
     const setCurrentPinPointId = useTimelineStore((state) => state.setCurrentPinPointId);
 
+    const { tripId, pinPointId } = useParams();
+    const navigate = useNavigate();
+
     useEffect(() => {
-        const fetchPinPointImages = async () => {
+        const getPinPointImagesData = async () => {
             if (!(tripId && pinPointId)) {
                 return;
             }
-            const data = await tripImageAPI.fetchImagesByPinPoint(tripId, pinPointId);
-            const { images } = data.firstImage;
-            setDisplayedImages(images);
+            const pinPointData = await tripImageAPI.fetchImagesByPinPoint(tripId, pinPointId);
+            const { images } = pinPointData.firstImage;
+            setCarouselImages(images);
         };
 
-        // 전역 스토어에 저장
         setCurrentPinPointId(pinPointId);
-        // 로컬 스토리지에도 저장 (새로고침 대비)
         localStorage.setItem('lastPinPointId', pinPointId || '');
 
-        fetchPinPointImages();
-    }, [tripId, pinPointId]);
+        getPinPointImagesData();
+    }, [tripId, pinPointId, setCurrentPinPointId]);
 
     const handleCarouselStateChange = useCallback((newState: CarouselState) => {
         setCarouselState(newState);
     }, []);
 
-    const handleBack = () => {
+    const navigateBeforePage = () => {
         navigate(`${PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`);
     };
 
     return (
-        <div css={containerStyle}>
+        <div css={pageContainer}>
             {carouselState !== 'zoomed' && (
-                <div css={backStyle} onClick={handleBack}>
-                    <X size={24} color='#FDFDFD' />
-                </div>
+                <X size={24} color={theme.colors.modalBg} onClick={navigateBeforePage} css={iconStyle} />
             )}
-            <div css={carouselWrapper}>
-                <ImageCarousel images={displayedImages} onStateChange={handleCarouselStateChange} />
-            </div>
+            <ImageCarousel images={carouselImages} onStateChange={handleCarouselStateChange} />
         </div>
     );
 };
 
-const containerStyle = css`
+const pageContainer = css`
     position: relative;
-    height: 100dvh;
+    /* height: 100dvh; */
 `;
 
-const backStyle = css`
+const iconStyle = css`
     position: absolute;
     cursor: pointer;
     top: 15px;
@@ -77,11 +67,12 @@ const backStyle = css`
     z-index: 1000;
 `;
 
-const carouselWrapper = css`
-    height: 100dvh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`;
+// const carouselWrapper = css`
+//     /* height: 100dvh; */
+//     /* height: 100%; */
+//     /* display: flex; */
+//     /* align-items: center; */
+//     /* justify-content: center; */
+// `;
 
 export default TimelinePinpointPage;

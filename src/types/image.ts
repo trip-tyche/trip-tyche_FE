@@ -12,3 +12,10 @@ export interface ImageModel {
 }
 
 export type ImageGroupByDateType = Record<string, ImageModel[]>;
+
+export type CarouselState = 'auto' | 'paused' | 'zoomed';
+
+export interface ImageCarouselModel {
+    mediaFileId: string;
+    mediaLink: string;
+}

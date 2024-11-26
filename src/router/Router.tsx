@@ -21,8 +21,8 @@ import TripTicketListPage from '@/pages/trips/TripTicketListPage';
 import { useToastStore } from '@/stores/useToastStore';
 import { validateUserAuth } from '@/utils/validation';
 
-const LOGIN_TIMEOUT = 10 * 60 * 1000; // 10분
-const LOGIN_CHECK = 1 * 60 * 1000; // 1분
+const LOGIN_TIMEOUT = 100 * 60 * 1000; // 10분
+const LOGIN_CHECK = 10 * 60 * 1000; // 1분
 
 const LoginCheck = ({ children }: { children: JSX.Element }) => {
     const navigate = useNavigate();
