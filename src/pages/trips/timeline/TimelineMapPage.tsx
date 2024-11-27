@@ -68,7 +68,6 @@ const TimelineMapPage = () => {
         try {
             setIsLoading(true);
             const { tripInfo, pinPoints, mediaFiles: images } = await tripAPI.fetchTripTimeline(tripId);
-
             if (pinPoints.length === 0) {
                 showToast('여행에 등록된 사진이 없습니다.');
                 navigate(PATH.TRIPS.ROOT);

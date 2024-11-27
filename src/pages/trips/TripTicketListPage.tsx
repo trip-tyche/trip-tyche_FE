@@ -51,7 +51,7 @@ const TripTicketListPage = () => {
             .filter((trip) => trip.tripTitle === 'N/A')
             .map((trip) => tripAPI.deleteTripTicket(trip.tripId));
 
-        return await Promise.allSettled(deletePromises);
+        await Promise.allSettled(deletePromises);
     };
 
     const handleTicketCreate = async () => {

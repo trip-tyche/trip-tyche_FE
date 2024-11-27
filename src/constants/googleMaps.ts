@@ -34,3 +34,4 @@ export const GOOGLE_MAPS_DEFAULT_CENTER = {
 } as const;
 
 export const GOOGLE_MAPS_DEFAULT_ZOOM = 12;
+export const GOOGLE_MAPS_IMAGE_BY_DATE_ZOOM = 14;
