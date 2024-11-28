@@ -3,8 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ogamiIcon from '/public/ogami_1.png';
 
 import { css } from '@emotion/react';
-import styled from '@emotion/styled';
-import { GoogleMap, Marker, useLoadScript, OverlayView, MarkerClusterer, Polyline } from '@react-google-maps/api';
+import { GoogleMap, Marker, OverlayView, MarkerClusterer, Polyline } from '@react-google-maps/api';
 import { Play, Pause, ChevronUp } from 'lucide-react';
 import { BsPersonWalking } from 'react-icons/bs';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -12,7 +11,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { tripAPI } from '@/api';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
-import { ENV } from '@/constants/api';
 import { GOOGLE_MAPS_OPTIONS, POLYLINE_OPTIONS } from '@/constants/googleMaps';
 import { PATH } from '@/constants/path';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
@@ -25,8 +23,8 @@ import { getDayNumber } from '@/utils/date';
 const MOVE_DURATION = 3000;
 const WAIT_DURATION = 3000;
 
-const PHOTO_CARD_WIDTH = 80;
-const PHOTO_CARD_HEIGHT = 80;
+const PHOTO_CARD_WIDTH = 100;
+const PHOTO_CARD_HEIGHT = 100;
 
 const INITIAL_ZOOM_SCALE = 14;
 const SHOW_DETAILED_ZOOM = 14;
@@ -549,11 +547,10 @@ const controlButtonStyle = css`
 
 const clusterPhotoCardStyle = css`
     background-color: ${theme.colors.white};
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 150px;
-    height: auto;
-    padding: 2px;
+    border-radius: 50%;
+    width: ${PHOTO_CARD_WIDTH}px;
+    height: ${PHOTO_CARD_HEIGHT}px;
+    padding: 1px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -563,24 +560,6 @@ const clusterPhotoCardStyle = css`
         rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
     cursor: pointer;
     transition: transform 0.2s ease;
-    position: relative;
-
-    &::after {
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 0;
-        border: 1px solid #ccc;
-        height: 0;
-        border-left: 10px solid transparent;
-        border-right: 10px solid transparent;
-        border-top: 10px solid white;
-        box-shadow:
-            rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
-            rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
-    }
 `;
 
 const photoCardStyle = (isCurrentPin: boolean) => css`
@@ -604,16 +583,6 @@ const photoCardStyle = (isCurrentPin: boolean) => css`
     opacity: ${isCurrentPin ? 1 : 0};
     visibility: ${isCurrentPin ? 'visible' : 'hidden'};
     pointer-events: ${isCurrentPin ? 'auto' : 'none'};
-    /* display: ${isCurrentPin ? 'block' : 'none'}; */
-
-    p {
-        font-size: 18px;
-        color: #333;
-        /* color: ${theme.colors.primary}; */
-        font-weight: 600;
-        align-self: start;
-        padding: 4px;
-    }
 
     &:hover {
         transform: scale(1.05);
@@ -641,7 +610,6 @@ const imageStyle = css`
     width: 100%;
     aspect-ratio: 1;
     object-fit: cover;
-    border-radius: 4px;
     border-radius: 50%;
 `;
 
