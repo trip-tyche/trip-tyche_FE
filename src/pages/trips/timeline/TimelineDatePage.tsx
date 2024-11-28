@@ -29,8 +29,6 @@ const TimelineDatePage = () => {
     const { state: imageDates } = useLocation();
     const navigate = useNavigate();
 
-    console.log(imageDates);
-
     const imageListRef = useRef<HTMLDivElement>(null);
 
     const { imagesByDate, imageLocation, isImageLoaded, setImageLocation, handleImageLoad } = useImagesByDate(
@@ -116,53 +114,6 @@ const pageContainer = (isTransitioning: boolean) => css`
     background-color: ${theme.colors.backGround.black};
 `;
 
-const mapWrapper = css`
-    height: 170px;
-    overflow: hidden;
-`;
-
-const dateScrollStyle = css`
-    display: flex;
-    background-color: ${theme.colors.white};
-    height: ${theme.heights.tall_54};
-    padding: 8px 20px 8px 8px;
-`;
-
-const buttonGroup = css`
-    display: flex;
-    overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    &::-webkit-scrollbar {
-        display: none;
-    }
-    flex-grow: 1;
-    /* padding: 0 10px; */
-`;
-
-const dayButtonStyle = (isSelected: boolean) => css`
-    background: none;
-    border: none;
-    padding: 8px 16px;
-    margin-right: 8px;
-    cursor: pointer;
-    font-weight: ${isSelected ? 'bold' : 'normal'};
-    font-size: ${isSelected ? '18px' : '14px'};
-    color: ${isSelected ? theme.colors.primary : theme.colors.darkGray};
-    flex-shrink: 0;
-`;
-
-const arrowButtonStyle = css`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    cursor: pointer;
-`;
-
 const imageListStyle = css`
     flex: 1;
     overflow-y: auto;
@@ -204,8 +155,6 @@ const imageListStyle = css`
         z-index: 10;
         box-shadow: -1px 0 3px rgba(0, 0, 0, 0.3);
 
-        // 필름 구멍 패턴
-        /* background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 4px, transparent 4px); */
         background-image: repeating-linear-gradient(
             to bottom,
             transparent 0px,
@@ -215,68 +164,9 @@ const imageListStyle = css`
             transparent 15px,
             transparent 20px
         );
-        /* background-size: 20px 20px;
-        background-position: center;
-        background-repeat: repeat-y; */
         background-size: 12px 24px;
         background-position: center;
         background-repeat: repeat-y;
-    }
-`;
-
-const imageForLoadStyle = css`
-    opacity: 0;
-`;
-
-const imageItemStyle = css`
-    margin-bottom: 12px;
-    position: relative;
-    padding: 0 20px; // 양쪽에 필름 스트립 공간 확보
-    width: 100%;
-
-    img {
-        width: 100%;
-        border-radius: 4px;
-    }
-
-    p {
-        z-index: 2;
-        position: absolute;
-        bottom: 8px;
-        right: 30px;
-        margin: 0;
-        padding: 2px 4px;
-        font-family: 'DS-DIGII', sans-serif;
-        font-weight: bold;
-        font-style: italic;
-        font-size: ${theme.fontSizes.xlarge_18};
-        color: #ff9b37;
-        letter-spacing: 1px;
-        opacity: 0.95;
-
-        text-shadow:
-            0 0 5px rgba(255, 155, 55, 0.7),
-            /* 내부 글로우 */ 0 0 10px rgba(255, 155, 55, 0.5),
-            /* 중간 글로우 */ 0 0 15px rgba(255, 155, 55, 0.3),
-            /* 외부 글로우 */ 1px 1px 2px rgba(0, 0, 0, 0.1); /* 가독성을 위한 엣지 섀도우 */
-
-        &::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: rgba(0, 0, 0, 0.05);
-            filter: blur(4px);
-            z-index: -1;
-            border-radius: 4px;
-        }
-    }
-
-    div {
-        color: white;
-        margin-left: 20px;
     }
 `;
 
