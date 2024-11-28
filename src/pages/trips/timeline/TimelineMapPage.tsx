@@ -13,7 +13,9 @@ import { tripAPI } from '@/api';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
 import { ENV } from '@/constants/api';
+import { GOOGLE_MAPS_OPTIONS, POLYLINE_OPTIONS } from '@/constants/googleMaps';
 import { PATH } from '@/constants/path';
+import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import useTimelineStore from '@/stores/useTimelineStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
@@ -54,6 +56,8 @@ const TimelineMapPage = () => {
     const { showToast } = useToastStore();
     const { currentPinPointId, setCurrentPinPointId } = useTimelineStore();
 
+    const { isLoaded, loadError, markerIcon } = useGoogleMaps();
+
     const mapRef = useRef<google.maps.Map | null>(null);
     const animationRef = useRef<number | null>(null);
     const startTimeRef = useRef<number | null>(null);
@@ -61,41 +65,6 @@ const TimelineMapPage = () => {
 
     const navigate = useNavigate();
     const { tripId } = useParams();
-
-    const fetchTripMapData = useCallback(async () => {
-        if (!tripId) return;
-
-        try {
-            setIsLoading(true);
-            const { tripInfo, pinPoints, mediaFiles: images } = await tripAPI.fetchTripTimeline(tripId);
-            if (pinPoints.length === 0) {
-                showToast('여행에 등록된 사진이 없습니다.');
-                navigate(PATH.TRIPS.ROOT);
-                return;
-            }
-
-            const sortedDataByDate = pinPoints.sort(
-                (a: PinPoint, b: PinPoint) => new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime(),
-            );
-
-            const imageDates = images.map((image: MediaFile) => image.recordDate.slice(0, 10));
-
-            const uniqueImageDates = [...new Set<string>([tripInfo.startDate, ...imageDates])].sort((a, b) =>
-                a.localeCompare(b),
-            );
-            setTripInfo(tripInfo);
-            setAllImages(images);
-            setImageDates(uniqueImageDates);
-            setPinPoints(sortedDataByDate);
-            setCharacterPosition({ lat: sortedDataByDate[0].latitude, lng: sortedDataByDate[0].longitude });
-            setIsPlaying(false);
-            setIsAtPin(true);
-        } catch (error) {
-            console.error('Error fetching trip data:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [tripId, navigate]);
 
     // 맵 로드 핸들러 추가
     const handleMapLoad = (map: google.maps.Map) => {
@@ -124,6 +93,41 @@ const TimelineMapPage = () => {
     );
 
     useEffect(() => {
+        const fetchTripMapData = async () => {
+            if (!tripId) return;
+
+            try {
+                setIsLoading(true);
+                const { tripInfo, pinPoints, mediaFiles: images } = await tripAPI.fetchTripTimeline(tripId);
+                if (pinPoints.length === 0) {
+                    showToast('여행에 등록된 사진이 없습니다.');
+                    navigate(PATH.TRIPS.ROOT);
+                    return;
+                }
+
+                const sortedDataByDate = pinPoints.sort(
+                    (a: PinPoint, b: PinPoint) => new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime(),
+                );
+
+                const imageDates = images.map((image: MediaFile) => image.recordDate.slice(0, 10));
+
+                const uniqueImageDates = [...new Set<string>([tripInfo.startDate, ...imageDates])].sort((a, b) =>
+                    a.localeCompare(b),
+                );
+                setTripInfo(tripInfo);
+                setAllImages(images);
+                setImageDates(uniqueImageDates);
+                setPinPoints(sortedDataByDate);
+                setCharacterPosition({ lat: sortedDataByDate[0].latitude, lng: sortedDataByDate[0].longitude });
+                setIsPlaying(false);
+                setIsAtPin(true);
+            } catch (error) {
+                console.error('Error fetching trip data:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
         fetchTripMapData();
 
         return () => {
@@ -136,7 +140,7 @@ const TimelineMapPage = () => {
             setCurrentPinPointId(undefined);
             localStorage.removeItem('lastPinPointId');
         };
-    }, [fetchTripMapData]);
+    }, []);
 
     useEffect(() => {
         if (pinPoints.length > 0) {
@@ -248,7 +252,7 @@ const TimelineMapPage = () => {
         }
     }, [characterPosition]);
 
-    const handleDayClick = useCallback(() => {
+    const handleDateClick = useCallback(() => {
         setIsTransitioning(true);
         setTimeout(() => {
             navigate(`${PATH.TRIPS.TIMELINE.DATE(Number(tripId))}`, { state: imageDates });
@@ -279,10 +283,6 @@ const TimelineMapPage = () => {
         }
     }, [currentPinIndex, pinPoints, isPlaying, moveCharacter]);
 
-    const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey: ENV.GOOGLE_MAPS_API_KEY || '',
-    });
-
     const characterIcon = useMemo(() => {
         if (isLoaded) {
             return {
@@ -293,72 +293,6 @@ const TimelineMapPage = () => {
         }
         return null;
     }, [isLoaded]);
-
-    const markerIcon = useMemo(() => {
-        if (isLoaded) {
-            return {
-                path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
-                fillColor: '#0073bb',
-                fillOpacity: 1,
-                strokeWeight: 1,
-                rotation: 0,
-                scale: 1.5,
-                anchor: new google.maps.Point(12, 23),
-            };
-        }
-        return null;
-    }, [isLoaded]);
-
-    // const polylineOptions = {
-    //     strokeColor: `${theme.colors.descriptionText}`,
-    //     strokeOpacity: 1,
-    //     strokeWeight: 2,
-    //     icons: [
-    //         {
-    //             icon: {
-    //                 path: 'M 0,-1 0,1',
-    //                 strokeOpacity: 1,
-    //                 scale: 4,
-    //             },
-    //             offset: '0',
-    //             repeat: '20px',
-    //         },
-    //     ],
-    // };
-
-    const polylineOptions: google.maps.PolylineOptions = {
-        strokeColor: `${theme.colors.descriptionText}`,
-        strokeOpacity: 0,
-        strokeWeight: 2,
-        icons: [
-            {
-                icon: {
-                    path: 'M 0,-1 0,1',
-                    strokeOpacity: 0.5,
-                    scale: 3,
-                },
-                offset: '0',
-                repeat: '15px',
-            },
-        ],
-    };
-
-    const mapOptions: google.maps.MapOptions = useMemo(
-        () => ({
-            mapTypeControl: false,
-            fullscreenControl: false,
-            zoomControl: false,
-            streetViewControl: false,
-            rotateControl: true,
-            clickableIcons: false,
-            // minZoom: 12,
-
-            draggable: isMapInteractive,
-            scrollwheel: isMapInteractive,
-            disableDoubleClickZoom: !isMapInteractive,
-        }),
-        [isMapInteractive],
-    );
 
     const clusterOptions = {
         maxZoom: INDIVIDUAL_MARKER_ZOOM - 1,
@@ -377,6 +311,7 @@ const TimelineMapPage = () => {
     };
 
     const handleZoomChanged = () => {
+        setSelectedMarker(null);
         if (mapRef.current) {
             const newZoom = mapRef.current.getZoom();
             if (newZoom !== undefined) {
@@ -405,16 +340,46 @@ const TimelineMapPage = () => {
     };
 
     if (loadError) {
-        return <div>Error loading maps</div>;
+        showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
     }
 
-    if (!isLoaded) {
-        return (
-            <div css={loadingStyle}>
-                <Spinner />
-            </div>
-        );
+    if (!isLoaded || isLoading) {
+        return <Spinner />;
     }
+
+    const renderControls = () => {
+        if (showDetailedView) {
+            return (
+                <>
+                    {isAtPin && (
+                        <button css={controlButtonStyle} onClick={togglePlayPause}>
+                            {isPlaying ? <Pause size={18} /> : <Play size={18} />}
+                        </button>
+                    )}
+                    {isAtPin && (
+                        <div css={imageByDateButton} onClick={handleDateClick}>
+                            <h2 css={textStyle}>날짜별로 사진보기</h2>
+                            <ChevronUp size={20} color={`${theme.colors.descriptionText}`} strokeWidth={2.5} />
+                        </div>
+                    )}
+                </>
+            );
+        } else {
+            return (
+                <div css={controlButtonStyle} onClick={handleHomeClick}>
+                    <BsPersonWalking />
+                </div>
+            );
+        }
+    };
+
+    const renderPolyline = () => {
+        if (pinPoints.length < 2) return null;
+
+        const path = pinPoints.map((point) => ({ lat: point.latitude, lng: point.longitude }));
+
+        return <Polyline path={path} options={POLYLINE_OPTIONS} />;
+    };
 
     const renderPhotoCard = (marker: PinPoint) => (
         <OverlayView
@@ -431,42 +396,6 @@ const TimelineMapPage = () => {
         </OverlayView>
     );
 
-    const renderControls = () => {
-        if (showDetailedView) {
-            return (
-                <>
-                    {isAtPin && (
-                        <ControlButton onClick={togglePlayPause}>
-                            {isPlaying ? <Pause size={18} /> : <Play size={18} />}
-                        </ControlButton>
-                    )}
-                    {isAtPin && (
-                        <DaySection onClick={handleDayClick}>
-                            <div css={dayInfoTextStyle}>
-                                <h2>날짜별로 사진보기</h2>
-                            </div>
-                            <ChevronUp size={20} color={`${theme.colors.descriptionText}`} strokeWidth={2.5} />
-                        </DaySection>
-                    )}
-                </>
-            );
-        } else {
-            return (
-                <ControlDefaultButton onClick={handleHomeClick}>
-                    <BsPersonWalking />
-                </ControlDefaultButton>
-            );
-        }
-    };
-
-    const renderPolyline = () => {
-        if (pinPoints.length < 2) return null;
-
-        const path = pinPoints.map((point) => ({ lat: point.latitude, lng: point.longitude }));
-
-        return <Polyline path={path} options={polylineOptions} />;
-    };
-
     const renderMarkers = () => {
         if (showDetailedView) {
             return (
@@ -481,10 +410,6 @@ const TimelineMapPage = () => {
                             <OverlayView
                                 position={{ lat: point.latitude, lng: point.longitude }}
                                 mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                                // getPixelPositionOffset={(_width, _height) => ({
-                                //     x: -PHOTO_CARD_WIDTH / 2,
-                                //     y: -(PHOTO_CARD_HEIGHT + 75),
-                                // })}
                                 getPixelPositionOffset={getPhotoCardOffset}
                             >
                                 <div
@@ -501,35 +426,6 @@ const TimelineMapPage = () => {
                     {characterPosition && (
                         <Marker position={characterPosition} icon={characterIcon || undefined} zIndex={1000} />
                     )}
-                    {/* {showPhotoCard && photoCardPosition && currentPinIndex < pinPoints.length && (
-                        <OverlayView
-                            position={photoCardPosition}
-                            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                            getPixelPositionOffset={(_width, _height) => ({
-                                x: -PHOTO_CARD_WIDTH / 2,
-                                y: -(PHOTO_CARD_HEIGHT + 75),
-                                // y: -PHOTO_CARD_HEIGHT,
-                            })}
-                        >
-                            <div
-                                css={photoCardStyle}
-                                onClick={() =>
-                                    navigate(`/music-video/${tripId}/${pinPoints[currentPinIndex].pinPointId}`)
-                                }
-                            >
-                                <img css={imageStyle} src={pinPoints[currentPinIndex].mediaLink} alt='photo-card' />
-                            </div>
-                        </OverlayView>
-                    )} */}
-                    {/* {isAtPin && (
-                        <DaySection onClick={handleDayClick}>
-                            <div css={dayInfoTextStyle}>
-                                <h2>{currentDay}</h2>
-                                <p>{currentDate && formatDateToKorean(currentDate)}</p>
-                            </div>
-                            <ChevronUp size={20} />
-                        </DaySection>
-                    )} */}
                 </>
             );
         } else if (showIndividualMarkers) {
@@ -569,38 +465,46 @@ const TimelineMapPage = () => {
     };
 
     return (
-        <PageContainer isTransitioning={isTransitioning}>
+        <div css={pageContainer(isTransitioning)}>
             <Header title={tripInfo?.tripTitle || ''} isBackButton onBack={() => navigate(PATH.TRIPS.ROOT)} />
-            <MapWrapper>
-                {isLoading ? (
-                    <LoadingWrapper>
-                        <Spinner />
-                    </LoadingWrapper>
-                ) : (
-                    <GoogleMap
-                        mapContainerStyle={mapContainerStyle}
-                        center={characterPosition || undefined}
-                        zoom={INITIAL_ZOOM_SCALE}
-                        options={mapOptions}
-                        // onLoad={(map) => {
-                        //     mapRef.current = map;
-                        // }}
-                        onLoad={handleMapLoad}
-                        onZoomChanged={handleZoomChanged}
-                        onClick={() => setSelectedMarker(null)}
-                    >
-                        {renderMarkers()}
-                        {renderControls()}
-                    </GoogleMap>
-                )}
-            </MapWrapper>
-        </PageContainer>
+            <div css={mapWrapper}>
+                <GoogleMap
+                    zoom={INITIAL_ZOOM_SCALE}
+                    center={characterPosition || undefined}
+                    options={{
+                        ...GOOGLE_MAPS_OPTIONS,
+                        draggable: isMapInteractive,
+                        scrollwheel: isMapInteractive,
+                    }}
+                    mapContainerStyle={{ height: 'calc(100% + 30px)' }}
+                    onLoad={handleMapLoad}
+                    onZoomChanged={handleZoomChanged}
+                    onClick={() => setSelectedMarker(null)}
+                >
+                    {renderMarkers()}
+                    {renderControls()}
+                </GoogleMap>
+            </div>
+        </div>
     );
 };
 
-const DaySection = styled.div`
+const pageContainer = (isTransitioning: boolean) => css`
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease-in-out;
+    transform: ${isTransitioning ? 'translateY(-100%)' : 'translateY(0)'};
+    overflow: hidden;
+`;
+
+const mapWrapper = css`
+    flex-grow: 1;
+`;
+
+const imageByDateButton = css`
     position: absolute;
-    bottom: 20px;
+    bottom: 30px;
     left: 0;
     right: 0;
     display: flex;
@@ -614,60 +518,14 @@ const DaySection = styled.div`
     background-color: ${theme.colors.white};
 `;
 
-const dayInfoTextStyle = css`
-    h2 {
-        font-size: ${theme.fontSizes.large_16};
-        color: ${theme.colors.descriptionText};
-        color: ${theme.colors.secondary};
-        font-weight: 600;
-        margin: 0;
-    }
+const textStyle = css`
+    color: ${theme.colors.descriptionText};
+    font-weight: bold;
 `;
 
-const loadingStyle = css`
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`;
-
-const MapWrapper = styled.div`
-    flex-grow: 1;
-    position: relative;
-    z-index: 0;
-    min-height: 400px;
-`;
-
-const ControlDefaultButton = styled.button`
+const controlButtonStyle = css`
     position: absolute;
-    bottom: 35px;
-    right: 15px;
-    font-size: 18px;
-    background-color: white;
-    background-color: ${theme.colors.primary};
-    color: ${theme.colors.white};
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    transition: all 0.3s ease;
-
-    &:hover {
-        background-color: ${theme.colors.white};
-        color: ${theme.colors.primary};
-    }
-`;
-
-const ControlButton = styled.button`
-    position: absolute;
-    bottom: 84px;
+    bottom: 94px;
     right: 10px;
     background-color: ${theme.colors.primary};
     color: ${theme.colors.white};
@@ -688,28 +546,6 @@ const ControlButton = styled.button`
         color: ${theme.colors.primary};
     }
 `;
-
-const PageContainer = styled.div<{ isTransitioning: boolean }>`
-    overflow: hidden;
-    height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.3s ease-in-out;
-    transform: ${(props) => (props.isTransitioning ? 'translateY(-100%)' : 'translateY(0)')};
-`;
-
-const LoadingWrapper = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: calc(100vh - 54px);
-`;
-
-const mapContainerStyle = {
-    height: 'calc(100% + 20px)',
-    width: '100%',
-    paddingTop: '20px',
-};
 
 const clusterPhotoCardStyle = css`
     background-color: ${theme.colors.white};

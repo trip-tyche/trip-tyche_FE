@@ -88,6 +88,7 @@ const DateSelector = ({
 
 const dateSelectorStyle = css`
     display: flex;
+    justify-content: space-between;
     background-color: ${theme.colors.white};
     height: ${theme.heights.tall_54};
     padding: 8px 20px 8px 8px;

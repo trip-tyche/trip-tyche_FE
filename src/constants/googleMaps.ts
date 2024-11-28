@@ -1,7 +1,8 @@
 import { Libraries } from '@react-google-maps/api';
 
 import { ENV } from '@/constants/api';
-import { MapOptionsType } from '@/types/googleMaps';
+import theme from '@/styles/theme';
+import { MapOptionsType, MapPolylineOptionsType } from '@/types/googleMaps';
 
 export const GOOGLE_MAPS_OPTIONS: MapOptionsType = {
     mapTypeControl: false,
@@ -10,6 +11,23 @@ export const GOOGLE_MAPS_OPTIONS: MapOptionsType = {
     streetViewControl: false,
     rotateControl: true,
     clickableIcons: false,
+} as const;
+
+export const POLYLINE_OPTIONS: MapPolylineOptionsType = {
+    strokeColor: `${theme.colors.descriptionText}`,
+    strokeOpacity: 0,
+    strokeWeight: 2,
+    icons: [
+        {
+            icon: {
+                path: 'M 0,-1 0,1',
+                strokeOpacity: 0.5,
+                scale: 3,
+            },
+            offset: '0',
+            repeat: '15px',
+        },
+    ],
 } as const;
 
 export const GOOGLE_MAPS_CONFIG = {

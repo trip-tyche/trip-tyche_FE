@@ -10,11 +10,14 @@ interface CarouselItemProps {
     isZoomed: boolean;
 }
 
-const CarouselItem = React.memo(({ image, isCurrent, isZoomed }: CarouselItemProps) => (
-    <div css={[carouselItemStyle, isCurrent && centerImageStyle, isZoomed && zoomedStyle]}>
-        <img src={image.mediaLink} alt={`이미지 ${image.mediaFileId}`} css={imageStyle(isZoomed)} />
-    </div>
-));
+const CarouselItem = React.memo(({ image, isCurrent, isZoomed }: CarouselItemProps) => {
+    return (
+        <div css={[carouselItemStyle, isCurrent && centerImageStyle, isZoomed && zoomedStyle]}>
+            <img src={image.mediaLink} alt={`이미지 ${image.mediaFileId}`} css={imageStyle(isZoomed)} />
+            {/* <p css={timeStampStyle}>{image.recordDate.split('T')[1]}</p> */}
+        </div>
+    );
+});
 const carouselItemStyle = css`
     height: 100dvh;
     display: flex;
