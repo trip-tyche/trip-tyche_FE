@@ -1,3 +1,5 @@
+import { useCallback, useEffect, useRef } from 'react';
+
 import { css } from '@emotion/react';
 import { ChevronDown } from 'lucide-react';
 
@@ -19,20 +21,59 @@ const DateSelector = ({
     onDateSelect,
     onArrowButtonClick,
 }: DateSelectorProps) => {
-    const generateDayList = () => {
-        if (!startDate || !datesWithImages.length) return [];
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const buttonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
-        return datesWithImages.map((date) => {
-            const dayNumber = getDayNumber(date, startDate);
-            return { date, dayNumber };
+    const generateDayList = useCallback(() => {
+        if (!startDate || !datesWithImages.length) {
+            return [];
+        }
+
+        return datesWithImages.map((date) => ({ date, dayNumber: getDayNumber(date, startDate) }));
+    }, [datesWithImages, startDate]);
+
+    const scrollToCenter = useCallback((targetDate: string) => {
+        const container = scrollContainerRef.current;
+        const button = buttonRefs.current.get(targetDate);
+
+        if (!(container && button)) {
+            return;
+        }
+
+        const containerWidth = container.offsetWidth;
+        const buttonLeft = button.offsetLeft;
+        const buttonWidth = button.offsetWidth;
+
+        const targetScrollLeft = buttonLeft - containerWidth / 2 + buttonWidth / 2 - 20;
+
+        container.scrollTo({
+            left: targetScrollLeft,
+            behavior: 'smooth',
         });
-    };
+    }, []);
+
+    useEffect(() => {
+        if (currentDate) {
+            scrollToCenter(currentDate);
+        }
+    }, [currentDate, scrollToCenter]);
 
     return (
         <section css={dateSelectorStyle}>
-            <div css={buttonGroup}>
+            <div ref={scrollContainerRef} css={buttonGroup}>
                 {generateDayList().map(({ date, dayNumber }) => (
-                    <button key={date} css={dayButtonStyle(currentDate === date)} onClick={() => onDateSelect(date)}>
+                    <button
+                        key={date}
+                        ref={(element) => {
+                            if (element) {
+                                buttonRefs.current.set(date, element);
+                            } else {
+                                buttonRefs.current.delete(date);
+                            }
+                        }}
+                        css={dayButtonStyle(currentDate === date)}
+                        onClick={() => onDateSelect(date)}
+                    >
                         <h3>{dayNumber}</h3>
                         <p>{formatDateToKorean(date)}</p>
                     </button>
@@ -59,10 +100,10 @@ const buttonGroup = css`
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    scroll-behavior: smooth;
     &::-webkit-scrollbar {
         display: none;
     }
-    flex-grow: 1;
 `;
 
 const dayButtonStyle = (isSelected: boolean) => css`

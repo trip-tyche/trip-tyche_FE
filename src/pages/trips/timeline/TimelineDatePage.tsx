@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import { css } from '@emotion/react';
 import { ArrowDown } from 'lucide-react';
@@ -67,39 +67,37 @@ const TimelineDatePage = () => {
 
     return (
         <div css={pageContainer(isTransitioning)}>
-            <>
-                {imageLocation && <DateMap imageLocation={imageLocation} />}
+            {imageLocation && <DateMap imageLocation={imageLocation} />}
 
-                <DateSelector
-                    currentDate={currentDate}
-                    datesWithImages={datesWithImages}
-                    startDate={startDate}
-                    onDateSelect={handleDayButtonClick}
-                    onArrowButtonClick={handleArrowButtonClick}
-                />
+            <DateSelector
+                currentDate={currentDate}
+                datesWithImages={datesWithImages}
+                startDate={startDate}
+                onDateSelect={handleDayButtonClick}
+                onArrowButtonClick={handleArrowButtonClick}
+            />
 
-                <section ref={imageListRef} css={imageListStyle}>
-                    {imagesByDate.map((image, index) => (
-                        <ImageItem
-                            key={image.mediaFileId}
-                            image={image}
-                            index={index}
-                            onImageLoad={handleImageLoad}
-                            isImageLoaded={isImageLoaded}
-                            reference={(element) => (imageRefs.current[index] = element)}
-                        />
-                    ))}
-                </section>
+            <section ref={imageListRef} css={imageListStyle}>
+                {imagesByDate.map((image, index) => (
+                    <ImageItem
+                        key={image.mediaFileId}
+                        image={image}
+                        index={index}
+                        onImageLoad={handleImageLoad}
+                        isImageLoaded={isImageLoaded}
+                        reference={(element) => (imageRefs.current[index] = element)}
+                    />
+                ))}
+            </section>
 
-                {isFirstLoad && (
-                    <div css={scrollHintOverlayStyle(isHintOverlayVisible)}>
-                        <div css={scrollHintContentStyle}>
-                            <p css={scrollHintText}>아래로 스크롤하세요</p>
-                            <ArrowDown size={24} color={theme.colors.white} />
-                        </div>
+            {isFirstLoad && (
+                <div css={scrollHintOverlayStyle(isHintOverlayVisible)}>
+                    <div css={scrollHintContentStyle}>
+                        <p css={scrollHintText}>아래로 스크롤하세요</p>
+                        <ArrowDown size={24} color={theme.colors.white} />
                     </div>
-                )}
-            </>
+                </div>
+            )}
         </div>
     );
 };
@@ -123,7 +121,7 @@ const imageListStyle = css`
         content: '';
         position: fixed;
         left: 0;
-        top: 224px;
+        top: 234px;
         bottom: 0;
         width: 28px;
         background-color: ${theme.colors.backGround.black};
@@ -148,7 +146,7 @@ const imageListStyle = css`
         content: '';
         position: fixed;
         right: 0;
-        top: 224px;
+        top: 234px;
         bottom: 0;
         width: 28px;
         background-color: ${theme.colors.backGround.black};

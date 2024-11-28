@@ -27,7 +27,7 @@ const DateMap = ({ imageLocation }: DateMapProps) => {
 };
 
 const mapWrapper = css`
-    height: 170px;
+    height: 180px;
     overflow: hidden;
 `;
 
