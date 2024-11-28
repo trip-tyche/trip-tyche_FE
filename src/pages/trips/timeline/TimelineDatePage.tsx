@@ -20,14 +20,16 @@ const TimelineDatePage = () => {
     const [currentDate, setCurrentDate] = useState('');
     const [startDate, setStartDate] = useState('');
     const [isTransitioning, setIsTransitioning] = useState(false);
-    const [availableDates, setAvailableDates] = useState<string[]>([]);
+    const [datesWithImages, setDatesWithImages] = useState<string[]>([]);
 
     const { isLoaded, loadError } = useGoogleMaps();
     const showToast = useToastStore((state) => state.showToast);
 
     const { tripId } = useParams();
-    const location = useLocation();
+    const { state: imageDates } = useLocation();
     const navigate = useNavigate();
+
+    console.log(imageDates);
 
     const imageListRef = useRef<HTMLDivElement>(null);
 
@@ -39,16 +41,14 @@ const TimelineDatePage = () => {
     const imageRefs = useImagesLocationObserver(imagesByDate, setImageLocation);
 
     useEffect(() => {
-        const imageDates = location?.state || [];
-
         if (!imageDates || imageDates.length === 0) {
             return;
         }
 
-        setAvailableDates(imageDates);
+        setDatesWithImages(imageDates);
         setStartDate(imageDates[0]);
         setCurrentDate(imageDates[0]);
-    }, [location.state]);
+    }, [imageDates]);
 
     const handleArrowButtonClick = () => {
         setIsTransitioning(true);
@@ -74,7 +74,7 @@ const TimelineDatePage = () => {
 
                 <DateSelector
                     currentDate={currentDate}
-                    availableDates={availableDates}
+                    datesWithImages={datesWithImages}
                     startDate={startDate}
                     onDateSelect={handleDayButtonClick}
                     onArrowButtonClick={handleArrowButtonClick}

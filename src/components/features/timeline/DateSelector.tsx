@@ -2,11 +2,11 @@ import { css } from '@emotion/react';
 import { ChevronDown } from 'lucide-react';
 
 import theme from '@/styles/theme';
-import { getDayNumber } from '@/utils/date';
+import { formatDateToKorean, getDayNumber } from '@/utils/date';
 
 interface DateSelectorProps {
     currentDate: string;
-    availableDates: string[];
+    datesWithImages: string[];
     startDate: string;
     onDateSelect: (date: string) => void;
     onArrowButtonClick: () => void;
@@ -14,26 +14,27 @@ interface DateSelectorProps {
 
 const DateSelector = ({
     currentDate,
-    availableDates,
+    datesWithImages,
     startDate,
     onDateSelect,
     onArrowButtonClick,
 }: DateSelectorProps) => {
     const generateDayList = () => {
-        if (!startDate || !availableDates.length) return [];
+        if (!startDate || !datesWithImages.length) return [];
 
-        return availableDates.map((date) => {
+        return datesWithImages.map((date) => {
             const dayNumber = getDayNumber(date, startDate);
             return { date, dayNumber };
         });
     };
 
     return (
-        <section css={dateScrollStyle}>
+        <section css={dateSelectorStyle}>
             <div css={buttonGroup}>
                 {generateDayList().map(({ date, dayNumber }) => (
                     <button key={date} css={dayButtonStyle(currentDate === date)} onClick={() => onDateSelect(date)}>
-                        {dayNumber}
+                        <h3>{dayNumber}</h3>
+                        <p>{formatDateToKorean(date)}</p>
                     </button>
                 ))}
             </div>
@@ -44,7 +45,7 @@ const DateSelector = ({
     );
 };
 
-const dateScrollStyle = css`
+const dateSelectorStyle = css`
     display: flex;
     background-color: ${theme.colors.white};
     height: ${theme.heights.tall_54};
@@ -67,13 +68,23 @@ const buttonGroup = css`
 const dayButtonStyle = (isSelected: boolean) => css`
     background: none;
     border: none;
-    padding: 8px 16px;
-    margin-right: 8px;
+    padding: 4px 16px;
     cursor: pointer;
-    font-weight: ${isSelected ? 'bold' : 'normal'};
-    font-size: ${isSelected ? '18px' : '14px'};
-    color: ${isSelected ? theme.colors.primary : theme.colors.darkGray};
-    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    h3 {
+        font-weight: bold;
+        color: ${isSelected ? theme.colors.primary : theme.colors.darkGray};
+    }
+
+    p {
+        font-size: ${theme.fontSizes.xsmall_10};
+        color: ${theme.colors.descriptionText};
+    }
 `;
 
 const arrowButtonStyle = css`

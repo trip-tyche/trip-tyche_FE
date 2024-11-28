@@ -79,8 +79,10 @@ const TimelineMapPage = () => {
             );
 
             const imageDates = images.map((image: MediaFile) => image.recordDate.slice(0, 10));
-            const uniqueImageDates = [...new Set<string>(imageDates)].sort((a, b) => a.localeCompare(b));
 
+            const uniqueImageDates = [...new Set<string>([tripInfo.startDate, ...imageDates])].sort((a, b) =>
+                a.localeCompare(b),
+            );
             setTripInfo(tripInfo);
             setAllImages(images);
             setImageDates(uniqueImageDates);
