@@ -13,7 +13,7 @@ const DateMap = ({ imageLocation }: DateMapProps) => {
     const { markerIcon } = useGoogleMaps();
 
     return (
-        <section css={mapWrapper}>
+        <div css={mapWrapper}>
             <GoogleMap
                 zoom={GOOGLE_MAPS_IMAGE_BY_DATE_ZOOM}
                 center={imageLocation}
@@ -22,7 +22,7 @@ const DateMap = ({ imageLocation }: DateMapProps) => {
             >
                 <Marker position={imageLocation} icon={markerIcon || undefined} />
             </GoogleMap>
-        </section>
+        </div>
     );
 };
 

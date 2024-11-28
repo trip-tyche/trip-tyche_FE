@@ -1,37 +1,26 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import { css } from '@emotion/react';
-import styled from '@emotion/styled';
-import { GoogleMap, Marker } from '@react-google-maps/api';
-import { ChevronDown, ArrowDown } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { tripImageAPI } from '@/api';
 import Spinner from '@/components/common/Spinner';
 import DateMap from '@/components/features/timeline/DateMap';
-import { GOOGLE_MAPS_IMAGE_BY_DATE_ZOOM, GOOGLE_MAPS_OPTIONS } from '@/constants/googleMaps';
+import DateSelector from '@/components/features/timeline/DateSelector';
+import ImageItem from '@/components/features/timeline/ImageItem';
 import { PATH } from '@/constants/path';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
+import { useImagesByDate } from '@/hooks/useImagesByDate';
+import { useImagesLocationObserver } from '@/hooks/useImagesLocationObserver';
+import { useScrollHint } from '@/hooks/useScrollHint';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
-import { LatLngLiteralType } from '@/types/googleMaps';
-import { MediaFile } from '@/types/trip';
-import { getDayNumber } from '@/utils/date';
 
-const TimelineDatePage: React.FC = () => {
-    const [imagesByDate, setImagesByDate] = useState<MediaFile[]>([]);
-    const [imageLocation, setImageLocation] = useState<LatLngLiteralType>();
+const TimelineDatePage = () => {
     const [currentDate, setCurrentDate] = useState('');
-
     const [startDate, setStartDate] = useState('');
     const [isTransitioning, setIsTransitioning] = useState(false);
-
-    const [isHintOverlayVisible, setIsHintOverlayVisible] = useState(false);
     const [availableDates, setAvailableDates] = useState<string[]>([]);
-
-    const [isFirstLoad, setIsFirstLoad] = useState(true);
-    const [isImageLoaded, setIsImageLoaded] = useState(false);
-    const [loadedImageCount, setLoadedImageCount] = useState(0);
 
     const { isLoaded, loadError } = useGoogleMaps();
     const showToast = useToastStore((state) => state.showToast);
@@ -41,120 +30,25 @@ const TimelineDatePage: React.FC = () => {
     const navigate = useNavigate();
 
     const imageListRef = useRef<HTMLDivElement>(null);
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-    useEffect(() => {
-        const getImagesByDate = async () => {
-            if (!(tripId && currentDate)) {
-                return;
-            }
-            setLoadedImageCount(0);
-            setIsImageLoaded(false);
-            const { images } = await tripImageAPI.fetchImagesByDate(tripId, currentDate);
-            setImagesByDate(images || []);
-
-            if (images && images.length > 0) {
-                setImageLocation({ lat: images[0].latitude, lng: images[0].longitude });
-            }
-        };
-
-        getImagesByDate();
-    }, [tripId, currentDate, showToast]);
+    const { imagesByDate, imageLocation, isImageLoaded, setImageLocation, handleImageLoad } = useImagesByDate(
+        tripId || '',
+        currentDate,
+    );
+    const { isHintOverlayVisible, isFirstLoad } = useScrollHint(imageListRef, isLoaded, isImageLoaded);
+    const imageRefs = useImagesLocationObserver(imagesByDate, setImageLocation);
 
     useEffect(() => {
         const imageDates = location?.state || [];
 
-        if (!imageDates || imageDates.length === 0) return;
+        if (!imageDates || imageDates.length === 0) {
+            return;
+        }
+
         setAvailableDates(imageDates);
         setStartDate(imageDates[0]);
         setCurrentDate(imageDates[0]);
     }, [location.state]);
-
-    const smoothScroll = (element: HTMLElement, target: number, duration: number) => {
-        const start = element.scrollTop;
-        const change = target - start;
-        const startTime = performance.now();
-
-        const animateScroll = (currentTime: number) => {
-            const elapsedTime = currentTime - startTime;
-            const progress = Math.min(elapsedTime / duration, 1);
-            const easeInOutCubic =
-                progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-
-            element.scrollTop = start + change * easeInOutCubic;
-
-            if (progress < 1) {
-                requestAnimationFrame(animateScroll);
-            }
-        };
-
-        requestAnimationFrame(animateScroll);
-    };
-
-    useEffect(() => {
-        if (isLoaded && isImageLoaded && imageListRef.current && isFirstLoad) {
-            setIsHintOverlayVisible(true);
-
-            const element = imageListRef.current;
-            const scrollDown = () => smoothScroll(element, 80, 1000);
-            const scrollUp = () => smoothScroll(element, 0, 1000);
-
-            const hideHint = () => {
-                setIsHintOverlayVisible(false);
-                setIsFirstLoad(false);
-            };
-
-            const timeoutIds = [setTimeout(scrollDown, 100), setTimeout(scrollUp, 1500), setTimeout(hideHint, 2500)];
-
-            return () => {
-                timeoutIds.forEach(clearTimeout);
-            };
-        }
-    }, [isLoaded, isImageLoaded, isFirstLoad]);
-
-    // const generateDayList = () => Array.from({ length: totalDays }, (_, i) => i + 1);
-    const generateDayList = () => {
-        if (!startDate || !availableDates.length) return [];
-
-        return availableDates.map((date) => {
-            const dayNumber = getDayNumber(date, startDate);
-            return { date, dayNumber };
-        });
-    };
-
-    const observerCallback = useCallback(
-        (entries: IntersectionObserverEntry[]) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    const index = parseInt(entry.target.getAttribute('data-index') || '0', 10);
-                    const image = imagesByDate[index];
-                    if (image) {
-                        setImageLocation({ lat: image.latitude, lng: image.longitude });
-                    }
-                }
-            });
-        },
-        [imagesByDate],
-    );
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(observerCallback, {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.5,
-        });
-
-        imageRefs.current.forEach((ref) => {
-            if (ref) observer.observe(ref);
-        });
-
-        return () => {
-            imageRefs.current.forEach((ref) => {
-                if (ref) observer.unobserve(ref);
-            });
-        };
-    }, [observerCallback, imagesByDate]);
 
     const handleArrowButtonClick = () => {
         setIsTransitioning(true);
@@ -163,19 +57,6 @@ const TimelineDatePage: React.FC = () => {
 
     const handleDayButtonClick = (date: string) => {
         setCurrentDate(date);
-    };
-
-    useEffect(() => {
-        if (loadedImageCount === imagesByDate.length) {
-            setIsImageLoaded(true);
-        }
-    }, [loadedImageCount, imagesByDate]);
-
-    const handleImageLoad = () => {
-        setLoadedImageCount((prev) => {
-            const loadedImageCount = prev + 1;
-            return loadedImageCount;
-        });
     };
 
     if (loadError) {
@@ -191,34 +72,24 @@ const TimelineDatePage: React.FC = () => {
             <>
                 {imageLocation && <DateMap imageLocation={imageLocation} />}
 
-                <section css={dateScrollStyle}>
-                    <DayScrollContainer ref={scrollContainerRef}>
-                        {generateDayList().map(({ date, dayNumber }) => (
-                            <button
-                                key={date}
-                                css={dayButtonStyle(currentDate === date)}
-                                onClick={() => handleDayButtonClick(date)}
-                            >
-                                {dayNumber}
-                            </button>
-                        ))}
-                    </DayScrollContainer>
-                    <button css={arrowButtonStyle} onClick={handleArrowButtonClick}>
-                        <ChevronDown size={20} color={`${theme.colors.descriptionText}`} strokeWidth={2.5} />
-                    </button>
-                </section>
+                <DateSelector
+                    currentDate={currentDate}
+                    availableDates={availableDates}
+                    startDate={startDate}
+                    onDateSelect={handleDayButtonClick}
+                    onArrowButtonClick={handleArrowButtonClick}
+                />
 
                 <section ref={imageListRef} css={imageListStyle}>
                     {imagesByDate.map((image, index) => (
-                        <div
-                            ref={(el) => (imageRefs.current[index] = el)}
+                        <ImageItem
                             key={image.mediaFileId}
-                            css={imageItemStyle}
-                            data-index={index}
-                        >
-                            <img src={image.mediaLink} alt={`이미지 ${image.mediaFileId}`} onLoad={handleImageLoad} />
-                            {isImageLoaded && <p>{image.recordDate.split('T')[1]}</p>}
-                        </div>
+                            image={image}
+                            index={index}
+                            onImageLoad={handleImageLoad}
+                            isImageLoaded={isImageLoaded}
+                            reference={(element) => (imageRefs.current[index] = element)}
+                        />
                     ))}
                 </section>
 
@@ -257,7 +128,7 @@ const dateScrollStyle = css`
     padding: 8px 20px 8px 8px;
 `;
 
-const DayScrollContainer = styled.div`
+const buttonGroup = css`
     display: flex;
     overflow-x: auto;
     white-space: nowrap;
