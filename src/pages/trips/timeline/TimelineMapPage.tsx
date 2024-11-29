@@ -70,27 +70,34 @@ const TimelineMapPage = () => {
     //  Google Maps가 처음 로드될 때 실행되는 핸들러 함수
     const handleMapLoad = (map: MapsType) => {
         mapRef.current = map;
-        setMapLoaded(true);
+        setMapLoaded(true); // 맵 로드 상태 변경
 
-        // 리사이즈 이벤트 리스너 추가
-        google.maps.event.addListener(map, 'resize', () => {
+        // 지도 타일 로드 완료 이벤트 리스너 추가
+        google.maps.event.addListenerOnce(map, 'tilesloaded', () => {
             if (characterPosition) {
-                map.panTo(characterPosition);
+                setPhotoCardPosition({ ...characterPosition });
             }
         });
+
+        // // 리사이즈 이벤트 리스너 추가
+        // google.maps.event.addListener(map, 'resize', () => {
+        //     if (characterPosition) {
+        //         map.panTo(characterPosition);
+        //     }
+        // });
     };
 
     // 포토카드 오프셋 계산 함수
     const getPhotoCardOffset = useCallback(
         (_width: number, _height: number) => {
-            if (!isLoaded) return { x: 0, y: 0 };
+            if (!mapLoaded) return { x: 0, y: 0 }; // mapLoaded가 false면 기본값 반환
 
             return {
                 x: -PHOTO_CARD_WIDTH / 2,
                 y: -(PHOTO_CARD_HEIGHT + 75),
             };
         },
-        [isLoaded],
+        [mapLoaded],
     );
 
     useEffect(() => {
@@ -478,7 +485,7 @@ const TimelineMapPage = () => {
                         scrollwheel: isMapInteractive,
                     }}
                     mapContainerStyle={{ height: 'calc(100% + 30px)' }}
-                    // onLoad={handleMapLoad}
+                    onLoad={handleMapLoad}
                     onZoomChanged={handleZoomChanged}
                     onClick={() => setSelectedMarker(null)}
                 >
