@@ -17,7 +17,7 @@ import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import useTimelineStore from '@/stores/useTimelineStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
-import { MapsType } from '@/types/googleMaps';
+import { LatLngLiteralType, MapsType } from '@/types/googleMaps';
 import { MediaFile, PinPoint, TripInfo } from '@/types/trip';
 import { getDayNumber } from '@/utils/date';
 
@@ -35,22 +35,23 @@ const TimelineMapPage = () => {
     const [tripInfo, setTripInfo] = useState<TripInfo | null>(null);
     const [pinPoints, setPinPoints] = useState<PinPoint[]>([]);
     const [allImages, setAllImages] = useState<any[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [characterPosition, setCharacterPosition] = useState<google.maps.LatLngLiteral | null>(null);
+    const [characterPosition, setCharacterPosition] = useState<LatLngLiteralType>();
+    const [photoCardPosition, setPhotoCardPosition] = useState<LatLngLiteralType>();
+    const [isPlayingAnimation, setIsPlayingAnimation] = useState(false);
+    const [isCharacterMoving, setIsCharacterMoving] = useState(false);
+
     const [currentPinIndex, setCurrentPinIndex] = useState(0);
     const [showPhotoCard, setShowPhotoCard] = useState(true);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [isMoving, setIsMoving] = useState(false);
-    const [isAtPin, setIsAtPin] = useState(true);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [currentDate, setCurrentDate] = useState<string | undefined>();
     const [currentDay, setCurrentDay] = useState<string | undefined>();
-    const [photoCardPosition, setPhotoCardPosition] = useState<google.maps.LatLngLiteral | null>(null);
     const [currentZoom, setCurrentZoom] = useState(INITIAL_ZOOM_SCALE);
     const [selectedMarker, setSelectedMarker] = useState<PinPoint | null>(null);
     const [isMapInteractive, setIsMapInteractive] = useState(true);
-    const [mapLoaded, setMapLoaded] = useState(false);
+    const [isMapLoaded, setIsMapLoaded] = useState(false);
     const [imageDates, setImageDates] = useState<string[]>([]);
+
+    const [isLoading, setIsLoading] = useState(true);
 
     const { showToast } = useToastStore();
     const { currentPinPointId, setCurrentPinPointId } = useTimelineStore();
@@ -68,25 +69,22 @@ const TimelineMapPage = () => {
     //  Google Maps가 처음 로드될 때 실행되는 핸들러 함수
     const handleMapLoad = (map: MapsType) => {
         mapRef.current = map;
-        setMapLoaded(true); // 맵 로드 상태 변경
+        setIsMapLoaded(true); // 맵 로드 상태 변경
 
-        // 지도 타일 로드 완료 이벤트 리스너 추가
-        google.maps.event.addListenerOnce(map, 'tilesloaded', () => {
-            if (characterPosition) {
-                setPhotoCardPosition({ ...characterPosition });
-            }
-        });
+        if (characterPosition) {
+            setPhotoCardPosition({ ...characterPosition });
+        }
 
-        // // 리사이즈 이벤트 리스너 추가
-        // google.maps.event.addListener(map, 'resize', () => {
+        // // 지도 타일 로드 완료 이벤트 리스너 추가
+        // google.maps.event.addListenerOnce(map, 'tilesloaded', () => {
         //     if (characterPosition) {
-        //         map.panTo(characterPosition);
+        //         setPhotoCardPosition({ ...characterPosition });
         //     }
         // });
     };
 
     // 포토카드 오프셋 계산 함수
-    const getPhotoCardOffset = useCallback((_width: number, _height: number) => {
+    const getPhotoCardOffset = useCallback(() => {
         return {
             x: -PHOTO_CARD_WIDTH / 2,
             y: -(PHOTO_CARD_HEIGHT + 75),
@@ -94,42 +92,40 @@ const TimelineMapPage = () => {
     }, []);
 
     useEffect(() => {
-        const fetchTripMapData = async () => {
-            if (!tripId) return;
-
-            try {
-                setIsLoading(true);
-                const { tripInfo, pinPoints, mediaFiles: images } = await tripAPI.fetchTripTimeline(tripId);
-                if (pinPoints.length === 0) {
-                    showToast('여행에 등록된 사진이 없습니다.');
-                    navigate(PATH.TRIPS.ROOT);
-                    return;
-                }
-
-                const sortedDataByDate = pinPoints.sort(
-                    (a: PinPoint, b: PinPoint) => new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime(),
-                );
-
-                const imageDates = images.map((image: MediaFile) => image.recordDate.slice(0, 10));
-
-                const uniqueImageDates = [...new Set<string>([tripInfo.startDate, ...imageDates])].sort((a, b) =>
-                    a.localeCompare(b),
-                );
-                setTripInfo(tripInfo);
-                setAllImages(images);
-                setImageDates(uniqueImageDates);
-                setPinPoints(sortedDataByDate);
-                setCharacterPosition({ lat: sortedDataByDate[0].latitude, lng: sortedDataByDate[0].longitude });
-                setIsPlaying(false);
-                setIsAtPin(true);
-            } catch (error) {
-                console.error('Error fetching trip data:', error);
-            } finally {
-                setIsLoading(false);
+        const getTimelineMapData = async () => {
+            if (!tripId) {
+                return;
             }
+
+            setIsLoading(true);
+            const { tripInfo, pinPoints, mediaFiles: images } = await tripAPI.fetchTripTimeline(tripId);
+
+            if (pinPoints.length === 0) {
+                showToast('여행에 등록된 사진이 없습니다.');
+                navigate(PATH.TRIPS.ROOT);
+                return;
+            }
+
+            const sortedPinPointByDate = pinPoints.sort(
+                (a: PinPoint, b: PinPoint) => new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime(),
+            );
+            const imageDates = images.map((image: MediaFile) => image.recordDate.split('T')[0]);
+            const uniqueImageDates = [...new Set<string>([tripInfo.startDate, ...imageDates])].sort((a, b) =>
+                a.localeCompare(b),
+            );
+
+            setTripInfo(tripInfo);
+            setAllImages(images);
+            setImageDates(uniqueImageDates);
+            setPinPoints(sortedPinPointByDate);
+
+            setCharacterPosition({ lat: sortedPinPointByDate[0].latitude, lng: sortedPinPointByDate[0].longitude });
+            setIsPlayingAnimation(false);
+            setIsCharacterMoving(false);
+            setIsLoading(false);
         };
 
-        fetchTripMapData();
+        getTimelineMapData();
 
         return () => {
             if (autoPlayTimeoutRef.current) {
@@ -174,9 +170,9 @@ const TimelineMapPage = () => {
 
     const moveCharacter = useCallback(() => {
         if (currentPinIndex >= pinPoints.length - 1) {
-            setIsPlaying(false);
-            setIsMoving(false);
-            setIsAtPin(true);
+            setIsPlayingAnimation(false);
+            // setIsMoving(false);
+            setIsCharacterMoving(false);
             setIsMapInteractive(true);
             return;
         }
@@ -184,8 +180,8 @@ const TimelineMapPage = () => {
         const start = pinPoints[currentPinIndex];
         const end = pinPoints[currentPinIndex + 1];
         setShowPhotoCard(false);
-        setIsMoving(true);
-        setIsAtPin(false);
+        // setIsMoving(true);
+        setIsCharacterMoving(true);
         setIsMapInteractive(false); // 캐릭터 이동 시작 시 지도 조작 비활성화
 
         const animate = (time: number) => {
@@ -207,15 +203,15 @@ const TimelineMapPage = () => {
                 startTimeRef.current = null;
                 setCurrentPinIndex((prev) => prev + 1);
                 setShowPhotoCard(true);
-                setIsMoving(false);
-                setIsAtPin(true);
+                // setIsMoving(false);
+                setIsCharacterMoving(false);
                 setIsMapInteractive(true);
 
                 // 새로운 핀포인트 위치로 포토카드 위치 업데이트
                 setPhotoCardPosition({ lat: end.latitude, lng: end.longitude });
 
                 autoPlayTimeoutRef.current = setTimeout(() => {
-                    if (isPlaying) {
+                    if (isPlayingAnimation) {
                         moveCharacter();
                     }
                 }, WAIT_DURATION);
@@ -223,10 +219,10 @@ const TimelineMapPage = () => {
         };
 
         animationRef.current = requestAnimationFrame(animate);
-    }, [currentPinIndex, pinPoints, isPlaying]);
+    }, [currentPinIndex, pinPoints, isPlayingAnimation]);
 
     useEffect(() => {
-        if (isPlaying && !isMoving && isAtPin) {
+        if (isPlayingAnimation && !isCharacterMoving) {
             autoPlayTimeoutRef.current = setTimeout(() => {
                 moveCharacter();
             }, WAIT_DURATION);
@@ -237,7 +233,7 @@ const TimelineMapPage = () => {
                 clearTimeout(autoPlayTimeoutRef.current);
             }
         };
-    }, [isPlaying, isMoving, isAtPin, moveCharacter]);
+    }, [isPlayingAnimation, isCharacterMoving, moveCharacter]);
 
     useEffect(() => {
         if (pinPoints.length > 0 && tripInfo) {
@@ -269,12 +265,12 @@ const TimelineMapPage = () => {
                 mapRef.current.panTo({ lat: pinPoints[0].latitude, lng: pinPoints[0].longitude });
             }
             setShowPhotoCard(true);
-            setIsPlaying(true);
-            setIsMoving(false);
-            setIsAtPin(true);
+            setIsPlayingAnimation(true);
+            // setIsMoving(false);
+            setIsCharacterMoving(false);
         } else {
-            setIsPlaying(!isPlaying);
-            if (!isPlaying) {
+            setIsPlayingAnimation(!isPlayingAnimation);
+            if (!isPlayingAnimation) {
                 // 재생 버튼을 눌렀을 때 즉시 이동 시작
                 if (autoPlayTimeoutRef.current) {
                     clearTimeout(autoPlayTimeoutRef.current);
@@ -282,7 +278,7 @@ const TimelineMapPage = () => {
                 moveCharacter();
             }
         }
-    }, [currentPinIndex, pinPoints, isPlaying, moveCharacter]);
+    }, [currentPinIndex, pinPoints, isPlayingAnimation, moveCharacter]);
 
     const characterIcon = useMemo(() => {
         if (isLoaded) {
@@ -352,12 +348,12 @@ const TimelineMapPage = () => {
         if (showDetailedView) {
             return (
                 <>
-                    {isAtPin && (
+                    {!isCharacterMoving && (
                         <button css={controlButtonStyle} onClick={togglePlayPause}>
-                            {isPlaying ? <Pause size={18} /> : <Play size={18} />}
+                            {isPlayingAnimation ? <Pause size={18} /> : <Play size={18} />}
                         </button>
                     )}
-                    {isAtPin && (
+                    {!isCharacterMoving && (
                         <div css={imageByDateButton} onClick={handleDateClick}>
                             <h2 css={textStyle}>날짜별로 사진보기</h2>
                             <ChevronUp size={20} color={`${theme.colors.descriptionText}`} strokeWidth={2.5} />
@@ -414,7 +410,7 @@ const TimelineMapPage = () => {
                                 getPixelPositionOffset={getPhotoCardOffset}
                             >
                                 <div
-                                    css={photoCardStyle(index === currentPinIndex && isAtPin)}
+                                    css={photoCardStyle(index === currentPinIndex && !isCharacterMoving)}
                                     onClick={() =>
                                         navigate(`${PATH.TRIPS.TIMELINE.PINPOINT(Number(tripId), point.pinPointId)}`)
                                     }
@@ -441,7 +437,7 @@ const TimelineMapPage = () => {
                             onClick={() => handleMarkerClick(image as PinPoint)}
                         />
                     ))}
-                    {selectedMarker && renderPhotoCard(selectedMarker)}
+                    {selectedMarker && isMapLoaded && renderPhotoCard(selectedMarker)}
                 </>
             );
         } else {

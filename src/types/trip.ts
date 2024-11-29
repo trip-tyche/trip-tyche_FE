@@ -26,16 +26,6 @@ export interface Trips {
     readonly trips: Trip[];
 }
 
-// 핀포인트
-export interface PinPoint {
-    tripId: number;
-    pinPointId: number;
-    latitude: number;
-    longitude: number;
-    mediaLink: string;
-    recordDate: string;
-}
-
 // 미디어파일
 export interface MediaFile {
     latitude: number;
@@ -67,4 +57,14 @@ export interface CountryOptionModel {
     nameKo: string;
     nameEn: string;
     value: string;
+}
+
+// 핀포인트
+export interface PinPoint {
+    tripId: number;
+    pinPointId: number;
+    latitude: number;
+    longitude: number;
+    mediaLink: string;
+    recordDate: string;
 }
