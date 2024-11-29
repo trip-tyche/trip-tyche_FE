@@ -72,3 +72,14 @@ export const MARKER_CLUSTER_OPTIONS = {
     minimumClusterSize: 1,
     clickZoom: 2,
 } as const;
+
+export const TIMELINE_MAP = {
+    PHOTO_CARD: {
+        WIDTH: 100,
+        HEIGHT: 100,
+    },
+    DURATION: {
+        MOVE: 3000,
+        WAIT: 3000,
+    },
+} as const;

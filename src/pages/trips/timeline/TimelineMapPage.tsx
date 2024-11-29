@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { css } from '@emotion/react';
 import { GoogleMap, Marker, OverlayView, MarkerClusterer, Polyline } from '@react-google-maps/api';
-import { Play, Pause, ChevronUp } from 'lucide-react';
+import { Play, Pause } from 'lucide-react';
 import { BsPersonWalking } from 'react-icons/bs';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -15,6 +15,7 @@ import {
     DEFAULT_ZOOM_SCALE,
     GOOGLE_MAPS_OPTIONS,
     MARKER_CLUSTER_OPTIONS,
+    TIMELINE_MAP,
     POLYLINE_OPTIONS,
 } from '@/constants/googleMaps';
 import { PATH } from '@/constants/path';
@@ -24,12 +25,7 @@ import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { LatLngLiteralType, MapsType } from '@/types/googleMaps';
 import { BaseLocationMedia, MediaFile, PinPoint, TripInfoModel } from '@/types/trip';
-
-const MOVE_DURATION = 3000;
-const WAIT_DURATION = 3000;
-
-const PHOTO_CARD_WIDTH = 100;
-const PHOTO_CARD_HEIGHT = 100;
+import { calculatePhotoCardOffset } from '@/utils/mapOverlay';
 
 const TimelineMapPage = () => {
     // console.log('Re-Rendering Count');
@@ -42,7 +38,6 @@ const TimelineMapPage = () => {
     const [currentPinPointIndex, setCurrentPinPointIndex] = useState(0);
     const [selectedIndividualMarker, setSelectedIndividualMarker] = useState<BaseLocationMedia | null>(null);
 
-    const [showPhotoCard, setShowPhotoCard] = useState(true);
     const [currentZoomScale, setCurrentZoomScale] = useState(DEFAULT_ZOOM_SCALE.TIMELINE);
     const [isMapInteractive, setIsMapInteractive] = useState(true);
     const [imagesByDates, setImagesByDates] = useState<string[]>([]);
@@ -70,23 +65,8 @@ const TimelineMapPage = () => {
     //  Google Maps가 처음 로드될 때 실행되는 핸들러 함수
     const handleMapLoad = (map: MapsType) => {
         mapRef.current = map;
-        setIsMapLoaded(true); // 맵 로드 상태 변경
-
-        // // 지도 타일 로드 완료 이벤트 리스너 추가
-        // google.maps.event.addListenerOnce(map, 'tilesloaded', () => {
-        //     if (characterPosition) {
-        //         setPhotoCardPosition({ ...characterPosition });
-        //     }
-        // });
+        setIsMapLoaded(true);
     };
-
-    // 포토카드 오프셋 계산 함수
-    const getPhotoCardOffset = useCallback(() => {
-        return {
-            x: -PHOTO_CARD_WIDTH / 2,
-            y: -(PHOTO_CARD_HEIGHT + 80),
-        };
-    }, []);
 
     // 데이터 패칭
     useEffect(() => {
@@ -170,14 +150,12 @@ const TimelineMapPage = () => {
 
         const start = pinPointsInfo[currentPinPointIndex];
         const end = pinPointsInfo[currentPinPointIndex + 1];
-        setShowPhotoCard(false);
-        // setIsMoving(true);
         setIsCharacterMoving(true);
         setIsMapInteractive(false); // 캐릭터 이동 시작 시 지도 조작 비활성화
 
         const animate = (time: number) => {
             if (!startTimeRef.current) startTimeRef.current = time;
-            const progress = Math.min((time - startTimeRef.current) / MOVE_DURATION, 1);
+            const progress = Math.min((time - startTimeRef.current) / TIMELINE_MAP.DURATION.MOVE, 1);
 
             const newLat = start.latitude + (end.latitude - start.latitude) * progress;
             const newLng = start.longitude + (end.longitude - start.longitude) * progress;
@@ -193,7 +171,6 @@ const TimelineMapPage = () => {
             } else {
                 startTimeRef.current = null;
                 setCurrentPinPointIndex((prev) => prev + 1);
-                setShowPhotoCard(true);
                 setIsCharacterMoving(false);
                 setIsMapInteractive(true);
 
@@ -201,12 +178,12 @@ const TimelineMapPage = () => {
                     if (isPlayingAnimation) {
                         moveCharacter();
                     }
-                }, WAIT_DURATION);
+                }, TIMELINE_MAP.DURATION.WAIT);
             }
         };
 
         animationRef.current = requestAnimationFrame(animate);
-    }, [currentPinPointIndex, pinPointsInfo, isPlayingAnimation]);
+    }, [currentPinPointIndex, pinPointsInfo, isPlayingAnimation, isLastPinPoint]);
 
     // 재생 버튼을 눌렀을 때 캐릭터가 각 위치에서 잠시 멈췄다가 자동으로 다음 위치로 이동하는 자동 재생 기능
     useEffect(() => {
@@ -215,7 +192,7 @@ const TimelineMapPage = () => {
                 () => {
                     moveCharacter();
                 },
-                isLastPinPoint ? 0 : WAIT_DURATION,
+                isLastPinPoint ? 0 : TIMELINE_MAP.DURATION.WAIT,
             );
         }
 
@@ -224,7 +201,7 @@ const TimelineMapPage = () => {
                 clearTimeout(autoPlayTimeoutRef.current);
             }
         };
-    }, [isPlayingAnimation, isCharacterMoving, moveCharacter]);
+    }, [isPlayingAnimation, isCharacterMoving, isLastPinPoint, moveCharacter]);
 
     const handleShowCharacterViewButtonClick = useCallback(() => {
         if (mapRef.current) {
@@ -264,7 +241,6 @@ const TimelineMapPage = () => {
             setCurrentPinPointIndex(0);
             setCharacterPosition(firstPinPointLocation);
             mapRef.current?.panTo(firstPinPointLocation);
-            setShowPhotoCard(true);
             setIsCharacterMoving(false);
         } else {
             setIsPlayingAnimation(!isPlayingAnimation);
@@ -275,7 +251,7 @@ const TimelineMapPage = () => {
                 moveCharacter();
             }
         }
-    }, [currentPinPointIndex, pinPointsInfo, isPlayingAnimation, moveCharacter]);
+    }, [pinPointsInfo, isPlayingAnimation, isLastPinPoint, moveCharacter]);
 
     const clusterOptions = useMemo(
         () => ({
@@ -322,6 +298,97 @@ const TimelineMapPage = () => {
         return <Spinner />;
     }
 
+    const renderPolyline = () => {
+        if (pinPointsInfo.length < 2) {
+            return null;
+        }
+
+        const path = pinPointsInfo.map((pinPoint) => ({ lat: pinPoint.latitude, lng: pinPoint.longitude }));
+
+        return <Polyline path={path} options={POLYLINE_OPTIONS} />;
+    };
+
+    const renderPhotoCard = (marker: BaseLocationMedia) => (
+        <OverlayView
+            position={{ lat: marker.latitude, lng: marker.longitude }}
+            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+            getPixelPositionOffset={() => calculatePhotoCardOffset(50)}
+        >
+            <div css={basePhotoCardStyle}>
+                <img src={marker.mediaLink} alt='포토카드 이미지' />
+            </div>
+        </OverlayView>
+    );
+
+    const renderMarkers = () => {
+        if (showCharacterView) {
+            return (
+                <>
+                    {renderPolyline()}
+                    {pinPointsInfo.map((point, index) => (
+                        <React.Fragment key={point.pinPointId}>
+                            <Marker
+                                position={{ lat: point.latitude, lng: point.longitude }}
+                                icon={markerIcon || undefined}
+                            />
+                            <OverlayView
+                                position={characterPosition || undefined}
+                                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                                getPixelPositionOffset={() => calculatePhotoCardOffset(80)}
+                            >
+                                <div css={photoCardStyle(index === currentPinPointIndex && !isCharacterMoving)}>
+                                    <img
+                                        src={point.mediaLink}
+                                        alt='포토카드 이미지'
+                                        onClick={() =>
+                                            navigate(
+                                                `${PATH.TRIPS.TIMELINE.PINPOINT(Number(tripId), point.pinPointId)}`,
+                                            )
+                                        }
+                                    />
+                                </div>
+                            </OverlayView>
+                        </React.Fragment>
+                    ))}
+                    {characterPosition && (
+                        <Marker position={characterPosition} icon={characterIcon || undefined} zIndex={1000} />
+                    )}
+                </>
+            );
+        } else if (showIndividualMarkers) {
+            return (
+                <>
+                    {tripImages.map((image) => (
+                        <Marker
+                            key={image.mediaFileId}
+                            position={{ lat: image.latitude, lng: image.longitude }}
+                            icon={markerIcon || undefined}
+                            onClick={() => handleIndividualMarkerClick(image)}
+                        />
+                    ))}
+                    {isMapLoaded && selectedIndividualMarker && renderPhotoCard(selectedIndividualMarker)}
+                </>
+            );
+        } else {
+            return (
+                <MarkerClusterer options={clusterOptions}>
+                    {(clusterer) => (
+                        <>
+                            {tripImages.map((image) => (
+                                <Marker
+                                    key={image.mediaFileId}
+                                    position={{ lat: image.latitude, lng: image.longitude }}
+                                    clusterer={clusterer}
+                                    // icon={markerIcon || undefined}
+                                />
+                            ))}
+                        </>
+                    )}
+                </MarkerClusterer>
+            );
+        }
+    };
+
     const renderButtons = () => {
         return (
             <>
@@ -360,97 +427,6 @@ const TimelineMapPage = () => {
                 )}
             </>
         );
-    };
-
-    const renderPolyline = () => {
-        if (pinPointsInfo.length < 2) return null;
-
-        const path = pinPointsInfo.map((point) => ({ lat: point.latitude, lng: point.longitude }));
-
-        return <Polyline path={path} options={POLYLINE_OPTIONS} />;
-    };
-
-    const renderPhotoCard = (marker: BaseLocationMedia) => (
-        <OverlayView
-            position={{ lat: marker.latitude, lng: marker.longitude }}
-            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-            getPixelPositionOffset={(_width, _height) => ({
-                x: -(PHOTO_CARD_WIDTH / 2),
-                y: -(PHOTO_CARD_HEIGHT + 45),
-            })}
-        >
-            <div css={clusterPhotoCardStyle}>
-                <img css={imageStyle} src={marker.mediaLink} alt='포토 카드' />
-            </div>
-        </OverlayView>
-    );
-
-    const renderMarkers = () => {
-        if (showCharacterView) {
-            return (
-                <>
-                    {renderPolyline()}
-                    {pinPointsInfo.map((point, index) => (
-                        <React.Fragment key={point.pinPointId}>
-                            <Marker
-                                position={{ lat: point.latitude, lng: point.longitude }}
-                                icon={markerIcon || undefined}
-                            />
-                            <OverlayView
-                                position={characterPosition || undefined}
-                                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                                getPixelPositionOffset={getPhotoCardOffset}
-                            >
-                                <div
-                                    css={photoCardStyle(index === currentPinPointIndex && !isCharacterMoving)}
-                                    onClick={() =>
-                                        navigate(`${PATH.TRIPS.TIMELINE.PINPOINT(Number(tripId), point.pinPointId)}`)
-                                    }
-                                >
-                                    <img css={imageStyle} src={point.mediaLink} alt='포토카드 이미지' />
-                                </div>
-                            </OverlayView>
-                        </React.Fragment>
-                    ))}
-                    {characterPosition && (
-                        <Marker position={characterPosition} icon={characterIcon || undefined} zIndex={1000} />
-                    )}
-                </>
-            );
-        } else if (showIndividualMarkers) {
-            return (
-                <>
-                    {renderPolyline()}
-                    {tripImages.map((image) => (
-                        <Marker
-                            key={image.mediaFileId}
-                            position={{ lat: image.latitude, lng: image.longitude }}
-                            icon={markerIcon || undefined}
-                            onClick={() => handleIndividualMarkerClick(image)}
-                        />
-                    ))}
-                    {selectedIndividualMarker && isMapLoaded && renderPhotoCard(selectedIndividualMarker)}
-                </>
-            );
-        } else {
-            return (
-                <MarkerClusterer options={clusterOptions}>
-                    {(clusterer) => (
-                        <>
-                            {renderPolyline()}
-                            {tripImages.map((image) => (
-                                <Marker
-                                    key={image.mediaFileId}
-                                    position={{ lat: image.latitude, lng: image.longitude }}
-                                    clusterer={clusterer}
-                                    icon={markerIcon || undefined}
-                                />
-                            ))}
-                        </>
-                    )}
-                </MarkerClusterer>
-            );
-        }
     };
 
     return (
@@ -504,44 +480,18 @@ const customButtonStyle = (variant: string = 'primary') => css`
     transition: all 0.3s ease;
 `;
 
-const clusterPhotoCardStyle = css`
+const basePhotoCardStyle = css`
     background-color: ${theme.colors.white};
-    border-radius: 50%;
-    width: ${PHOTO_CARD_WIDTH}px;
-    height: ${PHOTO_CARD_HEIGHT}px;
+    width: ${TIMELINE_MAP.PHOTO_CARD.WIDTH}px;
+    height: ${TIMELINE_MAP.PHOTO_CARD.HEIGHT}px;
+    border-radius: 20%;
     padding: 1px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    box-shadow:
-        rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
-        rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-`;
-
-const photoCardStyle = (isCurrentPin: boolean) => css`
-    background-color: ${theme.colors.white};
-    width: ${PHOTO_CARD_WIDTH}px;
-    height: ${PHOTO_CARD_HEIGHT}px;
-    border-radius: 30%;
-    height: auto;
-    padding: 1px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     box-shadow:
         rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
         rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
     cursor: pointer;
     transition: transform 0.2s ease;
     position: relative;
-    transition: opacity 0.3s ease;
-    opacity: ${isCurrentPin ? 1 : 0};
-    visibility: ${isCurrentPin ? 'visible' : 'hidden'};
-    pointer-events: ${isCurrentPin ? 'auto' : 'none'};
 
     &:hover {
         transform: scale(1.05);
@@ -553,9 +503,6 @@ const photoCardStyle = (isCurrentPin: boolean) => css`
         bottom: -10px;
         left: 50%;
         transform: translateX(-50%);
-        width: 0;
-        border: 1px solid #ccc;
-        height: 0;
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         border-top: 10px solid white;
@@ -563,13 +510,20 @@ const photoCardStyle = (isCurrentPin: boolean) => css`
             rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
             rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
     }
+
+    img {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        border-radius: 20%;
+    }
 `;
 
-const imageStyle = css`
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    border-radius: 30%;
+const photoCardStyle = (isCurrentPin: boolean) => css`
+    ${basePhotoCardStyle}
+    opacity: ${isCurrentPin ? 1 : 0};
+    visibility: ${isCurrentPin ? 'visible' : 'hidden'};
+    pointer-events: ${isCurrentPin ? 'auto' : 'none'};
 `;
 
 export default TimelineMapPage;
