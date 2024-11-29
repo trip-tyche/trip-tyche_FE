@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 
 import { css } from '@emotion/react';
 import { ArrowDown } from 'lucide-react';
@@ -39,7 +39,7 @@ const TimelineDatePage = () => {
     const imageRefs = useImagesLocationObserver(imagesByDate, setImageLocation);
 
     useEffect(() => {
-        if (!imageDates || imageDates.length === 0) {
+        if (!imageDates?.length) {
             return;
         }
 
@@ -48,14 +48,14 @@ const TimelineDatePage = () => {
         setCurrentDate(imageDates[0]);
     }, [imageDates]);
 
-    const handleArrowButtonClick = () => {
+    const handleArrowButtonClick = useCallback(() => {
         setIsTransitioning(true);
         navigate(`${PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`);
-    };
+    }, [navigate, tripId]);
 
-    const handleDayButtonClick = (date: string) => {
+    const handleDateButtonClick = useCallback((date: string) => {
         setCurrentDate(date);
-    };
+    }, []);
 
     if (loadError) {
         showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
@@ -74,7 +74,7 @@ const TimelineDatePage = () => {
                 currentDate={currentDate}
                 datesWithImages={datesWithImages}
                 startDate={startDate}
-                onDateSelect={handleDayButtonClick}
+                onDateSelect={handleDateButtonClick}
                 onArrowButtonClick={handleArrowButtonClick}
             />
 
