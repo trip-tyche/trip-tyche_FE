@@ -328,7 +328,7 @@ const TimelineMapPage = () => {
                 {!isCharacterMoving && (
                     <div css={buttonGroup}>
                         <Button
-                            text='날짜별로 사진보기'
+                            text='날짜별 사진보기'
                             variant='white'
                             onClick={handleImageByDateButtonClick}
                             customStyle={customButtonStyle('white')}
@@ -337,18 +337,20 @@ const TimelineMapPage = () => {
                             <Button
                                 text={
                                     isLastPinPoint
-                                        ? '처음으로 돌아가기'
+                                        ? '첫 위치로 돌아가기'
                                         : isPlayingAnimation
-                                          ? '캐릭터 멈추기'
-                                          : '캐릭터 이동하기'
+                                          ? '캐릭터 움직임 멈추기'
+                                          : '캐릭터 움직이기'
                                 }
-                                icon={isPlayingAnimation ? <Pause size={16} /> : <Play size={16} />}
+                                icon={
+                                    isLastPinPoint ? '' : isPlayingAnimation ? <Pause size={16} /> : <Play size={16} />
+                                }
                                 onClick={togglePlayingButton}
                                 customStyle={customButtonStyle()}
                             />
                         ) : (
                             <Button
-                                text='캐릭터 보기'
+                                text='캐릭터 화면에 표시'
                                 icon={<BsPersonWalking size={16} />}
                                 onClick={handleShowCharacterViewButtonClick}
                                 customStyle={customButtonStyle()}
