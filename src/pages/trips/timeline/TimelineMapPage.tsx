@@ -17,6 +17,7 @@ import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import useTimelineStore from '@/stores/useTimelineStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
+import { MapsType } from '@/types/googleMaps';
 import { MediaFile, PinPoint, TripInfo } from '@/types/trip';
 import { getDayNumber } from '@/utils/date';
 
@@ -64,8 +65,10 @@ const TimelineMapPage = () => {
     const navigate = useNavigate();
     const { tripId } = useParams();
 
-    // 맵 로드 핸들러 추가
-    const handleMapLoad = (map: google.maps.Map) => {
+    console.log(mapRef);
+
+    //  Google Maps가 처음 로드될 때 실행되는 핸들러 함수
+    const handleMapLoad = (map: MapsType) => {
         mapRef.current = map;
         setMapLoaded(true);
 
@@ -80,14 +83,14 @@ const TimelineMapPage = () => {
     // 포토카드 오프셋 계산 함수
     const getPhotoCardOffset = useCallback(
         (_width: number, _height: number) => {
-            if (!mapLoaded) return { x: 0, y: 0 };
+            if (!isLoaded) return { x: 0, y: 0 };
 
             return {
                 x: -PHOTO_CARD_WIDTH / 2,
                 y: -(PHOTO_CARD_HEIGHT + 75),
             };
         },
-        [mapLoaded],
+        [isLoaded],
     );
 
     useEffect(() => {
@@ -475,7 +478,7 @@ const TimelineMapPage = () => {
                         scrollwheel: isMapInteractive,
                     }}
                     mapContainerStyle={{ height: 'calc(100% + 30px)' }}
-                    onLoad={handleMapLoad}
+                    // onLoad={handleMapLoad}
                     onZoomChanged={handleZoomChanged}
                     onClick={() => setSelectedMarker(null)}
                 >
