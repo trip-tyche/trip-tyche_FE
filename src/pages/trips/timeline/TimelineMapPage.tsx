@@ -25,7 +25,6 @@ import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { LatLngLiteralType, MapsType } from '@/types/googleMaps';
 import { BaseLocationMedia, MediaFile, PinPoint, TripInfoModel } from '@/types/trip';
-import { calculatePhotoCardOffset } from '@/utils/mapOverlay';
 
 const TimelineMapPage = () => {
     // console.log('Re-Rendering Count');
@@ -214,8 +213,9 @@ const TimelineMapPage = () => {
     }, [characterPosition]);
 
     const handleImageByDateButtonClick = useCallback(() => {
-        navigate(`${PATH.TRIPS.TIMELINE.DATE(Number(tripId))}`, { state: imagesByDates });
-    }, [tripId, imagesByDates, navigate]);
+        const pinPointId = String(pinPointsInfo[currentPinPointIndex].pinPointId);
+        navigate(`${PATH.TRIPS.TIMELINE.DATE(Number(tripId))}`, { state: { imagesByDates, pinPointId } });
+    }, [tripId, imagesByDates, navigate, pinPointsInfo, currentPinPointIndex]);
 
     const handleIndividualMarkerClick = (marker: BaseLocationMedia) => {
         setSelectedIndividualMarker(marker);
@@ -252,6 +252,13 @@ const TimelineMapPage = () => {
             }
         }
     }, [pinPointsInfo, isPlayingAnimation, isLastPinPoint, moveCharacter]);
+
+    const calculatePhotoCardOffset = useCallback((height: number) => {
+        return {
+            x: -TIMELINE_MAP.PHOTO_CARD.WIDTH / 2,
+            y: -(TIMELINE_MAP.PHOTO_CARD.HEIGHT + height),
+        };
+    }, []);
 
     const clusterOptions = useMemo(
         () => ({
