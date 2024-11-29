@@ -9,7 +9,7 @@ import Header from '@/components/common/Header';
 import AlertModal from '@/components/features/guide/AlertModal';
 import ModalContent from '@/components/features/guide/ModalContent';
 import UploadingSpinner from '@/components/features/guide/UploadingSpinner';
-import { GOOGLE_MAPS_DEFAULT_CENTER } from '@/constants/googleMaps';
+import { DEFAULT_CENTER } from '@/constants/googleMaps';
 import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
 import { PATH } from '@/constants/path';
 import { PAGE } from '@/constants/title';
@@ -56,7 +56,7 @@ const TripImageUploadPage = () => {
     const navigateToImageLocation = () => {
         setIsAddLocationModalOpen(false);
         const defaultLocation =
-            imagesWithLocationAndDate.length !== 0 ? imagesWithLocationAndDate[0].location : GOOGLE_MAPS_DEFAULT_CENTER;
+            imagesWithLocationAndDate.length !== 0 ? imagesWithLocationAndDate[0].location : DEFAULT_CENTER;
 
         navigate(`${PATH.TRIPS.NEW.LOCATIONS(Number(tripId))}`, {
             state: { defaultLocation, imagesNoLocationWithDate },

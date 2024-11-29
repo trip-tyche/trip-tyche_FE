@@ -7,6 +7,7 @@ import { BsPersonWalking } from 'react-icons/bs';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
+import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
 import {
@@ -30,28 +31,26 @@ const WAIT_DURATION = 3000;
 const PHOTO_CARD_WIDTH = 100;
 const PHOTO_CARD_HEIGHT = 100;
 
-const INDIVIDUAL_MARKER_ZOOM = 17;
 const TimelineMapPage = () => {
-    console.log('Re-Rendering Count');
+    // console.log('Re-Rendering Count');
     const [tripInfo, setTripInfo] = useState<TripInfoModel>();
     const [pinPointsInfo, setPinPointsInfo] = useState<PinPoint[]>([]);
     const [tripImages, setTripImages] = useState<MediaFile[]>([]);
 
     const [characterPosition, setCharacterPosition] = useState<LatLngLiteralType>();
 
-    const [isPlayingAnimation, setIsPlayingAnimation] = useState(false);
-    const [isCharacterMoving, setIsCharacterMoving] = useState(false);
-
     const [currentPinPointIndex, setCurrentPinPointIndex] = useState(0);
     const [selectedIndividualMarker, setSelectedIndividualMarker] = useState<BaseLocationMedia | null>(null);
 
     const [showPhotoCard, setShowPhotoCard] = useState(true);
-    const [currentZoom, setCurrentZoom] = useState(DEFAULT_ZOOM_SCALE.TIMELINE);
+    const [currentZoomScale, setCurrentZoomScale] = useState(DEFAULT_ZOOM_SCALE.TIMELINE);
     const [isMapInteractive, setIsMapInteractive] = useState(true);
-    const [imageDates, setImageDates] = useState<string[]>([]);
+    const [imagesByDates, setImagesByDates] = useState<string[]>([]);
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isPlayingAnimation, setIsPlayingAnimation] = useState(false);
+    const [isCharacterMoving, setIsCharacterMoving] = useState(false);
     const [isMapLoaded, setIsMapLoaded] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const { showToast } = useToastStore();
     const { lastPinPointId, setLastPinPointId } = useTimelineStore();
@@ -65,6 +64,8 @@ const TimelineMapPage = () => {
 
     const navigate = useNavigate();
     const { tripId } = useParams();
+
+    const isLastPinPoint = currentPinPointIndex === pinPointsInfo.length - 1;
 
     //  Google Maps가 처음 로드될 때 실행되는 핸들러 함수
     const handleMapLoad = (map: MapsType) => {
@@ -113,7 +114,7 @@ const TimelineMapPage = () => {
 
             setTripInfo(tripInfo);
             setTripImages(images);
-            setImageDates(uniqueImageDates);
+            setImagesByDates(uniqueImageDates);
             setPinPointsInfo(sortedPinPointByDate);
 
             setCharacterPosition({ lat: sortedPinPointByDate[0].latitude, lng: sortedPinPointByDate[0].longitude });
@@ -160,9 +161,8 @@ const TimelineMapPage = () => {
     }, [pinPointsInfo, lastPinPointId]);
 
     const moveCharacter = useCallback(() => {
-        if (currentPinPointIndex >= pinPointsInfo.length - 1) {
+        if (isLastPinPoint) {
             setIsPlayingAnimation(false);
-            // setIsMoving(false);
             setIsCharacterMoving(false);
             setIsMapInteractive(true);
             return;
@@ -194,12 +194,8 @@ const TimelineMapPage = () => {
                 startTimeRef.current = null;
                 setCurrentPinPointIndex((prev) => prev + 1);
                 setShowPhotoCard(true);
-                // setIsMoving(false);
                 setIsCharacterMoving(false);
                 setIsMapInteractive(true);
-
-                // 새로운 핀포인트 위치로 포토카드 위치 업데이트
-                // setPhotoCardPosition({ lat: end.latitude, lng: end.longitude });
 
                 autoPlayTimeoutRef.current = setTimeout(() => {
                     if (isPlayingAnimation) {
@@ -215,9 +211,12 @@ const TimelineMapPage = () => {
     // 재생 버튼을 눌렀을 때 캐릭터가 각 위치에서 잠시 멈췄다가 자동으로 다음 위치로 이동하는 자동 재생 기능
     useEffect(() => {
         if (isPlayingAnimation && !isCharacterMoving) {
-            autoPlayTimeoutRef.current = setTimeout(() => {
-                moveCharacter();
-            }, WAIT_DURATION);
+            autoPlayTimeoutRef.current = setTimeout(
+                () => {
+                    moveCharacter();
+                },
+                isLastPinPoint ? 0 : WAIT_DURATION,
+            );
         }
 
         return () => {
@@ -227,22 +226,49 @@ const TimelineMapPage = () => {
         };
     }, [isPlayingAnimation, isCharacterMoving, moveCharacter]);
 
-    const togglePlayPause = useCallback(() => {
-        if (currentPinPointIndex === pinPointsInfo.length - 1) {
-            // 마지막 핀포인트에서 처음으로 돌아가기
-            setCurrentPinPointIndex(0);
-            setCharacterPosition({ lat: pinPointsInfo[0].latitude, lng: pinPointsInfo[0].longitude });
-            if (mapRef.current) {
-                mapRef.current.panTo({ lat: pinPointsInfo[0].latitude, lng: pinPointsInfo[0].longitude });
+    const handleShowCharacterViewButtonClick = useCallback(() => {
+        if (mapRef.current) {
+            mapRef.current.setZoom(DEFAULT_ZOOM_SCALE.TIMELINE);
+            // 지도 중심을 캐릭터 위치로 이동
+            if (characterPosition) {
+                mapRef.current.panTo(characterPosition);
             }
+        }
+    }, [characterPosition]);
+
+    const handleImageByDateButtonClick = useCallback(() => {
+        navigate(`${PATH.TRIPS.TIMELINE.DATE(Number(tripId))}`, { state: imagesByDates });
+    }, [tripId, imagesByDates, navigate]);
+
+    const handleIndividualMarkerClick = (marker: BaseLocationMedia) => {
+        setSelectedIndividualMarker(marker);
+        if (mapRef.current) {
+            mapRef.current.panTo({ lat: marker.latitude, lng: marker.longitude });
+        }
+    };
+
+    const handleZoomChanged = () => {
+        setSelectedIndividualMarker(null);
+        if (mapRef.current) {
+            const newZoom = mapRef.current.getZoom();
+            if (newZoom !== undefined) {
+                setCurrentZoomScale(newZoom);
+            }
+        }
+    };
+
+    const togglePlayingButton = useCallback(() => {
+        if (isLastPinPoint) {
+            const firstPinPointLocation = { lat: pinPointsInfo[0].latitude, lng: pinPointsInfo[0].longitude };
+
+            setCurrentPinPointIndex(0);
+            setCharacterPosition(firstPinPointLocation);
+            mapRef.current?.panTo(firstPinPointLocation);
             setShowPhotoCard(true);
-            setIsPlayingAnimation(true);
-            // setIsMoving(false);
             setIsCharacterMoving(false);
         } else {
             setIsPlayingAnimation(!isPlayingAnimation);
             if (!isPlayingAnimation) {
-                // 재생 버튼을 눌렀을 때 즉시 이동 시작
                 if (autoPlayTimeoutRef.current) {
                     clearTimeout(autoPlayTimeoutRef.current);
                 }
@@ -257,7 +283,7 @@ const TimelineMapPage = () => {
             onClick: (cluster: any, _markers: any) => {
                 if (mapRef.current) {
                     const currentZoom = mapRef.current.getZoom() || 0;
-                    const newZoom = Math.min(currentZoom + 3, INDIVIDUAL_MARKER_ZOOM - 1);
+                    const newZoom = Math.min(currentZoom + 3, DEFAULT_ZOOM_SCALE.INDIVIDUAL_MARKER_VISIBLE - 1);
                     mapRef.current.setZoom(newZoom);
                     mapRef.current.panTo(cluster.getCenter());
                 }
@@ -283,72 +309,55 @@ const TimelineMapPage = () => {
         return null;
     }, [isLoaded]);
 
-    const showDetailedView = currentZoom === DEFAULT_ZOOM_SCALE.TIMELINE;
-    const showIndividualMarkers = currentZoom >= INDIVIDUAL_MARKER_ZOOM;
-
-    const handleShowCharacterViewButtonClick = useCallback(() => {
-        if (mapRef.current) {
-            mapRef.current.setZoom(DEFAULT_ZOOM_SCALE.TIMELINE);
-            // 지도 중심을 캐릭터 위치로 이동
-            if (characterPosition) {
-                mapRef.current.panTo(characterPosition);
-            }
-        }
-    }, [characterPosition]);
-
-    const handleImageByDateButtonClick = useCallback(() => {
-        navigate(`${PATH.TRIPS.TIMELINE.DATE(Number(tripId))}`, { state: imageDates });
-    }, [tripId, imageDates, navigate]);
-
-    const handleIndividualMarkerClick = (marker: BaseLocationMedia) => {
-        setSelectedIndividualMarker(marker);
-        if (mapRef.current) {
-            mapRef.current.panTo({ lat: marker.latitude, lng: marker.longitude });
-        }
-    };
-
-    const handleZoomChanged = () => {
-        setSelectedIndividualMarker(null);
-        if (mapRef.current) {
-            const newZoom = mapRef.current.getZoom();
-            if (newZoom !== undefined) {
-                setCurrentZoom(newZoom);
-            }
-        }
-    };
+    const showCharacterView = currentZoomScale === DEFAULT_ZOOM_SCALE.TIMELINE;
+    const showIndividualMarkers = currentZoomScale >= DEFAULT_ZOOM_SCALE.INDIVIDUAL_MARKER_VISIBLE;
 
     if (loadError) {
         showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
+        navigate(PATH.TRIPS.ROOT);
+        return;
     }
 
     if (!isLoaded || isLoading) {
         return <Spinner />;
     }
 
-    const renderControls = () => {
-        if (showDetailedView) {
-            return (
-                <>
-                    {!isCharacterMoving && (
-                        <button css={controlButtonStyle} onClick={togglePlayPause}>
-                            {isPlayingAnimation ? <Pause size={18} /> : <Play size={18} />}
-                        </button>
-                    )}
-                    {!isCharacterMoving && (
-                        <div css={imageByDateButton} onClick={handleImageByDateButtonClick}>
-                            <h2 css={textStyle}>날짜별로 사진보기</h2>
-                            <ChevronUp size={20} color={`${theme.colors.descriptionText}`} strokeWidth={2.5} />
-                        </div>
-                    )}
-                </>
-            );
-        } else {
-            return (
-                <div css={controlButtonStyle} onClick={handleShowCharacterViewButtonClick}>
-                    <BsPersonWalking />
-                </div>
-            );
-        }
+    const renderButtons = () => {
+        return (
+            <>
+                {!isCharacterMoving && (
+                    <div css={buttonGroup}>
+                        <Button
+                            text='날짜별로 사진보기'
+                            variant='white'
+                            onClick={handleImageByDateButtonClick}
+                            customStyle={customButtonStyle('white')}
+                        />
+                        {showCharacterView ? (
+                            <Button
+                                text={
+                                    isLastPinPoint
+                                        ? '처음으로 돌아가기'
+                                        : isPlayingAnimation
+                                          ? '캐릭터 멈추기'
+                                          : '캐릭터 이동하기'
+                                }
+                                icon={isPlayingAnimation ? <Pause size={16} /> : <Play size={16} />}
+                                onClick={togglePlayingButton}
+                                customStyle={customButtonStyle()}
+                            />
+                        ) : (
+                            <Button
+                                text='캐릭터 보기'
+                                icon={<BsPersonWalking size={16} />}
+                                onClick={handleShowCharacterViewButtonClick}
+                                customStyle={customButtonStyle()}
+                            />
+                        )}
+                    </div>
+                )}
+            </>
+        );
     };
 
     const renderPolyline = () => {
@@ -375,7 +384,7 @@ const TimelineMapPage = () => {
     );
 
     const renderMarkers = () => {
-        if (showDetailedView) {
+        if (showCharacterView) {
             return (
                 <>
                     {renderPolyline()}
@@ -460,7 +469,7 @@ const TimelineMapPage = () => {
                     onClick={() => setSelectedIndividualMarker(null)}
                 >
                     {renderMarkers()}
-                    {renderControls()}
+                    {renderButtons()}
                 </GoogleMap>
             </div>
         </div>
@@ -477,43 +486,19 @@ const mapWrapper = css`
     flex-grow: 1;
 `;
 
-const imageByDateButton = css`
+const buttonGroup = css`
     position: absolute;
+    width: 100%;
     bottom: 30px;
-    left: 0;
-    right: 0;
+    padding: 12px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-    cursor: pointer;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    height: 54px;
-    background-color: ${theme.colors.white};
+    gap: 8px;
 `;
 
-const textStyle = css`
-    color: ${theme.colors.descriptionText};
+const customButtonStyle = (variant: string = 'primary') => css`
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    color: ${variant === 'white' ? theme.colors.descriptionText : ''};
     font-weight: bold;
-`;
-
-const controlButtonStyle = css`
-    position: absolute;
-    bottom: 94px;
-    right: 10px;
-    background-color: ${theme.colors.primary};
-    color: ${theme.colors.white};
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
     transition: all 0.3s ease;
 `;
 

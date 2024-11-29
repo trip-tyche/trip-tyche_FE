@@ -12,7 +12,7 @@ interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
     icon?: React.ReactNode;
     isLoading?: boolean;
     loadingText?: string;
-    css?: SerializedStyles;
+    customStyle?: SerializedStyles;
 }
 
 const Button = ({
@@ -22,9 +22,14 @@ const Button = ({
     isLoading = false,
     loadingText,
     disabled,
+    customStyle,
     ...props
 }: ButtonProps) => (
-    <button css={[buttonStyles.base, buttonStyles.variants(variant)]} disabled={disabled || isLoading} {...props}>
+    <button
+        css={[buttonStyles.base, buttonStyles.variants(variant), customStyle]}
+        disabled={disabled || isLoading}
+        {...props}
+    >
         {isLoading ? (
             <p css={loadingStyle}>{loadingText} </p>
         ) : (
