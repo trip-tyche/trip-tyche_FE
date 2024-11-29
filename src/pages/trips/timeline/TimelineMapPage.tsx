@@ -266,6 +266,23 @@ const TimelineMapPage = () => {
         [],
     );
 
+    const characterIcon = useMemo(() => {
+        if (isLoaded) {
+            return {
+                url: CHARACTER_ICON_CONFIG.url,
+                scaledSize: new window.google.maps.Size(
+                    CHARACTER_ICON_CONFIG.scaledSize.width,
+                    CHARACTER_ICON_CONFIG.scaledSize.height,
+                ),
+                anchor: new window.google.maps.Point(
+                    CHARACTER_ICON_CONFIG.anchorPoint.x,
+                    CHARACTER_ICON_CONFIG.anchorPoint.y,
+                ),
+            };
+        }
+        return null;
+    }, [isLoaded]);
+
     const showDetailedView = currentZoom === DEFAULT_ZOOM_SCALE.TIMELINE;
     const showIndividualMarkers = currentZoom >= INDIVIDUAL_MARKER_ZOOM;
 
@@ -385,7 +402,7 @@ const TimelineMapPage = () => {
                         </React.Fragment>
                     ))}
                     {characterPosition && (
-                        <Marker position={characterPosition} icon={CHARACTER_ICON_CONFIG || undefined} zIndex={1000} />
+                        <Marker position={characterPosition} icon={characterIcon || undefined} zIndex={1000} />
                     )}
                 </>
             );

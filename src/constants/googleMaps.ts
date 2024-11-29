@@ -62,8 +62,8 @@ export const DEFAULT_ZOOM_SCALE = {
 
 export const CHARACTER_ICON_CONFIG = {
     url: characterImage,
-    scaledSize: new window.google.maps.Size(50, 65),
-    anchor: new window.google.maps.Point(25, 65),
+    scaledSize: { width: 50, height: 65 },
+    anchorPoint: { x: 25, y: 65 },
 };
 
 export const MARKER_CLUSTER_OPTIONS = {
