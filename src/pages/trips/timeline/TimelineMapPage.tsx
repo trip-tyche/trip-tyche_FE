@@ -65,8 +65,6 @@ const TimelineMapPage = () => {
     const navigate = useNavigate();
     const { tripId } = useParams();
 
-    console.log(mapRef);
-
     //  Google Maps가 처음 로드될 때 실행되는 핸들러 함수
     const handleMapLoad = (map: MapsType) => {
         mapRef.current = map;
@@ -88,17 +86,12 @@ const TimelineMapPage = () => {
     };
 
     // 포토카드 오프셋 계산 함수
-    const getPhotoCardOffset = useCallback(
-        (_width: number, _height: number) => {
-            if (!mapLoaded) return { x: 0, y: 0 }; // mapLoaded가 false면 기본값 반환
-
-            return {
-                x: -PHOTO_CARD_WIDTH / 2,
-                y: -(PHOTO_CARD_HEIGHT + 75),
-            };
-        },
-        [mapLoaded],
-    );
+    const getPhotoCardOffset = useCallback((_width: number, _height: number) => {
+        return {
+            x: -PHOTO_CARD_WIDTH / 2,
+            y: -(PHOTO_CARD_HEIGHT + 75),
+        };
+    }, []);
 
     useEffect(() => {
         const fetchTripMapData = async () => {
