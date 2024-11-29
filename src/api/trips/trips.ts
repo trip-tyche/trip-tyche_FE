@@ -1,6 +1,6 @@
 import { apiClient } from '@/api/client';
 import { API_ENDPOINTS } from '@/constants/api';
-import { TripInfo, TripInfoModel } from '@/types/trip';
+import { TripInfoModel } from '@/types/trip';
 import { getToken } from '@/utils/auth';
 
 export const tripAPI = {
@@ -79,7 +79,7 @@ export const tripAPI = {
         //     throw error;
         // }
     },
-    updateTripInfo: async (tripId: string, tripInfo: TripInfo) => {
+    updateTripInfo: async (tripId: string, tripInfo: TripInfoModel) => {
         // try {
         const token = getToken();
         const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripId}`, tripInfo, {

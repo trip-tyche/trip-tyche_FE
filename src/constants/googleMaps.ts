@@ -1,5 +1,7 @@
 import { Libraries } from '@react-google-maps/api';
 
+import characterImage from '/character-1.png';
+
 import { ENV } from '@/constants/api';
 import theme from '@/styles/theme';
 import { MapOptionsType, MapPolylineOptionsType } from '@/types/googleMaps';
@@ -51,5 +53,22 @@ export const GOOGLE_MAPS_DEFAULT_CENTER = {
     longitude: 127,
 } as const;
 
-export const GOOGLE_MAPS_DEFAULT_ZOOM = 12;
-export const GOOGLE_MAPS_IMAGE_BY_DATE_ZOOM = 13;
+export const DEFAULT_ZOOM_SCALE = {
+    LOCATION_ADD: 12,
+    IMAGE_BY_DATE: 13,
+    TIMELINE: 14,
+    INDIVIDUAL_MARKER_VISIBLE: 17,
+};
+
+export const CHARACTER_ICON_CONFIG = {
+    url: characterImage,
+    scaledSize: new window.google.maps.Size(50, 65),
+    anchor: new window.google.maps.Point(25, 65),
+};
+
+export const MARKER_CLUSTER_OPTIONS = {
+    maxZoom: DEFAULT_ZOOM_SCALE.INDIVIDUAL_MARKER_VISIBLE - 1,
+    zoomOnClick: true,
+    minimumClusterSize: 1,
+    clickZoom: 2,
+};

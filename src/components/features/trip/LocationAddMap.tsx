@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Spinner from '@/components/common/Spinner';
-import { GOOGLE_MAPS_DEFAULT_ZOOM, GOOGLE_MAPS_OPTIONS } from '@/constants/googleMaps';
+import { DEFAULT_ZOOM_SCALE, GOOGLE_MAPS_OPTIONS } from '@/constants/googleMaps';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
@@ -90,7 +90,7 @@ const LocationAddMap = ({
                 </Autocomplete>
             </div>
             <GoogleMap
-                zoom={GOOGLE_MAPS_DEFAULT_ZOOM}
+                zoom={DEFAULT_ZOOM_SCALE.LOCATION_ADD}
                 center={center}
                 options={GOOGLE_MAPS_OPTIONS}
                 mapContainerStyle={{ height: 'calc(100vh + 30px)' }}

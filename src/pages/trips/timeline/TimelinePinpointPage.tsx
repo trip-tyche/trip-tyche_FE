@@ -15,7 +15,7 @@ const TimelinePinpointPage = () => {
     const [carouselImages, setCarouselImages] = useState<ImageCarouselModel[]>([]);
     const [carouselState, setCarouselState] = useState<CarouselStateType>('auto');
 
-    const setCurrentPinPointId = useTimelineStore((state) => state.setCurrentPinPointId);
+    const setLastPinPointId = useTimelineStore((state) => state.setLastPinPointId);
 
     const { tripId, pinPointId } = useParams();
     const navigate = useNavigate();
@@ -30,11 +30,11 @@ const TimelinePinpointPage = () => {
             setCarouselImages(images);
         };
 
-        setCurrentPinPointId(pinPointId);
+        setLastPinPointId(pinPointId);
         localStorage.setItem('lastPinPointId', pinPointId || '');
 
         getPinPointImagesData();
-    }, [tripId, pinPointId, setCurrentPinPointId]);
+    }, [tripId, pinPointId, setLastPinPointId]);
 
     const navigateBeforePage = () => {
         navigate(`${PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`);

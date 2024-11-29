@@ -10,7 +10,7 @@ export interface TripFormData {
 }
 
 // 여행
-export interface Trip extends TripInfo {
+export interface Trip extends TripInfoModel {
     readonly tripId: string;
 }
 
@@ -26,25 +26,8 @@ export interface Trips {
     readonly trips: Trip[];
 }
 
-// 미디어파일
-export interface MediaFile {
-    latitude: number;
-    longitude: number;
-    mediaFileId: string;
-    mediaLink: string;
-    recordDate: string;
-}
-
 // ////////////////
 export interface TripInfoModel {
-    tripTitle: string;
-    country: string;
-    startDate: string;
-    endDate: string;
-    hashtags: string[];
-}
-
-export interface TripInfo {
     tripTitle: string;
     country: string;
     startDate: string;
@@ -59,12 +42,18 @@ export interface CountryOptionModel {
     value: string;
 }
 
-// 핀포인트
-export interface PinPoint {
-    tripId: number;
-    pinPointId: number;
+export interface BaseLocationMedia {
     latitude: number;
     longitude: number;
     mediaLink: string;
     recordDate: string;
+}
+
+export interface PinPoint extends BaseLocationMedia {
+    pinPointId: number;
+}
+
+export interface MediaFile extends BaseLocationMedia {
+    mediaFileId: string;
+    mediaType: string;
 }

@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 
 interface TimelineStore {
-    currentPinPointId: string | null;
-    setCurrentPinPointId: (id: string | undefined) => void;
+    lastPinPointId: string | null;
+    setLastPinPointId: (id: string | undefined) => void;
 }
 
 const useTimelineStore = create<TimelineStore>((set) => ({
-    currentPinPointId: null,
-    setCurrentPinPointId: (id) => set({ currentPinPointId: id }),
+    lastPinPointId: null,
+    setLastPinPointId: (id) => set({ lastPinPointId: id }),
 }));
 
 export default useTimelineStore;
