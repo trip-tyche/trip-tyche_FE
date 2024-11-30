@@ -7,6 +7,7 @@ import { tripAPI } from '@/api';
 import { PATH } from '@/constants/path';
 import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
+import useUserDataStore from '@/stores/useUserDataStore';
 import { ImageModel, LocationType } from '@/types/image';
 import { formatDateToYYYYMMDD } from '@/utils/date';
 import { getImageLocation, extractDateFromImage } from '@/utils/piexif';
@@ -24,6 +25,7 @@ export const useImageUpload = () => {
 
     const showToast = useToastStore((state) => state.showToast);
     const setUploadStatus = useUploadStore((state) => state.setUploadStatus);
+    const isTripInfoEditing = useUserDataStore((state) => state.isTripInfoEditing);
 
     const navigate = useNavigate();
     const { tripId } = useParams();
@@ -202,7 +204,10 @@ export const useImageUpload = () => {
             return;
         }
 
-        await updateTripDate(images.map((image) => image.formattedDate));
+        if (isTripInfoEditing) {
+            await updateTripDate(images.map((image) => image.formattedDate));
+        }
+
         const imagesToUpload = images.map((image) => image.image);
 
         setUploadStatus('pending');
