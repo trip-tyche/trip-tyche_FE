@@ -111,7 +111,7 @@ export const useLocationAdd = () => {
         updateDisplayedImages();
 
         showToast(`${updatedImages.length}장의 사진이 등록되었습니다.`);
-        console.log('이미지에 위치가 등록되었습니다.', updatedImages, '선택한 위치:', selectedLocation);
+        // console.log('이미지에 위치가 등록되었습니다.', updatedImages, '선택한 위치:', selectedLocation);
     };
 
     const imageGroupByDate = useMemo(() => {

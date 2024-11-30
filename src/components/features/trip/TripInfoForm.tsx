@@ -31,7 +31,8 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
     const isEditing = mode === 'edit';
     const isSelectRange = dateSelectType === 'range';
     const imageDates = isEditing ? [] : (JSON.parse(localStorage.getItem('image-date') || '[]') as string[]);
-    const [defaultStartDate, defaultEndDate] = imageDates;
+    const defaultStartDate = imageDates[0];
+    const defaultEndDate = imageDates[imageDates.length - 1];
 
     const datePickerProps = useTripDateRange({
         imageDates,
