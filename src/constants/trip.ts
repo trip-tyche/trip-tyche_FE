@@ -538,7 +538,7 @@ export const WELCOME_TICKET_DATA = {
     tripId: '',
     tripTitle: '첫 티켓이 발급되었습니다',
     country: '👋/트립티케/TRIP TYCHE',
-    startDate: '2024-01-01',
-    endDate: '2024-12-31',
-    hashtags: ['패밀리', '버킷리스트', '계획무시'],
+    startDate: '2025-01-01',
+    endDate: '2025-12-31',
+    hashtags: ['나홀로', '버킷리스트', '계획무시'],
 };
