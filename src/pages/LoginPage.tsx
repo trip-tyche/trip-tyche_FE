@@ -6,7 +6,6 @@ import character3 from '@/assets/images/character-3.png';
 import character4 from '@/assets/images/character-4.png';
 import character5 from '@/assets/images/character-5.png';
 import character6 from '@/assets/images/character-6.png';
-import logoImage from '@/assets/images/logo.png';
 import LoginButton from '@/components/features/auth/LoginButton';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import { OAUTH_PATH } from '@/constants/auth';
@@ -27,8 +26,10 @@ const LoginPage = () => {
                     <div css={imageContainerStyle}>
                         <img css={imageStyle} src={character1} alt='여행 캐릭터 1' />
                         <img css={imageStyle} src={character2} alt='여행 캐릭터 2' />
+                        <img css={imageStyle} src={character3} alt='여행 캐릭터 3' />
                     </div>
                     <div css={imageContainerStyle}>
+                        <img css={imageStyle} src={character4} alt='여행 캐릭터 4' />
                         <img css={imageStyle} src={character5} alt='여행 캐릭터 5' />
                         <img css={imageStyle} src={character6} alt='여행 캐릭터 6' />
                     </div>
