@@ -108,7 +108,7 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
             <section>
                 <div css={titleStyle}>
                     <h2>{TRIP_FORM.DATE}</h2>
-                    <div>
+                    {!isEditing && (
                         <Select
                             value={dateSelectType}
                             onChange={(value) => setDateSelectType(value as DateSelectType)}
@@ -126,7 +126,7 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
                                 },
                             }}
                         />
-                    </div>
+                    )}
                 </div>
                 <DatePickerInput
                     type={isSelectRange ? 'range' : 'default'}
