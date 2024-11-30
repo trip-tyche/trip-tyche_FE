@@ -88,7 +88,9 @@ const TripImageUploadPage = () => {
     const closeAlertModal = async () => {
         if (imagesNoLocationWithDate.length) {
             setIsAlertModalModalOpen(false);
-            uploadImages(imagesWithLocationAndDate);
+            if (imagesWithLocationAndDate.length) {
+                uploadImages(imagesWithLocationAndDate);
+            }
             setIsAddLocationModalOpen(true);
             return;
         } else if (imagesWithLocationAndDate.length) {

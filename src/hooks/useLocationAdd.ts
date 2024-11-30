@@ -4,7 +4,9 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
 import { PATH } from '@/constants/path';
+import { updateTripDate } from '@/services/trips';
 import { useToastStore } from '@/stores/useToastStore';
+import { useUploadStore } from '@/stores/useUploadingStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import { ImageGroupByDateType, ImageModel, LocationType } from '@/types/image';
 import { addGpsMetadataToImages } from '@/utils/piexif';
@@ -16,7 +18,7 @@ export const useLocationAdd = () => {
     const [isMapVisible, setIsMapVisible] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
 
-    const isEditing = useUserDataStore((state) => state.isTripInfoEditing);
+    const isTripInfoEditing = useUserDataStore((state) => state.isTripInfoEditing);
     const setIsEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
     const showToast = useToastStore((state) => state.showToast);
 
@@ -56,7 +58,7 @@ export const useLocationAdd = () => {
         });
 
         if (updatedDisplayedImages.length === 0) {
-            if (isEditing) {
+            if (isTripInfoEditing) {
                 navigate(`${PATH.TRIPS.ROOT}`);
                 setIsEditing(false);
             } else {
@@ -77,6 +79,14 @@ export const useLocationAdd = () => {
             if (!tripId) {
                 return;
             }
+
+            if (isTripInfoEditing) {
+                await updateTripDate(
+                    tripId,
+                    images.map((image) => image.formattedDate),
+                );
+            }
+
             const imagesToUpload = images.map((image) => image.image);
 
             setIsUploading(true);
@@ -84,7 +94,6 @@ export const useLocationAdd = () => {
         } catch (error) {
             showToast('다시 로그인해주세요.');
             navigate(PATH.AUTH.LOGIN);
-            localStorage.clear();
         } finally {
             setIsUploading(false);
         }

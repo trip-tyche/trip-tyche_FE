@@ -4,6 +4,7 @@ import imageCompression from 'browser-image-compression';
 import { useParams } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
+import { updateTripDate } from '@/services/trips';
 import { useUploadStore } from '@/stores/useUploadingStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import { ImageModel, LocationType } from '@/types/image';
@@ -201,7 +202,10 @@ export const useImageUpload = () => {
         }
 
         if (isTripInfoEditing) {
-            await updateTripDate(images.map((image) => image.formattedDate));
+            await updateTripDate(
+                tripId,
+                images.map((image) => image.formattedDate),
+            );
         }
 
         const imagesToUpload = images.map((image) => image.image);
@@ -218,30 +222,6 @@ export const useImageUpload = () => {
                 });
         } else {
             setUploadStatus('completed');
-        }
-    };
-
-    const updateTripDate = async (datesOfImages: string[]) => {
-        if (!tripId) {
-            return;
-        }
-
-        const tripInfoWithTripId = await tripAPI.fetchTripTicketInfo(tripId);
-        const { tripId: _, ...tripInfo } = tripInfoWithTripId;
-        const { startDate, endDate } = tripInfo;
-
-        const sortedDates = datesOfImages.sort((a, b) => a.localeCompare(b));
-        const [earliestNewDate, latestNewDate] = [sortedDates[0], sortedDates[sortedDates.length - 1]];
-
-        const newStartDate = earliestNewDate.localeCompare(startDate) < 0 ? earliestNewDate : startDate;
-        const newEndDate = earliestNewDate.localeCompare(startDate) > 0 ? latestNewDate : endDate;
-
-        if (newStartDate !== startDate || newEndDate !== endDate) {
-            await tripAPI.updateTripInfo(tripId, {
-                ...tripInfo,
-                startDate: newStartDate,
-                endDate: newEndDate,
-            });
         }
     };
 
