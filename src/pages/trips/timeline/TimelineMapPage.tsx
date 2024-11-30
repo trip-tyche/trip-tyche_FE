@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { css } from '@emotion/react';
 import { GoogleMap, Marker, OverlayView, MarkerClusterer, Polyline } from '@react-google-maps/api';
-import { Play, Pause } from 'lucide-react';
+import { ChevronLeft, Play, Pause } from 'lucide-react';
 import { BsPersonWalking } from 'react-icons/bs';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -440,6 +440,9 @@ const TimelineMapPage = () => {
     return (
         <div css={pageContainer}>
             <Header title={tripInfo?.tripTitle || ''} isBackButton onBack={() => navigate(PATH.TRIPS.ROOT)} />
+            {/* <button css={backButtonStyle}>
+                <ChevronLeft size={24} strokeWidth={2.5} />
+            </button> */}
             <div css={mapWrapper}>
                 <GoogleMap
                     zoom={DEFAULT_ZOOM_SCALE.TIMELINE}
@@ -466,6 +469,20 @@ const pageContainer = css`
     height: 100dvh;
     display: flex;
     flex-direction: column;
+    position: relative;
+`;
+
+const backButtonStyle = css`
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    z-index: 1;
+    top: 12px;
+    left: 12px;
+    border: 2px solid ${theme.colors.descriptionText};
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 `;
 
 const mapWrapper = css`

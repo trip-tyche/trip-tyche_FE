@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 
 import { css } from '@emotion/react';
-import { ArrowDown } from 'lucide-react';
+import { ArrowDown, ChevronLeft } from 'lucide-react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import Spinner from '@/components/common/Spinner';
@@ -76,6 +76,10 @@ const TimelineDatePage = () => {
 
     return (
         <div css={pageContainer(isTransitioning)}>
+            <button css={backButtonStyle} onClick={handleArrowButtonClick}>
+                <ChevronLeft size={24} strokeWidth={1.5} />
+            </button>
+
             {imageLocation && <DateMap imageLocation={imageLocation} />}
 
             <DateSelector
@@ -119,6 +123,23 @@ const pageContainer = (isTransitioning: boolean) => css`
     transform: ${isTransitioning ? 'translateY(100%)' : 'translateY(0)'};
     overflow-y: auto;
     background-color: ${theme.colors.backGround.black};
+    position: relative;
+`;
+
+const backButtonStyle = css`
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    z-index: 1;
+    top: 8px;
+    left: 8px;
+    border: 1px solid ${theme.colors.descriptionText};
+    border: none;
+    box-shadow:
+        rgba(50, 50, 93, 0.25) 13px 13px 30px -10px,
+        rgba(0, 0, 0, 0.8) 5px 8px 16px -10px;
+    border-radius: 4px;
+    cursor: pointer;
 `;
 
 const imageListStyle = css`
