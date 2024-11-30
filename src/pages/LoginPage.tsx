@@ -6,6 +6,7 @@ import character3 from '@/assets/images/character-3.png';
 import character4 from '@/assets/images/character-4.png';
 import character5 from '@/assets/images/character-5.png';
 import character6 from '@/assets/images/character-6.png';
+import logoImage from '@/assets/images/logo.png';
 import LoginButton from '@/components/features/auth/LoginButton';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import { OAUTH_PATH } from '@/constants/auth';
@@ -24,19 +25,17 @@ const LoginPage = () => {
             <div css={contentStyle}>
                 <div>
                     <div css={imageContainerStyle}>
-                        <img css={imageStyle} src={character1} alt='character-1' />
-                        <img css={imageStyle} src={character2} alt='character-2' />
-                        <img css={imageStyle} src={character3} alt='character-3' />
+                        <img css={imageStyle} src={character1} alt='여행 캐릭터 1' />
+                        <img css={imageStyle} src={character2} alt='여행 캐릭터 2' />
                     </div>
                     <div css={imageContainerStyle}>
-                        <img css={imageStyle} src={character4} alt='character-4' />
-                        <img css={imageStyle} src={character5} alt='character-5' />
-                        <img css={imageStyle} src={character6} alt='character-6' />
+                        <img css={imageStyle} src={character5} alt='여행 캐릭터 5' />
+                        <img css={imageStyle} src={character6} alt='여행 캐릭터 6' />
                     </div>
                 </div>
                 <div>
-                    <h1 css={titleStyle}>여행 티켓에 시간과 공간을 담다</h1>
-                    <p css={subtitleStyle}>여러분만의 티켓을 만들어 여행을 기록하세요</p>
+                    <h1 css={titleStyle}>사진으로 그려지는 여행 지도</h1>
+                    <p css={subtitleStyle}>지도 위에 그려진 추억을 다시 걸어보세요</p>
                 </div>
             </div>
             <div css={buttonGroup}>
@@ -88,13 +87,13 @@ const imageStyle = css`
 `;
 
 const titleStyle = css`
+    color: ${theme.colors.black};
     font-size: ${theme.fontSizes.xxxlarge_24};
     font-weight: bold;
-    margin-bottom: 14px;
+    margin-bottom: 22px;
 `;
 
 const subtitleStyle = css`
-    font-size: ${theme.fontSizes.large_16};
     color: ${theme.colors.descriptionText};
 `;
 
