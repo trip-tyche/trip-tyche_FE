@@ -10,7 +10,7 @@ export interface ConfirmModalProps {
     title: string;
     description?: string;
     confirmText: string;
-    cancelText: string;
+    cancelText?: string;
     confirmModal?: () => void;
     closeModal?: () => void;
 }
@@ -20,7 +20,7 @@ const ConfirmModal = ({ title, description, confirmText, cancelText, confirmModa
         <h1 css={titleStyle}>{title}</h1>
         <p css={descriptionStyle}>{description}</p>
         <div css={buttonGroup}>
-            <Button text={cancelText} variant='white' onClick={closeModal} />
+            {cancelText && <Button text={cancelText} variant='white' onClick={closeModal} />}
             <Button text={confirmText} onClick={confirmModal} />
         </div>
     </Modal>

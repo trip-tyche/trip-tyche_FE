@@ -42,7 +42,7 @@ const titleStyle = css`
 
 const backButtonStyle = css`
     position: absolute;
-    left: 10px;
+    left: 12px;
     cursor: pointer;
 `;
 

@@ -49,7 +49,7 @@ const buttonStyles = {
         border: 0;
         border-radius: 16px;
         width: 100%;
-        height: 52px;
+        height: 48px;
         cursor: pointer;
         transition: all 0.2s ease-in-out;
         &:active {

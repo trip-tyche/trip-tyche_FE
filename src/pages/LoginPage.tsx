@@ -6,65 +6,63 @@ import character3 from '@/assets/images/character-3.png';
 import character4 from '@/assets/images/character-4.png';
 import character5 from '@/assets/images/character-5.png';
 import character6 from '@/assets/images/character-6.png';
-import BrowserNoticeModal from '@/components/BrowserNoticeModal';
 import LoginButton from '@/components/features/auth/LoginButton';
+import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import { OAUTH_PATH } from '@/constants/auth';
 import useBrowserCheck from '@/hooks/useBrowserCheck';
 import theme from '@/styles/theme';
 
 const LoginPage = () => {
-    const { showNotice, handleBrowserChange, closeNotice } = useBrowserCheck({ showOnce: false });
+    const { isModalOpen, closeModal } = useBrowserCheck({ showOnce: true });
 
     const handleLoginButtonClick = (provider: keyof typeof OAUTH_PATH) => {
         window.location.href = OAUTH_PATH[provider];
     };
 
     return (
-        <div css={containerStyle}>
-            <main css={mainStyle}>
-                <div css={contentStyle}>
-                    <div>
-                        <div css={imageContainerStyle}>
-                            <img css={imageStyle} src={character1} alt='character-1' />
-                            <img css={imageStyle} src={character2} alt='character-2' />
-                            <img css={imageStyle} src={character3} alt='character-3' />
-                        </div>
-                        <div css={imageContainerStyle}>
-                            <img css={imageStyle} src={character4} alt='character-4' />
-                            <img css={imageStyle} src={character5} alt='character-5' />
-                            <img css={imageStyle} src={character6} alt='character-6' />
-                        </div>
+        <div css={pageContainer}>
+            <div css={contentStyle}>
+                <div>
+                    <div css={imageContainerStyle}>
+                        <img css={imageStyle} src={character1} alt='character-1' />
+                        <img css={imageStyle} src={character2} alt='character-2' />
+                        <img css={imageStyle} src={character3} alt='character-3' />
                     </div>
-                    <div>
-                        <h1 css={titleStyle}>여행 티켓에 시간과 공간을 담다</h1>
-                        <p css={subtitleStyle}>여러분만의 티켓을 만들어 여행을 기록하세요</p>
+                    <div css={imageContainerStyle}>
+                        <img css={imageStyle} src={character4} alt='character-4' />
+                        <img css={imageStyle} src={character5} alt='character-5' />
+                        <img css={imageStyle} src={character6} alt='character-6' />
                     </div>
                 </div>
-                <div css={buttonGroup}>
-                    <LoginButton provider='kakao' onClick={() => handleLoginButtonClick('KAKAO')} />
-                    <LoginButton provider='google' onClick={() => handleLoginButtonClick('GOOGLE')} />
+                <div>
+                    <h1 css={titleStyle}>여행 티켓에 시간과 공간을 담다</h1>
+                    <p css={subtitleStyle}>여러분만의 티켓을 만들어 여행을 기록하세요</p>
                 </div>
-                <BrowserNoticeModal show={showNotice} onClose={closeNotice} onChangeBrowser={handleBrowserChange} />
-            </main>
+            </div>
+            <div css={buttonGroup}>
+                <LoginButton provider='kakao' onClick={() => handleLoginButtonClick('KAKAO')} />
+                <LoginButton provider='google' onClick={() => handleLoginButtonClick('GOOGLE')} />
+            </div>
+            {isModalOpen && (
+                <ConfirmModal
+                    title='브라우저 변경 안내'
+                    description='현재 카카오톡 브라우저를 사용 중이에요. 원활한 서비스 사용을 위해 Safari, Chrome, 웨일 사용을 추천드려요'
+                    confirmText='확인'
+                    confirmModal={closeModal}
+                />
+            )}
         </div>
     );
 };
 
-const containerStyle = css`
+const pageContainer = css`
     width: 100%;
-    min-height: 100dvh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
-`;
-
-const mainStyle = css`
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
     gap: 72px;
 `;
 
@@ -101,6 +99,7 @@ const subtitleStyle = css`
 `;
 
 const buttonGroup = css`
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;

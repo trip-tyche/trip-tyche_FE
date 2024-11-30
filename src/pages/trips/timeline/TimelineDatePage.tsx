@@ -77,7 +77,7 @@ const TimelineDatePage = () => {
     return (
         <div css={pageContainer(isTransitioning)}>
             <button css={backButtonStyle} onClick={handleArrowButtonClick}>
-                <ChevronLeft size={24} strokeWidth={1.5} />
+                <ChevronLeft color={theme.colors.descriptionText} size={24} strokeWidth={1.5} />
             </button>
 
             {imageLocation && <DateMap imageLocation={imageLocation} />}
