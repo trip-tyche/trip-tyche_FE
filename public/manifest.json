@@ -1,9 +1,10 @@
 {
-    "name": "여행 티켓에 공간과 시간을 담다, 트립티케(TripTyche)",
+    "name": "사진 속 추억을 따라 다시 걷는 여행 | 트립티케 (TripTyche)",
     "short_name": "트립티케",
     "display": "standalone",
     "theme_color": "#0073bb",
     "background_color": "#ffffff",
+    "description": "사진만 올리면 자동으로 그려지는 여행 경로. 지도 위에서 추억을 따라 다시 걷는 여행을 트립티케와 함께하세요.",
     "icons": [
     {
       "src": "/icon-192x192.png",
