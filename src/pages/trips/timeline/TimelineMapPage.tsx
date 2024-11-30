@@ -61,6 +61,7 @@ const TimelineMapPage = () => {
 
     const isLastPinPoint = currentPinPointIndex === pinPointsInfo.length - 1;
 
+    console.log(pinPointsInfo);
     //  Google Maps가 처음 로드될 때 실행되는 핸들러 함수
     const handleMapLoad = (map: MapsType) => {
         mapRef.current = map;
@@ -254,10 +255,11 @@ const TimelineMapPage = () => {
     }, [pinPointsInfo, isPlayingAnimation, isLastPinPoint, moveCharacter]);
 
     const calculatePhotoCardOffset = useCallback((height: number) => {
-        return {
+        const offset = {
             x: -TIMELINE_MAP.PHOTO_CARD.WIDTH / 2,
             y: -(TIMELINE_MAP.PHOTO_CARD.HEIGHT + height),
         };
+        return offset;
     }, []);
 
     const clusterOptions = useMemo(

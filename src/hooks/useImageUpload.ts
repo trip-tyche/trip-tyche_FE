@@ -51,7 +51,7 @@ export const useImageUpload = () => {
             return [];
         }
 
-        const extractStartTime = performance.now();
+        // const extractStartTime = performance.now();
         const extractedImages = await Promise.all(
             Array.from(images).map(async (image) => {
                 const location = await getImageLocation(image);
@@ -69,67 +69,12 @@ export const useImageUpload = () => {
                 };
             }),
         );
-        const extractEndTime = performance.now();
-        console.log(`메타데이터 추출 시간: ${(extractEndTime - extractStartTime).toFixed(2)}ms`);
+        // const extractEndTime = performance.now();
+        // console.log(`메타데이터 추출 시간: ${(extractEndTime - extractStartTime).toFixed(2)}ms`);
 
         return extractedImages;
     };
 
-    // const resizeImage = async (extractedImages: ImageModel[] | null): Promise<ImageModel[]> => {
-    //     if (!extractedImages || extractedImages.length === 0) {
-    //         return [];
-    //     }
-
-    //     const compressionOptions = {
-    //         maxWidthOrHeight: 1284,
-    //         initialQuality: 0.8,
-    //         useWebWorker: true,
-    //         preserveExif: true,
-    //         fileType: 'image/jpeg',
-    //     };
-
-    //     const resizeStartTime = performance.now();
-    //     const resizedImages = await Promise.all(
-    //         extractedImages.map(async (extractedImage: ImageModel) => {
-    //             try {
-    //                 const resizedBlob = await imageCompression(extractedImage.image, compressionOptions);
-
-    //                 const resizedFile = new File([resizedBlob], extractedImage.image.name, {
-    //                     type: compressionOptions.fileType,
-    //                     lastModified: extractedImage.image.lastModified,
-    //                 });
-
-    //                 // 진행된 이미지 수 증가 및 진행률 계산
-    //                 completedImages++;
-    //                 const currentProgress = Math.round((completedImages / totalImages) * 100);
-    //                 setResizingProgress(currentProgress);
-
-    //                 // console.log(`${extractedImage.image.name} 변환 결과:`, {
-    //                 //     originalSize: `${(extractedImage.image.size / (1024 * 1024)).toFixed(2)}MB`,
-    //                 //     convertedSize: `${(resizedBlob.size / (1024 * 1024)).toFixed(2)}MB`,
-    //                 //     format: compressionOptions.fileType,
-    //                 // });
-
-    //                 return {
-    //                     image: resizedFile,
-    //                     formattedDate: extractedImage.formattedDate,
-    //                     location: extractedImage.location,
-    //                 };
-    //             } catch (error) {
-    //                 completedImages++; // 에러 시에도 진행 수 증가
-    //                 const currentProgress = Math.round((completedImages / totalImages) * 100);
-    //                 setResizingProgress(currentProgress);
-    //                 return extractedImage;
-    //                 // console.error(`리사이징에 실패한 이미지: ${extractedImage.image.name}`, error);
-    //             }
-    //         }),
-    //     );
-
-    //     const resizeEndTime = performance.now();
-    //     console.log(`리사이징 시간: ${(resizeEndTime - resizeStartTime).toFixed(2)}ms`);
-
-    //     return resizedImages;
-    // };
     const resizeImage = async (
         extractedImages: ImageModel[] | null,
         progressRange: { start: number; end: number },
@@ -220,23 +165,6 @@ export const useImageUpload = () => {
                 return;
             }
 
-            // setIsResizing(true);
-            // setResizingProgress(0); // 진행률 초기화
-            // completedImages = 0; // 완료 이미지 수 초기화
-
-            // // 전체 이미지 개수 계산
-            // totalImages = (imagesWithLocationAndDate?.length || 0) + (imagesNoLocationWithDate?.length || 0);
-
-            // const [resizedImagesWithLocationAndDate, resizedImagesNoLocationWithDate] = await Promise.all([
-            //     resizeImage(imagesWithLocationAndDate),
-            //     resizeImage(imagesNoLocationWithDate),
-            // ]);
-            // setIsResizing(false);
-            // setResizingProgress(0); // 진행률 리셋
-
-            // setImagesWithLocationAndDate(resizedImagesWithLocationAndDate);
-            // setImagesNoLocationWithDate(resizedImagesNoLocationWithDate);
-
             setIsResizing(true);
             setResizingProgress(0);
 
@@ -273,10 +201,11 @@ export const useImageUpload = () => {
         if (!tripId) {
             return;
         }
-        setUploadStatus('pending');
 
+        await updateTripDate(images.map((image) => image.formattedDate));
         const imagesToUpload = images.map((image) => image.image);
 
+        setUploadStatus('pending');
         if (imagesToUpload.length > 0) {
             tripAPI
                 .createTripImages(tripId, imagesToUpload)
@@ -288,6 +217,30 @@ export const useImageUpload = () => {
                 });
         } else {
             setUploadStatus('completed');
+        }
+    };
+
+    const updateTripDate = async (datesOfImages: string[]) => {
+        if (!tripId) {
+            return;
+        }
+
+        const tripInfoWithTripId = await tripAPI.fetchTripTicketInfo(tripId);
+        const { tripId: _, ...tripInfo } = tripInfoWithTripId;
+        const { startDate, endDate } = tripInfo;
+
+        const sortedDates = datesOfImages.sort((a, b) => a.localeCompare(b));
+        const [earliestNewDate, latestNewDate] = [sortedDates[0], sortedDates[sortedDates.length - 1]];
+
+        const newStartDate = earliestNewDate.localeCompare(startDate) < 0 ? earliestNewDate : startDate;
+        const newEndDate = earliestNewDate.localeCompare(startDate) > 0 ? latestNewDate : endDate;
+
+        if (newStartDate !== startDate || newEndDate !== endDate) {
+            await tripAPI.updateTripInfo(tripId, {
+                ...tripInfo,
+                startDate: newStartDate,
+                endDate: newEndDate,
+            });
         }
     };
 
