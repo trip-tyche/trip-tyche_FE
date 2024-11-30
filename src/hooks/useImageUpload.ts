@@ -1,11 +1,9 @@
 import { useState } from 'react';
 
 import imageCompression from 'browser-image-compression';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
-import { PATH } from '@/constants/path';
-import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import { ImageModel, LocationType } from '@/types/image';
@@ -23,11 +21,9 @@ export const useImageUpload = () => {
     const [resizingProgress, setResizingProgress] = useState(0);
     const [isAddLocationModalOpen, setIsAddLocationModalOpen] = useState(false);
 
-    const showToast = useToastStore((state) => state.showToast);
     const setUploadStatus = useUploadStore((state) => state.setUploadStatus);
     const isTripInfoEditing = useUserDataStore((state) => state.isTripInfoEditing);
 
-    const navigate = useNavigate();
     const { tripId } = useParams();
 
     const removeDuplicateImages = (images: FileList): FileList => {

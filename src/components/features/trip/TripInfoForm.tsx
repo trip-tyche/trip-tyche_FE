@@ -1,8 +1,8 @@
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { Select } from '@mantine/core';
-import { DatePickerInput, DayProps } from '@mantine/dates';
+import { DatePickerInput, DayProps, DateValue, DatesRangeValue } from '@mantine/dates';
 import { IconPlane, IconCalendar, IconWorld } from '@tabler/icons-react';
 import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
@@ -15,6 +15,8 @@ import { TripInfoModel } from '@/types/trip';
 import { FormModeType } from '@/types/user';
 import { formatDateToKoreanYear } from '@/utils/date';
 
+type DateSelectType = 'range' | 'single';
+type DateChangeHandler = (value: DateValue | DatesRangeValue) => void;
 interface TripInfoFormProps {
     mode: FormModeType;
     tripInfo: TripInfoModel;
@@ -24,7 +26,10 @@ interface TripInfoFormProps {
 const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
     const { tripTitle, country, startDate, endDate, hashtags } = tripInfo;
 
+    const [dateSelectType, setDateSelectType] = useState<DateSelectType>('range');
+
     const isEditing = mode === 'edit';
+    const isSelectRange = dateSelectType === 'range';
     const imageDates = isEditing ? [] : (JSON.parse(localStorage.getItem('image-date') || '[]') as string[]);
     const [defaultStartDate, defaultEndDate] = imageDates;
 
@@ -33,6 +38,12 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
         setTripInfo,
         isEditing,
     });
+
+    useEffect(() => {
+        if (!isEditing) {
+            datePickerProps?.resetDates();
+        }
+    }, [dateSelectType]);
 
     const handleHashtagSelect = (tag: string) => {
         setTripInfo((prev: TripInfoModel) => {
@@ -46,6 +57,14 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
 
             return { ...prev, hashtags: [...prev.hashtags, tag] };
         });
+    };
+
+    const handleDateChange: DateChangeHandler = (value) => {
+        if (dateSelectType === 'range' && Array.isArray(value)) {
+            datePickerProps?.handleRangeDateChange(value as [DateValue, DateValue]);
+        } else if (dateSelectType === 'single' && !Array.isArray(value)) {
+            datePickerProps?.handleSingleDateChange(value as DateValue);
+        }
     };
 
     const renderCustomDay = (date: Date) => {
@@ -86,24 +105,51 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
 
     return (
         <div css={tripInfoFormContainer}>
-            <div>
+            <section>
                 <div css={titleStyle}>
                     <h2>{TRIP_FORM.DATE}</h2>
-                    <p css={descriptionStyle}>
-                        {isEditing ? '여행 기간은 수정이 불가합니다' : '사진이 있는 날짜는 파란점으로 표시됩니다'}
-                    </p>
+                    <div>
+                        <Select
+                            value={dateSelectType}
+                            onChange={(value) => setDateSelectType(value as DateSelectType)}
+                            data={[
+                                { value: 'range', label: '기간 선택' },
+                                { value: 'single', label: '하루 선택' },
+                            ]}
+                            size='xs'
+                            radius='sm'
+                            allowDeselect={false}
+                            w={100}
+                            styles={{
+                                input: {
+                                    fontWeight: 500,
+                                },
+                            }}
+                        />
+                    </div>
                 </div>
                 <DatePickerInput
-                    type='range'
+                    type={isSelectRange ? 'range' : 'default'}
                     placeholder={
                         isEditing
                             ? undefined
-                            : `${formatDateToKoreanYear(defaultStartDate)} ~ ${formatDateToKoreanYear(defaultEndDate)}`
+                            : isSelectRange
+                              ? `${formatDateToKoreanYear(defaultStartDate)} ${formatDateToKoreanYear(defaultEndDate) ? `~ ${formatDateToKoreanYear(defaultEndDate)}` : ''}`
+                              : `${formatDateToKoreanYear(defaultStartDate)}`
                     }
                     value={
                         isEditing
-                            ? [startDate ? dayjs(startDate).toDate() : null, endDate ? dayjs(endDate).toDate() : null]
-                            : datePickerProps?.dateRange
+                            ? isSelectRange
+                                ? [
+                                      startDate ? dayjs(startDate).toDate() : null,
+                                      endDate ? dayjs(endDate).toDate() : null,
+                                  ]
+                                : startDate
+                                  ? dayjs(startDate).toDate()
+                                  : null
+                            : isSelectRange
+                              ? datePickerProps?.dateRange
+                              : datePickerProps?.selectedDate
                     }
                     leftSection={<IconCalendar size={16} />}
                     locale='ko'
@@ -111,7 +157,7 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
                     radius='md'
                     valueFormat='YYYY년 MM월 DD일'
                     defaultDate={isEditing ? undefined : imageDates[0] ? new Date(imageDates[0]) : undefined}
-                    onChange={isEditing ? undefined : datePickerProps?.handleDateChange}
+                    onChange={isEditing ? undefined : handleDateChange}
                     onMouseLeave={isEditing ? undefined : datePickerProps?.handleDateMouseLeave}
                     popoverProps={{ position: 'bottom' }}
                     getDayProps={(date: Date) => {
@@ -123,18 +169,27 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
 
                         return isEditing
                             ? defaultProps
-                            : (datePickerProps?.getCustomDayProps(date, datePickerProps.handleDateMouseEnter) ??
-                                  defaultProps);
+                            : (datePickerProps?.getCustomDayProps(
+                                  date,
+                                  datePickerProps.handleDateMouseEnter,
+                                  dateSelectType,
+                              ) ?? defaultProps);
                     }}
                     renderDay={(date) => renderCustomDay(date)}
                     disabled={isEditing}
                 />
-                {!isEditing && datePickerProps?.isError && (
-                    <p css={errorStyle}>선택하신 여행 기간 외에도 사진이 있습니다. 기간을 다시 확인해 주세요.</p>
+                {datePickerProps?.isError ? (
+                    <p css={errorStyle}>
+                        선택하신 날짜 외에도 사진이 있습니다. {isSelectRange && '기간을 다시 확인해 주세요.'}
+                    </p>
+                ) : (
+                    <p css={dateDescriptionStyle}>
+                        {isEditing ? '여행 기간은 수정이 불가합니다' : '사진이 있는 날짜는 파란점으로 표시됩니다'}
+                    </p>
                 )}
-            </div>
+            </section>
 
-            <div>
+            <section>
                 <h2 css={titleStyle}>{TRIP_FORM.COUNTRY}</h2>
                 <Select
                     placeholder={TRIP_FORM.COUNTRY_DEFAULT}
@@ -145,11 +200,12 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
                     leftSection={<IconWorld size={16} />}
                     size='md'
                     radius='md'
+                    allowDeselect={false}
                     comboboxProps={{ transitionProps: { transition: 'pop', duration: 200 }, dropdownPadding: 6 }}
                 />
-            </div>
+            </section>
 
-            <div>
+            <section>
                 <h2 css={titleStyle}>{TRIP_FORM.TITLE}</h2>
                 <Input
                     value={tripTitle}
@@ -158,12 +214,12 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
                     maxLength={12}
                     leftSection={<IconPlane size={16} />}
                 />
-            </div>
+            </section>
 
-            <div>
+            <section>
                 <div css={titleStyle}>
                     <h2>{TRIP_FORM.HASHTAG}</h2>
-                    <p css={descriptionStyle}>최대 3개까지 선택할 수 있습니다</p>
+                    <p css={baseDescriptionStyle}>최대 3개까지 선택할 수 있습니다</p>
                 </div>
                 <div css={hashtagGroup}>
                     {HASHTAG_MENU.map((tag) => (
@@ -176,7 +232,7 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
                         </button>
                     ))}
                 </div>
-            </div>
+            </section>
         </div>
     );
 };
@@ -195,12 +251,6 @@ const titleStyle = css`
     font-weight: bold;
     color: ${theme.colors.black};
     margin-bottom: 12px;
-`;
-
-const descriptionStyle = css`
-    font-size: ${theme.fontSizes.small_12};
-    font-weight: normal;
-    color: ${theme.colors.descriptionText};
 `;
 
 const hashtagGroup = css`
@@ -231,6 +281,18 @@ const selectedButtonStyle = css`
 const defaultButtonStyle = css`
     background-color: #868e961a;
     color: #868e96;
+`;
+
+const baseDescriptionStyle = css`
+    font-size: ${theme.fontSizes.small_12};
+    font-weight: normal;
+    color: ${theme.colors.descriptionText};
+`;
+
+const dateDescriptionStyle = css`
+    ${baseDescriptionStyle}
+    margin-top: 6px;
+    margin-left: 4px;
 `;
 
 const errorStyle = css`
