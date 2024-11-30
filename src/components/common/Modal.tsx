@@ -25,8 +25,7 @@ const modalStyle = css`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 100vw;
-    max-width: 360px;
+    width: 360px;
     position: fixed;
     top: 50%;
     left: 50%;

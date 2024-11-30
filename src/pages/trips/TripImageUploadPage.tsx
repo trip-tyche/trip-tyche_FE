@@ -23,6 +23,7 @@ const TripImageUploadPage = () => {
     const [isUploading, setIsUploading] = useState(false);
 
     const waitForCompletion = useUploadStore((state) => state.waitForCompletion);
+    const setUploadStatus = useUploadStore((state) => state.setUploadStatus);
     const resetUpload = useUploadStore((state) => state.resetUpload);
     const isTripInfoEditing = useUserDataStore((state) => state.isTripInfoEditing);
     const setIsTripInfoEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
@@ -91,6 +92,7 @@ const TripImageUploadPage = () => {
             if (imagesWithLocationAndDate.length) {
                 uploadImages(imagesWithLocationAndDate);
             }
+            setUploadStatus('completed');
             setIsAddLocationModalOpen(true);
             return;
         } else if (imagesWithLocationAndDate.length) {
