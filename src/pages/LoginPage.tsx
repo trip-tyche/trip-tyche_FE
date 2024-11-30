@@ -43,6 +43,7 @@ const LoginPage = () => {
                 <LoginButton provider='kakao' onClick={() => handleLoginButtonClick('KAKAO')} />
                 <LoginButton provider='google' onClick={() => handleLoginButtonClick('GOOGLE')} />
             </div>
+            <p css={companyNameStyle}>© 2024 Vagabond. All rights reserved.</p>
             {isModalOpen && (
                 <ConfirmModal
                     title='브라우저 변경 안내'
@@ -105,6 +106,14 @@ const buttonGroup = css`
     justify-content: center;
     align-items: center;
     gap: 18px;
+`;
+
+const companyNameStyle = css`
+    position: absolute;
+    bottom: 16px;
+    text-align: center;
+    font-size: ${theme.fontSizes.small_12};
+    color: #868e96;
 `;
 
 export default LoginPage;
