@@ -87,7 +87,6 @@ const TimelineDatePage = () => {
                 datesWithImages={datesWithImages}
                 startDate={startDate}
                 onDateSelect={handleDateButtonClick}
-                onArrowButtonClick={handleArrowButtonClick}
             />
 
             <section ref={imageListRef} css={imageListStyle}>

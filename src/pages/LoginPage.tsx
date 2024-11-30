@@ -6,11 +6,15 @@ import character3 from '@/assets/images/character-3.png';
 import character4 from '@/assets/images/character-4.png';
 import character5 from '@/assets/images/character-5.png';
 import character6 from '@/assets/images/character-6.png';
+import BrowserNoticeModal from '@/components/BrowserNoticeModal';
 import LoginButton from '@/components/features/auth/LoginButton';
 import { OAUTH_PATH } from '@/constants/auth';
+import useBrowserCheck from '@/hooks/useBrowserCheck';
 import theme from '@/styles/theme';
 
 const LoginPage = () => {
+    const { showNotice, handleBrowserChange, closeNotice } = useBrowserCheck({ showOnce: false });
+
     const handleLoginButtonClick = (provider: keyof typeof OAUTH_PATH) => {
         window.location.href = OAUTH_PATH[provider];
     };
@@ -40,6 +44,7 @@ const LoginPage = () => {
                     <LoginButton provider='kakao' onClick={() => handleLoginButtonClick('KAKAO')} />
                     <LoginButton provider='google' onClick={() => handleLoginButtonClick('GOOGLE')} />
                 </div>
+                <BrowserNoticeModal show={showNotice} onClose={closeNotice} onChangeBrowser={handleBrowserChange} />
             </main>
         </div>
     );
