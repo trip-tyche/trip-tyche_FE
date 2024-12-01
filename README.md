@@ -38,6 +38,9 @@
 
 React, TypeScript, Yarn, Zustand, Tanstack-Query, Emotion
 
+![front-skills](https://github.com/user-attachments/assets/556ba8e3-7411-4719-8279-4392a548c21f)
+
+
 ### 백엔드
 
 Spring Boot Spring Data JPA, JUnit5, MySQL, JWT, OAuth2
