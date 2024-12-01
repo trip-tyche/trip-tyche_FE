@@ -12,7 +12,6 @@ dist
 dist-ssr
 *.local
 .env
-.vercel
 
 src/pages/trash/
 
@@ -27,4 +26,4 @@ src/pages/trash/
 *.sln
 *.sw?
 Notice.md
-.vercel
+docs/

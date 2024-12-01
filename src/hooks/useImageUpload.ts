@@ -50,7 +50,7 @@ export const useImageUpload = () => {
             return [];
         }
 
-        // const extractStartTime = performance.now();
+        const extractStartTime = performance.now();
         const extractedImages = await Promise.all(
             Array.from(images).map(async (image) => {
                 const location = await getImageLocation(image);
@@ -68,8 +68,8 @@ export const useImageUpload = () => {
                 };
             }),
         );
-        // const extractEndTime = performance.now();
-        // console.log(`메타데이터 추출 시간: ${(extractEndTime - extractStartTime).toFixed(2)}ms`);
+        const extractEndTime = performance.now();
+        console.log(`메타데이터 추출 시간: ${(extractEndTime - extractStartTime).toFixed(2)}ms`);
 
         return extractedImages;
     };
@@ -89,6 +89,8 @@ export const useImageUpload = () => {
             preserveExif: true,
             fileType: 'image/jpeg',
         };
+
+        const resizeStartTime = performance.now();
 
         const resizedImages: ImageModel[] = [];
         const batchSize = 3;
@@ -123,6 +125,8 @@ export const useImageUpload = () => {
             const batchProgress = ((i + batch.length) / extractedImages.length) * progressSpan;
             setResizingProgress(Math.round(progressRange.start + batchProgress));
         }
+        const resizeEndTime = performance.now();
+        console.log(`리사이징 추출 시간: ${(resizeEndTime - resizeStartTime).toFixed(2)}ms`);
 
         return resizedImages;
     };
