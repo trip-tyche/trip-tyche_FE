@@ -1,85 +1,36 @@
-// {
-//     "extends": "./tsconfig.json",
-//     "include": ["src", "global.d.ts"],
-//     "compilerOptions": {
-//         // 절대경로 import를 위한 설정
-//         "baseUrl": ".",
-//         "paths": {
-//             "@/*": ["src/*"]
-//         },
-//         "typeRoots": ["./node_modules/@types", "./types"],
-//         "target": "ES2022",
-//         // "module": "ESNext",
-//         "skipLibCheck": true,
-//         // "moduleResolution": "bundler",
-//         "module": "Node16",
-//         "moduleResolution": "node16",
-//         "allowImportingTsExtensions": true,
-//         "isolatedModules": true,
-//         "moduleDetection": "force",
-//         "noEmit": true,
-//         "strict": true,
-//         "noUnusedLocals": true,
-//         "noUnusedParameters": true,
-//         "noFallthroughCasesInSwitch": true,
-//         "jsx": "react-jsx",
-//         "jsxImportSource": "@emotion/react",
-//         "strictNullChecks": true, //null 및 undefined를 보다 명확하게 체크
-//         "noImplicitAny": true, //
-//         "esModuleInterop": true,
-//         "lib": ["dom", "dom.iterable", "esnext", "webworker"],
-//         "types": ["node", "vite/client"],
-//         "allowSyntheticDefaultImports": true,
-//         "resolveJsonModule": true
-//         // "composite": true
-//     }
-// }
-// {
-//     "extends": "./tsconfig.json",
-//     "include": ["src", "global.d.ts"],
-//     "compilerOptions": {
-//         "typeRoots": ["./node_modules/@types", "./types"],
-//         "types": ["node", "vite/client"],
-//         "noUnusedLocals": true,
-//         "noUnusedParameters": true,
-//         "noFallthroughCasesInSwitch": true,
-//         "strictNullChecks": true,
-//         "noImplicitAny": true,
-//         "moduleDetection": "force",
-//         "lib": ["dom", "dom.iterable", "esnext", "webworker"],
-//         "moduleResolution": "node16",
-//         "jsx": "react-jsx",
-//         "allowSyntheticDefaultImports": true,
-//         "resolveJsonModule": true
-//     }
-// }
-
-//
 {
     "compilerOptions": {
         "target": "ESNext",
-        "useDefineForClassFields": true,
-        "lib": ["DOM", "DOM.Iterable", "ESNext"],
-        "allowJs": false,
-        "skipLibCheck": true,
-        "esModuleInterop": true,
-        "types": ["node", "vite/client", "google.maps"],
-        "allowSyntheticDefaultImports": true,
-        "strict": true,
-        "forceConsistentCasingInFileNames": true,
         "module": "ESNext",
         "moduleResolution": "bundler",
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "noEmit": true,
-        "jsx": "react-jsx",
-        "jsxImportSource": "@emotion/react",
-        "allowImportingTsExtensions": true,
+        "lib": ["DOM", "DOM.Iterable", "ESNext"],
+
         "baseUrl": ".",
         "paths": {
             "@/*": ["src/*"]
-        }
+        },
+
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+        "forceConsistentCasingInFileNames": true,
+
+        "jsx": "react-jsx",
+        "jsxImportSource": "@emotion/react",
+
+        "allowJs": false,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "allowImportingTsExtensions": true,
+
+        "skipLibCheck": true,
+        "noEmit": true,
+
+        "types": ["node", "vite/client", "google.maps"]
     },
-    "include": ["src", "**/*.ts", "**/*d.ts", "**/*.tsx"],
+    "include": ["src", "**/*.ts", "**/*.tsx", "**/*d.ts"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

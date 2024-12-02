@@ -2,29 +2,3 @@
     "files": [],
     "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
 }
-// "extends": "./tsconfig.json",
-// 여기 extends하니까 빌드 시 순환 참조 오류..
-
-// {
-//     // "extends": "./tsconfig.json",
-//     // 여기 extends하니까 빌드 시 순환 참조 오류..
-//     "compilerOptions": {
-//         "composite": true,
-//         //   "module": "ESNext",
-//         //   "moduleResolution": "Node",
-//         "module": "Node16",
-//         "moduleResolution": "Node16",
-//         "allowSyntheticDefaultImports": true,
-//         // "baseUrl": "src",
-//         // "paths": {
-//         //     "@/*": ["./*"]
-//         // }
-//         "baseUrl": ".",
-//         "paths": {
-//             "@/*": ["src/*"]
-//         }
-//     },
-//     "files": [],
-//     "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
-//     "include": ["vite.config.ts", "src/**/*.ts", "src/**/*.tsx"]
-// }
