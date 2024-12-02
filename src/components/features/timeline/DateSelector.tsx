@@ -3,7 +3,8 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { css } from '@emotion/react';
 
 import theme from '@/styles/theme';
-import { formatDateToKorean, getDayNumber } from '@/utils/date';
+import { formatToKorean } from '@/utils/date';
+import { calculateTripDay } from '@/utils/trip';
 
 interface DateSelectorProps {
     currentDate: string;
@@ -21,7 +22,7 @@ const DateSelector = React.memo(({ currentDate, datesWithImages, startDate, onDa
             return [];
         }
 
-        return datesWithImages.map((date) => ({ date, dayNumber: getDayNumber(date, startDate) }));
+        return datesWithImages.map((date) => ({ date, dayNumber: calculateTripDay(date, startDate) }));
     }, [datesWithImages, startDate]);
 
     const scrollToCenter = useCallback((targetDate: string) => {
@@ -66,7 +67,7 @@ const DateSelector = React.memo(({ currentDate, datesWithImages, startDate, onDa
                     onClick={() => onDateSelect(date)}
                 >
                     <h3>{dayNumber}</h3>
-                    <p>{formatDateToKorean(date)}</p>
+                    <p>{formatToKorean(date)}</p>
                 </button>
             ))}
         </div>

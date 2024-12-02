@@ -10,4 +10,9 @@ export const OAUTH_PATH = {
 export const SOCIAL_LOGIN = {
     KAKAO: '카카오 계정으로 로그인',
     GOOGLE: 'Google 계정으로 로그인',
-};
+} as const;
+
+export const AUTH_KEYS = {
+    TOKEN: 'token',
+    USER_ID: 'userId',
+} as const;

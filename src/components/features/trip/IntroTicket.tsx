@@ -5,7 +5,7 @@ import characterImg from '@/assets/images/character-1.png';
 import { useTicket3DEffect } from '@/hooks/useTicket3DEffect';
 import theme from '@/styles/theme';
 import { TripModel } from '@/types/trip';
-import { formatDateToDot } from '@/utils/date';
+import { formatToDot } from '@/utils/date';
 
 interface IntroTicketProps {
     trip: TripModel;
@@ -35,11 +35,11 @@ const IntroTicket = ({ trip, userNickname }: IntroTicketProps) => {
                     </div>
                     <div>
                         <div css={labelStyle}>DATE</div>
-                        <p css={valueStyle}>{formatDateToDot(startDate)}</p>
+                        <p css={valueStyle}>{formatToDot(startDate)}</p>
                     </div>
                     <div>
                         <div css={labelStyle}>DATE</div>
-                        <p css={valueStyle}>{formatDateToDot(endDate)}</p>
+                        <p css={valueStyle}>{formatToDot(endDate)}</p>
                     </div>
                 </header>
 

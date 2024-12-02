@@ -11,7 +11,7 @@ import { useToastStore } from '@/stores/useToastStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
 import { ImageModel } from '@/types/image';
-import { formatDateToKorean } from '@/utils/date';
+import { formatToKorean } from '@/utils/date';
 
 interface ImageListByDateProps {
     imageGroupByDate: [string, ImageModel[]][];
@@ -57,7 +57,7 @@ const ImageListByDate = ({
             <div css={imageListContainer}>
                 {imageGroupByDate.map(([date, images]) => (
                     <Fragment key={date}>
-                        <h2 css={dateStyle}>{formatDateToKorean(date)}</h2>
+                        <h2 css={dateStyle}>{formatToKorean(date)}</h2>
                         <ImageGrid
                             imageSize={imageSize}
                             displayedImages={images}

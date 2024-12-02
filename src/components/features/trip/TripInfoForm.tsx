@@ -13,7 +13,7 @@ import { useTripDateRange } from '@/hooks/useTripDateRange';
 import theme from '@/styles/theme';
 import { FormMode } from '@/types/common';
 import { TripModelWithoutTripId } from '@/types/trip';
-import { formatDateToKoreanYear } from '@/utils/date';
+import { formatToKorean } from '@/utils/date';
 
 type DateSelectType = 'range' | 'single';
 type DateChangeHandler = (value: DateValue | DatesRangeValue) => void;
@@ -135,8 +135,8 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
                         isEditing
                             ? undefined
                             : isSelectRange
-                              ? `${formatDateToKoreanYear(defaultStartDate)} ${formatDateToKoreanYear(defaultEndDate) ? `~ ${formatDateToKoreanYear(defaultEndDate)}` : ''}`
-                              : `${formatDateToKoreanYear(defaultStartDate)}`
+                              ? `${formatToKorean(defaultStartDate, true)} ${formatToKorean(defaultEndDate, true) ? `~ ${formatToKorean(defaultEndDate, true)}` : ''}`
+                              : `${formatToKorean(defaultStartDate, true)}`
                     }
                     value={
                         isEditing

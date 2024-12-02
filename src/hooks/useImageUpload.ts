@@ -9,7 +9,7 @@ import { useUploadStore } from '@/stores/useUploadingStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import { ImageModel } from '@/types/image';
 import { Location } from '@/types/location';
-import { formatDateToYYYYMMDD } from '@/utils/date';
+import { formatToYYYYMMDD } from '@/utils/date';
 import { getImageLocation, extractDateFromImage } from '@/utils/piexif';
 
 export const useImageUpload = () => {
@@ -59,7 +59,7 @@ export const useImageUpload = () => {
                 let formattedDate = '';
 
                 if (date) {
-                    formattedDate = formatDateToYYYYMMDD(date);
+                    formattedDate = formatToYYYYMMDD(date);
                 }
 
                 return {
