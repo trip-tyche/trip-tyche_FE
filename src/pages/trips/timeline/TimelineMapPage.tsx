@@ -10,20 +10,14 @@ import { tripAPI } from '@/api';
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
-import {
-    CHARACTER_ICON_CONFIG,
-    DEFAULT_ZOOM_SCALE,
-    GOOGLE_MAPS_OPTIONS,
-    MARKER_CLUSTER_OPTIONS,
-    TIMELINE_MAP,
-    POLYLINE_OPTIONS,
-} from '@/constants/googleMaps';
-import { PATH } from '@/constants/path';
+import { DEFAULT_ZOOM_SCALE, GOOGLE_MAPS_OPTIONS, MARKER_CLUSTER_OPTIONS, TIMELINE_MAP } from '@/constants/maps/config';
+import { CHARACTER_ICON_CONFIG, POLYLINE_OPTIONS } from '@/constants/maps/styles';
+import { ROUTES } from '@/constants/paths';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import useTimelineStore from '@/stores/useTimelineStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
-import { LatLng, Map } from '@/types/map';
+import { LatLng, Map } from '@/types/maps';
 import { BaseLocationMedia, MediaFileModel, PinPointModel } from '@/types/media';
 import { TripModel } from '@/types/trip';
 
@@ -78,7 +72,7 @@ const TimelineMapPage = () => {
 
             if (pinPoints.length === 0) {
                 showToast('여행에 등록된 사진이 없습니다.');
-                navigate(PATH.TRIPS.ROOT);
+                navigate(ROUTES.PATH.TRIPS.ROOT);
                 return;
             }
 
@@ -215,7 +209,7 @@ const TimelineMapPage = () => {
 
     const handleImageByDateButtonClick = useCallback(() => {
         const pinPointId = String(pinPointsInfo[currentPinPointIndex].pinPointId);
-        navigate(`${PATH.TRIPS.TIMELINE.DATE(Number(tripId))}`, { state: { imagesByDates, pinPointId } });
+        navigate(`${ROUTES.PATH.TRIPS.TIMELINE.DATE(Number(tripId))}`, { state: { imagesByDates, pinPointId } });
     }, [tripId, imagesByDates, navigate, pinPointsInfo, currentPinPointIndex]);
 
     const handleIndividualMarkerClick = (marker: BaseLocationMedia) => {
@@ -299,7 +293,7 @@ const TimelineMapPage = () => {
 
     if (loadError) {
         showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
-        navigate(PATH.TRIPS.ROOT);
+        navigate(ROUTES.PATH.TRIPS.ROOT);
         return;
     }
 
@@ -351,7 +345,7 @@ const TimelineMapPage = () => {
                                         alt='포토카드 이미지'
                                         onClick={() =>
                                             navigate(
-                                                `${PATH.TRIPS.TIMELINE.PINPOINT(Number(tripId), point.pinPointId)}`,
+                                                `${ROUTES.PATH.TRIPS.TIMELINE.PINPOINT(Number(tripId), point.pinPointId)}`,
                                             )
                                         }
                                     />
@@ -440,7 +434,7 @@ const TimelineMapPage = () => {
 
     return (
         <div css={pageContainer}>
-            <Header title={tripInfo?.tripTitle || ''} isBackButton onBack={() => navigate(PATH.TRIPS.ROOT)} />
+            <Header title={tripInfo?.tripTitle || ''} isBackButton onBack={() => navigate(ROUTES.PATH.TRIPS.ROOT)} />
             <div css={mapWrapper}>
                 <GoogleMap
                     zoom={DEFAULT_ZOOM_SCALE.TIMELINE}

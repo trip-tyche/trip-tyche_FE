@@ -10,8 +10,8 @@ import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
 import TripTicket from '@/components/features/trip/TripTicket';
-import { PATH } from '@/constants/path';
-import { BUTTON, PAGE } from '@/constants/title';
+import { ROUTES } from '@/constants/paths';
+import { BUTTON } from '@/constants/ui/buttons';
 import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
 import { TripModel, TripListModel } from '@/types/trip';
@@ -56,7 +56,7 @@ const TripTicketListPage = () => {
 
     const handleTicketCreate = async () => {
         const tripId = await tripAPI.createTrip();
-        navigate(`${PATH.TRIPS.NEW.IMAGES(tripId)}`);
+        navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`);
     };
 
     if (isLoading) {
@@ -65,7 +65,7 @@ const TripTicketListPage = () => {
 
     return (
         <div css={pageContainer}>
-            <Header title={PAGE.TRIP_LIST} isBackButton onBack={() => navigate(PATH.MAIN)} />
+            <Header title={ROUTES.PATH_TITLE.TRIPS.ROOT} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
 
             <div css={listHeaderStyle}>
                 <div css={listSummaryStyle}>

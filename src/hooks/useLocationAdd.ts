@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
-import { PATH } from '@/constants/path';
+import { ROUTES } from '@/constants/paths';
 import { updateTripDate } from '@/services/trips';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserDataStore from '@/stores/useUserDataStore';
@@ -59,10 +59,10 @@ export const useLocationAdd = () => {
 
         if (updatedDisplayedImages.length === 0) {
             if (isTripInfoEditing) {
-                navigate(`${PATH.TRIPS.ROOT}`);
+                navigate(`${ROUTES.PATH.TRIPS.ROOT}`);
                 setIsEditing(false);
             } else {
-                navigate(`${PATH.TRIPS.NEW.INFO(Number(tripId))}`);
+                navigate(`${ROUTES.PATH.TRIPS.NEW.INFO(Number(tripId))}`);
                 return;
             }
         }
@@ -93,7 +93,7 @@ export const useLocationAdd = () => {
             await tripAPI.createTripImages(tripId, imagesToUpload);
         } catch (error) {
             showToast('다시 로그인해주세요.');
-            navigate(PATH.AUTH.LOGIN);
+            navigate(ROUTES.PATH.AUTH.LOGIN);
         } finally {
             setIsUploading(false);
         }

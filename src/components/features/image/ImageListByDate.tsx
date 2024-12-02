@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from '@/components/common/Button';
 import ImageGrid from '@/components/features/image/ImageGrid';
 import ImageSizeRadio from '@/components/features/image/ImageSizeRadio';
-import { PATH } from '@/constants/path';
+import { ROUTES } from '@/constants/paths';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
@@ -43,11 +43,11 @@ const ImageListByDate = ({
 
     const navigateToTripInfo = () => {
         if (isEditing) {
-            navigate(`${PATH.TRIPS.ROOT}`);
+            navigate(`${ROUTES.PATH.TRIPS.ROOT}`);
             showToast(`사진이 등록되었습니다.`);
             setIsEditing(false);
         } else {
-            navigate(`${PATH.TRIPS.NEW.INFO(Number(tripId))}`);
+            navigate(`${ROUTES.PATH.TRIPS.NEW.INFO(Number(tripId))}`);
         }
     };
 

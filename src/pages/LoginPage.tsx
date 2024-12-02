@@ -8,15 +8,15 @@ import character5 from '@/assets/images/character-5.png';
 import character6 from '@/assets/images/character-6.png';
 import LoginButton from '@/components/features/auth/LoginButton';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
-import { OAUTH_PATH } from '@/constants/auth';
+import { OAUTH_CONFIG } from '@/constants/api/oauth';
 import useBrowserCheck from '@/hooks/useBrowserCheck';
 import theme from '@/styles/theme';
 
 const LoginPage = () => {
     const { isModalOpen, closeModal } = useBrowserCheck({ showOnce: true });
 
-    const handleLoginButtonClick = (provider: keyof typeof OAUTH_PATH) => {
-        window.location.href = OAUTH_PATH[provider];
+    const handleLoginButtonClick = (provider: keyof typeof OAUTH_CONFIG.PATH) => {
+        window.location.href = OAUTH_CONFIG.PATH[provider];
     };
 
     return (

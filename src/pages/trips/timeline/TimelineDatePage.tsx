@@ -8,7 +8,7 @@ import Spinner from '@/components/common/Spinner';
 import DateMap from '@/components/features/timeline/DateMap';
 import DateSelector from '@/components/features/timeline/DateSelector';
 import ImageItem from '@/components/features/timeline/ImageItem';
-import { PATH } from '@/constants/path';
+import { ROUTES } from '@/constants/paths';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useImagesByDate } from '@/hooks/useImagesByDate';
 import { useImagesLocationObserver } from '@/hooks/useImagesLocationObserver';
@@ -55,7 +55,7 @@ const TimelineDatePage = () => {
 
     const handleArrowButtonClick = useCallback(() => {
         setIsTransitioning(true);
-        navigate(`${PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`);
+        navigate(`${ROUTES.PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`);
 
         setLastPinPointId(pinPointId);
         localStorage.setItem('lastPinPointId', pinPointId);

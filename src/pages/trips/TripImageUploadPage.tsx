@@ -9,10 +9,9 @@ import Header from '@/components/common/Header';
 import AlertModal from '@/components/features/guide/AlertModal';
 import ModalContent from '@/components/features/guide/ModalContent';
 import UploadingSpinner from '@/components/features/guide/UploadingSpinner';
-import { DEFAULT_CENTER } from '@/constants/googleMaps';
-import { TRIP_IMAGES_UPLOAD } from '@/constants/message';
-import { PATH } from '@/constants/path';
-import { PAGE } from '@/constants/title';
+import { DEFAULT_CENTER } from '@/constants/maps/config';
+import { ROUTES } from '@/constants/paths';
+import { TRIP_IMAGES_UPLOAD } from '@/constants/ui/message';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
@@ -59,7 +58,7 @@ const TripImageUploadPage = () => {
         const defaultLocation =
             imagesWithLocationAndDate.length !== 0 ? imagesWithLocationAndDate[0].location : DEFAULT_CENTER;
 
-        navigate(`${PATH.TRIPS.NEW.LOCATIONS(Number(tripId))}`, {
+        navigate(`${ROUTES.PATH.TRIPS.NEW.LOCATIONS(Number(tripId))}`, {
             state: { defaultLocation, imagesNoLocationWithDate },
         });
     };
@@ -70,20 +69,20 @@ const TripImageUploadPage = () => {
         }
 
         if (isTripInfoEditing) {
-            navigate(`${PATH.TRIPS.ROOT}`);
+            navigate(`${ROUTES.PATH.TRIPS.ROOT}`);
             showToast(`${imagesWithLocationAndDate.length}장의 사진이 등록되었습니다`);
             setIsTripInfoEditing(false);
         } else {
             setIsAddLocationModalOpen(false);
             if (tripId && !isNaN(Number(tripId))) {
-                navigate(`${PATH.TRIPS.NEW.INFO(Number(tripId))}`);
+                navigate(`${ROUTES.PATH.TRIPS.NEW.INFO(Number(tripId))}`);
             }
         }
     };
 
     const navigateBeforePage = () => {
         isTripInfoEditing && setIsTripInfoEditing(false);
-        navigate(isFirstTicket ? PATH.MAIN : PATH.TRIPS.ROOT);
+        navigate(isFirstTicket ? ROUTES.PATH.MAIN : ROUTES.PATH.TRIPS.ROOT);
     };
 
     const closeAlertModal = async () => {
@@ -104,11 +103,11 @@ const TripImageUploadPage = () => {
                 setIsUploading(true);
                 await waitForCompletion();
                 setIsUploading(true);
-                navigate(`${PATH.TRIPS.ROOT}`);
+                navigate(`${ROUTES.PATH.TRIPS.ROOT}`);
                 showToast(`${imagesWithLocationAndDate.length}장의 사진이 등록되었습니다.`);
                 setIsTripInfoEditing(false);
             } else {
-                navigate(`${PATH.TRIPS.NEW.INFO(Number(tripId))}`);
+                navigate(`${ROUTES.PATH.TRIPS.NEW.INFO(Number(tripId))}`);
             }
 
             return;
@@ -120,7 +119,7 @@ const TripImageUploadPage = () => {
 
     return (
         <div css={containerStyle}>
-            <Header title={PAGE.UPLOAD_IMAGES} isBackButton onBack={navigateBeforePage} />
+            <Header title={ROUTES.PATH_TITLE.TRIPS.NEW.IMAGES} isBackButton onBack={navigateBeforePage} />
             <main css={mainStyle}>
                 <section css={sectionStyle}>
                     <h4>[사진 등록 가이드]</h4>

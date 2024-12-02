@@ -12,8 +12,9 @@ import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
 import IntroTicket from '@/components/features/trip/IntroTicket';
 import NickNameForm from '@/components/features/user/NickNameForm';
-import { PATH } from '@/constants/path';
-import { WELCOME_TICKET_DATA } from '@/constants/trip';
+import { ROUTES } from '@/constants/paths';
+import { WELCOME_TICKET_DATA } from '@/constants/trip/form';
+import { NICKNAME_FORM } from '@/constants/ui/message';
 import useAuthStore from '@/stores/useAuthStore';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserDataStore from '@/stores/useUserDataStore';
@@ -37,14 +38,14 @@ const MainPage = () => {
     useEffect(() => {
         if (!isLogin) {
             setLogout();
-            navigate(PATH.AUTH.LOGIN);
+            navigate(ROUTES.PATH.AUTH.LOGIN);
             return;
         }
         const initializeMainPage = async () => {
             try {
                 await getUserInfoData();
             } catch (error) {
-                navigate(PATH.AUTH.LOGIN);
+                navigate(ROUTES.PATH.AUTH.LOGIN);
                 showToast('오류가 발생했습니다. 다시 시도해주세요.');
             } finally {
                 setIsInitializing(false);
@@ -57,7 +58,7 @@ const MainPage = () => {
         const isValidUser = validateUserAuth();
 
         if (!isValidUser) {
-            navigate(PATH.AUTH.LOGIN);
+            navigate(ROUTES.PATH.AUTH.LOGIN);
             return;
         }
         const { userNickName, trips } = await tripAPI.fetchTripTicketList();
@@ -72,12 +73,12 @@ const MainPage = () => {
 
     const handleButtonClick = async () => {
         if (latestTrip) {
-            navigate(PATH.TRIPS.ROOT);
+            navigate(ROUTES.PATH.TRIPS.ROOT);
             return;
         }
 
         const tripId = await tripAPI.createTrip();
-        navigate(`${PATH.TRIPS.NEW.IMAGES(tripId)}`, { state: 'first-ticket' });
+        navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`, { state: 'first-ticket' });
     };
 
     if (isInitializing) {
@@ -91,7 +92,7 @@ const MainPage = () => {
                     <Header title='닉네임 등록' />
                     <NickNameForm
                         mode='create'
-                        title='반가워요! 새로운 닉네임을 등록해주세요. 😀'
+                        title={`반가워요! ${NICKNAME_FORM.TITLE}`}
                         buttonText='등록 완료'
                         getUserInfoData={getUserInfoData}
                     />
@@ -99,7 +100,7 @@ const MainPage = () => {
             ) : (
                 <main css={pageContainer}>
                     <div css={headerStyle}>
-                        <Settings css={settingIconStyle} onClick={() => navigate(PATH.SETTING)} />
+                        <Settings css={settingIconStyle} onClick={() => navigate(ROUTES.PATH.SETTING)} />
                     </div>
                     <div css={ticketContainerStyle}>
                         <p css={dragGuideStyle}>

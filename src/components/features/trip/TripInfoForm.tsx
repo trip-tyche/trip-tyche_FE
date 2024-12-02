@@ -8,7 +8,9 @@ import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
 
 import Input from '@/components/common/Input';
-import { COUNTRY_OPTIONS, HASHTAG_MENU, TRIP_FORM } from '@/constants/trip';
+import { COUNTRY_OPTIONS } from '@/constants/trip/country';
+import { TRIP_FORM } from '@/constants/trip/form';
+import { HASHTAG_MENU } from '@/constants/trip/hashtags';
 import { useTripDateRange } from '@/hooks/useTripDateRange';
 import theme from '@/styles/theme';
 import { FormMode } from '@/types/common';

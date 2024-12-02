@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { setupRequestInterceptor, setupResponseInterceptor } from '@/api/interceptors';
-import { DEFAULT_HEADERS, ENV } from '@/constants/api';
+import { DEFAULT_HEADERS, ENV } from '@/constants/api/config';
 
 export const apiClient = axios.create({
     baseURL: ENV.API_BASE_URL,

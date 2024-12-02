@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
-import { PATH } from '@/constants/path';
+import { ROUTES } from '@/constants/paths';
 import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
 import useUserDataStore from '@/stores/useUserDataStore';
@@ -76,7 +76,7 @@ export const useTripInfoForm = (mode: FormMode) => {
             setIsUploading(false);
 
             localStorage.removeItem('image-date');
-            navigate(PATH.TRIPS.ROOT);
+            navigate(ROUTES.PATH.TRIPS.ROOT);
             showToast(
                 uploadStatus === 'error'
                     ? '사진 등록이 실패했습니다. 다시 추가해 주세요.'
@@ -89,7 +89,7 @@ export const useTripInfoForm = (mode: FormMode) => {
             } catch (error) {
                 showToast('여행 정보 수정에 실패했습니다. 다시 시도해 주세요.');
             } finally {
-                navigate(PATH.TRIPS.ROOT);
+                navigate(ROUTES.PATH.TRIPS.ROOT);
                 setIsTripInfoEditing(false);
             }
         }
@@ -97,10 +97,10 @@ export const useTripInfoForm = (mode: FormMode) => {
 
     const navigateBeforePage = () => {
         if (mode === 'create') {
-            navigate(`${PATH.TRIPS.NEW.IMAGES(Number(tripId))}`);
+            navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(Number(tripId))}`);
         } else {
             setIsTripInfoEditing(false);
-            navigate(PATH.TRIPS.ROOT);
+            navigate(ROUTES.PATH.TRIPS.ROOT);
         }
     };
 

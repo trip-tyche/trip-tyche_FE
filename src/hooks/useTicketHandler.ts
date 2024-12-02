@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
-import { PATH } from '@/constants/path';
+import { ROUTES } from '@/constants/paths';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 
@@ -19,13 +19,13 @@ export const useTicketHandler = (tripId: string) => {
     const handleImageUpload = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         setIsTripInfoEditing(true);
-        navigate(`${PATH.TRIPS.NEW.IMAGES(Number(tripId))}`);
+        navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(Number(tripId))}`);
     };
 
     const handleTripEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         setIsTripInfoEditing(true);
-        navigate(`${PATH.TRIPS.EDIT(Number(tripId))}`);
+        navigate(`${ROUTES.PATH.TRIPS.EDIT(Number(tripId))}`);
     };
 
     const handleTripDelete = (event: React.MouseEvent<HTMLButtonElement>) => {

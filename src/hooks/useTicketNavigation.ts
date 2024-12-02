@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-import { PATH } from '@/constants/path';
+import { ROUTES } from '@/constants/paths';
 
 export const useTicketNavigation = (tripId: string, isModalOpen: boolean) => {
     const [isAnimating, setIsAnimating] = useState(false);
@@ -12,7 +12,7 @@ export const useTicketNavigation = (tripId: string, isModalOpen: boolean) => {
     useEffect(() => {
         if (isAnimating) {
             const timer = setTimeout(() => {
-                navigate(`${PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`);
+                navigate(`${ROUTES.PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`);
             }, 800);
 
             return () => clearTimeout(timer);

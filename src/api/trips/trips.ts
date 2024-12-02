@@ -1,5 +1,5 @@
 import { apiClient } from '@/api/client';
-import { API_ENDPOINTS } from '@/constants/api';
+import { API_ENDPOINTS } from '@/constants/api/config';
 import { TripModelWithoutTripId } from '@/types/trip';
 import { getToken } from '@/utils/auth';
 

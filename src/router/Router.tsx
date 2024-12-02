@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { createBrowserRouter, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
-import { PATH } from '@/constants/path';
+import { ROUTES } from '@/constants/paths';
 import RootLayout from '@/layouts/RootLayout';
 import LoginPage from '@/pages/LoginPage';
 import LoginRedirectPage from '@/pages/LoginRedirectPage';
@@ -35,7 +35,7 @@ const LoginCheck = ({ children }: { children: JSX.Element }) => {
             const lastLoginTime = localStorage.getItem('lastLoginTime') || '';
 
             if (!isValid || !lastLoginTime) {
-                navigate(PATH.AUTH.LOGIN, {
+                navigate(ROUTES.PATH.AUTH.LOGIN, {
                     replace: true,
                     state: pathname + search,
                 });
@@ -47,7 +47,7 @@ const LoginCheck = ({ children }: { children: JSX.Element }) => {
 
             if (isTimeout) {
                 localStorage.clear();
-                navigate(PATH.AUTH.LOGIN, {
+                navigate(ROUTES.PATH.AUTH.LOGIN, {
                     replace: true,
                     state: pathname + search,
                 });
@@ -74,20 +74,20 @@ const ProtectedRoute = () => (
 
 const router = createBrowserRouter([
     {
-        path: PATH.MAIN,
+        path: ROUTES.PATH.MAIN,
         element: <RootLayout />,
         errorElement: <PageNotFound />,
         children: [
-            { path: PATH.ONBOARDING, element: <Onboarding /> },
-            { path: PATH.AUTH.LOGIN, element: <LoginPage /> },
-            { path: PATH.AUTH.LOGIN_REDIRECT, element: <LoginRedirectPage /> },
+            { path: ROUTES.PATH.ONBOARDING, element: <Onboarding /> },
+            { path: ROUTES.PATH.AUTH.LOGIN, element: <LoginPage /> },
+            { path: ROUTES.PATH.AUTH.LOGIN_REDIRECT, element: <LoginRedirectPage /> },
             {
                 element: <ProtectedRoute />,
                 children: [
                     { index: true, element: <MainPage /> },
-                    { path: PATH.SETTING, element: <SettingPage /> },
+                    { path: ROUTES.PATH.SETTING, element: <SettingPage /> },
 
-                    { path: PATH.TRIPS.ROOT, element: <TripTicketListPage /> },
+                    { path: ROUTES.PATH.TRIPS.ROOT, element: <TripTicketListPage /> },
                     {
                         path: 'trips/:tripId',
                         children: [

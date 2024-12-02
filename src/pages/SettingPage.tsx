@@ -9,8 +9,8 @@ import Header from '@/components/common/Header';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import NickNameForm from '@/components/features/user/NickNameForm';
 import SettingButton from '@/components/features/user/SettingButton';
-import { LOGOUT_MODAL } from '@/constants/message';
-import { PATH } from '@/constants/path';
+import { ROUTES } from '@/constants/paths';
+import { LOGOUT_MODAL, NICKNAME_FORM } from '@/constants/ui/message';
 import useAuthStore from '@/stores/useAuthStore';
 import { useModalStore } from '@/stores/useModalStore';
 import useUserDataStore from '@/stores/useUserDataStore';
@@ -29,12 +29,12 @@ const SettingPage = () => {
     const handleContact = () => console.log('문의하기');
     const handleLogout = () => openModal();
 
-    const navigateBeforePage = () => (isEditing ? setIsEditing(false) : navigate(PATH.MAIN));
+    const navigateBeforePage = () => (isEditing ? setIsEditing(false) : navigate(ROUTES.PATH.MAIN));
 
     const confirmLogoutModal = () => {
         closeModal();
         setLogout();
-        navigate(PATH.AUTH.LOGIN);
+        navigate(ROUTES.PATH.AUTH.LOGIN);
     };
 
     const settingButtons = [
@@ -61,7 +61,7 @@ const SettingPage = () => {
             {isEditing ? (
                 <NickNameForm
                     mode='edit'
-                    title='새로운 닉네임을 입력해주세요.'
+                    title={NICKNAME_FORM.TITLE}
                     buttonText='변경 완료'
                     placeholder={userNickName}
                     setIsEditing={setIsEditing}

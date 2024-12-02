@@ -3,7 +3,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { RiKakaoTalkFill } from 'react-icons/ri';
 
 import Button from '@/components/common/Button';
-import { SOCIAL_LOGIN } from '@/constants/auth';
+import { OAUTH_CONFIG } from '@/constants/api/oauth';
 import theme from '@/styles/theme';
 
 type ProviderType = 'kakao' | 'google';
@@ -15,7 +15,7 @@ interface LoginButtonProps {
 
 const LoginButton = ({ provider, onClick }: LoginButtonProps) => (
     <Button
-        text={provider === 'kakao' ? SOCIAL_LOGIN.KAKAO : SOCIAL_LOGIN.GOOGLE}
+        text={provider === 'kakao' ? OAUTH_CONFIG.LABELS.KAKAO : OAUTH_CONFIG.LABELS.GOOGLE}
         css={loginButtonStyles(provider)}
         onClick={onClick}
         icon={provider === 'kakao' ? <RiKakaoTalkFill css={iconStyle} /> : <FcGoogle css={iconStyle} />}

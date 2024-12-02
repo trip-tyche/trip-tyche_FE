@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom';
 
 import imageLeft from '@/assets/images/character-1.png';
 import imageRight from '@/assets/images/character-2.png';
-import { PATH } from '@/constants/path';
+import { ROUTES } from '@/constants/paths';
 import theme from '@/styles/theme';
 
 const Onboarding = () => {
@@ -20,7 +20,7 @@ const Onboarding = () => {
     }, []);
 
     if (redirect) {
-        return <Navigate to={PATH.AUTH.LOGIN} replace />;
+        return <Navigate to={ROUTES.PATH.AUTH.LOGIN} replace />;
     }
 
     return (

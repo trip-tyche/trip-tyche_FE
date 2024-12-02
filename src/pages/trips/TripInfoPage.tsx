@@ -4,7 +4,7 @@ import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import UploadingSpinner from '@/components/features/guide/UploadingSpinner';
 import TripInfoForm from '@/components/features/trip/TripInfoForm';
-import { PAGE } from '@/constants/title';
+import { ROUTES } from '@/constants/paths';
 import { useTripInfoForm } from '@/hooks/useTripInfoForm';
 
 const TripInfoPage = () => {
@@ -13,7 +13,7 @@ const TripInfoPage = () => {
 
     return (
         <div css={pageContainer}>
-            <Header title={PAGE.NEW_TRIP} isBackButton onBack={navigateBeforePage} />
+            <Header title={ROUTES.PATH_TITLE.TRIPS.NEW.INFO} isBackButton onBack={navigateBeforePage} />
             <main css={mainStyle}>
                 <TripInfoForm mode='create' tripInfo={tripInfo} setTripInfo={setTripInfo} />
                 <Button text='여행 등록하기' onClick={handleTripInfoSubmit} disabled={!isFormComplete} />

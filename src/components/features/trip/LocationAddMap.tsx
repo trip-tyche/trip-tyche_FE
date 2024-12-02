@@ -7,11 +7,11 @@ import { useLocation } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Spinner from '@/components/common/Spinner';
-import { DEFAULT_ZOOM_SCALE, GOOGLE_MAPS_OPTIONS } from '@/constants/googleMaps';
+import { DEFAULT_ZOOM_SCALE, GOOGLE_MAPS_OPTIONS } from '@/constants/maps/config';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
-import { LatLng, MapMouseEvent, PlacesAutocomplete } from '@/types/map';
+import { LatLng, MapMouseEvent, PlacesAutocomplete } from '@/types/maps';
 
 interface LocationAddMapProps {
     onLocationSelect: (lat: number, lng: number) => void;

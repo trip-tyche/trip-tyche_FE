@@ -6,6 +6,7 @@ import { MdCancel } from 'react-icons/md';
 import { userAPI } from '@/api';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
+import { NICKNAME_FORM } from '@/constants/ui/message';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
@@ -51,7 +52,7 @@ const NickNameForm = ({ mode, title, buttonText, placeholder, getUserInfoData, s
                     variant='error'
                     setIsInvalid={setIsInvalid}
                     maxLength={15}
-                    placeholder={placeholder || '닉네임은 최대 10자까지 등록할 수 있습니다.'}
+                    placeholder={placeholder || NICKNAME_FORM.TITLE}
                     rightSection={
                         <MdCancel size={16} onClick={handleCancelButtonClick} style={{ cursor: 'pointer' }} />
                     }

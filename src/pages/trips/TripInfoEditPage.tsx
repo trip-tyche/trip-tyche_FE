@@ -5,7 +5,8 @@ import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
 import TripInfoForm from '@/components/features/trip/TripInfoForm';
-import { BUTTON, PAGE } from '@/constants/title';
+import { ROUTES } from '@/constants/paths';
+import { BUTTON } from '@/constants/ui/buttons';
 import { useTripInfoForm } from '@/hooks/useTripInfoForm';
 
 const TripInfoEditPage = () => {
@@ -18,7 +19,7 @@ const TripInfoEditPage = () => {
 
     return (
         <div css={pageContainer}>
-            <Header title={PAGE.TRIP_EDIT} isBackButton onBack={navigateBeforePage} />
+            <Header title={ROUTES.PATH_TITLE.TRIPS.EDIT} isBackButton onBack={navigateBeforePage} />
             <main css={mainStyle}>
                 <TripInfoForm mode='edit' tripInfo={tripInfo} setTripInfo={setTripInfo} />
                 <Button text={BUTTON.UPDATE_TRIP} onClick={handleTripInfoSubmit} disabled={!isFormComplete} />

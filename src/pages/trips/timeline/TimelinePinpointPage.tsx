@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { tripImageAPI } from '@/api';
 import ImageCarousel from '@/components/features/image/ImageCarousel';
-import { PATH } from '@/constants/path';
+import { ROUTES } from '@/constants/paths';
 import useTimelineStore from '@/stores/useTimelineStore';
 import theme from '@/styles/theme';
 import { CarouselState } from '@/types/common';
@@ -38,7 +38,7 @@ const TimelinePinpointPage = () => {
     }, [tripId, pinPointId, setLastPinPointId]);
 
     const navigateBeforePage = () => {
-        navigate(`${PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`);
+        navigate(`${ROUTES.PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`);
     };
 
     return (
