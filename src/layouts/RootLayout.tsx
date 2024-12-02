@@ -6,10 +6,8 @@ import theme from '@/styles/theme';
 
 const RootLayout = () => (
     <div css={containerStyle}>
-        <main>
-            <Outlet />
-            <Toast />
-        </main>
+        <Outlet />
+        <Toast />
     </div>
 );
 const containerStyle = css`
