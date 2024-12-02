@@ -11,7 +11,7 @@ import { DEFAULT_ZOOM_SCALE, GOOGLE_MAPS_OPTIONS } from '@/constants/googleMaps'
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
-import { LatLngLiteralType, MapMouseEventType, PlacesAutocompleteType } from '@/types/googleMaps';
+import { LatLng, MapMouseEvent, PlacesAutocomplete } from '@/types/map';
 
 interface LocationAddMapProps {
     onLocationSelect: (lat: number, lng: number) => void;
@@ -30,16 +30,16 @@ const LocationAddMap = ({
         defaultLocation: { latitude: lat, longitude: lng },
     } = useLocation().state;
 
-    const [center, setCenter] = useState<LatLngLiteralType>({ lat, lng });
-    const [selectedLocation, setSelectedLocation] = useState<LatLngLiteralType | null>(null);
+    const [center, setCenter] = useState<LatLng>({ lat, lng });
+    const [selectedLocation, setSelectedLocation] = useState<LatLng | null>(null);
 
     const showToast = useToastStore((state) => state.showToast);
 
     const { isLoaded, loadError, markerIcon } = useGoogleMaps();
 
-    const autocompleteRef = useRef<PlacesAutocompleteType>(null);
+    const autocompleteRef = useRef<PlacesAutocomplete>(null);
 
-    const handleMapClick = (event: MapMouseEventType) => {
+    const handleMapClick = (event: MapMouseEvent) => {
         if (event.latLng) {
             const newLocation = {
                 lat: event.latLng.lat(),

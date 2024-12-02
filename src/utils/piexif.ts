@@ -1,6 +1,7 @@
 import piexif from 'piexifjs';
 
-import { GpsData, ImageModel } from '@/types/image';
+import { ImageModel } from '@/types/image';
+import { GpsCoordinates } from '@/types/location';
 // EXIF 데이터의 타입 정의
 interface ExifData {
     '0th'?: {
@@ -74,7 +75,7 @@ const convertDMSToDD = (degrees: number, minutes: number, seconds: number, direc
 };
 
 // EXIF 데이터를 기반으로 GPS 좌표를 추출하는 함수
-const extractGpsData = (exifObj: any): GpsData | null => {
+const extractGpsData = (exifObj: any): GpsCoordinates | null => {
     if (!exifObj || !exifObj['GPS']) return null;
 
     const gps = exifObj['GPS'];
@@ -112,7 +113,7 @@ const extractGpsData = (exifObj: any): GpsData | null => {
 };
 
 // 이미지에서 위치 추출 함수
-export const getImageLocation = async (file: File): Promise<GpsData | null> => {
+export const getImageLocation = async (file: File): Promise<GpsCoordinates | null> => {
     try {
         const exifData = await readExifData(file);
         if (!exifData) {
@@ -155,7 +156,7 @@ export const extractDateFromImage = async (file: File): Promise<Date | null> => 
 
 // ///////////////////////////////////////
 // 메타데이터 업데이트
-export const addGpsMetadataToImages = async (imagesToUpdate: ImageModel[], gpsLocation: GpsData) =>
+export const addGpsMetadataToImages = async (imagesToUpdate: ImageModel[], gpsLocation: GpsCoordinates) =>
     await Promise.all(
         imagesToUpdate.map(async (image) => {
             const currentExifData = piexif.load(await readFileAsDataURL(image.image));
@@ -187,9 +188,9 @@ const insertExifIntoJpeg = async (file: File, exifStr: string): Promise<Blob> =>
 };
 
 // 아래부분이 위치 추가
-const createGpsExif = (lat: number, lng: number) => {
-    const latRef = lat >= 0 ? 'N' : 'S';
-    const lngRef = lng >= 0 ? 'E' : 'W';
+const createGpsExif = (lat: number, lng: number): Pick<ExifData, 'GPS'> => {
+    const latRef = lat >= 0 ? ('N' as const) : ('S' as const);
+    const lngRef = lng >= 0 ? ('E' as const) : ('W' as const);
 
     const latDeg = Math.abs(lat);
     const lngDeg = Math.abs(lng);

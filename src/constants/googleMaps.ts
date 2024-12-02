@@ -4,7 +4,7 @@ import characterImage from '/character-1.png';
 
 import { ENV } from '@/constants/api';
 import theme from '@/styles/theme';
-import { MapOptionsType, MapPolylineOptionsType } from '@/types/googleMaps';
+import { MapOptionsType, MapPolylineOptionsType } from '@/types/map';
 
 export const GOOGLE_MAPS_CONFIG = {
     googleMapsApiKey: ENV.GOOGLE_MAPS_API_KEY || '',

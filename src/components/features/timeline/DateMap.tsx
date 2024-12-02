@@ -3,10 +3,10 @@ import { GoogleMap, Marker } from '@react-google-maps/api';
 
 import { DEFAULT_ZOOM_SCALE, GOOGLE_MAPS_OPTIONS } from '@/constants/googleMaps';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
-import { LatLngLiteralType } from '@/types/googleMaps';
+import { LatLng } from '@/types/map';
 
 interface DateMapProps {
-    imageLocation: LatLngLiteralType;
+    imageLocation: LatLng;
 }
 
 const DateMap = ({ imageLocation }: DateMapProps) => {

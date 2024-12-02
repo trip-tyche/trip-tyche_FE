@@ -1,37 +1,37 @@
 declare module 'piexifjs' {
-    export function load(data: string): ExifData;
-    export function dump(exif: ExifData): any;
-    export function insert(exif: any, jpeg: string): string;
-    export function remove(jpeg: string): string;
-
     export const GPSIFD: {
         GPSLatitudeRef: 1;
         GPSLatitude: 2;
         GPSLongitudeRef: 3;
         GPSLongitude: 4;
-        // 다른 GPS 관련 태그들도 필요하다면 여기에 추가
     };
 
-    export const ImageIFD: { [key: string]: number };
-    export const ExifIFD: { [key: string]: number };
-    export const TAGS: { [key: string]: { [key: number]: string } };
+    export function load(data: string): ExifData;
+    export function dump(exif: ExifData): string;
+    export function insert(exif: string, jpeg: string): string;
+    export function remove(jpeg: string): string;
+
+    export const ImageIFD: Record<string, number>;
+    export const ExifIFD: Record<string, number>;
+    export const TAGS: Record<string, Record<number, string>>;
 
     export namespace GPSHelper {
         function degToDmsRational(degFloat: number): [number, number][];
     }
 
     export interface ExifData {
-        '0th': { [key: number]: any };
-        Exif: { [key: number]: any };
+        '0th': Record<number, unknown>;
+        Exif: Record<number, unknown>;
         GPS: {
-            [key: number]: any;
+            [key: number]: unknown;
+        } & {
             [GPSIFD.GPSLatitude]?: [number, number][];
-            [GPSIFD.GPSLatitudeRef]?: string;
+            [GPSIFD.GPSLatitudeRef]?: 'N' | 'S';
             [GPSIFD.GPSLongitude]?: [number, number][];
-            [GPSIFD.GPSLongitudeRef]?: string;
+            [GPSIFD.GPSLongitudeRef]?: 'E' | 'W';
         };
-        Interop: { [key: number]: any };
-        '1st': { [key: number]: any };
+        Interop: Record<number, unknown>;
+        '1st': Record<number, unknown>;
         thumbnail: null | Uint8Array;
     }
 }

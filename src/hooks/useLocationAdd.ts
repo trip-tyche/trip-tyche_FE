@@ -6,15 +6,15 @@ import { tripAPI } from '@/api';
 import { PATH } from '@/constants/path';
 import { updateTripDate } from '@/services/trips';
 import { useToastStore } from '@/stores/useToastStore';
-import { useUploadStore } from '@/stores/useUploadingStore';
 import useUserDataStore from '@/stores/useUserDataStore';
-import { ImageGroupByDateType, ImageModel, LocationType } from '@/types/image';
+import { ImageModel, ImageGroupByDate } from '@/types/image';
+import { Location } from '@/types/location';
 import { addGpsMetadataToImages } from '@/utils/piexif';
 
 export const useLocationAdd = () => {
     const [displayedImages, setDisplayedImages] = useState<ImageModel[]>([]);
     const [selectedImages, setSelectedImages] = useState<ImageModel[]>([]);
-    const [selectedLocation, setSelectedLocation] = useState<LocationType>(null);
+    const [selectedLocation, setSelectedLocation] = useState<Location>(null);
     const [isMapVisible, setIsMapVisible] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
 
@@ -115,14 +115,14 @@ export const useLocationAdd = () => {
     };
 
     const imageGroupByDate = useMemo(() => {
-        const groups: ImageGroupByDateType = displayedImages.reduce((acc, image) => {
+        const groups: ImageGroupByDate = displayedImages.reduce((acc, image) => {
             const date = image.formattedDate;
             if (!acc[date]) {
                 acc[date] = [];
             }
             acc[date].push(image);
             return acc;
-        }, {} as ImageGroupByDateType);
+        }, {} as ImageGroupByDate);
         return Object.entries(groups).sort(([dateA], [dateB]) => dateA.localeCompare(dateB));
     }, [displayedImages]);
 

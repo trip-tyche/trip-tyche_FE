@@ -11,16 +11,16 @@ import Input from '@/components/common/Input';
 import { COUNTRY_OPTIONS, HASHTAG_MENU, TRIP_FORM } from '@/constants/trip';
 import { useTripDateRange } from '@/hooks/useTripDateRange';
 import theme from '@/styles/theme';
-import { TripInfoModel } from '@/types/trip';
-import { FormModeType } from '@/types/user';
+import { FormMode } from '@/types/common';
+import { TripModelWithoutTripId } from '@/types/trip';
 import { formatDateToKoreanYear } from '@/utils/date';
 
 type DateSelectType = 'range' | 'single';
 type DateChangeHandler = (value: DateValue | DatesRangeValue) => void;
 interface TripInfoFormProps {
-    mode: FormModeType;
-    tripInfo: TripInfoModel;
-    setTripInfo: Dispatch<SetStateAction<TripInfoModel>>;
+    mode: FormMode;
+    tripInfo: TripModelWithoutTripId;
+    setTripInfo: Dispatch<SetStateAction<TripModelWithoutTripId>>;
 }
 
 const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
@@ -47,7 +47,7 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
     }, [dateSelectType]);
 
     const handleHashtagSelect = (tag: string) => {
-        setTripInfo((prev: TripInfoModel) => {
+        setTripInfo((prev: TripModelWithoutTripId) => {
             if (prev.hashtags.includes(tag)) {
                 return { ...prev, hashtags: prev.hashtags.filter((hashtag) => hashtag !== tag) };
             }

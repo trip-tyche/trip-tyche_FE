@@ -1,21 +1,14 @@
-export interface GpsData {
-    latitude: number;
-    longitude: number;
-}
-
-export type LocationType = GpsData | null;
+import { Location } from '@/types/location';
 
 export interface ImageModel {
     image: File;
     formattedDate: string;
-    location: LocationType;
+    location: Location;
 }
-
-export type ImageGroupByDateType = Record<string, ImageModel[]>;
-
-export type CarouselStateType = 'auto' | 'paused' | 'zoomed';
 
 export interface ImageCarouselModel {
     mediaFileId: string;
     mediaLink: string;
 }
+
+export type ImageGroupByDate = Record<string, ImageModel[]>;

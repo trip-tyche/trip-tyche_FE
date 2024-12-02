@@ -1,4 +1,4 @@
-import { CountryOptionModel } from '@/types/trip';
+import { CountryOption } from '@/types/country';
 
 export const HASHTAG_MENU = [
     '솔로여행', // 혼자 여행하는 트렌드 반영
@@ -18,7 +18,7 @@ export const HASHTAG_MENU = [
     '가성비템', // 실용적인 여행
 ] as const;
 
-export const COUNTRY_OPTIONS: CountryOptionModel[] = [
+export const COUNTRY_OPTIONS: CountryOption[] = [
     {
         emoji: '🇬🇭',
         nameKo: '가나',

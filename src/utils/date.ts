@@ -1,6 +1,6 @@
-import { FormattedTripDate, Trip } from '@/types/trip';
+import { TripModel } from '@/types/trip';
 
-export const formatTripDate = (tripsList: Trip[]): FormattedTripDate[] =>
+export const formatTripDate = (tripsList: TripModel[]): TripModel[] =>
     tripsList?.map((trip) => ({
         ...trip,
         country: trip.country.toUpperCase(),

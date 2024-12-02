@@ -23,16 +23,16 @@ import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import useTimelineStore from '@/stores/useTimelineStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
-import { LatLngLiteralType, MapsType } from '@/types/googleMaps';
-import { BaseLocationMedia, MediaFile, PinPoint, TripInfoModel } from '@/types/trip';
+import { LatLng, Map } from '@/types/map';
+import { BaseLocationMedia, MediaFileModel, PinPointModel } from '@/types/media';
+import { TripModel } from '@/types/trip';
 
 const TimelineMapPage = () => {
-    // console.log('Re-Rendering Count');
-    const [tripInfo, setTripInfo] = useState<TripInfoModel>();
-    const [pinPointsInfo, setPinPointsInfo] = useState<PinPoint[]>([]);
-    const [tripImages, setTripImages] = useState<MediaFile[]>([]);
+    const [tripInfo, setTripInfo] = useState<TripModel>();
+    const [pinPointsInfo, setPinPointsInfo] = useState<PinPointModel[]>([]);
+    const [tripImages, setTripImages] = useState<MediaFileModel[]>([]);
 
-    const [characterPosition, setCharacterPosition] = useState<LatLngLiteralType>();
+    const [characterPosition, setCharacterPosition] = useState<LatLng>();
 
     const [currentPinPointIndex, setCurrentPinPointIndex] = useState(0);
     const [selectedIndividualMarker, setSelectedIndividualMarker] = useState<BaseLocationMedia | null>(null);
@@ -51,7 +51,7 @@ const TimelineMapPage = () => {
 
     const { isLoaded, loadError, markerIcon } = useGoogleMaps();
 
-    const mapRef = useRef<MapsType | null>(null);
+    const mapRef = useRef<Map | null>(null);
     const animationRef = useRef<number | null>(null);
     const startTimeRef = useRef<number | null>(null);
     const autoPlayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -62,7 +62,7 @@ const TimelineMapPage = () => {
     const isLastPinPoint = currentPinPointIndex === pinPointsInfo.length - 1;
 
     //  Google Maps가 처음 로드될 때 실행되는 핸들러 함수
-    const handleMapLoad = (map: MapsType) => {
+    const handleMapLoad = (map: Map) => {
         mapRef.current = map;
         setIsMapLoaded(true);
     };
@@ -83,9 +83,10 @@ const TimelineMapPage = () => {
             }
 
             const sortedPinPointByDate = pinPoints.sort(
-                (a: PinPoint, b: PinPoint) => new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime(),
+                (a: PinPointModel, b: PinPointModel) =>
+                    new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime(),
             );
-            const imageDates = images.map((image: MediaFile) => image.recordDate.split('T')[0]);
+            const imageDates = images.map((image: MediaFileModel) => image.recordDate.split('T')[0]);
 
             const uniqueImageDates = [...new Set<string>([tripInfo.startDate, ...imageDates])].sort((a, b) =>
                 a.localeCompare(b),

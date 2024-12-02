@@ -7,7 +7,8 @@ import { tripAPI } from '@/api';
 import { updateTripDate } from '@/services/trips';
 import { useUploadStore } from '@/stores/useUploadingStore';
 import useUserDataStore from '@/stores/useUserDataStore';
-import { ImageModel, LocationType } from '@/types/image';
+import { ImageModel } from '@/types/image';
+import { Location } from '@/types/location';
 import { formatDateToYYYYMMDD } from '@/utils/date';
 import { getImageLocation, extractDateFromImage } from '@/utils/piexif';
 
@@ -43,7 +44,7 @@ export const useImageUpload = () => {
         return dataTransfer.files;
     };
 
-    const hasValidLocation = (location: LocationType): boolean => location !== null;
+    const hasValidLocation = (location: Location): boolean => location !== null;
 
     const extractImageMetadata = async (images: FileList | null): Promise<ImageModel[]> => {
         if (!images || images.length === 0) {

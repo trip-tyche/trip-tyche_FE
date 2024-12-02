@@ -5,11 +5,11 @@ import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
 
 import theme from '@/styles/theme';
-import { TripInfoModel } from '@/types/trip';
+import { TripModelWithoutTripId } from '@/types/trip';
 
 interface UseTripDateRangeProps {
     imageDates: string[];
-    setTripInfo: Dispatch<SetStateAction<TripInfoModel>>;
+    setTripInfo: Dispatch<SetStateAction<TripModelWithoutTripId>>;
     isEditing: boolean;
 }
 
@@ -33,7 +33,7 @@ export const useTripDateRange = ({ imageDates, setTripInfo, isEditing }: UseTrip
         if (!isInitialized) {
             if (value[0] && !value[1]) {
                 const startDateString = dayjs(value[0]).format('YYYY-MM-DD');
-                setTripInfo((prev: TripInfoModel) => ({ ...prev, startDate: startDateString }));
+                setTripInfo((prev: TripModelWithoutTripId) => ({ ...prev, startDate: startDateString }));
                 setIsSelectMode(true);
                 setIsError(false);
             } else if (value[0] && value[1]) {
@@ -43,7 +43,11 @@ export const useTripDateRange = ({ imageDates, setTripInfo, isEditing }: UseTrip
                 const startDateString = date1.isBefore(date2) ? date1.format('YYYY-MM-DD') : date2.format('YYYY-MM-DD');
                 const endDateString = date1.isBefore(date2) ? date2.format('YYYY-MM-DD') : date1.format('YYYY-MM-DD');
 
-                setTripInfo((prev: TripInfoModel) => ({ ...prev, startDate: startDateString, endDate: endDateString }));
+                setTripInfo((prev: TripModelWithoutTripId) => ({
+                    ...prev,
+                    startDate: startDateString,
+                    endDate: endDateString,
+                }));
                 setIsSelectMode(false);
 
                 const hasOutsideImages = imageDates.some((imageDate) => {
@@ -60,7 +64,7 @@ export const useTripDateRange = ({ imageDates, setTripInfo, isEditing }: UseTrip
         const dateString = dayjs(value).format('YYYY-MM-DD');
 
         setSelectedDate(value);
-        setTripInfo((prev: TripInfoModel) => ({ ...prev, startDate: dateString, endDate: dateString }));
+        setTripInfo((prev: TripModelWithoutTripId) => ({ ...prev, startDate: dateString, endDate: dateString }));
 
         const hasOutsideImages = imageDates.some((imageDate) => {
             const date = dayjs(imageDate);
@@ -157,7 +161,7 @@ export const useTripDateRange = ({ imageDates, setTripInfo, isEditing }: UseTrip
         setIsSelectMode(false);
         setIsError(false);
         setIsInitialized(true);
-        setTripInfo((prev: TripInfoModel) => ({
+        setTripInfo((prev: TripModelWithoutTripId) => ({
             ...prev,
             startDate: '',
             endDate: '',

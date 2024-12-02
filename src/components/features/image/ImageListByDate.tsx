@@ -14,8 +14,8 @@ import { ImageModel } from '@/types/image';
 import { formatDateToKorean } from '@/utils/date';
 
 interface ImageListByDateProps {
-    tripId: string | undefined;
     imageGroupByDate: [string, ImageModel[]][];
+    tripId: string | undefined;
     selectedImages: ImageModel[];
     onHashtagSelect: (image: ImageModel) => void;
     setIsMapVisible: (isMapVisible: boolean) => void;

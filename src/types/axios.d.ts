@@ -1,7 +1,7 @@
-import type { AxiosRequestConfig as OriginalAxiosRequestConfig } from 'axios';
+import type { AxiosRequestConfig } from 'axios';
 
 declare module 'axios' {
-    interface AxiosRequestConfig extends OriginalAxiosRequestConfig {
+    interface AxiosRequestConfig {
         skipAuth?: boolean;
     }
 }

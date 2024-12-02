@@ -14,11 +14,11 @@ import { PATH } from '@/constants/path';
 import { BUTTON, PAGE } from '@/constants/title';
 import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
-import { Trip, Trips } from '@/types/trip';
+import { TripModel, TripListModel } from '@/types/trip';
 
 const TripTicketListPage = () => {
     const [userNickname, setUserNickname] = useState('');
-    const [tripList, setTripList] = useState<Trip[]>([]);
+    const [tripList, setTripList] = useState<TripModel[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
     const tripTicketCount = useUserDataStore((state) => state.tripTicketCount);
@@ -32,7 +32,7 @@ const TripTicketListPage = () => {
 
     const getTripListData = async () => {
         setIsLoading(true);
-        const tripList: Trips = await tripAPI.fetchTripTicketList();
+        const tripList: TripListModel = await tripAPI.fetchTripTicketList();
         const inValidTripList = tripList.trips.filter((trip) => trip.tripTitle === 'N/A');
         const validTripList = tripList.trips?.filter((trip) => trip.tripTitle !== 'N/A').reverse();
 
@@ -46,7 +46,7 @@ const TripTicketListPage = () => {
         setIsLoading(false);
     };
 
-    const deleteInValidTrips = async (trips: Trip[]) => {
+    const deleteInValidTrips = async (trips: TripModel[]) => {
         const deletePromises = trips
             .filter((trip) => trip.tripTitle === 'N/A')
             .map((trip) => tripAPI.deleteTripTicket(trip.tripId));

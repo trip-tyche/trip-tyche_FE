@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-import { LatLngLiteralType } from '@/types/googleMaps';
-import { MediaFile } from '@/types/trip';
+import { LatLng } from '@/types/map';
+import { MediaFileModel } from '@/types/media';
 
 export const useImagesLocationObserver = (
-    imagesByDate: MediaFile[],
-    setImageLocation: (location: LatLngLiteralType) => void,
+    imagesByDate: MediaFileModel[],
+    setImageLocation: (location: LatLng) => void,
 ) => {
     const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
 

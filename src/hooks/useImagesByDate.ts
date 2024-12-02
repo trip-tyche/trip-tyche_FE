@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 
 import { tripImageAPI } from '@/api';
-import { LatLngLiteralType } from '@/types/googleMaps';
-import { MediaFile } from '@/types/trip';
+import { LatLng } from '@/types/map';
+import { MediaFileModel } from '@/types/media';
 
 export const useImagesByDate = (tripId: string, currentDate: string) => {
-    const [imagesByDate, setImagesByDate] = useState<MediaFile[]>([]);
-    const [imageLocation, setImageLocation] = useState<LatLngLiteralType>();
+    const [imagesByDate, setImagesByDate] = useState<MediaFileModel[]>([]);
+    const [imageLocation, setImageLocation] = useState<LatLng>();
 
     const [isImageLoaded, setIsImageLoaded] = useState(false);
     const [loadedImageCount, setLoadedImageCount] = useState(0);

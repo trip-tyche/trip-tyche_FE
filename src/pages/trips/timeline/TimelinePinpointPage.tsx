@@ -9,11 +9,12 @@ import ImageCarousel from '@/components/features/image/ImageCarousel';
 import { PATH } from '@/constants/path';
 import useTimelineStore from '@/stores/useTimelineStore';
 import theme from '@/styles/theme';
-import { ImageCarouselModel, CarouselStateType } from '@/types/image';
+import { CarouselState } from '@/types/common';
+import { ImageCarouselModel } from '@/types/image';
 
 const TimelinePinpointPage = () => {
     const [carouselImages, setCarouselImages] = useState<ImageCarouselModel[]>([]);
-    const [carouselState, setCarouselState] = useState<CarouselStateType>('auto');
+    const [carouselState, setCarouselState] = useState<CarouselState>('auto');
 
     const setLastPinPointId = useTimelineStore((state) => state.setLastPinPointId);
 

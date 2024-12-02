@@ -1,10 +1,10 @@
 import { css } from '@emotion/react';
 
 import theme from '@/styles/theme';
-import { MediaFile } from '@/types/trip';
+import { MediaFileModel } from '@/types/media';
 
 interface ImageItemProps {
-    image: MediaFile;
+    image: MediaFileModel;
     index: number;
     onImageLoad: () => void;
     isImageLoaded: boolean;

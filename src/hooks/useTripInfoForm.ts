@@ -7,10 +7,10 @@ import { PATH } from '@/constants/path';
 import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
 import useUserDataStore from '@/stores/useUserDataStore';
-import { TripInfoModel } from '@/types/trip';
-import { FormModeType } from '@/types/user';
+import { FormMode } from '@/types/common';
+import { TripModel } from '@/types/trip';
 
-export const useTripInfoForm = (mode: FormModeType) => {
+export const useTripInfoForm = (mode: FormMode) => {
     const initialState = {
         tripTitle: '',
         country: '',
@@ -19,7 +19,7 @@ export const useTripInfoForm = (mode: FormModeType) => {
         hashtags: [],
     };
 
-    const [tripInfo, setTripInfo] = useState<TripInfoModel>(initialState);
+    const [tripInfo, setTripInfo] = useState<Omit<TripModel, 'tripId'>>(initialState);
     const [isLoading, setIsLoading] = useState(true);
     const [isUploading, setIsUploading] = useState(false);
     const [isFormComplete, setIsFormComplete] = useState(false);

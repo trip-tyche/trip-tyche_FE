@@ -7,12 +7,13 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import CarouselItem from '@/components/features/image/CarouselItem';
 import theme from '@/styles/theme';
-import { ImageCarouselModel, CarouselStateType } from '@/types/image';
+import { CarouselState } from '@/types/common';
+import { ImageCarouselModel } from '@/types/image';
 
 interface ImageCarouselProps {
     images: ImageCarouselModel[];
-    carouselState: CarouselStateType;
-    setCarouselState: Dispatch<SetStateAction<CarouselStateType>>;
+    carouselState: CarouselState;
+    setCarouselState: Dispatch<SetStateAction<CarouselState>>;
 }
 
 const ImageCarousel = ({ images, carouselState, setCarouselState }: ImageCarouselProps) => {
@@ -54,7 +55,7 @@ const ImageCarousel = ({ images, carouselState, setCarouselState }: ImageCarouse
             }
 
             setCarouselState((prevState) => {
-                let newState: CarouselStateType;
+                let newState: CarouselState;
                 if (prevState === 'auto') {
                     newState = 'paused';
                     zoomTimerRef.current = setTimeout(() => {

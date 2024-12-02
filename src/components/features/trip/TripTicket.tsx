@@ -8,11 +8,11 @@ import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import { useTicketHandler } from '@/hooks/useTicketHandler';
 import { useTicketNavigation } from '@/hooks/useTicketNavigation';
 import theme from '@/styles/theme';
-import { FormattedTripDate } from '@/types/trip';
+import { TripModel } from '@/types/trip';
 import { formatDateToDot } from '@/utils/date';
 
 interface TripTicketProps {
-    trip: FormattedTripDate;
+    trip: TripModel;
     userNickname: string;
 }
 

@@ -1,6 +1,6 @@
 import { apiClient } from '@/api/client';
 import { API_ENDPOINTS } from '@/constants/api';
-import { TripInfoModel } from '@/types/trip';
+import { TripModel } from '@/types/trip';
 import { getToken } from '@/utils/auth';
 
 export const tripAPI = {
@@ -46,7 +46,7 @@ export const tripAPI = {
         //     console.error('tripId 등록에 실패하였습니다', error);
         // }
     },
-    createTripInfo: async (tripId: string, tripInfo: TripInfoModel) => {
+    createTripInfo: async (tripId: string, tripInfo: TripModel) => {
         // try {
         const token = getToken();
         const data = await apiClient.post(`${API_ENDPOINTS.TRIPS}/${tripId}/info`, tripInfo, {
@@ -79,7 +79,7 @@ export const tripAPI = {
         //     throw error;
         // }
     },
-    updateTripInfo: async (tripId: string, tripInfo: TripInfoModel) => {
+    updateTripInfo: async (tripId: string, tripInfo: TripModel) => {
         // try {
         const token = getToken();
         const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripId}`, tripInfo, {

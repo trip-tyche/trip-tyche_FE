@@ -9,10 +9,10 @@ import Input from '@/components/common/Input';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
-import { FormModeType } from '@/types/user';
+import { FormMode } from '@/types/common';
 
 interface NickNameFormProps {
-    mode: FormModeType;
+    mode: FormMode;
     title: string;
     buttonText: string;
     placeholder?: string;
