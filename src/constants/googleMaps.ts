@@ -4,7 +4,7 @@ import characterImage from '/character-1.png';
 
 import { ENV } from '@/constants/api';
 import theme from '@/styles/theme';
-import { MapOptionsType, MapPolylineOptionsType } from '@/types/map';
+import { MapOption, PolylineOption } from '@/types/map';
 
 export const GOOGLE_MAPS_CONFIG = {
     googleMapsApiKey: ENV.GOOGLE_MAPS_API_KEY || '',
@@ -13,7 +13,7 @@ export const GOOGLE_MAPS_CONFIG = {
     region: 'KR',
 } as const;
 
-export const GOOGLE_MAPS_OPTIONS: MapOptionsType = {
+export const GOOGLE_MAPS_OPTIONS: MapOption = {
     mapTypeControl: false,
     fullscreenControl: false,
     zoomControl: false,
@@ -34,7 +34,7 @@ export const DEFAULT_ZOOM_SCALE = {
     INDIVIDUAL_MARKER_VISIBLE: 17,
 };
 
-export const POLYLINE_OPTIONS: MapPolylineOptionsType = {
+export const POLYLINE_OPTIONS: PolylineOption = {
     strokeColor: `${theme.colors.descriptionText}`,
     strokeOpacity: 0,
     strokeWeight: 2,
