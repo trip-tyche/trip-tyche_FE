@@ -87,11 +87,7 @@ const loadingStyle = css`
     align-items: center;
     width: 100%;
     height: 100%;
-    font-size: ${theme.FONT_SIZES.MD};
-
-    p {
-        font-size: 14px;
-    }
+    font-size: ${theme.FONT_SIZES.LG};
 `;
 
 export default Button;
