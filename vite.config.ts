@@ -22,7 +22,7 @@ export default defineConfig({
         alias: [{ find: '@', replacement: resolve(__dirname, 'src') }],
     },
     optimizeDeps: {
-        include: ['@emotion/react', '@emotion/styled'],
+        include: ['@emotion/react'],
     },
     build: {
         target: 'esnext',

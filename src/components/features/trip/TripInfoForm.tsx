@@ -3,9 +3,9 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import { Select } from '@mantine/core';
 import { DatePickerInput, DayProps, DateValue, DatesRangeValue } from '@mantine/dates';
-import { IconPlane, IconCalendar, IconWorld } from '@tabler/icons-react';
 import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
+import { Plane, Calendar, Globe } from 'lucide-react';
 
 import Input from '@/components/common/Input';
 import { COUNTRY_OPTIONS } from '@/constants/trip/country';
@@ -154,7 +154,7 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
                               ? datePickerProps?.dateRange
                               : datePickerProps?.selectedDate
                     }
-                    leftSection={<IconCalendar size={16} />}
+                    leftSection={<Calendar size={16} />}
                     locale='ko'
                     size='md'
                     radius='md'
@@ -200,7 +200,7 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
                     value={country}
                     onChange={(value) => setTripInfo({ ...tripInfo, country: value || '' })}
                     checkIconPosition='right'
-                    leftSection={<IconWorld size={16} />}
+                    leftSection={<Globe size={16} />}
                     size='md'
                     radius='md'
                     allowDeselect={false}
@@ -215,7 +215,7 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
                     onChange={(value) => setTripInfo({ ...tripInfo, tripTitle: value })}
                     placeholder='최대 12자까지 입력할 수 있습니다'
                     maxLength={12}
-                    leftSection={<IconPlane size={16} />}
+                    leftSection={<Plane size={16} />}
                 />
             </section>
 
