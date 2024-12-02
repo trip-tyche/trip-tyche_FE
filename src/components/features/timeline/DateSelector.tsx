@@ -75,8 +75,8 @@ const DateSelector = React.memo(({ currentDate, datesWithImages, startDate, onDa
 
 const buttonGroup = css`
     display: flex;
-    background-color: ${theme.colors.white};
-    height: ${theme.heights.tall_54};
+    background-color: ${theme.COLORS.BACKGROUND.WHITE};
+    height: 54px;
     padding: 8px;
     overflow-x: auto;
     white-space: nowrap;
@@ -102,12 +102,12 @@ const dayButtonStyle = (isSelected: boolean) => css`
 
     h3 {
         font-weight: bold;
-        color: ${isSelected ? theme.colors.primary : theme.colors.darkGray};
+        color: ${isSelected ? theme.COLORS.PRIMARY : theme.COLORS.TEXT.DESCRIPTION_LIGHT};
     }
 
     p {
-        font-size: ${theme.fontSizes.xsmall_10};
-        color: ${theme.colors.descriptionText};
+        font-size: ${theme.FONT_SIZES.XS};
+        color: ${theme.COLORS.TEXT.DESCRIPTION};
     }
 `;
 

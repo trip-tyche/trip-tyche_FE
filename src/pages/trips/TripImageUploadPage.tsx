@@ -199,7 +199,7 @@ const alertStyle = css`
         font-size: 16px;
         margin: 0 26px 34px 26px;
         text-align: center;
-        color: ${theme.colors.descriptionText};
+        color: ${theme.COLORS.TEXT.DESCRIPTION};
         line-height: 20px;
     }
 
@@ -212,7 +212,7 @@ const countStyle = css`
     font-size: 18px;
     font-weight: 600;
     margin: 0 4px;
-    color: ${theme.colors.primary};
+    color: ${theme.COLORS.PRIMARY};
 `;
 
 const containerStyle = css`
@@ -240,14 +240,14 @@ const sectionStyle = css`
 
     h4 {
         font-size: 14px;
-        color: ${theme.colors.black};
+        color: ${theme.COLORS.TEXT.BLACK};
         font-weight: 600;
         margin-bottom: 14px;
     }
 
     p {
         font-size: 12px;
-        color: ${theme.colors.descriptionText};
+        color: ${theme.COLORS.TEXT.DESCRIPTION};
         margin-bottom: 10px;
         margin-left: 2px;
     }
@@ -274,7 +274,7 @@ const uploadLabelStyle = css`
     flex-direction: column;
     align-items: center;
     gap: 18px;
-    color: ${theme.colors.descriptionText};
+    color: ${theme.COLORS.TEXT.DESCRIPTION};
 `;
 
 const uploadedStyle = css`

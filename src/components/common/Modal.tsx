@@ -31,7 +31,7 @@ const modalStyle = css`
     left: 50%;
     transform: translate(-50%, -50%);
     border-radius: 16px;
-    background-color: ${theme.colors.modalBg};
+    background-color: ${theme.COLORS.BACKGROUND.WHITE};
     z-index: 1000;
 `;
 

@@ -59,20 +59,20 @@ const Input = ({ value, onChange, variant = 'default', setIsInvalid, ...props }:
 const inputBaseStyles = {
     '&:focusWithin': {
         outline: 'none',
-        border: `2px solid ${theme.colors.primary}`,
+        border: `2px solid ${theme.COLORS.PRIMARY}`,
     },
 };
 
 const errorStyle = {
     borderWidth: '1.2px',
-    borderColor: '#ff0101',
+    borderColor: `${theme.COLORS.TEXT.ERROR}`,
 };
 
 const errorMessageStyle = css`
     margin-top: 8px;
     margin-left: 4px;
-    color: #ff0101;
-    font-size: ${theme.fontSizes.normal_14};
+    color: ${theme.COLORS.TEXT.ERROR};
+    font-size: ${theme.FONT_SIZES.MD};
 `;
 
 export default Input;

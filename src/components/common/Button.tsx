@@ -62,15 +62,15 @@ const buttonStyles = {
     `,
     variants: (variant: VariantType) => {
         return css`
-            background-color: ${variant === 'primary' ? theme.colors.primary : '#f2f4f9'};
-            color: ${variant === 'primary' ? '#f2f4f9' : theme.colors.primary};
+            background-color: ${variant === 'primary' ? theme.COLORS.PRIMARY : '#f2f4f9'};
+            color: ${variant === 'primary' ? '#f2f4f9' : theme.COLORS.PRIMARY};
             @media (hover: hover) {
                 &:hover {
-                    background-color: ${variant === 'primary' ? theme.colors.primaryHover : '#e5e8f0'};
+                    background-color: ${variant === 'primary' ? theme.COLORS.PRIMARY_HOVER : '#e5e8f0'};
                 }
             }
             &:active {
-                background-color: ${variant === 'primary' ? theme.colors.primaryHover : '#e5e8f0'};
+                background-color: ${variant === 'primary' ? theme.COLORS.PRIMARY_HOVER : '#e5e8f0'};
             }
         `;
     },
@@ -87,7 +87,7 @@ const loadingStyle = css`
     align-items: center;
     width: 100%;
     height: 100%;
-    font-size: ${theme.fontSizes.normal_14};
+    font-size: ${theme.FONT_SIZES.MD};
 
     p {
         font-size: 14px;

@@ -16,8 +16,8 @@ const containerStyle = css`
     max-width: 428px;
     min-height: 100dvh;
     margin: 0 auto;
-    background-color: ${theme.colors.white};
-    box-shadow: ${theme.colors.boxShadowDown};
+    background-color: ${theme.COLORS.TEXT.WHITE};
+    box-shadow: ${theme.COLORS.BOX_SHADOW};
 `;
 
 export default RootLayout;

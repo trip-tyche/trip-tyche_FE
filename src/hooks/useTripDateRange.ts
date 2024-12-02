@@ -138,7 +138,7 @@ export const useTripDateRange = ({ imageDates, setTripInfo, isEditing }: UseTrip
                 ...baseProps,
                 style: {
                     ...(isStartOrEndDate(date)
-                        ? { backgroundColor: theme.colors.primary, color: 'white' }
+                        ? { backgroundColor: theme.COLORS.PRIMARY, color: 'white' }
                         : isInRange(date)
                           ? { backgroundColor: '#3d4e8117' }
                           : {}),
@@ -149,7 +149,7 @@ export const useTripDateRange = ({ imageDates, setTripInfo, isEditing }: UseTrip
         return {
             ...baseProps,
             style: {
-                ...(isSelectedDay(date, 'single') ? { backgroundColor: theme.colors.primary, color: 'white' } : {}),
+                ...(isSelectedDay(date, 'single') ? { backgroundColor: theme.COLORS.PRIMARY, color: 'white' } : {}),
             },
         };
     };

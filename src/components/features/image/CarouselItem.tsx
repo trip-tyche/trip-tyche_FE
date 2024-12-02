@@ -14,7 +14,6 @@ const CarouselItem = React.memo(({ image, isCurrent, isZoomed }: CarouselItemPro
     return (
         <div css={[carouselItemStyle, isCurrent && centerImageStyle, isZoomed && zoomedStyle]}>
             <img src={image.mediaLink} alt={`이미지 ${image.mediaFileId}`} css={imageStyle(isZoomed)} />
-            {/* <p css={timeStampStyle}>{image.recordDate.split('T')[1]}</p> */}
         </div>
     );
 });

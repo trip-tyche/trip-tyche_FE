@@ -59,7 +59,7 @@ const sizeOptionContainer = css`
     justify-content: end;
     align-items: center;
     gap: 12px;
-    font-size: ${theme.fontSizes.normal_14};
+    font-size: ${theme.FONT_SIZES.MD};
 `;
 
 const titleStyle = css`

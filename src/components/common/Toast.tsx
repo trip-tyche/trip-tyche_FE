@@ -5,8 +5,8 @@ import { css } from '@emotion/react';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 
-const TOAST_VISIBLE_DURATION = 1200; // 토스트가 보이는 시간 (ms)
-const TOAST_FADE_DURATION = 200; // 토스트가 사라지는 애니메이션 시간 (ms)
+const TOAST_VISIBLE_DURATION = 1200;
+const TOAST_FADE_DURATION = 200;
 
 const Toast: React.FC = () => {
     const isVisible = useToastStore((state) => state.isVisible);
@@ -50,7 +50,7 @@ const toastStyle = css`
     padding: 20px 0;
     border-radius: 8px;
     background-color: #455555;
-    color: ${theme.colors.white};
+    color: ${theme.COLORS.TEXT.WHITE};
     z-index: 1000;
     transition: all 0.2s ease-in;
 `;

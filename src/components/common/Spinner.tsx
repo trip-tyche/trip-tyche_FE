@@ -12,7 +12,7 @@ interface SpinnerProps {
 const Spinner = ({ background = 'light', containerStyle }: SpinnerProps) => (
     <div css={[loadingSpinnerStyle, containerStyle]}>
         <ClipLoader
-            color={background === 'light' ? theme.colors.black : theme.colors.modalBg}
+            color={background === 'light' ? theme.COLORS.TEXT.BLACK : theme.COLORS.TEXT.WHITE}
             size={30}
             speedMultiplier={0.7}
         />

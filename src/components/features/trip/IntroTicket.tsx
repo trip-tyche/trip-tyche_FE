@@ -102,27 +102,26 @@ const ticketContainer = css`
 
 const leftContent = css`
     width: 75%;
-    background: ${theme.colors.modalBg};
-    background: white;
-    border-right: 1px solid ${theme.colors.borderColor};
+    background: ${theme.COLORS.BACKGROUND.WHITE};
+    border-right: 1px solid ${theme.COLORS.BORDER};
 `;
 
 const leftTopSection = css`
     display: flex;
     justify-content: space-between;
-    background-color: ${theme.colors.primary};
-    color: ${theme.colors.modalBg};
+    background-color: ${theme.COLORS.PRIMARY};
+    color: ${theme.COLORS.TEXT.WHITE};
     padding: 10px 12px;
 `;
 
 const labelStyle = css`
-    font-size: ${theme.fontSizes.small_12};
+    font-size: ${theme.FONT_SIZES.SM};
     color: rgba(255, 255, 255, 0.7);
     margin-bottom: 4px;
 `;
 
 const valueStyle = css`
-    font-size: ${theme.fontSizes.small_12};
+    font-size: ${theme.FONT_SIZES.SM};
     font-weight: bold;
 `;
 
@@ -133,7 +132,7 @@ const contentContainer = css`
 const citiesStyle = css`
     display: flex;
     justify-content: space-between;
-    font-size: ${theme.fontSizes.xxlarge_20};
+    font-size: ${theme.FONT_SIZES.XXL};
     font-weight: bold;
 `;
 
@@ -150,7 +149,7 @@ const titleStyle = css`
 `;
 
 const titleLabelStyle = css`
-    font-size: ${theme.fontSizes.small_12};
+    font-size: ${theme.FONT_SIZES.SM};
     font-weight: bold;
 `;
 
@@ -162,7 +161,7 @@ const flagStyle = css`
     display: flex;
     align-items: center;
     margin-right: 4px;
-    font-size: ${theme.fontSizes.xlarge_18};
+    font-size: ${theme.FONT_SIZES.XL};
 `;
 
 const hashtagGroup = css`
@@ -173,21 +172,21 @@ const hashtagGroup = css`
 
 const hashtagStyle = css`
     background-color: #f0f0f0;
-    color: ${theme.colors.black};
+    color: ${theme.COLORS.TEXT.BLACK};
     padding: 5px 10px;
     border-radius: 15px;
-    font-size: ${theme.fontSizes.small_12};
+    font-size: ${theme.FONT_SIZES.SM};
 `;
 
 const rightSection = css`
     width: 25%;
-    background: ${theme.colors.modalBg};
+    background: ${theme.COLORS.BACKGROUND.WHITE};
 `;
 
 const rightTopSection = css`
     padding: 10px 12px;
-    background-color: ${theme.colors.primary};
-    color: ${theme.colors.modalBg};
+    background-color: ${theme.COLORS.PRIMARY};
+    color: ${theme.COLORS.TEXT.WHITE};
 `;
 
 const rightContent = css`
@@ -197,7 +196,7 @@ const rightContent = css`
     justify-content: center;
     align-items: center;
     gap: 16px;
-    background: ${theme.colors.modalBg};
+    background: ${theme.COLORS.BACKGROUND.WHITE};
 `;
 
 const imageStyle = css`
@@ -205,9 +204,9 @@ const imageStyle = css`
 `;
 
 const textStyle = css`
-    font-size: ${theme.fontSizes.normal_14};
+    font-size: ${theme.FONT_SIZES.MD};
     font-weight: 600;
-    color: ${theme.colors.descriptionText};
+    color: ${theme.COLORS.TEXT.DESCRIPTION};
 `;
 
 export default IntroTicket;

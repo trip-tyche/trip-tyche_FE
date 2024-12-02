@@ -68,7 +68,7 @@ const ImageGrid = ({ imageSize, displayedImages, selectedImages, onHashtagSelect
                     ) && (
                         <div css={selectedOverlayStyle}>
                             <span css={checkIconStyle}>
-                                <GoCheckCircleFill size={24} color={theme.colors.primary} />
+                                <GoCheckCircleFill size={24} color={theme.COLORS.PRIMARY} />
                             </span>
                         </div>
                     )}

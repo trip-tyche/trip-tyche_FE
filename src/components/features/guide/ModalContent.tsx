@@ -36,12 +36,12 @@ const titleStyle = css`
 const countStyle = css`
     font-size: 18px;
     font-weight: 600;
-    color: ${theme.colors.primary};
+    color: ${theme.COLORS.PRIMARY};
 `;
 
 const descriptionStyle = css`
     font-size: 12px;
-    color: ${theme.colors.descriptionText};
+    color: ${theme.COLORS.TEXT.DESCRIPTION};
     margin-bottom: 24px;
 `;
 

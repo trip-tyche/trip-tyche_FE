@@ -41,7 +41,7 @@ const timeStampStyle = css`
     font-family: 'DS-DIGII', sans-serif;
     font-weight: bold;
     font-style: italic;
-    font-size: ${theme.fontSizes.xlarge_18};
+    font-size: ${theme.FONT_SIZES.XL};
     color: #ff9b37;
     letter-spacing: 1px;
     opacity: 0.95;

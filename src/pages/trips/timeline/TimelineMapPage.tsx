@@ -485,13 +485,13 @@ const buttonGroup = css`
 
 const customButtonStyle = (variant: string = 'primary') => css`
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    color: ${variant === 'white' ? theme.colors.descriptionText : ''};
+    color: ${variant === 'white' ? theme.COLORS.TEXT.DESCRIPTION : ''};
     font-weight: bold;
     transition: all 0.3s ease;
 `;
 
 const basePhotoCardStyle = css`
-    background-color: ${theme.colors.white};
+    background-color: ${theme.COLORS.TEXT.WHITE};
     width: ${TIMELINE_MAP.PHOTO_CARD.WIDTH}px;
     height: ${TIMELINE_MAP.PHOTO_CARD.HEIGHT}px;
     border-radius: 20%;

@@ -24,7 +24,7 @@ const buttonStyle = css`
     background-color: transparent;
     padding: 15px 0;
     cursor: pointer;
-    color: ${theme.colors.black};
+    color: ${theme.COLORS.TEXT.BLACK};
 `;
 
 const textStyle = css`

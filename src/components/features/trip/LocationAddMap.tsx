@@ -79,7 +79,7 @@ const LocationAddMap = ({
         <div css={locationMapContainer}>
             <div css={inputContainer}>
                 <button css={backButtonStyle} onClick={() => setIsMapVisible(false)} disabled={isUploading}>
-                    <ChevronLeft size={24} color={`${theme.colors.descriptionText}`} />
+                    <ChevronLeft size={24} color={`${theme.COLORS.TEXT.DESCRIPTION}`} />
                 </button>
                 <Autocomplete
                     onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
@@ -124,7 +124,7 @@ const inputContainer = css`
     left: 16px;
     z-index: 1;
     display: flex;
-    background-color: ${theme.colors.modalBg};
+    background-color: ${theme.COLORS.BACKGROUND.WHITE};
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;

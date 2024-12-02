@@ -121,8 +121,8 @@ const ticketStyle = css`
 const leftSection = css`
     width: 75%;
     height: 100%;
-    background: ${theme.colors.modalBg};
-    border-right: 1px solid ${theme.colors.borderColor};
+    background: ${theme.COLORS.BACKGROUND.WHITE};
+    border-right: 1px solid ${theme.COLORS.BORDER};
     border-radius: 10px 0 0 10px;
     box-shadow:
         -6px 6px 8px rgba(0, 0, 0, 0.1),
@@ -134,19 +134,19 @@ const leftTopSection = css`
     display: flex;
     justify-content: space-between;
     border-radius: 10px 0 0 0;
-    background-color: ${theme.colors.primary};
-    color: ${theme.colors.modalBg};
+    background-color: ${theme.COLORS.PRIMARY};
+    color: ${theme.COLORS.TEXT.WHITE};
     padding: 10px 12px;
 `;
 
 const labelStyle = css`
-    font-size: ${theme.fontSizes.small_12};
+    font-size: ${theme.FONT_SIZES.SM};
     color: rgba(255, 255, 255, 0.7);
     margin-bottom: 4px;
 `;
 
 const valueStyle = css`
-    font-size: ${theme.fontSizes.small_12};
+    font-size: ${theme.FONT_SIZES.SM};
     font-weight: bold;
 `;
 
@@ -157,7 +157,7 @@ const contentContainer = css`
 const citiesStyle = css`
     display: flex;
     justify-content: space-between;
-    font-size: ${theme.fontSizes.xxlarge_20};
+    font-size: ${theme.FONT_SIZES.XXL};
     font-weight: bold;
 `;
 
@@ -174,7 +174,7 @@ const titleStyle = css`
 `;
 
 const titleLabelStyle = css`
-    font-size: ${theme.fontSizes.small_12};
+    font-size: ${theme.FONT_SIZES.SM};
     font-weight: bold;
 `;
 
@@ -186,7 +186,7 @@ const flagStyle = css`
     display: flex;
     align-items: center;
     margin-right: 4px;
-    font-size: ${theme.fontSizes.xlarge_18};
+    font-size: ${theme.FONT_SIZES.XL};
 `;
 
 const hashtagGroup = css`
@@ -196,17 +196,17 @@ const hashtagGroup = css`
 `;
 
 const hashtagStyle = css`
-    background-color: ${theme.colors.white};
-    color: ${theme.colors.black};
+    background-color: #f0f0f0;
+    color: ${theme.COLORS.TEXT.BLACK};
     padding: 5px 10px;
     border-radius: 15px;
-    font-size: ${theme.fontSizes.small_12};
+    font-size: ${theme.FONT_SIZES.SM};
 `;
 
 const rightSection = css`
     width: 25%;
     height: 100%;
-    background-color: ${theme.colors.white};
+    background: ${theme.COLORS.BACKGROUND.WHITE};
     border-radius: 0 10px 10px 0;
     box-shadow:
         6px 6px 8px rgba(0, 0, 0, 0.1),
@@ -216,9 +216,9 @@ const rightSection = css`
 const rightTopSection = css`
     height: 48px;
     padding: 10px 12px;
-    background-color: ${theme.colors.primary};
+    background-color: ${theme.COLORS.PRIMARY};
+    color: ${theme.COLORS.TEXT.WHITE};
     border-radius: 0 10px 0 0;
-    color: ${theme.colors.modalBg};
 `;
 
 const rightContent = css`
@@ -228,7 +228,7 @@ const rightContent = css`
     justify-content: center;
     align-items: center;
     gap: 28px;
-    background: ${theme.colors.modalBg};
+    background-color: ${theme.COLORS.BACKGROUND.WHITE};
     border-radius: 0 0 10px 0;
 `;
 
@@ -237,9 +237,9 @@ const imageStyle = css`
 `;
 
 const textStyle = css`
-    font-size: ${theme.fontSizes.normal_14};
+    font-size: ${theme.FONT_SIZES.MD};
     font-weight: 600;
-    color: ${theme.colors.descriptionText};
+    color: ${theme.COLORS.TEXT.DESCRIPTION};
 `;
 
 const slideRight = keyframes`
@@ -267,13 +267,13 @@ const buttonStyle = css`
     padding: 6px 8px;
     border: none;
     border-radius: 4px;
-    font-size: ${theme.fontSizes.small_12};
+    font-size: ${theme.FONT_SIZES.SM};
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     gap: 4px;
     background: transparent;
-    color: ${theme.colors.black};
+    color: ${theme.COLORS.TEXT.BLACK};
 `;
 
 export default TripTicket;

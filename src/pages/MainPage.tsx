@@ -165,8 +165,8 @@ const dragGuideStyle = css`
     display: flex;
     align-items: center;
     gap: 4px;
-    font-size: ${theme.fontSizes.small_12};
-    color: ${theme.colors.descriptionText};
+    font-size: ${theme.FONT_SIZES.SM};
+    color: ${theme.COLORS.TEXT.DESCRIPTION};
     font-weight: bold;
     margin-bottom: 24px;
 `;
@@ -176,14 +176,14 @@ const ticketGuideStyle = css`
     justify-content: center;
     align-items: center;
     gap: 4px;
-    font-size: ${theme.fontSizes.normal_14};
+    font-size: ${theme.FONT_SIZES.MD};
     font-weight: bold;
-    color: ${theme.colors.descriptionText};
+    color: ${theme.COLORS.TEXT.DESCRIPTION};
 `;
 
 const tripCountStyle = css`
-    font-size: ${theme.fontSizes.xlarge_18};
-    color: ${theme.colors.primary};
+    font-size: ${theme.FONT_SIZES.XL};
+    color: ${theme.COLORS.PRIMARY};
 `;
 
 const buttonWrapper = css`

@@ -22,16 +22,16 @@ const uploadingContainer = css`
     width: 100%;
     display: flex;
     flex-direction: column;
-    background-color: ${theme.colors.white};
+    background-color: ${theme.COLORS.BACKGROUND.WHITE};
     border-radius: 14px;
-    border: 2px solid ${theme.colors.white};
+    border: 2px solid ${theme.COLORS.BACKGROUND.WHITE};
     overflow: hidden;
 `;
 
 const textStyle = css`
     font-weight: 600;
     text-align: center;
-    color: ${theme.colors.descriptionText};
+    color: ${theme.COLORS.TEXT.DESCRIPTION};
     margin: 16px 0;
 `;
 

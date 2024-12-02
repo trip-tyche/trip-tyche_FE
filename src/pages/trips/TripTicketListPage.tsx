@@ -87,7 +87,7 @@ const TripTicketListPage = () => {
                         height: 34px;
                         padding: 0 12px;
                         border-radius: 8px;
-                        font-size: ${theme.fontSizes.small_12};
+                        font-size: ${theme.FONT_SIZES.SM};
                     `}
                 />
             </div>
@@ -127,20 +127,20 @@ const listSummaryStyle = css`
     align-items: center;
     gap: 8px;
     margin-left: 8px;
-    font-size: ${theme.fontSizes.normal_14};
+    font-size: ${theme.FONT_SIZES.MD};
     font-weight: bold;
-    color: ${theme.colors.black};
+    color: ${theme.COLORS.TEXT.BLACK};
 `;
 
 const listCountStyle = css`
-    font-size: ${theme.fontSizes.xlarge_18};
+    font-size: ${theme.FONT_SIZES.XL};
     font-weight: bold;
-    color: ${theme.colors.primary};
+    color: ${theme.COLORS.PRIMARY};
 `;
 
 const guideStyle = css`
-    font-size: ${theme.fontSizes.small_12};
-    color: ${theme.colors.descriptionText};
+    font-size: ${theme.FONT_SIZES.SM};
+    color: ${theme.COLORS.TEXT.DESCRIPTION};
     padding: 24px 12px 8px 16px;
     margin-bottom: 12px;
 `;
@@ -158,9 +158,9 @@ const emptyTripListStyle = css`
     align-items: center;
     gap: 8px;
     height: calc(100dvh - 180px);
-    font-size: ${theme.fontSizes.normal_14};
+    font-size: ${theme.FONT_SIZES.MD};
     font-weight: bold;
-    color: ${theme.colors.descriptionText};
+    color: ${theme.COLORS.TEXT.DESCRIPTION};
 `;
 
 export default TripTicketListPage;

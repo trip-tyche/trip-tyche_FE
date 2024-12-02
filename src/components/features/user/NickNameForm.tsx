@@ -79,9 +79,8 @@ const inputContainer = css`
 `;
 
 const titleStyle = css`
-    font-size: ${theme.fontSizes.large_16};
     font-weight: 600;
-    color: ${theme.colors.black};
+    color: ${theme.COLORS.TEXT.BLACK};
     margin: 12px 0 20px 4px;
 `;
 

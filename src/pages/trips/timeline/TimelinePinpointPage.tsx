@@ -44,7 +44,7 @@ const TimelinePinpointPage = () => {
     return (
         <div css={pageContainer}>
             {carouselState !== 'zoomed' && (
-                <X size={24} color={theme.colors.modalBg} onClick={navigateBeforePage} css={iconStyle} />
+                <X size={24} color={theme.COLORS.TEXT.WHITE} onClick={navigateBeforePage} css={iconStyle} />
             )}
             <ImageCarousel images={carouselImages} carouselState={carouselState} setCarouselState={setCarouselState} />
         </div>

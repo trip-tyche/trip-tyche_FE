@@ -35,7 +35,7 @@ export const DEFAULT_ZOOM_SCALE = {
 };
 
 export const POLYLINE_OPTIONS: PolylineOption = {
-    strokeColor: `${theme.colors.descriptionText}`,
+    strokeColor: `${theme.COLORS.TEXT.DESCRIPTION}`,
     strokeOpacity: 0,
     strokeWeight: 2,
     icons: [

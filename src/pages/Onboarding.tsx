@@ -71,16 +71,16 @@ const imageStyle = css`
 `;
 
 const titleStyle = css`
-    font-size: ${theme.fontSizes.xxxlarge_24};
+    font-size: ${theme.FONT_SIZES.XXXL};
     font-weight: bold;
     margin-bottom: 14px;
-    color: ${theme.colors.white};
+    color: ${theme.COLORS.TEXT};
 `;
 
 const subtitleStyle = css`
-    font-size: ${theme.fontSizes.large_16};
+    font-size: ${theme.FONT_SIZES.LG};
     font-weight: 600;
-    color: ${theme.colors.black};
+    color: ${theme.COLORS.TEXT.BLACK};
 `;
 
 export default Onboarding;

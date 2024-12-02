@@ -89,14 +89,14 @@ const imageStyle = css`
 `;
 
 const titleStyle = css`
-    color: ${theme.colors.black};
-    font-size: ${theme.fontSizes.xxxlarge_24};
+    color: ${theme.COLORS.TEXT.BLACK};
+    font-size: ${theme.FONT_SIZES.XXXL};
     font-weight: bold;
     margin-bottom: 22px;
 `;
 
 const subtitleStyle = css`
-    color: ${theme.colors.descriptionText};
+    color: ${theme.COLORS.TEXT.DESCRIPTION};
 `;
 
 const buttonGroup = css`
@@ -112,7 +112,7 @@ const companyNameStyle = css`
     position: absolute;
     bottom: 16px;
     text-align: center;
-    font-size: ${theme.fontSizes.small_12};
+    font-size: ${theme.FONT_SIZES.SM};
     color: #868e96;
 `;
 

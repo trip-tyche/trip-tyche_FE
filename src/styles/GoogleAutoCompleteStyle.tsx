@@ -1,6 +1,6 @@
 import { css, Global } from '@emotion/react';
 
-export const GoogleMapsStyles = () => (
+const GoogleAutoCompleteStyle = () => (
     <Global
         styles={css`
             .pac-container {
@@ -40,3 +40,5 @@ export const GoogleMapsStyles = () => (
         `}
     />
 );
+
+export default GoogleAutoCompleteStyle;

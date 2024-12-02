@@ -131,7 +131,7 @@ const ImageCarousel = ({ images, carouselState, setCarouselState }: ImageCarouse
 };
 
 const carouselStyle = css`
-    background-color: ${theme.colors.backGround.black};
+    background-color: ${theme.COLORS.BACKGROUND.BLACK};
     cursor: pointer;
 `;
 

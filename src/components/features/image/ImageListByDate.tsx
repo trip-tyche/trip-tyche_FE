@@ -81,19 +81,19 @@ const imageListContainer = css`
 `;
 
 const dateStyle = css`
-    font-size: ${theme.fontSizes.xlarge_18};
+    font-size: ${theme.FONT_SIZES.XL};
     font-weight: bold;
     padding: 12px 0 12px 12px;
     background-color: #eee;
-    border-bottom: 1px solid ${theme.colors.borderColor};
-    border-top: 1px solid ${theme.colors.borderColor};
+    border-bottom: 1px solid ${theme.COLORS.BORDER};
+    border-top: 1px solid ${theme.COLORS.BORDER};
 `;
 
 const buttonGroup = css`
     width: 100%;
     max-width: 428px;
     position: fixed;
-    background-color: ${theme.colors.modalBg};
+    background-color: ${theme.COLORS.BACKGROUND.WHITE};
     border-radius: 12px 12px 0 0;
     bottom: 0;
     padding: 12px;

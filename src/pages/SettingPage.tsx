@@ -40,17 +40,17 @@ const SettingPage = () => {
     const settingButtons = [
         {
             text: '닉네임 수정',
-            icon: <User size={20} color={theme.colors.black} />,
+            icon: <User size={20} color={theme.COLORS.TEXT.BLACK} />,
             handleButtonClick: handleNicknameEdit,
         },
         {
             text: '문의하기',
-            icon: <MessageCircle size={20} color={theme.colors.black} />,
+            icon: <MessageCircle size={20} color={theme.COLORS.TEXT.BLACK} />,
             handleButtonClick: handleContact,
         },
         {
             text: '로그아웃',
-            icon: <LogOut size={20} color={theme.colors.black} />,
+            icon: <LogOut size={20} color={theme.COLORS.TEXT.BLACK} />,
             handleButtonClick: handleLogout,
         },
     ];
@@ -116,7 +116,7 @@ const userInfoContainer = css`
     align-items: center;
     gap: 8px;
     margin-bottom: 18px;
-    font-size: ${theme.fontSizes.xlarge_18};
+    font-size: ${theme.FONT_SIZES.XL};
 `;
 
 const characterStyle = css`
@@ -130,7 +130,7 @@ const nickNameWrapper = css`
 `;
 
 const nickNameStyle = css`
-    font-size: ${theme.fontSizes.xlarge_18};
+    font-size: ${theme.FONT_SIZES.XL};
     font-weight: 600;
     margin-left: 4px;
     position: relative;
@@ -144,7 +144,7 @@ const nickNameStyle = css`
         bottom: 0;
         width: 100%;
         height: 40%;
-        background-color: ${theme.colors.primary};
+        background-color: ${theme.COLORS.PRIMARY};
         opacity: 0.3;
         border-radius: 2px;
         z-index: -1;

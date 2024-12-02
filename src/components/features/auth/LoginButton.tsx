@@ -23,7 +23,7 @@ const LoginButton = ({ provider, onClick }: LoginButtonProps) => (
 );
 
 const loginButtonStyles = (provider: ProviderType) => css`
-    color: ${theme.colors.black};
+    color: ${theme.COLORS.TEXT.BLACK};
     border-radius: 12px;
     line-height: 1.5rem;
     font-weight: 600;

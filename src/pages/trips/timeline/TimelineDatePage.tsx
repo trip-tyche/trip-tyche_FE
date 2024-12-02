@@ -77,7 +77,7 @@ const TimelineDatePage = () => {
     return (
         <div css={pageContainer(isTransitioning)}>
             <button css={backButtonStyle} onClick={handleArrowButtonClick}>
-                <ChevronLeft color={theme.colors.descriptionText} size={24} strokeWidth={1.5} />
+                <ChevronLeft color={theme.COLORS.TEXT.DESCRIPTION} size={24} strokeWidth={1.5} />
             </button>
 
             {imageLocation && <DateMap imageLocation={imageLocation} />}
@@ -106,7 +106,7 @@ const TimelineDatePage = () => {
                 <div css={scrollHintOverlayStyle(isHintOverlayVisible)}>
                     <div css={scrollHintContentStyle}>
                         <p css={scrollHintText}>아래로 스크롤하세요</p>
-                        <ArrowDown size={24} color={theme.colors.white} />
+                        <ArrowDown size={24} color={theme.COLORS.TEXT.WHITE} />
                     </div>
                 </div>
             )}
@@ -121,7 +121,7 @@ const pageContainer = (isTransitioning: boolean) => css`
     transition: transform 0.3s ease-in-out;
     transform: ${isTransitioning ? 'translateY(100%)' : 'translateY(0)'};
     overflow-y: auto;
-    background-color: ${theme.colors.backGround.black};
+    background-color: ${theme.COLORS.BACKGROUND.BLACK};
     position: relative;
 `;
 
@@ -132,7 +132,7 @@ const backButtonStyle = css`
     z-index: 1;
     top: 8px;
     left: 8px;
-    border: 1px solid ${theme.colors.descriptionText};
+    border: 1px solid ${theme.COLORS.TEXT.DESCRIPTION};
     border: none;
     box-shadow:
         rgba(50, 50, 93, 0.25) 13px 13px 30px -10px,
@@ -153,7 +153,7 @@ const imageListStyle = css`
         top: 234px;
         bottom: 0;
         width: 28px;
-        background-color: ${theme.colors.backGround.black};
+        background-color: ${theme.COLORS.BACKGROUND.BLACK};
         z-index: 10;
         box-shadow: 1px 0 3px rgba(0, 0, 0, 0.3);
 
@@ -178,7 +178,7 @@ const imageListStyle = css`
         top: 234px;
         bottom: 0;
         width: 28px;
-        background-color: ${theme.colors.backGround.black};
+        background-color: ${theme.COLORS.BACKGROUND.BLACK};
         z-index: 10;
         box-shadow: -1px 0 3px rgba(0, 0, 0, 0.3);
 
@@ -226,7 +226,7 @@ const scrollHintContentStyle = css`
 `;
 
 const scrollHintText = css`
-    color: ${theme.colors.white};
+    color: ${theme.COLORS.TEXT.WHITE};
     text-align: center;
     margin: 0;
 `;

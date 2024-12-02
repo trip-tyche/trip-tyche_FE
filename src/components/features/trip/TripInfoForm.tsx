@@ -89,7 +89,7 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
                             transform: 'translateX(-50%)',
                             width: '5px',
                             height: '5px',
-                            backgroundColor: datePickerProps?.isStartOrEndDate(date) ? 'white' : theme.colors.primary,
+                            backgroundColor: datePickerProps?.isStartOrEndDate(date) ? 'white' : theme.COLORS.PRIMARY,
                             borderRadius: '50%',
                             zIndex: 2,
                         }}
@@ -248,9 +248,9 @@ const titleStyle = css`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: ${theme.fontSizes.normal_14};
+    font-size: ${theme.FONT_SIZES.MD};
     font-weight: bold;
-    color: ${theme.colors.black};
+    color: ${theme.COLORS.TEXT.BLACK};
     margin-bottom: 12px;
 `;
 
@@ -275,8 +275,8 @@ const buttonBaseStyle = css`
 
 const selectedButtonStyle = css`
     font-weight: bold;
-    background-color: ${theme.colors.primary};
-    color: ${theme.colors.white};
+    background-color: ${theme.COLORS.PRIMARY};
+    color: ${theme.COLORS.TEXT.WHITE};
 `;
 
 const defaultButtonStyle = css`
@@ -285,9 +285,9 @@ const defaultButtonStyle = css`
 `;
 
 const baseDescriptionStyle = css`
-    font-size: ${theme.fontSizes.small_12};
+    font-size: ${theme.FONT_SIZES.SM};
     font-weight: normal;
-    color: ${theme.colors.descriptionText};
+    color: ${theme.COLORS.TEXT.DESCRIPTION};
 `;
 
 const dateDescriptionStyle = css`
@@ -299,8 +299,8 @@ const dateDescriptionStyle = css`
 const errorStyle = css`
     margin-top: 6px;
     margin-left: 4px;
-    font-size: ${theme.fontSizes.small_12};
-    color: ${theme.colors.error};
+    font-size: ${theme.FONT_SIZES.SM};
+    color: ${theme.COLORS.TEXT.ERROR};
 `;
 
 export default TripInfoForm;
