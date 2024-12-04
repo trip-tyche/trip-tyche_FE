@@ -53,7 +53,8 @@ const TripImageUploadPage = () => {
 
     const closeAlertModal = async () => {
         if (imagesNoLocationWithDate.length || imagesWithLocationAndDate.length) {
-            uploadImages([...imagesNoLocationWithDate, ...imagesWithLocationAndDate]);
+            const imageFile = [...imagesNoLocationWithDate, ...imagesWithLocationAndDate];
+            uploadImages(imageFile);
             setIsAlertModalModalOpen(false);
 
             if (isTripInfoEditing) {
@@ -62,7 +63,7 @@ const TripImageUploadPage = () => {
                 setIsUploading(true);
 
                 navigate(`${ROUTES.PATH.TRIPS.ROOT}`);
-                showToast(`${imagesWithLocationAndDate.length}장의 사진이 등록되었습니다.`);
+                showToast(`${imageFile.length}장의 사진이 등록되었습니다.`);
                 setIsTripInfoEditing(false);
                 return;
             }
