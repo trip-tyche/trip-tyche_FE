@@ -38,19 +38,19 @@ export const tripAPI = {
         });
         return data;
     },
-    createTripImages: async (tripId: string, images: File[]) => {
-        const formData = new FormData();
-        images.forEach((image) => {
-            formData.append('files', image);
-        });
+    // createTripImages: async (tripId: string, images: File[]) => {
+    //     const formData = new FormData();
+    //     images.forEach((image) => {
+    //         formData.append('files', image);
+    //     });
 
-        const data = await apiClient.post(`${API_ENDPOINTS.TRIPS}/${tripId}/upload`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
-        return data;
-    },
+    //     const data = await apiClient.post(`${API_ENDPOINTS.TRIPS}/${tripId}/upload`, formData, {
+    //         headers: {
+    //             'Content-Type': 'multipart/form-data',
+    //         },
+    //     });
+    //     return data;
+    // },
     updateTripInfo: async (tripId: string, tripInfo: TripModelWithoutTripId) => {
         const token = getToken();
         const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripId}`, tripInfo, {

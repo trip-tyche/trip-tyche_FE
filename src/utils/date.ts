@@ -25,3 +25,19 @@ export const formatToKorean = (dateString: string, isIncludeYear = false) => {
 export const formatToDot = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('ko-KR');
 };
+
+// Date 객체를 ISO 문자열로 변환하는 함수
+export const formatToISOLocal = (date: Date): string => {
+    if (!date) return '';
+
+    // 현지 시간대의 년, 월, 일, 시, 분, 초 가져오기
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    // YYYY-MM-DDTHH:mm:ss 형식으로 조합
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+};

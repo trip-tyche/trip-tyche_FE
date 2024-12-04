@@ -10,10 +10,12 @@ import MainPage from '@/pages/MainPage';
 import Onboarding from '@/pages/Onboarding';
 import PageNotFound from '@/pages/PageNotFound';
 import SettingPage from '@/pages/SettingPage';
+import PresigendTripInfoPage from '@/pages/trips/PresigendTripInfoPage';
+import PresignedTripImageUploadPage from '@/pages/trips/PresignedTripImageUploadPage';
 import TimelineDatePage from '@/pages/trips/timeline/TimelineDatePage';
 import TimelineMapPage from '@/pages/trips/timeline/TimelineMapPage';
 import TimelinePinpointPage from '@/pages/trips/timeline/TimelinePinpointPage';
-import TripImageUploadPage from '@/pages/trips/TripImageUploadPage';
+// import TripImageUploadPage from '@/pages/trips/TripImageUploadPage';
 import TripInfoEditPage from '@/pages/trips/TripInfoEditPage';
 import TripInfoPage from '@/pages/trips/TripInfoPage';
 import TripLocationAddPage from '@/pages/trips/TripLocationAddPage';
@@ -94,9 +96,11 @@ const router = createBrowserRouter([
                             {
                                 path: 'new',
                                 children: [
-                                    { path: 'images', element: <TripImageUploadPage /> },
+                                    // { path: 'images', element: <TripImageUploadPage /> },
+                                    { path: 'images', element: <PresignedTripImageUploadPage /> },
                                     { path: 'locations', element: <TripLocationAddPage /> },
-                                    { path: 'info', element: <TripInfoPage /> },
+                                    // { path: 'info', element: <TripInfoPage /> },
+                                    { path: 'info', element: <PresigendTripInfoPage /> },
                                 ],
                             },
                             { path: 'edit', element: <TripInfoEditPage /> },

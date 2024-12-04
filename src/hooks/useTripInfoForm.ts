@@ -71,11 +71,12 @@ export const useTripInfoForm = (mode: FormMode) => {
         if (mode === 'create') {
             await tripAPI.createTripInfo(tripId, tripInfo);
 
-            setIsUploading(true);
-            await waitForCompletion();
-            setIsUploading(false);
+            // setIsUploading(true);
+            // await waitForCompletion();
+            // setIsUploading(false);
 
             localStorage.removeItem('image-date');
+            console.log('as');
             navigate(ROUTES.PATH.TRIPS.ROOT);
             showToast(
                 uploadStatus === 'error'

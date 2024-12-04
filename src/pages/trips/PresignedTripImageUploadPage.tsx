@@ -12,18 +12,15 @@ import UploadingSpinner from '@/components/features/guide/UploadingSpinner';
 import { DEFAULT_CENTER } from '@/constants/maps/config';
 import { ROUTES } from '@/constants/paths';
 import { TRIP_IMAGES_UPLOAD } from '@/constants/ui/message';
-import { useImageUpload } from '@/hooks/useImageUpload';
+import { usePresignedUrl } from '@/hooks/usePresignedUrl';
 import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
 
-const TripImageUploadPage = () => {
+const PresignedTripImageUploadPage = () => {
     const [isUploading, setIsUploading] = useState(false);
 
-    const waitForCompletion = useUploadStore((state) => state.waitForCompletion);
-    const setUploadStatus = useUploadStore((state) => state.setUploadStatus);
-    const resetUpload = useUploadStore((state) => state.resetUpload);
     const isTripInfoEditing = useUserDataStore((state) => state.isTripInfoEditing);
     const setIsTripInfoEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
     const showToast = useToastStore((state) => state.showToast);
@@ -35,23 +32,17 @@ const TripImageUploadPage = () => {
         imagesNoLocationWithDate,
         imagesNoDate,
         isExtracting,
-        isResizing,
-        resizingProgress,
         isAlertModalOpen,
         isAddLocationModalOpen,
         setIsAlertModalModalOpen,
         handleImageProcess,
         setIsAddLocationModalOpen,
         uploadImages,
-    } = useImageUpload();
+    } = usePresignedUrl();
 
     const navigate = useNavigate();
     const location = useLocation();
     const isFirstTicket = Boolean(location.state);
-
-    useEffect(() => {
-        resetUpload();
-    }, []);
 
     const navigateToImageLocation = () => {
         setIsAddLocationModalOpen(false);
@@ -86,30 +77,29 @@ const TripImageUploadPage = () => {
     };
 
     const closeAlertModal = async () => {
-        if (imagesNoLocationWithDate.length) {
-            setIsAlertModalModalOpen(false);
-            if (imagesWithLocationAndDate.length) {
-                uploadImages(imagesWithLocationAndDate);
-            }
-            setUploadStatus('completed');
-            setIsAddLocationModalOpen(true);
-            return;
-        } else if (imagesWithLocationAndDate.length) {
-            setIsAlertModalModalOpen(false);
-
-            uploadImages(imagesWithLocationAndDate);
+        if (imagesNoLocationWithDate.length || imagesWithLocationAndDate.length) {
+            await uploadImages([...imagesNoLocationWithDate, ...imagesWithLocationAndDate]);
 
             if (isTripInfoEditing) {
-                setIsUploading(true);
-                await waitForCompletion();
-                setIsUploading(false);
+                // setIsUploading(true);
+                // await waitForCompletion();
+                // setIsUploading(true);
+                setIsAlertModalModalOpen(false);
                 navigate(`${ROUTES.PATH.TRIPS.ROOT}`);
                 showToast(`${imagesWithLocationAndDate.length}장의 사진이 등록되었습니다.`);
                 setIsTripInfoEditing(false);
-            } else {
-                navigate(`${ROUTES.PATH.TRIPS.NEW.INFO(Number(tripId))}`);
             }
 
+            // if (imagesWithLocationAndDate.length) {
+            // }
+            // setIsAddLocationModalOpen(true);
+            // return;
+            // } else if (imagesWithLocationAndDate.length) {
+            // setIsAlertModalModalOpen(false);
+
+            navigate(`${ROUTES.PATH.TRIPS.NEW.INFO(Number(tripId))}`);
+
+            setIsAlertModalModalOpen(false);
             return;
         } else {
             setIsAlertModalModalOpen(false);
@@ -151,12 +141,7 @@ const TripImageUploadPage = () => {
                 </section>
             </main>
             {isAlertModalOpen && (
-                <AlertModal
-                    confirmText='사진 등록하기'
-                    confirmModal={closeAlertModal}
-                    disabled={isResizing}
-                    disabledText={`사진 등록 준비 중 ${resizingProgress}%`}
-                >
+                <AlertModal confirmText='사진 등록하기' confirmModal={closeAlertModal}>
                     <div css={alertStyle}>
                         <h1>
                             총 <span css={countStyle}>{imageCount}</span> 개의 이미지를 선택했습니다.
@@ -281,4 +266,4 @@ const uploadedStyle = css`
     font-weight: bold;
 `;
 
-export default TripImageUploadPage;
+export default PresignedTripImageUploadPage;

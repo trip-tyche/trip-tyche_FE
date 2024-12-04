@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { tripAPI } from '@/api';
+import { tripImageAPI } from '@/api';
 import { ROUTES } from '@/constants/paths';
 import { updateTripDate } from '@/services/trips';
 import { useToastStore } from '@/stores/useToastStore';
@@ -90,7 +90,7 @@ export const useLocationAdd = () => {
             const imagesToUpload = images.map((image) => image.image);
 
             setIsUploading(true);
-            await tripAPI.createTripImages(tripId, imagesToUpload);
+            await tripImageAPI.createTripImages(tripId, imagesToUpload);
         } catch (error) {
             showToast('다시 로그인해주세요.');
             navigate(ROUTES.PATH.AUTH.LOGIN);
