@@ -109,7 +109,7 @@ export const useImageUpload = () => {
         }
 
         const resizedImages: ImageModel[] = [];
-        const batchSize = 3;
+        const batchSize = 1;
 
         for (let i = 0; i < extractedImages.length; i += batchSize) {
             const batch = extractedImages.slice(i, i + batchSize);
@@ -120,8 +120,7 @@ export const useImageUpload = () => {
                         const resizedBlob = await imageCompression(extractedImage.image, COMPRESSION_OPTIONS);
                         const resizedFile = new File(
                             [resizedBlob],
-                            extractedImage.image.name,
-                            // extractedImage.image.name.replace(/\.[^/.]+$/, '.webp'),
+                            extractedImage.image.name.replace(/\.[^/.]+$/, '.webp'),
                             {
                                 type: COMPRESSION_OPTIONS.fileType,
                                 lastModified: extractedImage.image.lastModified,
