@@ -7,9 +7,7 @@ import { ClipLoader } from 'react-spinners';
 
 import Header from '@/components/common/Header';
 import AlertModal from '@/components/features/guide/AlertModal';
-import ModalContent from '@/components/features/guide/ModalContent';
 import UploadingSpinner from '@/components/features/guide/UploadingSpinner';
-import { DEFAULT_CENTER } from '@/constants/maps/config';
 import { ROUTES } from '@/constants/paths';
 import { TRIP_IMAGES_UPLOAD } from '@/constants/ui/message';
 import { useImageUpload } from '@/hooks/useImageUpload';
@@ -21,11 +19,10 @@ import theme from '@/styles/theme';
 const TripImageUploadPage = () => {
     const [isUploading, setIsUploading] = useState(false);
 
-    const waitForCompletion = useUploadStore((state) => state.waitForCompletion);
-    const setUploadStatus = useUploadStore((state) => state.setUploadStatus);
-    const resetUpload = useUploadStore((state) => state.resetUpload);
     const isTripInfoEditing = useUserDataStore((state) => state.isTripInfoEditing);
     const setIsTripInfoEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
+    const waitForCompletion = useUploadStore((state) => state.waitForCompletion);
+    const resetUpload = useUploadStore((state) => state.resetUpload);
     const showToast = useToastStore((state) => state.showToast);
 
     const {
@@ -35,13 +32,9 @@ const TripImageUploadPage = () => {
         imagesNoLocationWithDate,
         imagesNoDate,
         isExtracting,
-        isResizing,
-        resizingProgress,
         isAlertModalOpen,
-        isAddLocationModalOpen,
         setIsAlertModalModalOpen,
         handleImageProcess,
-        setIsAddLocationModalOpen,
         uploadImages,
     } = useImageUpload();
 
@@ -53,63 +46,28 @@ const TripImageUploadPage = () => {
         resetUpload();
     }, []);
 
-    const navigateToImageLocation = () => {
-        setIsAddLocationModalOpen(false);
-        const defaultLocation =
-            imagesWithLocationAndDate.length !== 0 ? imagesWithLocationAndDate[0].location : DEFAULT_CENTER;
-
-        navigate(`${ROUTES.PATH.TRIPS.NEW.LOCATIONS(Number(tripId))}`, {
-            state: { defaultLocation, imagesNoLocationWithDate },
-        });
-    };
-
-    const navigateToTripInfo = () => {
-        if (imagesWithLocationAndDate.length === 0) {
-            showToast('등록된 사진이 없습니다. 여행 등록하고 추가해주세요');
-        }
-
-        if (isTripInfoEditing) {
-            navigate(`${ROUTES.PATH.TRIPS.ROOT}`);
-            showToast(`${imagesWithLocationAndDate.length}장의 사진이 등록되었습니다`);
-            setIsTripInfoEditing(false);
-        } else {
-            setIsAddLocationModalOpen(false);
-            if (tripId && !isNaN(Number(tripId))) {
-                navigate(`${ROUTES.PATH.TRIPS.NEW.INFO(Number(tripId))}`);
-            }
-        }
-    };
-
     const navigateBeforePage = () => {
         isTripInfoEditing && setIsTripInfoEditing(false);
         navigate(isFirstTicket ? ROUTES.PATH.MAIN : ROUTES.PATH.TRIPS.ROOT);
     };
 
     const closeAlertModal = async () => {
-        if (imagesNoLocationWithDate.length) {
+        if (imagesNoLocationWithDate.length || imagesWithLocationAndDate.length) {
+            uploadImages([...imagesNoLocationWithDate, ...imagesWithLocationAndDate]);
             setIsAlertModalModalOpen(false);
-            if (imagesWithLocationAndDate.length) {
-                uploadImages(imagesWithLocationAndDate);
-            }
-            setUploadStatus('completed');
-            setIsAddLocationModalOpen(true);
-            return;
-        } else if (imagesWithLocationAndDate.length) {
-            setIsAlertModalModalOpen(false);
-
-            uploadImages(imagesWithLocationAndDate);
 
             if (isTripInfoEditing) {
                 setIsUploading(true);
                 await waitForCompletion();
-                setIsUploading(false);
+                setIsUploading(true);
+
                 navigate(`${ROUTES.PATH.TRIPS.ROOT}`);
                 showToast(`${imagesWithLocationAndDate.length}장의 사진이 등록되었습니다.`);
                 setIsTripInfoEditing(false);
-            } else {
-                navigate(`${ROUTES.PATH.TRIPS.NEW.INFO(Number(tripId))}`);
+                return;
             }
 
+            navigate(`${ROUTES.PATH.TRIPS.NEW.INFO(Number(tripId))}`);
             return;
         } else {
             setIsAlertModalModalOpen(false);
@@ -151,12 +109,7 @@ const TripImageUploadPage = () => {
                 </section>
             </main>
             {isAlertModalOpen && (
-                <AlertModal
-                    confirmText='사진 등록하기'
-                    confirmModal={closeAlertModal}
-                    disabled={isResizing}
-                    disabledText={`사진 등록 준비 중 ${resizingProgress}%`}
-                >
+                <AlertModal confirmText='사진 등록하기' confirmModal={closeAlertModal}>
                     <div css={alertStyle}>
                         <h1>
                             총 <span css={countStyle}>{imageCount}</span> 개의 이미지를 선택했습니다.
@@ -167,16 +120,6 @@ const TripImageUploadPage = () => {
                             <p>날짜정보가 없어요 ❌ : {imagesNoDate.length} 개</p>
                         </div>
                     </div>
-                </AlertModal>
-            )}
-            {isAddLocationModalOpen && (
-                <AlertModal
-                    confirmText='직접 위치 선택하기'
-                    cancelText='건너뛰기'
-                    confirmModal={navigateToImageLocation}
-                    closeModal={navigateToTripInfo}
-                >
-                    <ModalContent noLocationImageCount={imagesNoLocationWithDate.length} />
                 </AlertModal>
             )}
             {isUploading && <UploadingSpinner />}

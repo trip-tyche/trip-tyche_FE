@@ -2,6 +2,8 @@ import axios from 'axios';
 
 import { apiClient } from '@/api/client';
 import { API_ENDPOINTS } from '@/constants/api/config';
+import { PresignedUrlRequest } from '@/types/image';
+import { MediaFileModel } from '@/types/media';
 import { getToken } from '@/utils/auth';
 
 export const tripImageAPI = {
@@ -32,10 +34,9 @@ export const tripImageAPI = {
         });
         return data;
     },
-    requestPresignedUploadUrls: async (tripId: string, files: PresignedUploadFileInfo[]) => {
-        const formData = { tripId, files };
-        const data = await apiClient.post(`/api/trips/${tripId}/presigned-url`, formData);
-        // console.log(data);
+    requestPresignedUploadUrls: async (tripId: string, files: PresignedUrlRequest[]) => {
+        const formattedData = { tripId, files };
+        const data = await apiClient.post(`/api/trips/${tripId}/presigned-url`, formattedData);
         return data.data.presignedUrls;
     },
     uploadToS3: async (presignedUrl: string, file: File) => {
@@ -44,26 +45,10 @@ export const tripImageAPI = {
                 'Content-Type': file.type,
             },
         });
-        // console.log(data);
         return data;
     },
-    registerTripMediaFiles: async (tripId: string, files: MediaFileMetadata[]) => {
-        // const formData = { tripId, files };
+    registerTripMediaFiles: async (tripId: string, files: MediaFileModel[]) => {
         const data = await apiClient.post(`/api/trips/${tripId}/media-files`, files);
-        // console.log(data);
         return data;
     },
 };
-
-interface PresignedUploadFileInfo {
-    fileName: string;
-    fileType: string;
-}
-
-interface MediaFileMetadata {
-    mediaLink: string;
-    latitude: number | null;
-    longitude: number | null;
-    recordDate: string;
-    mediaType: string;
-}
