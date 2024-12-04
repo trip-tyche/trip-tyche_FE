@@ -21,11 +21,3 @@ export interface PresignedUrlResponse {
     fileKey: string;
     presignedPutUrl: string;
 }
-
-// interface MediaFileMetadata {
-//     mediaLink: string;
-//     latitude: number | null;
-//     longitude: number | null;
-//     recordDate: string;
-//     mediaType: string;
-// }

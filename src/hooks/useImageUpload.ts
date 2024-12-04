@@ -120,7 +120,8 @@ export const useImageUpload = () => {
                         const resizedBlob = await imageCompression(extractedImage.image, COMPRESSION_OPTIONS);
                         const resizedFile = new File(
                             [resizedBlob],
-                            extractedImage.image.name.replace(/\.[^/.]+$/, '.webp'),
+                            extractedImage.image.name,
+                            // extractedImage.image.name.replace(/\.[^/.]+$/, '.webp'),
                             {
                                 type: COMPRESSION_OPTIONS.fileType,
                                 lastModified: extractedImage.image.lastModified,
