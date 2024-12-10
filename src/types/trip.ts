@@ -5,6 +5,7 @@ export interface TripModel {
     startDate: string;
     endDate: string;
     hashtags: string[];
+    imagesDate: string[];
 }
 
 export interface TripListModel {

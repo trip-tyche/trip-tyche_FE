@@ -10,10 +10,9 @@ import { TripModelWithoutTripId } from '@/types/trip';
 interface UseTripDateRangeProps {
     imageDates: string[];
     setTripInfo: Dispatch<SetStateAction<TripModelWithoutTripId>>;
-    isEditing: boolean;
 }
 
-export const useTripDateRange = ({ imageDates, setTripInfo, isEditing }: UseTripDateRangeProps) => {
+export const useTripDateRange = ({ imageDates, setTripInfo }: UseTripDateRangeProps) => {
     const [dateRange, setDateRange] = useState<DatesRangeValue>([null, null]);
     const [selectedDate, setSelectedDate] = useState<DateValue>(null);
     const [isInitialized, setIsInitialized] = useState(true);
@@ -168,23 +167,17 @@ export const useTripDateRange = ({ imageDates, setTripInfo, isEditing }: UseTrip
         }));
     };
 
-    return isEditing
-        ? null
-        : {
-              dateRange,
-              selectedDate,
-              hoveredDate,
-              isSelectMode,
-              isError,
-              isInitialized,
-              resetDates,
-              isSelectedDay,
-              handleRangeDateChange,
-              handleSingleDateChange,
-              handleDateMouseEnter,
-              handleDateMouseLeave,
-              isInRange,
-              isStartOrEndDate,
-              getCustomDayProps,
-          };
+    return {
+        dateRange,
+        selectedDate,
+        isError,
+        isInitialized,
+        resetDates,
+        handleRangeDateChange,
+        handleSingleDateChange,
+        handleDateMouseEnter,
+        handleDateMouseLeave,
+        isStartOrEndDate,
+        getCustomDayProps,
+    };
 };

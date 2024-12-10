@@ -17,6 +17,7 @@ export const useTripInfoForm = (mode: FormMode) => {
         startDate: '',
         endDate: '',
         hashtags: [],
+        imagesDate: [],
     };
 
     const [tripInfo, setTripInfo] = useState<Omit<TripModel, 'tripId'>>(initialState);

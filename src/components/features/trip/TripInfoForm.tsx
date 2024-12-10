@@ -26,21 +26,27 @@ interface TripInfoFormProps {
 }
 
 const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
-    const { tripTitle, country, startDate, endDate, hashtags } = tripInfo;
+    const { tripTitle, country, startDate, endDate, hashtags, imagesDate: dates } = tripInfo;
 
     const [dateSelectType, setDateSelectType] = useState<DateSelectType>('range');
+    const [isSelectRange, setIsSelectRange] = useState<boolean>(true);
 
     const isEditing = mode === 'edit';
-    const isSelectRange = dateSelectType === 'range';
-    const imageDates = isEditing ? [] : (JSON.parse(localStorage.getItem('image-date') || '[]') as string[]);
+    const imageDates = isEditing ? dates : (JSON.parse(localStorage.getItem('image-date') || '[]') as string[]);
     const defaultStartDate = imageDates[0];
     const defaultEndDate = imageDates[imageDates.length - 1];
 
     const datePickerProps = useTripDateRange({
         imageDates,
         setTripInfo,
-        isEditing,
     });
+
+    useEffect(() => {
+        if (imageDates.length === 1) {
+            setIsSelectRange(false);
+            setDateSelectType('single');
+        }
+    }, []);
 
     useEffect(() => {
         if (!isEditing) {
@@ -71,10 +77,6 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
     };
 
     const renderCustomDay = (date: Date) => {
-        if (isEditing) {
-            return date.getDate();
-        }
-
         const isImage = imageDates.some(
             (imageDate) => dayjs(imageDate).format('YYYY-MM-DD') === dayjs(date).format('YYYY-MM-DD'),
         );
@@ -111,44 +113,40 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
             <section>
                 <div css={titleStyle}>
                     <h2>{TRIP_FORM.DATE}</h2>
-                    {!isEditing && (
-                        <Select
-                            value={dateSelectType}
-                            onChange={(value) => setDateSelectType(value as DateSelectType)}
-                            data={[
-                                { value: 'range', label: '기간 선택' },
-                                { value: 'single', label: '하루 선택' },
-                            ]}
-                            size='xs'
-                            radius='sm'
-                            allowDeselect={false}
-                            w={100}
-                            styles={{
-                                input: {
-                                    fontWeight: 500,
-                                },
-                            }}
-                        />
-                    )}
+                    <Select
+                        value={dateSelectType}
+                        onChange={(value) => {
+                            setDateSelectType(value as DateSelectType);
+                            setIsSelectRange(!isSelectRange);
+                        }}
+                        data={[
+                            { value: 'range', label: '기간 선택' },
+                            { value: 'single', label: '하루 선택' },
+                        ]}
+                        size='xs'
+                        radius='sm'
+                        allowDeselect={false}
+                        w={100}
+                        styles={{
+                            input: {
+                                fontWeight: 500,
+                            },
+                        }}
+                    />
                 </div>
                 <DatePickerInput
                     type={isSelectRange ? 'range' : 'default'}
                     placeholder={
-                        isEditing
-                            ? undefined
-                            : isSelectRange
-                              ? `${formatToKorean(defaultStartDate, true)} ${formatToKorean(defaultEndDate, true) ? `~ ${formatToKorean(defaultEndDate, true)}` : ''}`
-                              : `${formatToKorean(defaultStartDate, true)}`
+                        isSelectRange
+                            ? `${formatToKorean(defaultStartDate, true)} ${formatToKorean(defaultEndDate, true) ? `~ ${formatToKorean(defaultEndDate, true)}` : ''}`
+                            : `${formatToKorean(defaultStartDate, true)}`
                     }
                     value={
-                        isEditing
+                        datePickerProps.isInitialized
                             ? isSelectRange
-                                ? [
-                                      startDate ? dayjs(startDate).toDate() : null,
-                                      endDate ? dayjs(endDate).toDate() : null,
-                                  ]
+                                ? [startDate ? new Date(startDate) : null, endDate ? new Date(startDate) : null]
                                 : startDate
-                                  ? dayjs(startDate).toDate()
+                                  ? new Date(startDate)
                                   : null
                             : isSelectRange
                               ? datePickerProps?.dateRange
@@ -159,9 +157,9 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
                     size='md'
                     radius='md'
                     valueFormat='YYYY년 MM월 DD일'
-                    defaultDate={isEditing ? undefined : imageDates[0] ? new Date(imageDates[0]) : undefined}
-                    onChange={isEditing ? undefined : handleDateChange}
-                    onMouseLeave={isEditing ? undefined : datePickerProps?.handleDateMouseLeave}
+                    defaultDate={imageDates[0] ? new Date(imageDates[0]) : undefined}
+                    onChange={handleDateChange}
+                    onMouseLeave={datePickerProps?.handleDateMouseLeave}
                     popoverProps={{ position: 'bottom' }}
                     getDayProps={(date: Date) => {
                         const defaultProps: Omit<Partial<DayProps>, 'classNames' | 'styles' | 'vars'> = {
@@ -170,25 +168,22 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
                             selected: false,
                         };
 
-                        return isEditing
-                            ? defaultProps
-                            : (datePickerProps?.getCustomDayProps(
-                                  date,
-                                  datePickerProps.handleDateMouseEnter,
-                                  dateSelectType,
-                              ) ?? defaultProps);
+                        return (
+                            datePickerProps?.getCustomDayProps(
+                                date,
+                                datePickerProps.handleDateMouseEnter,
+                                dateSelectType,
+                            ) ?? defaultProps
+                        );
                     }}
                     renderDay={(date) => renderCustomDay(date)}
-                    disabled={isEditing}
                 />
                 {datePickerProps?.isError ? (
                     <p css={errorStyle}>
                         선택하신 날짜 외에도 사진이 있습니다. {isSelectRange && '기간을 다시 확인해 주세요.'}
                     </p>
                 ) : (
-                    <p css={dateDescriptionStyle}>
-                        {isEditing ? '여행 기간은 수정이 불가합니다' : '사진이 있는 날짜는 파란점으로 표시됩니다'}
-                    </p>
+                    <p css={dateDescriptionStyle}>사진이 있는 날짜는 파란점으로 표시됩니다</p>
                 )}
             </section>
 
