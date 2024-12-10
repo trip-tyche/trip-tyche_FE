@@ -24,11 +24,11 @@
 
 |                                                기능                                                |                                          기능                                           |
 | :------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: |
-|                             ![위치추출](/docs/images/image-upload.gif)                             |                         ![타임라인](/docs/images/timeline.gif)                          |
+|                             ![위치추출](docs/images/image-upload.gif)                              |                         ![타임라인](/docs/images/timeline.gif)                          |
 | **자동 위치 정보 추출** <br/> 메타데이터(위치, 날짜) 추출 및 리사이징, WebP 변환으로 이미지 최적화 | **인터랙티브 타임라인** <br/> 군집화된 여행 경로를 따라 움직이는 캐릭터 애니메이션 제공 |
-|                        ![위치별 이미지](/docs/images/image-by-pinpoint.gif)                        |                    ![날짜별 이미지](/docs/images/image-by-date.gif)                     |
+|                        ![위치별 이미지](docs/images/image-by-pinpoint.gif)                         |                    ![날짜별 이미지](/docs/images/image-by-date.gif)                     |
 |        **위치별 이미지 슬라이드쇼** <br/> 핀포인트에 해당하는 이미지 슬라이드쇼 형식 갤러리        |             **날짜별 듀얼뷰** <br/> 시간순으로 정렬된 날짜별 이미지 갤러리              |
-|                             ![클러스터링](/docs/images/clustering.gif)                             |                                                                                         |
+|                             ![클러스터링](docs/images/clustering.gif)                              |                                                                                         |
 |    **동적 클러스터링** <br/> Google Maps Clusterer를 활용한 줌 레벨 기반 동적 이미지 클러스터링    |                                                                                         |
 
 ---
