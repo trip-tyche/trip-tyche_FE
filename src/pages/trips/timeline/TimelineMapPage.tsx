@@ -76,18 +76,27 @@ const TimelineMapPage = () => {
                 return;
             }
 
-            const sortedPinPointByDate = pinPoints.sort(
+            const validLocationPinPoints = pinPoints.filter(
+                (pinPoint: PinPointModel) => pinPoint.latitude !== 0 && pinPoint.longitude !== 0,
+            );
+
+            const sortedPinPointByDate = validLocationPinPoints.sort(
                 (a: PinPointModel, b: PinPointModel) =>
                     new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime(),
             );
-            const imageDates = images.map((image: MediaFileModel) => image.recordDate.split('T')[0]);
+
+            const validLocationImages = images.filter(
+                (image: MediaFileModel) => image.latitude !== 0 && image.longitude !== 0,
+            );
+
+            const imageDates = validLocationImages.map((image: MediaFileModel) => image.recordDate.split('T')[0]);
 
             const uniqueImageDates = [...new Set<string>([tripInfo.startDate, ...imageDates])].sort((a, b) =>
                 a.localeCompare(b),
             );
 
             setTripInfo(tripInfo);
-            setTripImages(images);
+            setTripImages(validLocationImages);
             setImagesByDates(uniqueImageDates);
             setPinPointsInfo(sortedPinPointByDate);
 
