@@ -11,6 +11,7 @@ import useTimelineStore from '@/stores/useTimelineStore';
 import theme from '@/styles/theme';
 import { CarouselState } from '@/types/common';
 import { ImageCarouselModel } from '@/types/image';
+import { PinpointMediaModel } from '@/types/media';
 
 const TimelinePinpointPage = () => {
     const [carouselImages, setCarouselImages] = useState<ImageCarouselModel[]>([]);
@@ -27,8 +28,13 @@ const TimelinePinpointPage = () => {
                 return;
             }
             const pinPointData = await tripImageAPI.fetchImagesByPinPoint(tripId, pinPointId);
-            const { images } = pinPointData.firstImage;
-            setCarouselImages(images);
+            const { imagesLink } = pinPointData.images;
+
+            const sortedImages = imagesLink.sort((dateA: PinpointMediaModel, dateB: PinpointMediaModel) =>
+                dateA.recordDate.localeCompare(dateB.recordDate),
+            );
+
+            setCarouselImages(sortedImages);
         };
 
         setLastPinPointId(pinPointId);
