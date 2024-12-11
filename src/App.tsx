@@ -1,5 +1,6 @@
 import { ThemeProvider } from '@emotion/react';
 import { MantineProvider } from '@mantine/core';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from 'react-router-dom';
 
 import router from '@/router/Router';
@@ -10,14 +11,18 @@ import theme from '@/styles/theme';
 import '@mantine/dates/styles.css';
 import '@mantine/core/styles.css';
 
+const queryClient = new QueryClient();
+
 const App = () => (
-    <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        <GoogleAutoCompleteStyle />
+    <QueryClientProvider client={queryClient}>
         <MantineProvider>
-            <RouterProvider router={router} />
+            <ThemeProvider theme={theme}>
+                <GlobalStyle />
+                <GoogleAutoCompleteStyle />
+                <RouterProvider router={router} />
+            </ThemeProvider>
         </MantineProvider>
-    </ThemeProvider>
+    </QueryClientProvider>
 );
 
 export default App;

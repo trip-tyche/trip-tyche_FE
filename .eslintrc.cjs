@@ -80,6 +80,10 @@ module.exports = {
         '@typescript-eslint/explicit-function-return-type': 'off',
         '@typescript-eslint/explicit-module-boundary-types': 'off',
 
+        '@tanstack/query/exhaustive-deps': 'error',
+        '@tanstack/query/stable-query-client': 'error',
+        '@tanstack/query/no-rest-destructuring': 'warn',
+
         'no-console': ['warn', { allow: ['warn', 'error'] }],
         'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
         'prefer-destructuring': ['error', { array: false, object: true }],
