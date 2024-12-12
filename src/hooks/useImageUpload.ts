@@ -77,7 +77,9 @@ export const useImageUpload = () => {
 
         const uniqueImages = removeDuplicateImages(images);
         setIsExtracting(true);
+        console.time(`메타데이터 추출 시간`);
         const extractedImages = await extractImageMetadata(uniqueImages);
+        console.timeEnd(`메타데이터 추출 시간`);
         setIsExtracting(false);
 
         const sortedImagesDates = extractedImages
@@ -161,7 +163,9 @@ export const useImageUpload = () => {
         try {
             setUploadStatus('pending');
 
+            console.time(`리사이징 시간`);
             const resizedImages = await resizeImage(images);
+            console.timeEnd(`리사이징 시간`);
 
             const files = resizedImages.map((image) => ({
                 fileName: image.image.name,
@@ -170,13 +174,13 @@ export const useImageUpload = () => {
 
             const presignedUrls = await tripImageAPI.requestPresignedUploadUrls(tripId, files);
 
-            // console.time(`S3 업로드 시간`);
+            console.time(`S3 업로드 시간`);
             await Promise.all(
                 presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) =>
                     tripImageAPI.uploadToS3(urlInfo.presignedPutUrl, resizedImages[index].image),
                 ),
             );
-            // console.timeEnd(`S3 업로드 시간`);
+            console.timeEnd(`S3 업로드 시간`);
 
             const uploadedFiles = presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) => ({
                 mediaLink: urlInfo.presignedPutUrl.split('?')[0],
@@ -186,9 +190,9 @@ export const useImageUpload = () => {
                 mediaType: resizedImages[index].image.type,
             }));
 
-            // console.time(`서버 데이터 전송 시간`);
+            console.time(`서버 데이터 전송 시간`);
             await tripImageAPI.registerTripMediaFiles(tripId, uploadedFiles);
-            // console.timeEnd(`서버 데이터 전송 시간`);
+            console.timeEnd(`서버 데이터 전송 시간`);
             setUploadStatus('completed');
         } catch (error) {
             setUploadStatus('error');
