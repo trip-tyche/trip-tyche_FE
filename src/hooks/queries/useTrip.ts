@@ -2,17 +2,18 @@ import { useQuery } from '@tanstack/react-query';
 
 import { tripAPI } from '@/api';
 
-export const useTripTicketInfo = (tripId: string) => {
+export const useTripTicketInfo = (tripId: string, enabled: boolean) => {
     return useQuery({
         queryKey: ['trip-ticket-info', tripId],
         queryFn: () => tripAPI.fetchTripTicketInfo(tripId),
+        enabled,
     });
 };
 
 export const useTripTicketList = () => {
     return useQuery({
         queryKey: ['trip-ticket-list'],
-        queryFn: () => tripAPI.fetchTripTicketList,
+        queryFn: () => tripAPI.fetchTripTicketList(),
     });
 };
 
