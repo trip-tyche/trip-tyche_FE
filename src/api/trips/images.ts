@@ -45,10 +45,12 @@ export const tripImageAPI = {
                 'Content-Type': file.type,
             },
         });
+        console.log('S3 업로드 완료 데이터: ', data);
         return data;
     },
     registerTripMediaFiles: async (tripId: string, files: MediaFileModel[]) => {
         const data = await apiClient.post(`/api/trips/${tripId}/media-files`, files);
+        console.log('서버 업로드 완료 데이터: ', data);
         return data;
     },
 };
