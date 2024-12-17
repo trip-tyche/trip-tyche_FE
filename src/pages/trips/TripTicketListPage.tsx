@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { css } from '@emotion/react';
 import { TicketsPlane, PlaneTakeoff } from 'lucide-react';

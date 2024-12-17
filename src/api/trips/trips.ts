@@ -10,7 +10,6 @@ export const tripAPI = {
     },
     fetchTripTicketList: async () => {
         const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}`);
-        console.log(data);
         return data.data;
     },
     fetchTripTimeline: async (tripId: string) => {
