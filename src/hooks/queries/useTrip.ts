@@ -14,6 +14,7 @@ export const useTripTicketList = () => {
     return useQuery({
         queryKey: ['trip-ticket-list'],
         queryFn: () => tripAPI.fetchTripTicketList(),
+        staleTime: 60 * 1000,
     });
 };
 
