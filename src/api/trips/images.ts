@@ -21,6 +21,11 @@ export const tripImageAPI = {
         const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/map?date=${formattedDate}`);
         return data.data;
     },
+    fetchUnlocatedImages: async (tripId: string) => {
+        const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/images/unlocated`);
+        console.log(data);
+        return data.data;
+    },
     createTripImages: async (tripId: string, images: File[]) => {
         const formData = new FormData();
         images.forEach((image) => {
@@ -34,6 +39,7 @@ export const tripImageAPI = {
         });
         return data;
     },
+
     requestPresignedUploadUrls: async (tripId: string, files: PresignedUrlRequest[]) => {
         const formattedData = { tripId, files };
         const data = await apiClient.post(`/api/trips/${tripId}/presigned-url`, formattedData);
@@ -45,7 +51,6 @@ export const tripImageAPI = {
                 'Content-Type': file.type,
             },
         });
-        console.log('S3 업로드 완료 데이터: ', data);
         return data;
     },
     registerTripMediaFiles: async (tripId: string, files: MediaFileModel[]) => {
