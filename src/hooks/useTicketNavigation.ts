@@ -2,10 +2,13 @@ import { useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
+import { tripImageAPI } from '@/api';
 import { ROUTES } from '@/constants/paths';
 
-export const useTicketNavigation = (tripId: string, isModalOpen: boolean) => {
+export const useTicketNavigation = (tripId: string) => {
     const [isAnimating, setIsAnimating] = useState(false);
+    const [isUnlocatedImageModalOpen, setIsUnlocatedImageModalOpen] = useState(false);
+    const [unlocatedImagesCount, setUnlocatedImagesCount] = useState(0);
 
     const navigate = useNavigate();
 
@@ -19,14 +22,31 @@ export const useTicketNavigation = (tripId: string, isModalOpen: boolean) => {
         }
     }, [isAnimating, tripId, navigate]);
 
-    const handleCardClick = () => {
-        if (!isModalOpen) {
+    const handleCardClick = async () => {
+        const unlocatedImages = await tripImageAPI.fetchUnlocatedImages(tripId);
+
+        if (!unlocatedImages) {
             setIsAnimating(true);
+            return;
         }
+
+        setUnlocatedImagesCount(unlocatedImages.length);
+        setIsUnlocatedImageModalOpen(true);
+    };
+
+    const confirmUnlocatedImageModal = () => {};
+
+    const closeUnlocatedImageModal = () => {
+        setIsUnlocatedImageModalOpen(false);
+        setIsAnimating(true);
     };
 
     return {
         isAnimating,
+        isUnlocatedImageModalOpen,
+        unlocatedImagesCount,
+        confirmUnlocatedImageModal,
+        closeUnlocatedImageModal,
         handleCardClick,
     };
 };

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { apiClient } from '@/api/client';
 import { API_ENDPOINTS } from '@/constants/api/config';
 import { PresignedUrlRequest } from '@/types/image';
-import { MediaFileModel } from '@/types/media';
+import { MediaFileModel, UnlocatedMediaFileModel } from '@/types/media';
 import { getToken } from '@/utils/auth';
 
 export const tripImageAPI = {
@@ -21,9 +21,10 @@ export const tripImageAPI = {
         const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/map?date=${formattedDate}`);
         return data.data;
     },
-    fetchUnlocatedImages: async (tripId: string) => {
-        const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/images/unlocated`);
-        console.log(data);
+    fetchUnlocatedImages: async (tripId: string): Promise<UnlocatedMediaFileModel[]> => {
+        const data = await apiClient.get<UnlocatedMediaFileModel[]>(
+            `${API_ENDPOINTS.TRIPS}/${tripId}/images/unlocated`,
+        );
         return data.data;
     },
     createTripImages: async (tripId: string, images: File[]) => {

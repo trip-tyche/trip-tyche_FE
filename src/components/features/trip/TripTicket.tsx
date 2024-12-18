@@ -21,7 +21,14 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
 
     const { isModalOpen, handleImageUpload, handleTripEdit, handleTripDelete, deleteTrip, closeModal } =
         useTicketHandler(tripId);
-    const { isAnimating, handleCardClick } = useTicketNavigation(tripId, isModalOpen);
+    const {
+        isAnimating,
+        isUnlocatedImageModalOpen,
+        unlocatedImagesCount,
+        confirmUnlocatedImageModal,
+        closeUnlocatedImageModal,
+        handleCardClick,
+    } = useTicketNavigation(tripId);
 
     return (
         <div css={ticketContainer}>
@@ -75,17 +82,6 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
                         <p css={textStyle}>Click Ticket</p>
                     </div>
                 </aside>
-
-                {isModalOpen && (
-                    <ConfirmModal
-                        title='보더패스를 삭제하시겠습니까?'
-                        description='보더패스를 삭제하면 해당 여행의 정보와 사진들은 다시 복구할 수 없어요. 그래도 삭제하시겠습니까?'
-                        confirmText='삭제'
-                        cancelText='취소'
-                        confirmModal={deleteTrip}
-                        closeModal={closeModal}
-                    />
-                )}
             </article>
 
             <footer css={buttonGroup}>
@@ -99,6 +95,26 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
                     <FaTrashAlt size={12} /> 여행 삭제
                 </button>
             </footer>
+            {isModalOpen && (
+                <ConfirmModal
+                    title='보더패스를 삭제하시겠습니까?'
+                    description='보더패스를 삭제하면 해당 여행의 정보와 사진들은 다시 복구할 수 없어요. 그래도 삭제하시겠습니까?'
+                    confirmText='삭제'
+                    cancelText='취소'
+                    confirmModal={deleteTrip}
+                    closeModal={closeModal}
+                />
+            )}
+            {isUnlocatedImageModalOpen && (
+                <ConfirmModal
+                    title={`위치정보 없는 사진이 ${unlocatedImagesCount} 장 있어요!`}
+                    description='사진에 직접 위치를 등록할 수 있어요. 지금 등록하시겠습니까? 등록은 언제든지 할 수 있어요'
+                    confirmText='위치 등록하기'
+                    cancelText='다음에'
+                    confirmModal={confirmUnlocatedImageModal}
+                    closeModal={closeUnlocatedImageModal}
+                />
+            )}
         </div>
     );
 };

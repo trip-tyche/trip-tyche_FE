@@ -14,4 +14,14 @@ export interface MediaFileModel extends BaseLocationMedia {
     mediaType: string;
 }
 
+interface UnlocatedMediaFile {
+    mediaFileId: number;
+    mediaLink: string;
+}
+
+export interface UnlocatedMediaFileModel {
+    recordDate: string;
+    media: UnlocatedMediaFile[];
+}
+
 export type PinpointMediaModel = Pick<BaseLocationMedia, 'mediaLink' | 'recordDate'>;
