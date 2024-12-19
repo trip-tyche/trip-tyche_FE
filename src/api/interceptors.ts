@@ -22,7 +22,7 @@ export const setupRequestInterceptor = (instance: AxiosInstance) => {
 export const setupResponseInterceptor = (instance: AxiosInstance) => {
     instance.interceptors.response.use(
         (response) => {
-            return response.data.data ? response.data : response;
+            return response.data;
         },
         (error) => {
             const { setLogout } = useAuthStore.getState();

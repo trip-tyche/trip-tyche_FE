@@ -6,6 +6,7 @@ const TripLocationAddPage = () => {
     const {
         tripId,
         imageGroupByDate,
+        // defaultLocation,
         selectedImages,
         isMapVisible,
         setIsMapVisible,
@@ -25,6 +26,7 @@ const TripLocationAddPage = () => {
         />
     ) : (
         <LocationAddMap
+            // defaultLocation={defaultLocation}
             onLocationSelect={handleMapLocationSelect}
             setIsMapVisible={setIsMapVisible}
             isUploading={isUploading}

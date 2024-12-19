@@ -3,17 +3,18 @@ import { useState, useRef } from 'react';
 import { css } from '@emotion/react';
 import { GoogleMap, Marker, Autocomplete } from '@react-google-maps/api';
 import { ChevronLeft } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Spinner from '@/components/common/Spinner';
-import { DEFAULT_ZOOM_SCALE, GOOGLE_MAPS_OPTIONS } from '@/constants/maps/config';
+import { DEFAULT_CENTER, DEFAULT_ZOOM_SCALE, GOOGLE_MAPS_OPTIONS } from '@/constants/maps/config';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
+import { GpsCoordinates } from '@/types/location';
 import { LatLng, MapMouseEvent, PlacesAutocomplete } from '@/types/maps';
 
 interface LocationAddMapProps {
+    defaultLocation?: GpsCoordinates;
     onLocationSelect: (lat: number, lng: number) => void;
     setIsMapVisible: (isMapVisible: boolean) => void;
     isUploading: boolean;
@@ -21,14 +22,14 @@ interface LocationAddMapProps {
 }
 
 const LocationAddMap = ({
+    // defaultLocation,
     onLocationSelect,
     setIsMapVisible,
     isUploading,
     uploadImagesWithLocation,
 }: LocationAddMapProps) => {
-    const {
-        defaultLocation: { latitude: lat, longitude: lng },
-    } = useLocation().state;
+    // const { latitude: lat, longitude: lng } = defaultLocation;
+    const { latitude: lat, longitude: lng } = DEFAULT_CENTER;
 
     const [center, setCenter] = useState<LatLng>({ lat, lng });
     const [selectedLocation, setSelectedLocation] = useState<LatLng | null>(null);

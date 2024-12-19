@@ -1,4 +1,5 @@
 import { Location } from '@/types/location';
+import { UnlocatedMediaFileModel } from '@/types/media';
 
 export interface ImageModel {
     image: File;
@@ -11,7 +12,7 @@ export interface ImageCarouselModel {
     mediaLink: string;
 }
 
-export type ImageGroupByDate = Record<string, ImageModel[]>;
+export type ImageGroupByDate = Record<string, UnlocatedMediaFileModel[]>;
 
 export interface PresignedUrlRequest {
     fileName: string;

@@ -14,7 +14,7 @@ export interface MediaFileModel extends BaseLocationMedia {
     mediaType: string;
 }
 
-interface UnlocatedMediaFile {
+export interface UnlocatedMediaFile {
     mediaFileId: number;
     mediaLink: string;
 }

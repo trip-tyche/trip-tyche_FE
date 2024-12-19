@@ -5,35 +5,27 @@ import { GoCheckCircleFill } from 'react-icons/go';
 
 import Spinner from '@/components/common/Spinner';
 import theme from '@/styles/theme';
-import { ImageModel } from '@/types/image';
+import { UnlocatedMediaFile } from '@/types/media';
 
 interface ImageGridProps {
     imageSize: number;
-    displayedImages: ImageModel[];
-    selectedImages: ImageModel[];
-    onHashtagSelect: (image: ImageModel) => void;
+    // displayedImages: ImageModel[];
+    displayedImages: UnlocatedMediaFile[];
+    selectedImages: UnlocatedMediaFile[];
+    // selectedImages: ImageModel[];
+    onHashtagSelect: (image: UnlocatedMediaFile) => void;
 }
 
 const ImageGrid = ({ imageSize, displayedImages, selectedImages, onHashtagSelect }: ImageGridProps) => {
-    const [imageUrls, setImageUrls] = useState<string[]>([]);
+    const [images, setImages] = useState<UnlocatedMediaFile[]>([]);
     const [allImagesLoaded, setAllImagesLoaded] = useState(false);
 
     const [loadedImages, setLoadedImages] = useState<boolean[]>([]);
 
     useEffect(() => {
         setAllImagesLoaded(false);
+        setImages(displayedImages);
     }, []);
-
-    useEffect(() => {
-        const blobUrls = displayedImages.map((image) => URL.createObjectURL(image.image));
-        setImageUrls(blobUrls);
-        setLoadedImages(new Array(blobUrls.length).fill(false));
-        setAllImagesLoaded(false);
-
-        return () => {
-            blobUrls.forEach((blobUrl) => URL.revokeObjectURL(blobUrl));
-        };
-    }, [displayedImages, setAllImagesLoaded]);
 
     useEffect(() => {
         if (loadedImages.every((loaded) => loaded)) {
@@ -55,16 +47,20 @@ const ImageGrid = ({ imageSize, displayedImages, selectedImages, onHashtagSelect
 
     return (
         <div css={gridStyle(imageSize)}>
-            {imageUrls.map((imageUrl, index) => (
-                <div key={imageUrl} css={imageContainerStyle} onClick={() => onHashtagSelect(displayedImages[index])}>
+            {images.map((image, index) => (
+                <div
+                    key={image.mediaFileId}
+                    css={imageContainerStyle}
+                    onClick={() => onHashtagSelect(displayedImages[index])}
+                >
                     <img
-                        src={imageUrl}
+                        src={image.mediaLink}
                         alt={`이미지-${index}`}
                         onLoad={() => handleImageLoad(index)}
                         css={imageStyle}
                     />
                     {selectedImages.some(
-                        (selectedImage) => selectedImage.image.name === displayedImages[index].image.name,
+                        (selectedImage) => selectedImage.mediaFileId === displayedImages[index].mediaFileId,
                     ) && (
                         <div css={selectedOverlayStyle}>
                             <span css={checkIconStyle}>

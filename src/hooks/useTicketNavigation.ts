@@ -34,7 +34,12 @@ export const useTicketNavigation = (tripId: string) => {
         setIsUnlocatedImageModalOpen(true);
     };
 
-    const confirmUnlocatedImageModal = () => {};
+    const confirmUnlocatedImageModal = () => {
+        setIsUnlocatedImageModalOpen(false);
+        setTimeout(() => {
+            navigate(`${ROUTES.PATH.TRIPS.NEW.LOCATIONS(Number(tripId))}`);
+        }, 0);
+    };
 
     const closeUnlocatedImageModal = () => {
         setIsUnlocatedImageModalOpen(false);

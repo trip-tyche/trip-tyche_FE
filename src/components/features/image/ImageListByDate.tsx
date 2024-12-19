@@ -4,20 +4,21 @@ import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
+import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import ImageGrid from '@/components/features/image/ImageGrid';
 import ImageSizeRadio from '@/components/features/image/ImageSizeRadio';
 import { ROUTES } from '@/constants/paths';
-import { useToastStore } from '@/stores/useToastStore';
-import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
-import { ImageModel } from '@/types/image';
+import { UnlocatedMediaFile, UnlocatedMediaFileModel } from '@/types/media';
 import { formatToKorean } from '@/utils/date';
 
 interface ImageListByDateProps {
-    imageGroupByDate: [string, ImageModel[]][];
+    // imageGroupByDate: [string, ImageModel[]][];
+    imageGroupByDate: UnlocatedMediaFileModel[];
     tripId: string | undefined;
-    selectedImages: ImageModel[];
-    onHashtagSelect: (image: ImageModel) => void;
+    // selectedImages: ImageModel[];
+    selectedImages: UnlocatedMediaFile[];
+    onHashtagSelect: (image: UnlocatedMediaFile) => void;
     setIsMapVisible: (isMapVisible: boolean) => void;
 }
 
@@ -26,13 +27,9 @@ const ImageListByDate = ({
     selectedImages,
     onHashtagSelect,
     setIsMapVisible,
-    tripId,
 }: ImageListByDateProps) => {
     const [imageSize, setImageSize] = useState(3);
-
-    const isEditing = useUserDataStore((state) => state.isTripInfoEditing);
-    const setIsEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
-    const showToast = useToastStore((state) => state.showToast);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const navigate = useNavigate();
     const handleSetLocationOnMap = () => {
@@ -41,26 +38,28 @@ const ImageListByDate = ({
         }
     };
 
-    const navigateToTripInfo = () => {
-        if (isEditing) {
-            navigate(`${ROUTES.PATH.TRIPS.ROOT}`);
-            showToast(`사진이 등록되었습니다.`);
-            setIsEditing(false);
-        } else {
-            navigate(`${ROUTES.PATH.TRIPS.NEW.INFO(Number(tripId))}`);
-        }
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+
+    const navigateToTripList = () => {
+        navigate(`${ROUTES.PATH.TRIPS.ROOT}`);
     };
 
     return (
         <>
             <ImageSizeRadio imageSize={imageSize} setImageSize={setImageSize} />
             <div css={imageListContainer}>
-                {imageGroupByDate.map(([date, images]) => (
-                    <Fragment key={date}>
-                        <h2 css={dateStyle}>{formatToKorean(date)}</h2>
+                {imageGroupByDate.map((image) => (
+                    <Fragment key={image.recordDate}>
+                        <h2 css={dateStyle}>{formatToKorean(image.recordDate.split('T')[0])}</h2>
                         <ImageGrid
                             imageSize={imageSize}
-                            displayedImages={images}
+                            displayedImages={image.media}
                             selectedImages={selectedImages}
                             onHashtagSelect={onHashtagSelect}
                         />
@@ -68,9 +67,19 @@ const ImageListByDate = ({
                 ))}
             </div>
             <div css={buttonGroup}>
-                <Button text='건너뛰고 계속하기' variant='white' onClick={navigateToTripInfo} />
+                <Button text='나가기' variant='white' onClick={openModal} />
                 <Button text='위치 선택하기' onClick={handleSetLocationOnMap} disabled={selectedImages.length === 0} />
             </div>
+            {isModalOpen && (
+                <ConfirmModal
+                    title='여행티켓 리스트 페이지로 이동하시겠습니까?'
+                    description='위치 등록은 언제든지 다시 할 수 있습니다'
+                    confirmText='이동하기'
+                    cancelText='아니요'
+                    confirmModal={navigateToTripList}
+                    closeModal={closeModal}
+                />
+            )}
         </>
     );
 };
@@ -97,7 +106,7 @@ const buttonGroup = css`
     border-radius: 12px 12px 0 0;
     bottom: 0;
     padding: 12px;
-    z-index: 1000;
+    z-index: 10;
     display: flex;
     gap: 8px;
 `;

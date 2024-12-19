@@ -3,6 +3,7 @@ import axios from 'axios';
 import { apiClient } from '@/api/client';
 import { API_ENDPOINTS } from '@/constants/api/config';
 import { PresignedUrlRequest } from '@/types/image';
+import { GpsCoordinates } from '@/types/location';
 import { MediaFileModel, UnlocatedMediaFileModel } from '@/types/media';
 import { getToken } from '@/utils/auth';
 
@@ -27,6 +28,11 @@ export const tripImageAPI = {
         );
         return data.data;
     },
+    fetchDefaultLocation: async (tripId: string) => {
+        const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/images/firstimage`);
+        console.log(data);
+        return data.data;
+    },
     createTripImages: async (tripId: string, images: File[]) => {
         const formData = new FormData();
         images.forEach((image) => {
@@ -40,7 +46,10 @@ export const tripImageAPI = {
         });
         return data;
     },
-
+    updateUnlocatedImages: async (tripId: string, mediaFileId: string, location: GpsCoordinates) => {
+        const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripId}/images/unlocated/${mediaFileId}`, location);
+        return data.data;
+    },
     requestPresignedUploadUrls: async (tripId: string, files: PresignedUrlRequest[]) => {
         const formattedData = { tripId, files };
         const data = await apiClient.post(`/api/trips/${tripId}/presigned-url`, formattedData);

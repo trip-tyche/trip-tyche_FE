@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { css } from '@emotion/react';
 import { TicketsPlane, PlaneTakeoff } from 'lucide-react';
@@ -23,7 +23,7 @@ const TripTicketListPage = () => {
 
     const navigate = useNavigate();
 
-    const { data: tripList, isLoading } = useTripTicketList();
+    const { data: tripList, refetch, isLoading } = useTripTicketList();
 
     const deleteInValidTrips = async (trips: TripModel[]) => {
         const deletePromises = trips
@@ -43,15 +43,18 @@ const TripTicketListPage = () => {
 
         if (inValidTripList.length > 3) {
             deleteInValidTrips(tripList.trips);
+            refetch();
         }
-
-        setTripTicketCount(validTripList.length);
 
         return {
             validTripList,
             userNickname: tripList.userNickName,
         };
-    }, [tripList, setTripTicketCount]);
+    }, [tripList, refetch]);
+
+    useEffect(() => {
+        setTripTicketCount(validTripList.length);
+    }, [validTripList, setTripTicketCount]);
 
     const handleTicketCreate = async () => {
         const tripId = await tripAPI.createTrip();
