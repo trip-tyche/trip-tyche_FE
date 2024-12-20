@@ -68,7 +68,7 @@ const TimelineMapPage = () => {
                 return;
             }
 
-            const { tripInfo, pinPoints, mediaFiles: images } = await tripAPI.fetchTripTimeline(tripId);
+            const { startDate, pinPoints, mediaFiles: images } = await tripAPI.fetchTripTimeline(tripId);
 
             if (pinPoints.length === 0) {
                 showToast('여행에 등록된 사진이 없습니다.');
@@ -91,7 +91,7 @@ const TimelineMapPage = () => {
 
             const imageDates = validLocationImages.map((image: MediaFileModel) => image.recordDate.split('T')[0]);
 
-            const uniqueImageDates = [...new Set<string>([tripInfo.startDate, ...imageDates])].sort((a, b) =>
+            const uniqueImageDates = [...new Set<string>([startDate, ...imageDates])].sort((a, b) =>
                 a.localeCompare(b),
             );
 

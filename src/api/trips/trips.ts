@@ -14,7 +14,7 @@ export const tripAPI = {
         return data.data;
     },
     fetchTripTimeline: async (tripId: string) => {
-        const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/info`, {});
+        const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/info`);
         return data.data;
     },
     createTrip: async () => {
