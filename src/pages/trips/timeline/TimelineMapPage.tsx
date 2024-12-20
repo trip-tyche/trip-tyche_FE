@@ -19,10 +19,9 @@ import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { LatLng, Map } from '@/types/maps';
 import { BaseLocationMedia, MediaFileModel, PinPointModel } from '@/types/media';
-import { TripModel } from '@/types/trip';
 
 const TimelineMapPage = () => {
-    const [tripInfo, setTripInfo] = useState<TripModel>();
+    const [tripTitle, setTripTitle] = useState();
     const [pinPointsInfo, setPinPointsInfo] = useState<PinPointModel[]>([]);
     const [tripImages, setTripImages] = useState<MediaFileModel[]>([]);
 
@@ -68,7 +67,7 @@ const TimelineMapPage = () => {
                 return;
             }
 
-            const { startDate, pinPoints, mediaFiles: images } = await tripAPI.fetchTripTimeline(tripId);
+            const { tripTitle, startDate, pinPoints, mediaFiles: images } = await tripAPI.fetchTripTimeline(tripId);
 
             if (pinPoints.length === 0) {
                 showToast('여행에 등록된 사진이 없습니다.');
@@ -95,7 +94,7 @@ const TimelineMapPage = () => {
                 a.localeCompare(b),
             );
 
-            setTripInfo(tripInfo);
+            setTripTitle(tripTitle);
             setTripImages(validLocationImages);
             setImagesByDates(uniqueImageDates);
             setPinPointsInfo(sortedPinPointByDate);
@@ -443,7 +442,7 @@ const TimelineMapPage = () => {
 
     return (
         <div css={pageContainer}>
-            <Header title={tripInfo?.tripTitle || ''} isBackButton onBack={() => navigate(ROUTES.PATH.TRIPS.ROOT)} />
+            <Header title={tripTitle || ''} isBackButton onBack={() => navigate(ROUTES.PATH.TRIPS.ROOT)} />
             <div css={mapWrapper}>
                 <GoogleMap
                     zoom={DEFAULT_ZOOM_SCALE.TIMELINE}
