@@ -18,8 +18,14 @@ export const useImagesByDate = (tripId: string, currentDate: string) => {
             }
             setLoadedImageCount(0);
             setIsImageLoaded(false);
+
             const { imagesLink } = await tripImageAPI.fetchImagesByDate(tripId, currentDate);
-            setImagesByDate(imagesLink || []);
+
+            const validLocationImages = imagesLink.filter(
+                (image: MediaFileModel) => image.latitude !== 0 && image.longitude !== 0,
+            );
+
+            setImagesByDate(validLocationImages || []);
 
             if (imagesLink && imagesLink.length > 0) {
                 setImageLocation({ lat: imagesLink[0].latitude, lng: imagesLink[0].longitude });

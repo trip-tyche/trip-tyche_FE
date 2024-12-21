@@ -6,7 +6,7 @@ import { ChevronLeft } from 'lucide-react';
 
 import Button from '@/components/common/Button';
 import Spinner from '@/components/common/Spinner';
-import { DEFAULT_CENTER, DEFAULT_ZOOM_SCALE, GOOGLE_MAPS_OPTIONS } from '@/constants/maps/config';
+import { DEFAULT_ZOOM_SCALE, GOOGLE_MAPS_OPTIONS } from '@/constants/maps/config';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
