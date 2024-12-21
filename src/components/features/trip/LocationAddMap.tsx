@@ -14,7 +14,7 @@ import { GpsCoordinates } from '@/types/location';
 import { LatLng, MapMouseEvent, PlacesAutocomplete } from '@/types/maps';
 
 interface LocationAddMapProps {
-    defaultLocation?: GpsCoordinates;
+    defaultLocation: GpsCoordinates;
     onLocationSelect: (lat: number, lng: number) => void;
     setIsMapVisible: (isMapVisible: boolean) => void;
     isUploading: boolean;
@@ -22,14 +22,13 @@ interface LocationAddMapProps {
 }
 
 const LocationAddMap = ({
-    // defaultLocation,
+    defaultLocation,
     onLocationSelect,
     setIsMapVisible,
     isUploading,
     uploadImagesWithLocation,
 }: LocationAddMapProps) => {
-    // const { latitude: lat, longitude: lng } = defaultLocation;
-    const { latitude: lat, longitude: lng } = DEFAULT_CENTER;
+    const { latitude: lat, longitude: lng } = defaultLocation;
 
     const [center, setCenter] = useState<LatLng>({ lat, lng });
     const [selectedLocation, setSelectedLocation] = useState<LatLng | null>(null);

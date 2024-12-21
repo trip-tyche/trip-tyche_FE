@@ -22,17 +22,17 @@ export const tripImageAPI = {
         const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/map?date=${formattedDate}`);
         return data.data;
     },
+    fetchDefaultLocation: async (tripId: string) => {
+        const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/images/firstimage`);
+        return data.data;
+    },
     fetchUnlocatedImages: async (tripId: string): Promise<UnlocatedMediaFileModel[]> => {
         const data = await apiClient.get<UnlocatedMediaFileModel[]>(
             `${API_ENDPOINTS.TRIPS}/${tripId}/images/unlocated`,
         );
         return data.data;
     },
-    fetchDefaultLocation: async (tripId: string) => {
-        const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/images/firstimage`);
-        console.log(data);
-        return data.data;
-    },
+
     createTripImages: async (tripId: string, images: File[]) => {
         const formData = new FormData();
         images.forEach((image) => {
@@ -46,26 +46,27 @@ export const tripImageAPI = {
         });
         return data;
     },
-    updateUnlocatedImages: async (tripId: string, mediaFileId: string, location: GpsCoordinates) => {
-        const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripId}/images/unlocated/${mediaFileId}`, location);
-        return data.data;
-    },
     requestPresignedUploadUrls: async (tripId: string, files: PresignedUrlRequest[]) => {
         const formattedData = { tripId, files };
         const data = await apiClient.post(`/api/trips/${tripId}/presigned-url`, formattedData);
         return data.data.presignedUrls;
     },
+    registerTripMediaFiles: async (tripId: string, files: MediaFileModel[]) => {
+        const data = await apiClient.post(`/api/trips/${tripId}/media-files`, files);
+        return data;
+    },
+
+    updateUnlocatedImages: async (tripId: string, mediaFileId: string, location: GpsCoordinates) => {
+        const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripId}/images/unlocated/${mediaFileId}`, location);
+        return data.data;
+    },
+
     uploadToS3: async (presignedUrl: string, file: File) => {
         const data = await axios.put(presignedUrl, file, {
             headers: {
                 'Content-Type': file.type,
             },
         });
-        return data;
-    },
-    registerTripMediaFiles: async (tripId: string, files: MediaFileModel[]) => {
-        const data = await apiClient.post(`/api/trips/${tripId}/media-files`, files);
-        console.log('서버 업로드 완료 데이터: ', data);
         return data;
     },
 };
