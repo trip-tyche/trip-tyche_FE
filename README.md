@@ -37,9 +37,7 @@
 
 ### 프론트엔드
 
-React, TypeScript, Yarn, Zustand, Tanstack-Query, Emotion
-
-![front-skills](https://github.com/user-attachments/assets/556ba8e3-7411-4719-8279-4392a548c21f)
+React, TypeScript, Zustand, Tanstack-Query, Emotion
 
 ### 백엔드
 
