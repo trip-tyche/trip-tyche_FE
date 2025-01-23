@@ -65,14 +65,10 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
                         showToast(errorMessage || '이미 가입된 이메일입니다.');
                         break;
 
-                    case 429:
-                        showToast('너무 많은 요청이 발생했습니다. 잠시 후 다시 시도해주세요.');
-                        break;
-
                     case 500:
                     case 502:
                     case 503:
-                        showToast('서버에 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                        showToast('서버에 일시적인 문제가 발생했습니다.');
                         break;
 
                     default:

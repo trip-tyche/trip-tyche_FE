@@ -79,10 +79,9 @@ const TimelineMapPage = () => {
                 (pinPoint: PinPointModel) => pinPoint.latitude !== 0 && pinPoint.longitude !== 0,
             );
 
-            const sortedPinPointByDate = validLocationPinPoints.sort(
-                (a: PinPointModel, b: PinPointModel) =>
-                    new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime(),
-            );
+            const sortedPinPointByDate = validLocationPinPoints.sort((a: PinPointModel, b: PinPointModel) => {
+                return new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime();
+            });
 
             const validLocationImages = images.filter(
                 (image: MediaFileModel) => image.latitude !== 0 && image.longitude !== 0,

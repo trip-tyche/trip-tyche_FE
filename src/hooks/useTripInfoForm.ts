@@ -60,7 +60,7 @@ export const useTripInfoForm = (mode: FormMode) => {
         }
 
         if (mode === 'create') {
-            await tripAPI.createTripInfo(tripId, tripInfo);
+            await tripAPI.updateTripInfo(tripId, tripInfo);
 
             setIsUploading(true);
             await waitForCompletion();
