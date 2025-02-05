@@ -86,7 +86,7 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
 
             <footer css={buttonGroup}>
                 <button css={buttonStyle} onClick={handleImageUpload}>
-                    <ImagePlus size={16} /> 사진 추가
+                    <ImagePlus size={16} /> 사진 관리
                 </button>
                 <button css={buttonStyle} onClick={handleTripEdit}>
                     <FaPencilAlt size={12} /> 여행 수정

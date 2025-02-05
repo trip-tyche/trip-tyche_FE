@@ -13,4 +13,9 @@ export const userAPI = {
         });
         return data;
     },
+    checkDuplication: async (userNickName: string) => {
+        const response = await apiClient.get(`${API_ENDPOINTS.USERS}/check-nickname?userNickName=${userNickName}`);
+
+        return response;
+    },
 };

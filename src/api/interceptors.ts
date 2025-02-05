@@ -39,30 +39,14 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
             }
 
             if (error.response) {
-                const { status } = error.response;
-                const errorMessage = error.response.data?.message || error.message;
+                const { status } = error.response.data;
 
                 switch (status) {
-                    case 400:
-                        showToast(errorMessage || '잘못된 요청입니다.');
-                        break;
-
                     case 401:
+                    case 403:
                         setLogout();
                         showToast('로그인이 필요합니다.');
                         window.location.href = '/login';
-                        break;
-
-                    case 403:
-                        showToast('접근 권한이 없습니다.');
-                        break;
-
-                    case 404:
-                        showToast('요청하신 정보를 찾을 수 없습니다.');
-                        break;
-
-                    case 409:
-                        showToast(errorMessage || '이미 가입된 이메일입니다.');
                         break;
 
                     case 500:
@@ -73,11 +57,6 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
 
                     default:
                         showToast('예기치 않은 오류가 발생했습니다.');
-                }
-
-                if (status === 401 || status === 403) {
-                    setLogout();
-                    window.location.href = '/login';
                 }
             }
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { css } from '@emotion/react';
+import { AxiosError } from 'axios';
 import { MdCancel } from 'react-icons/md';
 
 import { userAPI } from '@/api';
@@ -21,6 +22,15 @@ interface NickNameFormProps {
     setIsEditing?: (isEditing: boolean) => void;
 }
 
+interface ApiError {
+    response?: {
+        status: number;
+        data: {
+            message: string;
+        };
+    };
+}
+
 const NickNameForm = ({ mode, title, buttonText, placeholder, getUserInfoData, setIsEditing }: NickNameFormProps) => {
     const [inputValue, setInputValue] = useState('');
     const [isInvalid, setIsInvalid] = useState(false);
@@ -33,10 +43,28 @@ const NickNameForm = ({ mode, title, buttonText, placeholder, getUserInfoData, s
     const submitUserNickName = async () => {
         try {
             setUserNickName(inputValue);
-            await userAPI.createUserNickName(inputValue);
+
+            const reseponse = await userAPI.createUserNickName(inputValue);
+
+            console.log(reseponse);
+
             mode === 'edit' ? showToast('닉네임이 변경되었습니다.') : getUserInfoData && getUserInfoData();
-        } catch (error) {
-            showToast(`닉네임 ${mode === 'edit' ? '수정' : '등록'}이 실패했습니다. 다시 시도해주세요.`);
+        } catch (error: unknown) {
+            if (error && typeof error === 'object' && 'response' in error) {
+                const errorData = (error as AxiosError).response?.data as {
+                    code: number;
+                    data: null;
+                    httpStatus: string;
+                    message: string;
+                    status: number;
+                };
+
+                if (errorData?.code === 3002) {
+                    showToast(errorData.message);
+                } else {
+                    showToast(`닉네임 ${mode === 'edit' ? '수정' : '등록'}이 실패했습니다. 다시 시도해주세요.`);
+                }
+            }
         } finally {
             setIsEditing && setIsEditing(false);
         }
