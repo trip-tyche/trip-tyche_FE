@@ -22,15 +22,6 @@ interface NickNameFormProps {
     setIsEditing?: (isEditing: boolean) => void;
 }
 
-interface ApiError {
-    response?: {
-        status: number;
-        data: {
-            message: string;
-        };
-    };
-}
-
 const NickNameForm = ({ mode, title, buttonText, placeholder, getUserInfoData, setIsEditing }: NickNameFormProps) => {
     const [inputValue, setInputValue] = useState('');
     const [isInvalid, setIsInvalid] = useState(false);
