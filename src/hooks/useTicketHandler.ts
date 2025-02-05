@@ -16,20 +16,17 @@ export const useTicketHandler = (tripId: string) => {
 
     const navigate = useNavigate();
 
-    const handleImageUpload = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.stopPropagation();
+    const handleImageUpload = () => {
         setIsTripInfoEditing(true);
-        navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(Number(tripId))}`);
+        navigate(`${ROUTES.PATH.TRIPS.IMAGES(Number(tripId))}`);
     };
 
-    const handleTripEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.stopPropagation();
+    const handleTripEdit = () => {
         setIsTripInfoEditing(true);
         navigate(`${ROUTES.PATH.TRIPS.EDIT(Number(tripId))}`);
     };
 
-    const handleTripDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.stopPropagation();
+    const handleTripDelete = () => {
         setIsModalOpen(true);
     };
 

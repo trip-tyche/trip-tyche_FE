@@ -12,6 +12,7 @@ export const ROUTES = {
         SETTING: '/setting',
         TRIPS: {
             ROOT: '/trips',
+            IMAGES: (tripId: TripIdType) => `/trips/${tripId}/images`,
             NEW: {
                 IMAGES: (tripId: TripIdType) => `/trips/${tripId}/new/images`,
                 LOCATIONS: (tripId: TripIdType) => `/trips/${tripId}/new/locations`,
@@ -37,7 +38,7 @@ export const ROUTES = {
         TRIPS: {
             ROOT: '여행 리스트',
             NEW: {
-                IMAGES: '여행 사진 등록',
+                IMAGES: '여행 사진 관리',
                 LOCATIONS: '위치 등록',
                 INFO: '여행 정보 입력',
             },

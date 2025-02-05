@@ -142,6 +142,7 @@ const SettingPage = lazy(() => import('@/pages/SettingPage'));
 // 여행 관련 페이지들을 그룹화하여 지연 로딩
 const TripPages = {
     TripTicketListPage: lazy(() => import('@/pages/trips/TripTicketListPage')),
+    TripImageManagePage: lazy(() => import('@/pages/trips/TripImageManagePage')),
     TripImageUploadPage: lazy(() => import('@/pages/trips/TripImageUploadPage')),
     TripLocationAddPage: lazy(() => import('@/pages/trips/TripLocationAddPage')),
     TripInfoPage: lazy(() => import('@/pages/trips/TripInfoPage')),
@@ -257,6 +258,10 @@ const router = createBrowserRouter([
                     {
                         path: 'trips/:tripId',
                         children: [
+                            {
+                                path: 'images',
+                                element: <TripPages.TripImageManagePage />,
+                            },
                             {
                                 path: 'new',
                                 children: [

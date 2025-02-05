@@ -65,7 +65,6 @@ const NickNameForm = ({ mode, title, buttonText, placeholder, getUserInfoData, s
             mode === 'edit' ? showToast('닉네임이 변경되었습니다.') : getUserInfoData && getUserInfoData();
         } catch (error: unknown) {
             handleError(error as AxiosError);
-            return;
         }
 
         setIsEditing && setIsEditing(false);

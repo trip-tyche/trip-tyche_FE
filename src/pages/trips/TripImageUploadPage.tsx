@@ -48,7 +48,7 @@ const TripImageUploadPage = () => {
 
     const navigateBeforePage = () => {
         isTripInfoEditing && setIsTripInfoEditing(false);
-        navigate(isFirstTicket ? ROUTES.PATH.MAIN : ROUTES.PATH.TRIPS.ROOT);
+        navigate(isFirstTicket ? ROUTES.PATH.MAIN : ROUTES.PATH.TRIPS.IMAGES(Number(tripId)));
     };
 
     const closeAlertModal = async () => {
