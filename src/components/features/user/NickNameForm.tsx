@@ -31,34 +31,44 @@ const NickNameForm = ({ mode, title, buttonText, placeholder, getUserInfoData, s
 
     const handleCancelButtonClick = () => setInputValue('');
 
+    const handleError = (error: AxiosError) => {
+        if (error && typeof error === 'object' && 'response' in error) {
+            const errorData = error.response?.data as {
+                code: number;
+                data: null;
+                httpStatus: string;
+                message: string;
+                status: number;
+            };
+
+            if (errorData?.code === 3002) {
+                showToast(errorData.message);
+                return;
+            } else {
+                showToast(`닉네임 ${mode === 'edit' ? '수정' : '등록'}이 실패했습니다. 다시 시도해주세요.`);
+            }
+        }
+    };
+
     const submitUserNickName = async () => {
+        setUserNickName(inputValue);
+
         try {
-            setUserNickName(inputValue);
+            await userAPI.checkDuplication(inputValue);
+        } catch (error: unknown) {
+            handleError(error as AxiosError);
+            return;
+        }
 
-            const reseponse = await userAPI.createUserNickName(inputValue);
-
-            console.log(reseponse);
-
+        try {
+            await userAPI.createUserNickName(inputValue);
             mode === 'edit' ? showToast('닉네임이 변경되었습니다.') : getUserInfoData && getUserInfoData();
         } catch (error: unknown) {
-            if (error && typeof error === 'object' && 'response' in error) {
-                const errorData = (error as AxiosError).response?.data as {
-                    code: number;
-                    data: null;
-                    httpStatus: string;
-                    message: string;
-                    status: number;
-                };
-
-                if (errorData?.code === 3002) {
-                    showToast(errorData.message);
-                } else {
-                    showToast(`닉네임 ${mode === 'edit' ? '수정' : '등록'}이 실패했습니다. 다시 시도해주세요.`);
-                }
-            }
-        } finally {
-            setIsEditing && setIsEditing(false);
+            handleError(error as AxiosError);
+            return;
         }
+
+        setIsEditing && setIsEditing(false);
     };
 
     return (
