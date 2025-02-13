@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Settings } from 'lucide-react';
+import { Settings, HeartHandshake } from 'lucide-react';
 import { FaArrowCircleDown } from 'react-icons/fa';
 import { GiRapidshareArrow } from 'react-icons/gi';
 import { useNavigate } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
+import { shareAPI } from '@/api/trips/share';
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
@@ -26,6 +27,7 @@ const MainPage = () => {
     const [latestTrip, setLatestTrip] = useState(null);
     const [tripCount, setTripCount] = useState(0);
     const [isInitializing, setIsInitializing] = useState(true);
+    const [sharedTripsCount, setSharedTripsCount] = useState(0);
 
     const isLogin = useAuthStore((state) => state.isLogIn);
     const userNickName = useUserDataStore((state) => state.userNickName);
@@ -62,6 +64,10 @@ const MainPage = () => {
             return;
         }
         const { userNickName, trips } = await tripAPI.fetchTripTicketList();
+
+        const userId = localStorage.getItem('userId') || '';
+        const sharedTrips = await shareAPI.getSharedTrip(userId);
+        setSharedTripsCount(sharedTrips.length);
 
         const validTripList = trips?.filter((trip: TripModel) => trip.tripTitle !== 'N/A');
         const latestTrip = validTripList[validTripList.length - 1];
@@ -100,6 +106,10 @@ const MainPage = () => {
             ) : (
                 <main css={pageContainer}>
                     <div css={headerStyle}>
+                        <div css={shareIconStyle}>
+                            {sharedTripsCount && <div css={count} />}
+                            <HeartHandshake css={settingIconStyle} onClick={() => navigate(ROUTES.PATH.SHARE)} />
+                        </div>
                         <Settings css={settingIconStyle} onClick={() => navigate(ROUTES.PATH.SETTING)} />
                     </div>
                     <div css={ticketContainerStyle}>
@@ -146,12 +156,28 @@ const pageContainer = css`
 
 const headerStyle = css`
     display: flex;
+    gap: 8px;
     justify-content: flex-end;
     padding-right: 4px;
 `;
 
 const settingIconStyle = css`
     cursor: pointer;
+`;
+
+const shareIconStyle = css`
+    position: relative;
+    cursor: pointer;
+`;
+
+const count = css`
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: red;
+    position: absolute;
+    top: -3px;
+    right: -3px;
 `;
 
 const ticketContainerStyle = css`

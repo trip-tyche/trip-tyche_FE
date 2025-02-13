@@ -10,6 +10,7 @@ export const ROUTES = {
             LOGIN_REDIRECT: '/login/redirect',
         },
         SETTING: '/setting',
+        SHARE: '/share',
         TRIPS: {
             ROOT: '/trips',
             IMAGES: (tripId: TripIdType) => `/trips/${tripId}/images`,

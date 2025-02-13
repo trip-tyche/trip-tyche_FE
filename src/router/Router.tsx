@@ -138,6 +138,7 @@ const MainPage = lazy(() => import('@/pages/MainPage'));
 const Onboarding = lazy(() => import('@/pages/Onboarding'));
 const PageNotFound = lazy(() => import('@/pages/PageNotFound'));
 const SettingPage = lazy(() => import('@/pages/SettingPage'));
+const SharePage = lazy(() => import('@/pages/SharePage'));
 
 // 여행 관련 페이지들을 그룹화하여 지연 로딩
 const TripPages = {
@@ -250,6 +251,10 @@ const router = createBrowserRouter([
                     {
                         path: ROUTES.PATH.SETTING,
                         element: <SettingPage />,
+                    },
+                    {
+                        path: ROUTES.PATH.SHARE,
+                        element: <SharePage />,
                     },
                     {
                         path: ROUTES.PATH.TRIPS.ROOT,

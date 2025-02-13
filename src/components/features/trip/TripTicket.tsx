@@ -1,12 +1,18 @@
+import { useState } from 'react';
+
 import { css, keyframes } from '@emotion/react';
-import { ImagePlus } from 'lucide-react';
+import { AxiosError } from 'axios';
+import { ImagePlus, HeartHandshake } from 'lucide-react';
 import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
+import { shareAPI } from '@/api/trips/share';
 import characterImg from '@/assets/images/character-1.png';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
+import InputModal from '@/components/features/guide/InputModal';
 import { useTicketHandler } from '@/hooks/useTicketHandler';
 import { useTicketNavigation } from '@/hooks/useTicketNavigation';
+import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { TripModel } from '@/types/trip';
 import { formatToDot } from '@/utils/date';
@@ -19,6 +25,12 @@ interface TripTicketProps {
 const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
     const { tripId, tripTitle, country, startDate, endDate, hashtags } = trip;
 
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [inputValue, setInputValue] = useState('');
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const { showToast } = useToastStore.getState();
+
     const { isModalOpen, handleImageUpload, handleTripEdit, handleTripDelete, deleteTrip, closeModal } =
         useTicketHandler(tripId);
     const {
@@ -29,6 +41,44 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
         closeUnlocatedImageModal,
         handleCardClick,
     } = useTicketNavigation(tripId);
+
+    const handleShareSuccess = () => {
+        setInputValue('');
+        setError('');
+        setIsShareModalOpen(false);
+        showToast(`'${inputValue}'님께 여행 공유를 요청했습니다`);
+    };
+
+    const handleShareError = (error: unknown) => {
+        if (error instanceof AxiosError && error.response?.data) {
+            const { status } = error.response.data;
+            setError(
+                status === 404 ? '해당 닉네임의 사용자를 찾을 수 없습니다' : `이미 '${inputValue}'와 공유된 여행입니다`,
+            );
+        }
+    };
+
+    const handleTripShare = async () => {
+        if (!inputValue.trim()) {
+            setError('닉네임을 입력해주세요.');
+            return;
+        }
+
+        try {
+            setIsLoading(true);
+
+            const searchResult = await shareAPI.getUserByNickname(inputValue);
+
+            const recipientId = searchResult.data.userId;
+            await shareAPI.shareTripWithUser(tripId, recipientId);
+
+            handleShareSuccess();
+        } catch (error) {
+            handleShareError(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div css={ticketContainer}>
@@ -85,6 +135,9 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
             </article>
 
             <footer css={buttonGroup}>
+                <button css={buttonStyle} onClick={() => setIsShareModalOpen(true)}>
+                    <HeartHandshake size={16} /> 티켓 공유
+                </button>
                 <button css={buttonStyle} onClick={handleImageUpload}>
                     <ImagePlus size={16} /> 사진 관리
                 </button>
@@ -113,6 +166,24 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
                     cancelText='다음에'
                     confirmModal={confirmUnlocatedImageModal}
                     closeModal={closeUnlocatedImageModal}
+                />
+            )}
+            {isShareModalOpen && (
+                <InputModal
+                    error={error}
+                    value={inputValue}
+                    onChange={(inputValue) => setInputValue(inputValue)}
+                    title='여행 공유하기'
+                    description='함께 여행을 관리할 여행자를 입력해주세요'
+                    confirmText='공유하기'
+                    cancelText='나가기'
+                    confirmModal={handleTripShare}
+                    closeModal={() => {
+                        setIsShareModalOpen(false);
+                        setInputValue('');
+                        setError('');
+                    }}
+                    disabled={isLoading}
                 />
             )}
         </div>
@@ -274,7 +345,7 @@ const animateRight = css`
 const buttonGroup = css`
     display: flex;
     justify-content: space-between;
-    padding: 12px 18px 8px 18px;
+    padding: 12px 8px 0 8px;
 `;
 
 const buttonStyle = css`

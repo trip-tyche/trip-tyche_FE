@@ -1,0 +1,92 @@
+import { css } from '@emotion/react';
+
+import Button from '@/components/common/Button';
+import Input from '@/components/common/Input';
+import Modal from '@/components/common/Modal';
+import theme from '@/styles/theme';
+
+export interface InputModalProps {
+    error?: string;
+    value: string;
+    onChange: (value: string) => void;
+    title: string;
+    description?: string;
+    confirmText: string;
+    cancelText?: string;
+    confirmModal?: () => void;
+    closeModal?: () => void;
+    disabled: boolean;
+}
+
+const InputModal = ({
+    error,
+    value,
+    onChange,
+    title,
+    description,
+    confirmText,
+    cancelText,
+    confirmModal,
+    closeModal,
+    disabled,
+}: InputModalProps) => {
+    return (
+        <Modal closeModal={closeModal}>
+            <h1 css={titleStyle}>{title}</h1>
+            <p css={descriptionStyle}>{description}</p>
+
+            <div css={inputWrapper}>
+                <Input value={value} onChange={onChange} />
+                {error && <p css={errorMessage}>{error}</p>}
+            </div>
+            <div css={buttonGroup}>
+                {cancelText && <Button text={cancelText} variant='white' onClick={closeModal} />}
+                <Button text={confirmText} onClick={confirmModal} disabled={disabled} />
+            </div>
+        </Modal>
+    );
+};
+
+const titleStyle = css`
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: #181818;
+    margin-top: 24px;
+    margin-bottom: 14px;
+`;
+
+const descriptionStyle = css`
+    font-size: 14px;
+    margin: 8px 26px 22px 26px;
+    text-align: center;
+    color: #5e5e5e;
+    line-height: 20px;
+`;
+
+const buttonGroup = css`
+    width: 100%;
+    display: flex;
+    padding: 0 12px;
+    margin-bottom: 12px;
+    gap: 8px;
+`;
+
+const inputWrapper = css`
+    position: relative;
+    width: 90%;
+    margin-bottom: 44px;
+`;
+
+const errorMessage = css`
+    text-align: center;
+    width: 100%;
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: ${theme.COLORS.TEXT.ERROR};
+    font-size: ${theme.FONT_SIZES.MD};
+`;
+
+export default InputModal;

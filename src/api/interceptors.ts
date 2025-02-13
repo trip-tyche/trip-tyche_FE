@@ -47,16 +47,18 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
                         setLogout();
                         showToast('로그인이 필요합니다.');
                         window.location.href = '/login';
-                        break;
+                        return;
+                    // break;
 
                     case 500:
                     case 502:
                     case 503:
                         showToast('서버에 일시적인 문제가 발생했습니다.');
-                        break;
+                        return;
+                    //break
 
-                    default:
-                        showToast('예기치 않은 오류가 발생했습니다.');
+                    // default:
+                    // showToast('예기치 않은 오류가 발생했습니다.');
                 }
             }
 
