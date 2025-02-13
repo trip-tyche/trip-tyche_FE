@@ -52,12 +52,12 @@ const SharePage = () => {
 
     const handleApproveClick = async (shareId: string) => {
         const recipientId = localStorage.getItem('userId') || '';
-        const response = await shareAPI.approveSharedTrip(recipientId, shareId, 'APPROVED');
+        await shareAPI.approveSharedTrip(recipientId, shareId, 'APPROVED');
     };
 
     const handleRejectClick = async (shareId: string) => {
         const recipientId = localStorage.getItem('userId') || '';
-        const response = await shareAPI.approveSharedTrip(recipientId, shareId, 'REJECTED');
+        await shareAPI.approveSharedTrip(recipientId, shareId, 'REJECTED');
     };
 
     const handleReceiveClick = () => {
