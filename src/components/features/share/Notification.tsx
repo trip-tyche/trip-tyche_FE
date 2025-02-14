@@ -69,7 +69,7 @@ const Notification = ({ notification }: NotificationProps) => {
     };
 
     const handleShareApprove = async () => {
-        const response = await shareAPI.updateShareStatus(String(notification.shareId), 'APPROVED');
+        // const response = await shareAPI.updateShareStatus(String(notification.shareId), 'APPROVED');
         setIsDetailOpen(false);
         showToast('여행 공유가 수락되었습니다');
         // console.log(response);
