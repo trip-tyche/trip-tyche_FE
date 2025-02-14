@@ -11,4 +11,5 @@ export const API_ENDPOINTS = {
 export const DEFAULT_HEADERS = {
     accept: '*/*',
     'Content-Type': 'application/json',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE',
 };

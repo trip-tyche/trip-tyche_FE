@@ -1,13 +1,19 @@
 import { apiClient } from '@/api/client';
+import { getToken } from '@/utils/auth';
+
+// interface Result<T> {
+//     isSuccess: boolean;
+//     data?: T;
+//     error?: string;
+// }
 
 export const shareAPI = {
-    getUserByNickname: async (userNickName: string) => {
-        const params = {
-            userNickName,
-        };
-
+    // 사용자 검색(닉네임)
+    searchUsers: async (userNickName: string) => {
         const response = await apiClient.get(`/api/share/users`, {
-            params,
+            params: {
+                userNickName,
+            },
         });
 
         if (response.status === 404) {
@@ -16,31 +22,60 @@ export const shareAPI = {
 
         return { isSuccess: true, data: response.data };
     },
-    shareTripWithUser: async (tripId: string, recipientId: string) => {
+
+    // 다른 사용자에게 여행 공유 요청
+    createShareRequest: async (tripId: string, recipientId: string) => {
         await apiClient.post(`/api/trips/share`, {
             tripId,
             recipientId,
         });
+
+        return { isSuccess: true, data: '' };
     },
-    getSharedTrip: async (userId: string) => {
+
+    // 공유 알림 목록 조회
+    getNotifications: async (userId: string) => {
         const response = await apiClient.get(`/api/notifications/${userId}`);
 
-        return response.data;
+        return { isSuccess: true, data: response.data };
     },
-    getSendTrip: async (recipientId: string) => {
-        const response = await apiClient.get(`/api/trips/share/${recipientId}`);
 
-        return response.data;
+    // 공유 상세 조회
+    getShareDetail: async (shareId: string) => {
+        const response = await apiClient.get(`/api/shares/${shareId}`);
+
+        return { isSuccess: true, data: response.data };
     },
-    approveSharedTrip: async (recipientId: string, shareId: string, status: string) => {
+
+    // 알림 상태 변경 (READ / UNREAD)
+    updateNotificationStatus: async (notificationId: string) => {
+        const token = getToken();
+
+        const response = await apiClient.patch(`/api/notifications/${notificationId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        console.log(response);
+        return { isSuccess: true, data: response.data };
+    },
+
+    // 공유 상태 변경 (수락 / 거절)
+    updateShareStatus: async (shareId: string, status: string) => {
         const params = {
             shareId,
             status,
         };
-        const response = await apiClient.patch(`/api/trips/share/${recipientId}`, {
+
+        const token = getToken();
+        const response = await apiClient.patch(`/api/shares/${shareId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
             params,
         });
 
-        return response.data;
+        return { isSuccess: true, data: response.data };
     },
 };

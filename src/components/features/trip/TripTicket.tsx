@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { css, keyframes } from '@emotion/react';
 import { AxiosError } from 'axios';
-import { ImagePlus, HeartHandshake } from 'lucide-react';
+import { ImagePlus, Bell } from 'lucide-react';
 import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
@@ -67,10 +67,10 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
         try {
             setIsLoading(true);
 
-            const searchResult = await shareAPI.getUserByNickname(inputValue);
+            const searchResult = await shareAPI.searchUsers(inputValue);
 
             const recipientId = searchResult.data.userId;
-            await shareAPI.shareTripWithUser(tripId, recipientId);
+            await shareAPI.createShareRequest(tripId, recipientId);
 
             handleShareSuccess();
         } catch (error) {
@@ -136,7 +136,7 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
 
             <footer css={buttonGroup}>
                 <button css={buttonStyle} onClick={() => setIsShareModalOpen(true)}>
-                    <HeartHandshake size={16} /> 티켓 공유
+                    <Bell size={16} /> 티켓 공유
                 </button>
                 <button css={buttonStyle} onClick={handleImageUpload}>
                     <ImagePlus size={16} /> 사진 관리

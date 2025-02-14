@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Settings, HeartHandshake } from 'lucide-react';
+import { Settings, Bell } from 'lucide-react';
 import { FaArrowCircleDown } from 'react-icons/fa';
 import { GiRapidshareArrow } from 'react-icons/gi';
 import { useNavigate } from 'react-router-dom';
@@ -66,8 +66,10 @@ const MainPage = () => {
         const { userNickName, trips } = await tripAPI.fetchTripTicketList();
 
         const userId = localStorage.getItem('userId') || '';
-        const sharedTrips = await shareAPI.getSharedTrip(userId);
-        setSharedTripsCount(sharedTrips.length);
+        const response = await shareAPI.getNotifications(userId);
+        const sharedTripsCount = response.data;
+
+        setSharedTripsCount(sharedTripsCount.length);
 
         const validTripList = trips?.filter((trip: TripModel) => trip.tripTitle !== 'N/A');
         const latestTrip = validTripList[validTripList.length - 1];
@@ -107,8 +109,8 @@ const MainPage = () => {
                 <main css={pageContainer}>
                     <div css={headerStyle}>
                         <div css={shareIconStyle}>
-                            {sharedTripsCount && <div css={count} />}
-                            <HeartHandshake css={settingIconStyle} onClick={() => navigate(ROUTES.PATH.SHARE)} />
+                            {!!sharedTripsCount && <div css={count} />}
+                            <Bell css={settingIconStyle} onClick={() => navigate(ROUTES.PATH.SHARE)} />
                         </div>
                         <Settings css={settingIconStyle} onClick={() => navigate(ROUTES.PATH.SETTING)} />
                     </div>
@@ -171,13 +173,13 @@ const shareIconStyle = css`
 `;
 
 const count = css`
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background-color: red;
     position: absolute;
-    top: -3px;
-    right: -3px;
+    top: 1px;
+    right: 2px;
 `;
 
 const ticketContainerStyle = css`
