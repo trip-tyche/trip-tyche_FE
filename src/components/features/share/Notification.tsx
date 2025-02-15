@@ -61,25 +61,35 @@ const Notification = ({ notification }: NotificationProps) => {
     };
 
     const handleDetailShow = async () => {
-        setIsDetailOpen(true);
-        const response = await shareAPI.getShareDetail(String(notification.shareId));
-        setSharedTripDetail(response.data);
+        if (notification.message === 'SHARED_APPROVE' && notification.status === 'READ') return;
 
         await shareAPI.updateNotificationStatus(String(notification.notificationId));
+
+        if (notification.shareId) {
+            const response = await shareAPI.getShareDetail(String(notification.shareId));
+            const { status } = response.data;
+
+            if (status === 'PENDING') {
+                setSharedTripDetail(response.data);
+                setIsDetailOpen(true);
+            } else if (status === 'REJECTED') {
+                showToast('이미 거절된 여행입니다');
+            } else {
+                showToast('이미 승인된 여행입니다');
+            }
+        }
     };
 
     const handleShareApprove = async () => {
-        // const response = await shareAPI.updateShareStatus(String(notification.shareId), 'APPROVED');
+        await shareAPI.updateShareStatus(String(notification.shareId), 'APPROVED');
         setIsDetailOpen(false);
         showToast('여행 공유가 수락되었습니다');
-        // console.log(response);
     };
 
     const handleShareReject = async () => {
-        // const response = await shareAPI.updateShareStatus(String(notification.shareId), 'REJECTED');
+        await shareAPI.updateShareStatus(String(notification.shareId), 'REJECTED');
         setIsDetailOpen(false);
         showToast('여행 공유가 거절되었습니다');
-        // console.log(response);
     };
 
     const message =
@@ -94,6 +104,8 @@ const Notification = ({ notification }: NotificationProps) => {
                     notificationStyle,
                     getNotificationStyle(notification.message),
                     getReadStatus(notification.status),
+                    (notification.status === 'UNREAD' || notification.message === 'SHARED_REQUEST') &&
+                        unReadNotificationStyle,
                 ]}
                 onClick={handleDetailShow}
             >
@@ -113,8 +125,8 @@ const Notification = ({ notification }: NotificationProps) => {
                 <ConfirmModal
                     title={`'${sharedTripDetail?.tripTitle}' 여행 공유 요청`}
                     description={`${sharedTripDetail?.ownerNickname}님이 '${sharedTripDetail?.tripTitle}' 여행을 공유했습니다. 수락하시면 여행에 참여할 수 있어요.`}
-                    confirmText='삭제'
-                    cancelText='취소'
+                    confirmText='수락'
+                    cancelText='거절'
                     confirmModal={handleShareApprove}
                     closeModal={handleShareReject}
                 />
@@ -130,6 +142,9 @@ const notificationStyle = css`
     border-radius: 8px;
     display: flex;
     flex-direction: column;
+`;
+
+const unReadNotificationStyle = css`
     cursor: pointer;
     transition: all 0.2s ease;
 

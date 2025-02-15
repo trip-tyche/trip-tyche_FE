@@ -23,6 +23,14 @@ import theme from '@/styles/theme';
 import { TripModel } from '@/types/trip';
 import { validateUserAuth } from '@/utils/validation';
 
+interface Notification {
+    notificationId: number;
+    shareId: number;
+    message: string;
+    status: string;
+    createdAt: string;
+}
+
 const MainPage = () => {
     const [latestTrip, setLatestTrip] = useState(null);
     const [tripCount, setTripCount] = useState(0);
@@ -67,7 +75,7 @@ const MainPage = () => {
 
         const userId = localStorage.getItem('userId') || '';
         const response = await shareAPI.getNotifications(userId);
-        const sharedTripsCount = response.data;
+        const sharedTripsCount = response.data.filter((trip: Notification) => trip.status === 'UNREAD');
 
         setSharedTripsCount(sharedTripsCount.length);
 

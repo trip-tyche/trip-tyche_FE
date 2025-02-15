@@ -57,23 +57,21 @@ export const shareAPI = {
             },
         });
 
-        console.log(response);
         return { isSuccess: true, data: response.data };
     },
 
     // 공유 상태 변경 (수락 / 거절)
     updateShareStatus: async (shareId: string, status: string) => {
         const params = {
-            shareId,
             status,
         };
 
         const token = getToken();
-        const response = await apiClient.patch(`/api/shares/${shareId}`, {
+        const response = await apiClient.patch(`/api/shares/${shareId}`, null, {
+            params,
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-            params,
         });
 
         return { isSuccess: true, data: response.data };

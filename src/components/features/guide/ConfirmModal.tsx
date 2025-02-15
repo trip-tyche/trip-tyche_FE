@@ -13,7 +13,7 @@ export interface ConfirmModalProps {
 }
 
 const ConfirmModal = ({ title, description, confirmText, cancelText, confirmModal, closeModal }: ConfirmModalProps) => (
-    <Modal closeModal={closeModal}>
+    <Modal closeModal={closeModal} isConfirm>
         <h1 css={titleStyle}>{title}</h1>
         <p css={descriptionStyle}>{description}</p>
         <div css={buttonGroup}>

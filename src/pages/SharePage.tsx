@@ -43,9 +43,11 @@ const SharePage = () => {
                 총<span css={count}>{sharedTrips.length}</span>개의 공유가 있습니다
             </p>
             <div css={content}>
-                {sharedTrips.map((trip: SharedTrip) => {
-                    return <Notification key={trip.notificationId} notification={trip} />;
-                })}
+                {[...sharedTrips]
+                    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                    .map((trip: SharedTrip) => (
+                        <Notification key={trip.notificationId} notification={trip} />
+                    ))}
             </div>
         </div>
     );

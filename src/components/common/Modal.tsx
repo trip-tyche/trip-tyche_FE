@@ -7,13 +7,14 @@ import theme from '@/styles/theme';
 
 interface ModalProps {
     closeModal?: () => void;
+    isConfirm?: boolean;
     children: React.ReactNode;
 }
 
-const Modal = ({ closeModal, children }: ModalProps) => {
+const Modal = ({ closeModal, isConfirm = false, children }: ModalProps) => {
     return createPortal(
         <React.Fragment>
-            <div css={overlayStyle} onClick={closeModal}></div>
+            <div css={overlayStyle} onClick={!isConfirm ? closeModal : undefined}></div>
             <div css={modalStyle}>{children}</div>
         </React.Fragment>,
         document.getElementById('portal-root') || document.body,
