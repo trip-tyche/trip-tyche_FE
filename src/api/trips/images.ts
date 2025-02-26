@@ -69,4 +69,8 @@ export const tripImageAPI = {
         });
         return data;
     },
+    getAllImages: async (tripId: string) => {
+        const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/media-files`);
+        return data.data;
+    },
 };

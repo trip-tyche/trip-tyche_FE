@@ -23,12 +23,13 @@ export const useTicketNavigation = (tripId: string) => {
     }, [isAnimating, tripId, navigate]);
 
     const handleCardClick = async () => {
-        const unlocatedImages = await tripImageAPI.fetchUnlocatedImages(tripId);
-
-        if (!unlocatedImages) {
+        const unlocatedImagesDate = await tripImageAPI.fetchUnlocatedImages(tripId);
+        if (!unlocatedImagesDate) {
             setIsAnimating(true);
             return;
         }
+
+        const unlocatedImages = unlocatedImagesDate.map((image) => image.media);
 
         setUnlocatedImagesCount(unlocatedImages.length);
         setIsUnlocatedImageModalOpen(true);
