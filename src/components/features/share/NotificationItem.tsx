@@ -21,6 +21,7 @@ interface NotificationProps {
 
 const NotificationItem = ({ notification }: NotificationProps) => {
     const [isDetailOpen, setIsDetailOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [sharedTripInfo, setSharedTripInfo] = useState<SharedTripInfo>();
 
     const showToast = useToastStore((state) => state.showToast);
@@ -82,11 +83,15 @@ const NotificationItem = ({ notification }: NotificationProps) => {
         showToast('여행 공유가 거절되었습니다');
     };
 
-    const handleNotificationRemove = async (event: React.MouseEvent<HTMLDivElement>) => {
+    const handleDeleteClick = async (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
 
-        // const deletedNotification = [notification.notificationId];
-        // await shareAPI.deleteNotification(deletedNotification);
+        setIsDeleteModalOpen(true);
+    };
+
+    const handleNotificationRemove = async () => {
+        const deletedNotification = [notification.notificationId];
+        await shareAPI.deleteNotification(deletedNotification);
     };
 
     return (
@@ -100,13 +105,24 @@ const NotificationItem = ({ notification }: NotificationProps) => {
                         <p css={sender}>{notification.senderNickname}</p>
                         <p css={createdAt}>{formatDateTime(notification.createdAt).slice(6, 13)}</p>
                     </div>
-                    <div css={removeIcon} onClick={handleNotificationRemove}>
+                    <div css={removeIcon} onClick={handleDeleteClick}>
                         <GoKebabHorizontal />
                     </div>
                 </div>
 
                 <p css={notificationMessage}>{getMessageByType(notification.message)}</p>
             </div>
+
+            {isDeleteModalOpen && (
+                <ConfirmModal
+                    title='알림을 삭제하시겠습니까?'
+                    description='알림을 삭제하면 다시 확인할 수 없어요. 그래도 삭제하시겠습니까?'
+                    confirmText='삭제'
+                    cancelText='취소'
+                    confirmModal={handleNotificationRemove}
+                    closeModal={() => setIsDeleteModalOpen(false)}
+                />
+            )}
 
             {isDetailOpen && (
                 <Modal closeModal={() => setIsDetailOpen(false)}>
