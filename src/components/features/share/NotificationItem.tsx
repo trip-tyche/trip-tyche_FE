@@ -8,7 +8,7 @@ import { shareAPI } from '@/api/trips/share';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
-import SharedTicket from '@/components/features/trip/sharedTicket';
+import SharedTicket from '@/components/features/trip/SharedTicket';
 import { COLORS } from '@/constants/theme';
 import { useToastStore } from '@/stores/useToastStore';
 import { Notification, SharedTripInfo } from '@/types/notification';
