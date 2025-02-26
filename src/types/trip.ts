@@ -14,3 +14,4 @@ export interface TripListModel {
 }
 
 export type TripModelWithoutTripId = Omit<TripModel, 'tripId'>;
+export type TripModelWithoutTripIdAndImagesDate = Omit<TripModel, 'tripId' | 'imagesDate'>;

@@ -61,10 +61,6 @@ interface MediaFile {
     longitude: number;
 }
 
-interface RouteParams {
-    tripId: string;
-}
-
 const TripImageManagePage = () => {
     const navigate = useNavigate();
     const { tripId } = useParams();
@@ -236,7 +232,7 @@ const hoverOverlayStyle = css`
     }
 `;
 
-const selectionOverlayStyle = (isSelected) => css`
+const selectionOverlayStyle = (isSelected: boolean) => css`
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, ${isSelected ? 0.5 : 0.3});
@@ -246,7 +242,7 @@ const selectionOverlayStyle = (isSelected) => css`
     padding: 8px;
 `;
 
-const checkboxStyle = (isSelected) => css`
+const checkboxStyle = (isSelected: boolean) => css`
     width: 24px;
     height: 24px;
     border-radius: 50%;
@@ -258,7 +254,7 @@ const deleteButtonStyle = css`
     background: white;
     border-radius: 50%;
     padding: 8px;
-    color: ${theme.COLORS.RED};
+    color: ${theme.COLORS.TEXT.ERROR};
     border: none;
     cursor: pointer;
 `;
@@ -275,7 +271,7 @@ const buttonContainerStyle = css`
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
 `;
 
-const buttonStyle = (isActive) => css`
+const buttonStyle = (isActive: boolean) => css`
     flex: 1;
     padding: 12px;
     border-radius: 8px;
