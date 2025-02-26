@@ -5,20 +5,13 @@ import { useNavigate } from 'react-router-dom';
 
 import { shareAPI } from '@/api/trips/share';
 import Header from '@/components/common/Header';
-import Notification from '@/components/features/share/Notification';
+import NotificationItem from '@/components/features/share/NotificationItem';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
+import { Notification } from '@/types/notification';
 
-interface SharedTrip {
-    notificationId: number;
-    shareId: number;
-    message: string;
-    status: string;
-    createdAt: string;
-}
-
-const SharePage = () => {
-    const [sharedTrips, setSharedTrips] = useState<SharedTrip[]>();
+const NotificationPage = () => {
+    const [notifications, setNotifications] = useState<Notification[]>();
 
     const navigate = useNavigate();
 
@@ -27,39 +20,37 @@ const SharePage = () => {
             const userId = localStorage.getItem('userId') || '';
             const result = await shareAPI.getNotifications(userId);
 
-            const sharedTrips = result.data;
-            setSharedTrips(sharedTrips);
+            const notifications = result.data;
+            setNotifications(notifications);
         };
 
         getSharedTrips();
     }, []);
 
-    if (!sharedTrips) return;
+    if (!notifications) return;
 
     return (
-        <div css={pageContainer}>
-            <Header title={'여행 공유'} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
-            <p css={notificationCount}>
-                총<span css={count}>{sharedTrips.length}</span>개의 공유가 있습니다
-            </p>
+        <div css={container}>
+            <Header title={'알림'} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
+
             <div css={content}>
-                {[...sharedTrips]
+                {[...notifications]
                     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-                    .map((trip: SharedTrip) => (
-                        <Notification key={trip.notificationId} notification={trip} />
+                    .map((item: Notification) => (
+                        <NotificationItem key={item.notificationId} notification={item} />
                     ))}
             </div>
         </div>
     );
 };
 
-const pageContainer = css`
+const container = css`
     height: 100dvh;
     overflow: auto;
 `;
 
 const content = css`
-    padding: 0 8px;
+    padding: 20px;
 `;
 
 const notificationCount = css`
@@ -76,4 +67,4 @@ const count = css`
     margin: 0 4px;
 `;
 
-export default SharePage;
+export default NotificationPage;

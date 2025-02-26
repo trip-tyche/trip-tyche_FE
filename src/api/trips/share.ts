@@ -60,6 +60,19 @@ export const shareAPI = {
         return { isSuccess: true, data: response.data };
     },
 
+    // 알림 삭제
+    deleteNotification: async (notificationId: number[]) => {
+        const token = getToken();
+
+        const response = await apiClient.patch(`/api/notifications/delete`, notificationId, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return { isSuccess: true, data: response.data };
+    },
+
     // 공유 상태 변경 (수락 / 거절)
     updateShareStatus: async (shareId: string, status: string) => {
         const params = {

@@ -125,6 +125,7 @@ import { createBrowserRouter, Outlet, useLocation, useNavigate } from 'react-rou
 import Spinner from '@/components/common/Spinner';
 import { ROUTES } from '@/constants/paths';
 import RootLayout from '@/layouts/RootLayout';
+import NotificationPage from '@/pages/NotificationPage';
 import { useToastStore } from '@/stores/useToastStore';
 import { validateUserAuth } from '@/utils/validation';
 
@@ -138,7 +139,6 @@ const MainPage = lazy(() => import('@/pages/MainPage'));
 const Onboarding = lazy(() => import('@/pages/Onboarding'));
 const PageNotFound = lazy(() => import('@/pages/PageNotFound'));
 const SettingPage = lazy(() => import('@/pages/SettingPage'));
-const SharePage = lazy(() => import('@/pages/SharePage'));
 
 // 여행 관련 페이지들을 그룹화하여 지연 로딩
 const TripPages = {
@@ -254,7 +254,7 @@ const router = createBrowserRouter([
                     },
                     {
                         path: ROUTES.PATH.SHARE,
-                        element: <SharePage />,
+                        element: <NotificationPage />,
                     },
                     {
                         path: ROUTES.PATH.TRIPS.ROOT,
