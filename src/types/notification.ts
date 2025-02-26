@@ -7,12 +7,8 @@ export interface Notification {
     createdAt: string;
 }
 
-export interface SharedTripDetail {
-    shareId: number;
-    status: string;
+export interface SharedTripInfo {
     ownerNickname: string;
-    recipientNickname: string;
-    tripId: number;
     tripTitle: string;
     country: string;
     startDate: string;

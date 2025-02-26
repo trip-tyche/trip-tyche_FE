@@ -5,10 +5,13 @@ import { TicketsPlane } from 'lucide-react';
 import { GoKebabHorizontal } from 'react-icons/go';
 
 import { shareAPI } from '@/api/trips/share';
+import Button from '@/components/common/Button';
+import Modal from '@/components/common/Modal';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
+import IntroTicket from '@/components/features/trip/IntroTicket';
 import { COLORS } from '@/constants/theme';
 import { useToastStore } from '@/stores/useToastStore';
-import { Notification, SharedTripDetail } from '@/types/notification';
+import { Notification, SharedTripInfo } from '@/types/notification';
 import { formatDateTime } from '@/utils/date';
 
 interface NotificationProps {
@@ -18,7 +21,7 @@ interface NotificationProps {
 
 const NotificationItem = ({ notification }: NotificationProps) => {
     const [isDetailOpen, setIsDetailOpen] = useState(false);
-    const [sharedTripDetail, setSharedTripDetail] = useState<SharedTripDetail>();
+    const [sharedTripInfo, setSharedTripInfo] = useState<SharedTripInfo>();
 
     const showToast = useToastStore((state) => state.showToast);
 
@@ -36,21 +39,34 @@ const NotificationItem = ({ notification }: NotificationProps) => {
     };
 
     const handleDetailShow = async () => {
-        // if (notification.message === 'SHARED_APPROVE' && notification.status === 'READ') return;
-        await shareAPI.updateNotificationStatus(String(notification.notificationId));
+        if (notification.status === 'READ') {
+            await shareAPI.updateNotificationStatus(String(notification.notificationId));
+        }
 
         if (notification.referenceId) {
             const response = await shareAPI.getShareDetail(String(notification.referenceId));
-            const { status } = response.data;
+            const sharedTripInfo = response.data;
 
-            if (status === 'PENDING') {
-                setSharedTripDetail(response.data);
-                setIsDetailOpen(true);
-            } else if (status === 'REJECTED') {
-                showToast('이미 거절된 여행입니다');
-            } else {
-                showToast('이미 승인된 여행입니다');
-            }
+            const tripInfo = {
+                ownerNickname: sharedTripInfo.ownerNickname,
+                tripTitle: sharedTripInfo.tripTitle,
+                country: sharedTripInfo.country,
+                startDate: sharedTripInfo.startDate,
+                endDate: sharedTripInfo.endDate,
+                hashtags: sharedTripInfo.hashtags.split(','),
+            };
+
+            setSharedTripInfo(tripInfo);
+            setIsDetailOpen(true);
+
+            // if (status === 'PENDING') {
+            //     setSharedTripDetail(response.data);
+            //     setIsDetailOpen(true);
+            // } else if (status === 'REJECTED') {
+            //     showToast('이미 거절된 여행입니다');
+            // } else {
+            //     showToast('이미 승인된 여행입니다');
+            // }
         }
     };
 
@@ -93,14 +109,18 @@ const NotificationItem = ({ notification }: NotificationProps) => {
             </div>
 
             {isDetailOpen && (
-                <ConfirmModal
-                    title={`'${sharedTripDetail?.tripTitle}' 여행 공유 요청`}
-                    description={`${sharedTripDetail?.ownerNickname}님이 '${sharedTripDetail?.tripTitle}' 여행을 공유했습니다. 수락하시면 여행에 참여할 수 있어요.`}
-                    confirmText='수락'
-                    cancelText='거절'
-                    confirmModal={handleShareApprove}
-                    closeModal={handleShareReject}
-                />
+                <Modal closeModal={() => setIsDetailOpen(false)}>
+                    <div css={sharedTripInfoStyle}>
+                        <IntroTicket
+                            userNickname={sharedTripInfo?.ownerNickname || ''}
+                            trip={sharedTripInfo as SharedTripInfo}
+                        />
+                        <div css={buttonGroup}>
+                            <Button text={'거절하기'} variant='white' onClick={handleShareReject} />
+                            <Button text={'수락하기'} onClick={handleShareApprove} />
+                        </div>
+                    </div>
+                </Modal>
             )}
         </>
     );
@@ -179,6 +199,16 @@ const notificationMessage = css`
     margin-left: 2px;
     font-size: 14px;
     line-height: 1.3;
+`;
+
+const sharedTripInfoStyle = css`
+    padding: 8px;
+`;
+
+const buttonGroup = css`
+    display: flex;
+    margin-bottom: 4px;
+    gap: 8px;
 `;
 
 export default NotificationItem;

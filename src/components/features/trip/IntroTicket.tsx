@@ -4,11 +4,11 @@ import { IoAirplaneSharp } from 'react-icons/io5';
 import characterImg from '@/assets/images/character-1.png';
 import { useTicket3DEffect } from '@/hooks/useTicket3DEffect';
 import theme from '@/styles/theme';
-import { TripModel } from '@/types/trip';
+import { TripModelWithoutTripIdAndImagesDate } from '@/types/trip';
 import { formatToDot } from '@/utils/date';
 
 interface IntroTicketProps {
-    trip: TripModel;
+    trip: TripModelWithoutTripIdAndImagesDate;
     userNickname: string;
 }
 
