@@ -2,7 +2,6 @@ import { css } from '@emotion/react';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
 import characterImg from '@/assets/images/character-1.png';
-import { useTicket3DEffect } from '@/hooks/useTicket3DEffect';
 import theme from '@/styles/theme';
 import { TripModelWithoutTripIdAndImagesDate } from '@/types/trip';
 import { formatToDot } from '@/utils/date';
@@ -12,21 +11,11 @@ interface IntroTicketProps {
     userNickname: string;
 }
 
-const IntroTicket = ({ trip, userNickname }: IntroTicketProps) => {
+const SharedTicket = ({ trip, userNickname }: IntroTicketProps) => {
     const { tripTitle, country, startDate, endDate, hashtags } = trip;
 
-    const { ticketStyle, handlers } = useTicket3DEffect();
-
     return (
-        <article
-            css={[ticketContainer, interactionTicketStyle]}
-            style={ticketStyle}
-            onMouseMove={handlers.handleMouseMove}
-            onMouseLeave={handlers.handleMouseLeave}
-            onTouchStart={handlers.handleTouchStart}
-            onTouchMove={handlers.handleTouchMove}
-            onTouchEnd={handlers.handleTouchEnd}
-        >
+        <article css={[ticketContainer, interactionTicketStyle]}>
             <section css={leftContent}>
                 <header css={leftTopSection}>
                     <div>
@@ -73,7 +62,6 @@ const IntroTicket = ({ trip, userNickname }: IntroTicketProps) => {
                 </div>
                 <div css={rightContent}>
                     <img css={imageStyle} src={characterImg} alt='캐릭터' />
-                    <p css={textStyle}>Move Ticket</p>
                 </div>
             </aside>
         </article>
@@ -203,10 +191,4 @@ const imageStyle = css`
     width: 48px;
 `;
 
-const textStyle = css`
-    font-size: ${theme.FONT_SIZES.MD};
-    font-weight: 600;
-    color: ${theme.COLORS.TEXT.DESCRIPTION};
-`;
-
-export default IntroTicket;
+export default SharedTicket;

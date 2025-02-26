@@ -8,7 +8,7 @@ import { shareAPI } from '@/api/trips/share';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
-import IntroTicket from '@/components/features/trip/IntroTicket';
+import SharedTicket from '@/components/features/trip/sharedTicket';
 import { COLORS } from '@/constants/theme';
 import { useToastStore } from '@/stores/useToastStore';
 import { Notification, SharedTripInfo } from '@/types/notification';
@@ -31,16 +31,24 @@ const NotificationItem = ({ notification }: NotificationProps) => {
 
         switch (message) {
             case 'SHARED_REQUEST':
-                return '새로운 티켓 공유 요청이 도착했습니다';
+                return <p css={notificationMessage}>새로운 티켓 공유 요청이 도착했습니다</p>;
             case 'SHARED_APPROVE':
-                return '티켓 공유 요청을 승인했어요';
+                return (
+                    <p css={notificationMessage}>
+                        상대방이 티켓 공유 요청을 <span css={statusStyle(true)}>승인</span>했어요
+                    </p>
+                );
             case 'SHARED_REJECTED':
-                return '티켓 공유 요청을 거절했어요';
+                return (
+                    <p css={notificationMessage}>
+                        상대방이 티켓 공유 요청을 <span css={statusStyle(false)}>거절</span>했어요
+                    </p>
+                );
         }
     };
 
     const handleDetailShow = async () => {
-        if (notification.status === 'READ') {
+        if (notification.status === 'UNREAD') {
             await shareAPI.updateNotificationStatus(String(notification.notificationId));
         }
 
@@ -50,6 +58,7 @@ const NotificationItem = ({ notification }: NotificationProps) => {
 
             const tripInfo = {
                 ownerNickname: sharedTripInfo.ownerNickname,
+                status: sharedTripInfo.status,
                 tripTitle: sharedTripInfo.tripTitle,
                 country: sharedTripInfo.country,
                 startDate: sharedTripInfo.startDate,
@@ -57,13 +66,10 @@ const NotificationItem = ({ notification }: NotificationProps) => {
                 hashtags: sharedTripInfo.hashtags.split(','),
             };
 
+            // if (notification.status === 'PENDING') {
             setSharedTripInfo(tripInfo);
             setIsDetailOpen(true);
-
-            // if (status === 'PENDING') {
-            //     setSharedTripDetail(response.data);
-            //     setIsDetailOpen(true);
-            // } else if (status === 'REJECTED') {
+            // } else if (notification.status === 'REJECTED') {
             //     showToast('이미 거절된 여행입니다');
             // } else {
             //     showToast('이미 승인된 여행입니다');
@@ -91,7 +97,12 @@ const NotificationItem = ({ notification }: NotificationProps) => {
 
     const handleNotificationRemove = async () => {
         const deletedNotification = [notification.notificationId];
-        await shareAPI.deleteNotification(deletedNotification);
+        const response = await shareAPI.deleteNotification(deletedNotification);
+
+        if (response.isSuccess) {
+            showToast('알림이 삭제되었습니다');
+            setIsDeleteModalOpen(false);
+        }
     };
 
     return (
@@ -110,7 +121,7 @@ const NotificationItem = ({ notification }: NotificationProps) => {
                     </div>
                 </div>
 
-                <p css={notificationMessage}>{getMessageByType(notification.message)}</p>
+                {getMessageByType(notification.message)}
             </div>
 
             {isDeleteModalOpen && (
@@ -127,14 +138,40 @@ const NotificationItem = ({ notification }: NotificationProps) => {
             {isDetailOpen && (
                 <Modal closeModal={() => setIsDetailOpen(false)}>
                     <div css={sharedTripInfoStyle}>
-                        <IntroTicket
+                        <SharedTicket
                             userNickname={sharedTripInfo?.ownerNickname || ''}
                             trip={sharedTripInfo as SharedTripInfo}
                         />
-                        <div css={buttonGroup}>
-                            <Button text={'거절하기'} variant='white' onClick={handleShareReject} />
-                            <Button text={'수락하기'} onClick={handleShareApprove} />
-                        </div>
+                        {sharedTripInfo?.status === 'PENDING' && (
+                            <div css={buttonGroup}>
+                                <Button text={'거절하기'} variant='white' onClick={handleShareReject} />
+                                <Button text={'수락하기'} onClick={handleShareApprove} />
+                            </div>
+                        )}
+                        {sharedTripInfo?.status === 'REJECTED' && (
+                            <>
+                                <p css={descriptionStyle}>이미 거절된 요청입니다</p>
+                                <div css={buttonGroup}>
+                                    <Button
+                                        text={'목록으로 돌아가기'}
+                                        variant='white'
+                                        onClick={() => setIsDetailOpen(false)}
+                                    />
+                                </div>
+                            </>
+                        )}
+                        {sharedTripInfo?.status === 'APPROVED' && (
+                            <>
+                                <p css={descriptionStyle}>이미 승인된 요청입니다</p>
+                                <div css={buttonGroup}>
+                                    <Button
+                                        text={'목록으로 돌아가기'}
+                                        variant='white'
+                                        onClick={() => setIsDetailOpen(false)}
+                                    />
+                                </div>
+                            </>
+                        )}
                     </div>
                 </Modal>
             )}
@@ -217,7 +254,14 @@ const notificationMessage = css`
     line-height: 1.3;
 `;
 
+const statusStyle = (isApproved: boolean) => css`
+    margin: 0 2px;
+    font-weight: bold;
+    color: ${isApproved ? COLORS.PRIMARY : COLORS.TEXT.ERROR};
+`;
+
 const sharedTripInfoStyle = css`
+    width: 100%;
     padding: 8px;
 `;
 
@@ -225,6 +269,14 @@ const buttonGroup = css`
     display: flex;
     margin-bottom: 4px;
     gap: 8px;
+`;
+
+const descriptionStyle = css`
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: ${COLORS.TEXT.DESCRIPTION_LIGHT};
+    margin-bottom: 16px;
 `;
 
 export default NotificationItem;

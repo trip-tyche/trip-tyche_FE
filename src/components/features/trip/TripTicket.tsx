@@ -320,7 +320,7 @@ const rightContent = css`
 `;
 
 const imageStyle = css`
-    width: 55px;
+    width: 48px;
 `;
 
 const textStyle = css`

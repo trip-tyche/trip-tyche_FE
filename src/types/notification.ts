@@ -9,6 +9,7 @@ export interface Notification {
 
 export interface SharedTripInfo {
     ownerNickname: string;
+    status: string;
     tripTitle: string;
     country: string;
     startDate: string;

@@ -7,7 +7,6 @@ import { shareAPI } from '@/api/trips/share';
 import Header from '@/components/common/Header';
 import NotificationItem from '@/components/features/share/NotificationItem';
 import { ROUTES } from '@/constants/paths';
-import { COLORS } from '@/constants/theme';
 import { Notification } from '@/types/notification';
 
 const NotificationPage = () => {
@@ -51,20 +50,6 @@ const container = css`
 
 const content = css`
     padding: 20px;
-`;
-
-const notificationCount = css`
-    display: flex;
-    align-items: center;
-    padding: 16px 12px;
-    font-size: 14px;
-`;
-
-const count = css`
-    color: ${COLORS.PRIMARY};
-    font-size: 16px;
-    font-weight: bold;
-    margin: 0 4px;
 `;
 
 export default NotificationPage;
