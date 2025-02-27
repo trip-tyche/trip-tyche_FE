@@ -7,7 +7,7 @@ import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
 import { shareAPI } from '@/api/trips/share';
-import characterImg from '@/assets/images/character-1.png';
+import characterImg from '@/assets/images/character-ogami-1.png';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import InputModal from '@/components/features/guide/InputModal';
 import { useTicketHandler } from '@/hooks/useTicketHandler';

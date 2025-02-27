@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
-import characterImg from '@/assets/images/character-1.png';
+import characterImg from '@/assets/images/character-ogami-1.png';
 import { useTicket3DEffect } from '@/hooks/useTicket3DEffect';
 import theme from '@/styles/theme';
 import { TripModelWithoutTripIdAndImagesDate } from '@/types/trip';

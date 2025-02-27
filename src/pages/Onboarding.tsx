@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import { Navigate } from 'react-router-dom';
 
-import imageLeft from '@/assets/images/character-1.png';
-import imageRight from '@/assets/images/character-2.png';
+import imageRight from '@/assets/images/character-ogami-1.png';
+import imageLeft from '@/assets/images/character-ogami-2.png';
 import { ROUTES } from '@/constants/paths';
 import theme from '@/styles/theme';
 

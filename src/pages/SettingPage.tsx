@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { User, MessageCircle, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import character from '@/assets/images/character-1.png';
+import character from '@/assets/images/character-ogami-1.png';
 import Header from '@/components/common/Header';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import NickNameForm from '@/components/features/user/NickNameForm';
