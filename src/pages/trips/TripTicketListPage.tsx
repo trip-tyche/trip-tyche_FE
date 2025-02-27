@@ -69,7 +69,7 @@ const TripTicketListPage = () => {
 
     return (
         <div css={pageContainer}>
-            <Header title={ROUTES.PATH_TITLE.TRIPS.ROOT} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
+            <Header title='나의 여행 티켓' isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
 
             <div css={listHeaderStyle}>
                 <div css={listSummaryStyle}>

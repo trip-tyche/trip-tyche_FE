@@ -1,47 +1,3 @@
-// import { css } from '@emotion/react';
-// import { useNavigate, useParams } from 'react-router-dom';
-
-// import Header from '@/components/common/Header';
-// import { ROUTES } from '@/constants/paths';
-
-// const TripImageManagePage = () => {
-//     const navigate = useNavigate();
-//     const { tripId } = useParams();
-
-//     const navigateBeforePage = () => {
-//         navigate(-1);
-//     };
-
-//     const navigateImageAdd = () => {
-//         navigate(ROUTES.PATH.TRIPS.NEW.IMAGES(Number(tripId)));
-//     };
-
-//     return (
-//         <div css={containerStyle}>
-//             <Header title={ROUTES.PATH_TITLE.TRIPS.NEW.IMAGES} isBackButton onBack={navigateBeforePage} />
-//             <main css={mainStyle}>
-//                 <button onClick={navigateImageAdd}>새로운 사진 추가</button>
-//                 <button>삭제</button>
-//             </main>
-//         </div>
-//     );
-// };
-
-// const containerStyle = css`
-//     height: 100dvh;
-//     display: flex;
-//     flex-direction: column;
-// `;
-
-// const mainStyle = css`
-//     flex: 1;
-//     padding: 20px;
-//     display: flex;
-//     flex-direction: column;
-// `;
-
-// export default TripImageManagePage;
-
 import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
@@ -52,14 +8,7 @@ import { tripImageAPI } from '@/api';
 import Header from '@/components/common/Header';
 import { ROUTES } from '@/constants/paths';
 import theme from '@/styles/theme';
-
-interface MediaFile {
-    mediaFileId: number;
-    mediaLink: string;
-    recordDate: string;
-    latitude: number;
-    longitude: number;
-}
+import { MediaFile } from '@/types/media';
 
 const TripImageManagePage = () => {
     const navigate = useNavigate();
@@ -69,10 +18,11 @@ const TripImageManagePage = () => {
     const [isSelectionMode, setIsSelectionMode] = useState(false);
 
     useEffect(() => {
-        const fetchTripImages = async () => {
+        const getTripImages = async () => {
             try {
                 if (!tripId) return;
-                const response = await tripImageAPI.getAllImages(tripId);
+
+                const response = await tripImageAPI.getTripImages(tripId);
                 setMediaFiles(response.mediaFiles);
             } catch (error) {
                 console.error('Failed to fetch images:', error);
@@ -80,19 +30,8 @@ const TripImageManagePage = () => {
             }
         };
 
-        fetchTripImages();
+        getTripImages();
     }, [tripId]);
-
-    const navigateBeforePage = () => {
-        navigate(`${ROUTES.PATH.TRIPS.ROOT}`);
-    };
-
-    console.log(mediaFiles);
-
-    const navigateImageAdd = () => {
-        if (!tripId) return;
-        navigate(ROUTES.PATH.TRIPS.NEW.IMAGES(Number(tripId)));
-    };
 
     const handleDeleteImages = async (imagesToDelete: MediaFile[]) => {
         try {
@@ -112,73 +51,10 @@ const TripImageManagePage = () => {
         }
     };
 
-    const toggleImageSelection = (image: MediaFile) => {
-        if (!isSelectionMode) return;
-
-        setSelectedImages((prev) => {
-            const isSelected = prev.some((img) => img.mediaFileId === image.mediaFileId);
-            if (isSelected) {
-                return prev.filter((img) => img.mediaFileId !== image.mediaFileId);
-            }
-            return [...prev, image];
-        });
-    };
-
-    const isImageSelected = (image: MediaFile): boolean =>
-        selectedImages.some((img) => img.mediaFileId === image.mediaFileId);
-
     return (
         <div css={containerStyle}>
-            <Header title={ROUTES.PATH_TITLE.TRIPS.NEW.IMAGES} isBackButton onBack={navigateBeforePage} />
-            <main css={mainStyle}>
-                <div css={gridContainer}>
-                    {mediaFiles.map((image, index) => (
-                        <div
-                            key={image.mediaFileId}
-                            css={imageContainerStyle}
-                            onClick={() => toggleImageSelection(image)}
-                        >
-                            <img src={image.mediaLink} alt={`Trip image ${index + 1}`} css={imageStyle} />
-                            {isSelectionMode ? (
-                                <div css={selectionOverlayStyle(isImageSelected(image))}>
-                                    <div css={checkboxStyle(isImageSelected(image))} />
-                                </div>
-                            ) : (
-                                <div css={hoverOverlayStyle}>
-                                    <button
-                                        css={deleteButtonStyle}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleDeleteImages([image]);
-                                        }}
-                                    >
-                                        <Trash2 size={20} />
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
-                <div css={buttonContainerStyle}>
-                    <button css={buttonStyle(isSelectionMode)} onClick={() => setIsSelectionMode(!isSelectionMode)}>
-                        {isSelectionMode ? '선택 취소' : '사진 선택'}
-                    </button>
-                    {isSelectionMode ? (
-                        <button
-                            css={[buttonStyle(true), deleteButtonTextStyle]}
-                            onClick={() => handleDeleteImages(selectedImages)}
-                            disabled={selectedImages.length === 0}
-                        >
-                            선택 삭제 ({selectedImages.length})
-                        </button>
-                    ) : (
-                        <button css={buttonStyle(false)} onClick={navigateImageAdd}>
-                            <Plus size={20} />
-                            새로운 사진 추가
-                        </button>
-                    )}
-                </div>
-            </main>
+            <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.TRIPS.ROOT)} />
+            <main css={mainStyle}></main>
         </div>
     );
 };
@@ -191,7 +67,7 @@ const containerStyle = css`
 
 const mainStyle = css`
     flex: 1;
-    padding: 20px;
+    /* padding: 20px; */
     display: flex;
     flex-direction: column;
 `;

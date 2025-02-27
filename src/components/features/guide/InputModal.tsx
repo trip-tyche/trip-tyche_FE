@@ -16,6 +16,7 @@ export interface InputModalProps {
     confirmModal?: () => void;
     closeModal?: () => void;
     disabled: boolean;
+    placeholder?: string;
 }
 
 const InputModal = ({
@@ -29,6 +30,7 @@ const InputModal = ({
     confirmModal,
     closeModal,
     disabled,
+    placeholder,
 }: InputModalProps) => {
     return (
         <Modal closeModal={closeModal}>
@@ -36,7 +38,7 @@ const InputModal = ({
             <p css={descriptionStyle}>{description}</p>
 
             <div css={inputWrapper}>
-                <Input value={value} onChange={onChange} />
+                <Input value={value} onChange={onChange} placeholder={placeholder} />
                 {error && <p css={errorMessage}>{error}</p>}
             </div>
             <div css={buttonGroup}>
@@ -53,12 +55,12 @@ const titleStyle = css`
     font-weight: 600;
     color: #181818;
     margin-top: 24px;
-    margin-bottom: 14px;
+    margin-bottom: 20px;
 `;
 
 const descriptionStyle = css`
     font-size: 14px;
-    margin: 8px 26px 22px 26px;
+    margin: 0 26px 20px 26px;
     text-align: center;
     color: #5e5e5e;
     line-height: 20px;
@@ -75,16 +77,13 @@ const buttonGroup = css`
 const inputWrapper = css`
     position: relative;
     width: 90%;
-    margin-bottom: 44px;
+    margin-bottom: 20px;
 `;
 
 const errorMessage = css`
+    margin-top: 8px;
+    margin-left: 4px;
     text-align: center;
-    width: 100%;
-    position: absolute;
-    bottom: -22px;
-    left: 50%;
-    transform: translateX(-50%);
     color: ${theme.COLORS.TEXT.ERROR};
     font-size: ${theme.FONT_SIZES.MD};
 `;

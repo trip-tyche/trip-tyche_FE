@@ -69,8 +69,9 @@ export const tripImageAPI = {
         });
         return data;
     },
-    getAllImages: async (tripId: string) => {
-        const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/media-files`);
-        return data.data;
+    // 여행에 등록된 모든 이미지 조회
+    getTripImages: async (tripId: string) => {
+        const response = await apiClient.get(`/api/trips/${tripId}/media-files`);
+        return response.data;
     },
 };

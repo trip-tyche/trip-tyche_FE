@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { css, keyframes } from '@emotion/react';
 import { AxiosError } from 'axios';
-import { ImagePlus, Bell } from 'lucide-react';
+import { ImagePlus, Share2 } from 'lucide-react';
 import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
@@ -136,17 +136,17 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
 
             {isOwner ? (
                 <footer css={buttonGroup}>
-                    <button css={buttonStyle} onClick={() => setIsShareModalOpen(true)}>
-                        <Bell size={16} /> 티켓 공유
+                    <button css={buttonStyle} onClick={handleTripEdit}>
+                        <FaPencilAlt size={14} /> 티켓 수정
                     </button>
                     <button css={buttonStyle} onClick={handleImageUpload}>
                         <ImagePlus size={16} /> 사진 관리
                     </button>
-                    <button css={buttonStyle} onClick={handleTripEdit}>
-                        <FaPencilAlt size={12} /> 여행 수정
+                    <button css={buttonStyle} onClick={() => setIsShareModalOpen(true)}>
+                        <Share2 size={16} /> 티켓 공유
                     </button>
                     <button css={buttonStyle} onClick={handleTripDelete}>
-                        <FaTrashAlt size={12} /> 여행 삭제
+                        <FaTrashAlt size={14} /> 티켓 삭제
                     </button>
                 </footer>
             ) : (
@@ -155,8 +155,8 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
 
             {isModalOpen && (
                 <ConfirmModal
-                    title='보더패스를 삭제하시겠습니까?'
-                    description='보더패스를 삭제하면 해당 여행의 정보와 사진들은 다시 복구할 수 없어요. 그래도 삭제하시겠습니까?'
+                    title='여행 티켓을 삭제하시겠습니까?'
+                    description='여행 티켓을 삭제하면 해당 여행의 정보와 사진들은 다시 복구할 수 없습니다. 그래도 삭제하시겠습니까?'
                     confirmText='삭제'
                     cancelText='취소'
                     confirmModal={deleteTrip}
@@ -178,10 +178,10 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
                     error={error}
                     value={inputValue}
                     onChange={(inputValue) => setInputValue(inputValue)}
-                    title='여행 공유하기'
-                    description='함께 여행을 관리할 여행자를 입력해주세요'
+                    title='티켓 공유하기'
+                    description='함께 여행 티켓을 관리할 친구를 추가해 보세요! 친구에게 초대 알림이 전송됩니다'
                     confirmText='공유하기'
-                    cancelText='나가기'
+                    cancelText='취소'
                     confirmModal={handleTripShare}
                     closeModal={() => {
                         setIsShareModalOpen(false);
@@ -189,6 +189,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
                         setError('');
                     }}
                     disabled={isLoading}
+                    placeholder='친구의 닉네임을 입력해주세요'
                 />
             )}
         </div>

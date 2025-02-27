@@ -8,7 +8,7 @@ import theme from '@/styles/theme';
 import { UnlocatedMediaFile } from '@/types/media';
 
 interface ImageGridProps {
-    imageSize: number;
+    imageSize?: number;
     // displayedImages: ImageModel[];
     displayedImages: UnlocatedMediaFile[];
     selectedImages: UnlocatedMediaFile[];
@@ -16,7 +16,7 @@ interface ImageGridProps {
     onHashtagSelect: (image: UnlocatedMediaFile) => void;
 }
 
-const ImageGrid = ({ imageSize, displayedImages, selectedImages, onHashtagSelect }: ImageGridProps) => {
+const ImageGrid = ({ imageSize = 3, displayedImages, selectedImages, onHashtagSelect }: ImageGridProps) => {
     const [images, setImages] = useState<UnlocatedMediaFile[]>([]);
     const [allImagesLoaded, setAllImagesLoaded] = useState(false);
 
@@ -86,11 +86,13 @@ const gridStyle = (imageSize: number) => css`
 `;
 
 const imageContainerStyle = css`
-    position: relative;
-    cursor: pointer;
     width: 100%;
     height: 100%;
+    position: relative;
+    cursor: pointer;
     aspect-ratio: 1;
+    border-radius: 12px;
+    overflow: hidden;
 `;
 
 const imageStyle = css`

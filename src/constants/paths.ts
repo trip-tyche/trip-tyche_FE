@@ -43,7 +43,7 @@ export const ROUTES = {
                 LOCATIONS: '위치 등록',
                 INFO: '여행 정보 입력',
             },
-            EDIT: '여행 정보 수정',
+            EDIT: '여행 티켓 수정',
             TIMELINE: {
                 MAP: '타임라인 지도',
                 PINPOINT: '핀포인트',

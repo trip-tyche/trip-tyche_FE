@@ -28,7 +28,7 @@ const headerStyle = css`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 54px;
+    min-height: 48px;
     position: relative;
     border-bottom: 1px solid ${theme.COLORS.BORDER};
     background-color: ${theme.COLORS.TEXT.WHITE};

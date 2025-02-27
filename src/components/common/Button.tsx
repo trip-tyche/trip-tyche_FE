@@ -47,7 +47,7 @@ const buttonStyles = {
         justify-content: center;
         align-items: center;
         border: 0;
-        border-radius: 16px;
+        border-radius: 12px;
         width: 100%;
         height: 48px;
         cursor: pointer;
