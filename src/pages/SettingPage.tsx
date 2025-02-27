@@ -48,11 +48,6 @@ const SettingPage = () => {
             icon: <MessageCircle size={20} color={theme.COLORS.TEXT.BLACK} />,
             handleButtonClick: handleContact,
         },
-        {
-            text: '로그아웃',
-            icon: <LogOut size={20} color={theme.COLORS.TEXT.BLACK} />,
-            handleButtonClick: handleLogout,
-        },
     ];
 
     return (
@@ -74,15 +69,23 @@ const SettingPage = () => {
                             여행자,<span css={nickNameStyle}>{userNickName}</span>
                         </p>
                     </div>
+
                     <div css={buttonGroup}>
-                        {settingButtons.map((button, index) => (
-                            <SettingButton
-                                key={index}
-                                text={button.text}
-                                icon={button.icon}
-                                onClick={button.handleButtonClick}
-                            />
-                        ))}
+                        <div css={optionList}>
+                            {settingButtons.map((button, index) => (
+                                <SettingButton
+                                    key={index}
+                                    text={button.text}
+                                    icon={button.icon}
+                                    onClick={button.handleButtonClick}
+                                />
+                            ))}
+                        </div>
+                        <SettingButton
+                            text='로그아웃'
+                            icon={<LogOut size={20} color={theme.COLORS.TEXT.BLACK} />}
+                            onClick={handleLogout}
+                        />
                     </div>
                 </main>
             )}
@@ -107,6 +110,7 @@ const pageContainer = css`
 `;
 
 const mainStyle = css`
+    height: calc(100% - 44px);
     padding: 20px;
 `;
 
@@ -152,6 +156,13 @@ const nickNameStyle = css`
 `;
 
 const buttonGroup = css`
+    height: calc(100% - 54px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+`;
+
+const optionList = css`
     display: flex;
     flex-direction: column;
 `;

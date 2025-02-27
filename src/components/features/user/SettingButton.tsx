@@ -22,7 +22,7 @@ const buttonStyle = css`
     align-items: center;
     border: none;
     background-color: transparent;
-    padding: 15px 0;
+    padding: 15px 4px;
     cursor: pointer;
     color: ${theme.COLORS.TEXT.BLACK};
 `;

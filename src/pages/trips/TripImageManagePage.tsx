@@ -1,21 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment, useMemo } from 'react';
 
 import { css } from '@emotion/react';
-import { Trash2, Plus } from 'lucide-react';
+// import { Trash2, Plus } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { tripImageAPI } from '@/api';
 import Header from '@/components/common/Header';
+import ImageGrid1 from '@/components/features/image/ImageGrid1';
 import { ROUTES } from '@/constants/paths';
 import theme from '@/styles/theme';
-import { MediaFile } from '@/types/media';
+import { MediaFile, MediaFileWithDate } from '@/types/media';
+import { formatToKorean } from '@/utils/date';
 
 const TripImageManagePage = () => {
     const navigate = useNavigate();
     const { tripId } = useParams();
-    const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
-    const [selectedImages, setSelectedImages] = useState<MediaFile[]>([]);
-    const [isSelectionMode, setIsSelectionMode] = useState(false);
+    const [tripImages, setTripImages] = useState<MediaFile[]>([]);
+    // const [selectedImages, setSelectedImages] = useState<MediaFile[]>([]);
+    // const [isSelectionMode, setIsSelectionMode] = useState(false);
 
     useEffect(() => {
         const getTripImages = async () => {
@@ -23,9 +25,9 @@ const TripImageManagePage = () => {
                 if (!tripId) return;
 
                 const response = await tripImageAPI.getTripImages(tripId);
-                setMediaFiles(response.mediaFiles);
+                setTripImages(response.mediaFiles);
             } catch (error) {
-                console.error('Failed to fetch images:', error);
+                console.error('여행 이미지 조회 실패', error);
                 // TODO: 에러 처리 추가
             }
         };
@@ -33,28 +35,70 @@ const TripImageManagePage = () => {
         getTripImages();
     }, [tripId]);
 
-    const handleDeleteImages = async (imagesToDelete: MediaFile[]) => {
-        try {
-            // TODO: API 호출로 이미지 삭제 구현
-            // await tripImageAPI.deleteImages(imagesToDelete.map(img => img.mediaFileId));
+    const imageGroupByDate = useMemo(() => {
+        const grouped = tripImages.reduce<Record<string, MediaFileWithDate>>((acc, curr) => {
+            const date = curr.recordDate.split('T')[0];
 
-            setMediaFiles((prev) =>
-                prev.filter(
-                    (image) => !imagesToDelete.some((deleteImage) => deleteImage.mediaFileId === image.mediaFileId),
-                ),
-            );
-            setSelectedImages([]);
-            setIsSelectionMode(false);
-        } catch (error) {
-            console.error('Failed to delete images:', error);
-            // TODO: 에러 처리 추가
-        }
-    };
+            if (!acc[date]) {
+                acc[date] = { recordDate: date, images: [curr] };
+            } else {
+                acc[date].images = [...acc[date].images, curr];
+            }
+            return acc;
+        }, {});
+
+        return Object.values(grouped);
+    }, [tripImages]);
+
+    // const handleDeleteImages = async (imagesToDelete: MediaFile[]) => {
+    //     try {
+    //         // TODO: API 호출로 이미지 삭제 구현
+    //         // await tripImageAPI.deleteImages(imagesToDelete.map(img => img.mediaFileId));
+
+    //         setTripImages((prev) =>
+    //             prev.filter(
+    //                 (image) => !imagesToDelete.some((deleteImage) => deleteImage.mediaFileId === image.mediaFileId),
+    //             ),
+    //         );
+    //         setSelectedImages([]);
+    //         setIsSelectionMode(false);
+    //     } catch (error) {
+    //         console.error('Failed to delete images:', error);
+    //         // TODO: 에러 처리 추가
+    //     }
+    // };
+
+    if (!tripImages) return null;
 
     return (
         <div css={containerStyle}>
             <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.TRIPS.ROOT)} />
-            <main css={mainStyle}></main>
+            <main css={mainStyle}>
+                {/* <div css={header}>
+                    <Select
+                        defaultValue='모든 사진'
+                        data={['모든 사진', '위치 정보 없음', '날짜 정보 없음']}
+                        size='sm'
+                        radius='sm'
+                        allowDeselect={false}
+                        w={120}
+                        styles={{
+                            input: {},
+                        }}
+                    />
+                    <div css={selectButton}>선택</div>
+                </div> */}
+                {imageGroupByDate?.map((image) => (
+                    <Fragment key={image.recordDate}>
+                        <h2 css={dateStyle}>{formatToKorean(image.recordDate.split('T')[0])}</h2>
+                        <ImageGrid1
+                            displayedImages={image.images}
+                            selectedImages={[]}
+                            onHashtagSelect={() => console.log('select')}
+                        />
+                    </Fragment>
+                ))}
+            </main>
         </div>
     );
 };
@@ -63,112 +107,43 @@ const containerStyle = css`
     height: 100dvh;
     display: flex;
     flex-direction: column;
+    overflow: auto;
 `;
 
 const mainStyle = css`
     flex: 1;
-    /* padding: 20px; */
     display: flex;
     flex-direction: column;
 `;
 
-const gridContainer = css`
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    padding-bottom: 80px;
-`;
+// const header = css`
+//     padding: 4px;
+//     position: relative;
+//     display: flex;
+//     justify-content: space-between;
+//     align-items: center;
+// `;
 
-const imageContainerStyle = css`
-    position: relative;
-    aspect-ratio: 1;
-    cursor: pointer;
-    border-radius: 8px;
-    overflow: hidden;
-`;
+// const selectButton = css`
+//     padding: 8px 12px;
+//     position: fixed;
+//     right: calc(50% - 206px);
+//     top: 54px;
+//     background-color: ${COLORS.SECONDARY};
+//     color: ${COLORS.TEXT.WHITE};
+//     font-size: 14px;
+//     font-weight: 500;
+//     border-radius: 14px;
+//     z-index: 50;
+// `;
 
-const imageStyle = css`
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-`;
-
-const hoverOverlayStyle = css`
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.2s;
-
-    &:hover {
-        opacity: 1;
-    }
-`;
-
-const selectionOverlayStyle = (isSelected: boolean) => css`
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, ${isSelected ? 0.5 : 0.3});
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-end;
-    padding: 8px;
-`;
-
-const checkboxStyle = (isSelected: boolean) => css`
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 2px solid white;
-    background: ${isSelected ? theme.COLORS.PRIMARY : 'transparent'};
-`;
-
-const deleteButtonStyle = css`
-    background: white;
-    border-radius: 50%;
-    padding: 8px;
-    color: ${theme.COLORS.TEXT.ERROR};
-    border: none;
-    cursor: pointer;
-`;
-
-const buttonContainerStyle = css`
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 16px;
-    display: flex;
-    gap: 8px;
-    background: white;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-`;
-
-const buttonStyle = (isActive: boolean) => css`
-    flex: 1;
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    background: ${isActive ? theme.COLORS.PRIMARY : theme.COLORS.TEXT.DESCRIPTION_LIGHT};
-    color: ${isActive ? 'white' : theme.COLORS.PRIMARY};
-
-    &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-`;
-
-const deleteButtonTextStyle = css`
-    background: ${theme.COLORS.TEXT.ERROR};
+const dateStyle = css`
+    font-size: ${theme.FONT_SIZES.XL};
+    font-weight: bold;
+    padding: 12px 0 12px 12px;
+    background-color: #eee;
+    border-bottom: 1px solid ${theme.COLORS.BORDER};
+    border-top: 1px solid ${theme.COLORS.BORDER};
 `;
 
 export default TripImageManagePage;

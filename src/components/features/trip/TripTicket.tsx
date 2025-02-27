@@ -10,6 +10,7 @@ import { shareAPI } from '@/api/trips/share';
 import characterImg from '@/assets/images/character-ogami-1.png';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import InputModal from '@/components/features/guide/InputModal';
+import { COLORS } from '@/constants/theme';
 import { useTicketHandler } from '@/hooks/useTicketHandler';
 import { useTicketNavigation } from '@/hooks/useTicketNavigation';
 import { useToastStore } from '@/stores/useToastStore';
@@ -345,7 +346,8 @@ const animateRight = css`
 const buttonGroup = css`
     display: flex;
     justify-content: space-between;
-    padding: 12px 8px 0 8px;
+    padding: 8px;
+    border-bottom: 1.5px dashed ${COLORS.TEXT.DESCRIPTION}50;
 `;
 
 const buttonStyle = css`

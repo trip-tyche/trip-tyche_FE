@@ -33,3 +33,8 @@ export interface MediaFile {
     latitude: number;
     longitude: number;
 }
+
+export interface MediaFileWithDate {
+    recordDate: string;
+    images: MediaFile[];
+}
