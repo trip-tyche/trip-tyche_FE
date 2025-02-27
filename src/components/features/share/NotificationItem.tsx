@@ -129,7 +129,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
                             <>
                                 <img
                                     css={shareStatusStyle}
-                                    src={`/src/assets/images/passport-${sharedTripInfo?.status === 'REJECTED' ? 'rejected' : 'approved'}.png`}
+                                    src={`/passport-${sharedTripInfo?.status === 'REJECTED' ? 'rejected' : 'approved'}.png`}
                                 />
                                 <Button
                                     text={'알림으로 돌아가기'}

@@ -187,7 +187,7 @@ const count = css`
     background-color: ${COLORS.TEXT.ERROR};
     position: absolute;
     top: -2px;
-    right: 1px;
+    right: 4px;
     display: flex;
     justify-content: center;
     align-items: center;
