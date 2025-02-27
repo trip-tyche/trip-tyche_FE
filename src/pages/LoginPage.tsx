@@ -1,11 +1,7 @@
 import { css } from '@emotion/react';
 
-import character1 from '@/assets/images/character-1.png';
-import character2 from '@/assets/images/character-2.png';
-import character3 from '@/assets/images/character-3.png';
-import character4 from '@/assets/images/character-4.png';
-import character5 from '@/assets/images/character-5.png';
-import character6 from '@/assets/images/character-6.png';
+import character1 from '@/assets/images/character-ogami-1.png';
+import character2 from '@/assets/images/character-ogami-2.png';
 import LoginButton from '@/components/features/auth/LoginButton';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import { OAUTH_CONFIG } from '@/constants/api/oauth';
@@ -20,18 +16,12 @@ const LoginPage = () => {
     };
 
     return (
-        <div css={pageContainer}>
+        <div css={container}>
             <div css={contentStyle}>
                 <div>
                     <div css={imageContainerStyle}>
                         <img css={imageStyle} src={character1} alt='여행 캐릭터 1' />
                         <img css={imageStyle} src={character2} alt='여행 캐릭터 2' />
-                        <img css={imageStyle} src={character3} alt='여행 캐릭터 3' />
-                    </div>
-                    <div css={imageContainerStyle}>
-                        <img css={imageStyle} src={character4} alt='여행 캐릭터 4' />
-                        <img css={imageStyle} src={character5} alt='여행 캐릭터 5' />
-                        <img css={imageStyle} src={character6} alt='여행 캐릭터 6' />
                     </div>
                 </div>
                 <div>
@@ -56,7 +46,7 @@ const LoginPage = () => {
     );
 };
 
-const pageContainer = css`
+const container = css`
     width: 100%;
     height: 100dvh;
     display: flex;
@@ -77,8 +67,8 @@ const contentStyle = css`
 `;
 
 const imageContainerStyle = css`
-    width: 200px;
-    overflow: hidden;
+    display: flex;
+    gap: 6px;
     margin: 12px 0;
 `;
 

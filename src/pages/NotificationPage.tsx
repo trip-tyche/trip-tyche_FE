@@ -36,7 +36,7 @@ const NotificationPage = () => {
                 {[...notifications]
                     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
                     .map((item: Notification) => (
-                        <NotificationItem key={item.notificationId} notification={item} />
+                        <NotificationItem key={item.notificationId} notificationInfo={item} />
                     ))}
             </div>
         </div>

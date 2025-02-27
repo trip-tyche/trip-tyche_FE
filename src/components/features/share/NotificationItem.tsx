@@ -13,47 +13,26 @@ import { COLORS } from '@/constants/theme';
 import { useToastStore } from '@/stores/useToastStore';
 import { Notification, SharedTripInfo } from '@/types/notification';
 import { formatDateTime } from '@/utils/date';
+import { getMessageByType, getNotificationStyle } from '@/utils/notification';
 
 interface NotificationProps {
-    notification: Notification;
-    onClick?: () => void;
+    notificationInfo: Notification;
 }
 
-const NotificationItem = ({ notification }: NotificationProps) => {
+const NotificationItem = ({ notificationInfo }: NotificationProps) => {
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [sharedTripInfo, setSharedTripInfo] = useState<SharedTripInfo>();
 
     const showToast = useToastStore((state) => state.showToast);
 
-    const getMessageByType = (message: string) => {
-        if (!message) return;
-
-        switch (message) {
-            case 'SHARED_REQUEST':
-                return <p css={notificationMessage}>새로운 티켓 공유 요청이 도착했습니다</p>;
-            case 'SHARED_APPROVE':
-                return (
-                    <p css={notificationMessage}>
-                        상대방이 티켓 공유 요청을 <span css={statusStyle(true)}>승인</span>했어요
-                    </p>
-                );
-            case 'SHARED_REJECTED':
-                return (
-                    <p css={notificationMessage}>
-                        상대방이 티켓 공유 요청을 <span css={statusStyle(false)}>거절</span>했어요
-                    </p>
-                );
-        }
-    };
-
     const handleDetailShow = async () => {
-        if (notification.status === 'UNREAD') {
-            await shareAPI.updateNotificationStatus(String(notification.notificationId));
+        if (notificationInfo.status === 'UNREAD') {
+            await shareAPI.updateNotificationStatus(String(notificationInfo.notificationId));
         }
 
-        if (notification.referenceId) {
-            const response = await shareAPI.getShareDetail(String(notification.referenceId));
+        if (notificationInfo.referenceId) {
+            const response = await shareAPI.getShareDetail(String(notificationInfo.referenceId));
             const sharedTripInfo = response.data;
 
             const tripInfo = {
@@ -66,25 +45,19 @@ const NotificationItem = ({ notification }: NotificationProps) => {
                 hashtags: sharedTripInfo.hashtags.split(','),
             };
 
-            // if (notification.status === 'PENDING') {
             setSharedTripInfo(tripInfo);
             setIsDetailOpen(true);
-            // } else if (notification.status === 'REJECTED') {
-            //     showToast('이미 거절된 여행입니다');
-            // } else {
-            //     showToast('이미 승인된 여행입니다');
-            // }
         }
     };
 
     const handleShareApprove = async () => {
-        await shareAPI.updateShareStatus(String(notification.referenceId), 'APPROVED');
+        await shareAPI.updateShareStatus(String(notificationInfo.referenceId), 'APPROVED');
         setIsDetailOpen(false);
         showToast('여행 공유가 수락되었습니다');
     };
 
     const handleShareReject = async () => {
-        await shareAPI.updateShareStatus(String(notification.referenceId), 'REJECTED');
+        await shareAPI.updateShareStatus(String(notificationInfo.referenceId), 'REJECTED');
         setIsDetailOpen(false);
         showToast('여행 공유가 거절되었습니다');
     };
@@ -96,7 +69,7 @@ const NotificationItem = ({ notification }: NotificationProps) => {
     };
 
     const handleNotificationRemove = async () => {
-        const deletedNotification = [notification.notificationId];
+        const deletedNotification = [notificationInfo.notificationId];
         const response = await shareAPI.deleteNotification(deletedNotification);
 
         if (response.isSuccess) {
@@ -105,23 +78,28 @@ const NotificationItem = ({ notification }: NotificationProps) => {
         }
     };
 
+    const isRead = notificationInfo.status === 'READ';
+
     return (
         <>
-            <div key={notification.notificationId} css={container(notification.status)} onClick={handleDetailShow}>
-                <div css={header}>
-                    <div css={notificationInfo}>
+            <div
+                key={notificationInfo.notificationId}
+                css={[container, getNotificationStyle(isRead)]}
+                onClick={handleDetailShow}
+            >
+                <div css={info}>
+                    <div css={notification}>
                         <div css={ticketIcon}>
                             <TicketsPlane size={18} color={COLORS.PRIMARY} />
                         </div>
-                        <p css={sender}>{notification.senderNickname}</p>
-                        <p css={createdAt}>{formatDateTime(notification.createdAt).slice(6, 13)}</p>
+                        <p css={sender}>{notificationInfo.senderNickname}</p>
+                        <p css={createdAt}>{formatDateTime(notificationInfo.createdAt).slice(6, 13)}</p>
                     </div>
                     <div css={removeIcon} onClick={handleDeleteClick}>
                         <GoKebabHorizontal />
                     </div>
                 </div>
-
-                {getMessageByType(notification.message)}
+                {getMessageByType(notificationInfo.message)}
             </div>
 
             {isDeleteModalOpen && (
@@ -179,7 +157,7 @@ const NotificationItem = ({ notification }: NotificationProps) => {
     );
 };
 
-const container = (status: string) => css`
+const container = css`
     margin-bottom: 16px;
     padding: 15px 16px;
     border-radius: 12px;
@@ -188,17 +166,15 @@ const container = (status: string) => css`
     background-color: ${COLORS.BACKGROUND.WHITE};
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
     cursor: pointer;
-    color: ${status === 'READ' && COLORS.TEXT.DESCRIPTION};
-    opacity: ${status === 'READ' ? 0.5 : 1};
 `;
 
-const header = css`
+const info = css`
     display: flex;
     justify-content: space-between;
     align-items: center;
 `;
 
-const notificationInfo = css`
+const notification = css`
     display: flex;
     align-items: center;
 `;
@@ -245,19 +221,6 @@ const removeIcon = css`
     background: transparent;
     transform: rotate(90deg);
     cursor: pointer;
-`;
-
-const notificationMessage = css`
-    margin-top: 10px;
-    margin-left: 2px;
-    font-size: 14px;
-    line-height: 1.3;
-`;
-
-const statusStyle = (isApproved: boolean) => css`
-    margin: 0 2px;
-    font-weight: bold;
-    color: ${isApproved ? COLORS.PRIMARY : COLORS.TEXT.ERROR};
 `;
 
 const sharedTripInfoStyle = css`
