@@ -18,12 +18,11 @@ import { TripModel } from '@/types/trip';
 import { formatToDot } from '@/utils/date';
 
 interface TripTicketProps {
-    trip: TripModel;
-    userNickname: string;
+    tripInfo: TripModel;
 }
 
-const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
-    const { tripId, tripTitle, country, startDate, endDate, hashtags } = trip;
+const TripTicket = ({ tripInfo }: TripTicketProps) => {
+    const { tripId, tripTitle, country, startDate, endDate, hashtags, ownerNickname, userNickname } = tripInfo;
 
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
@@ -80,14 +79,16 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
         }
     };
 
+    const isOwner = userNickname === ownerNickname;
+
     return (
         <div css={ticketContainer}>
             <article css={ticketStyle} onClick={handleCardClick}>
                 <section css={leftSection}>
-                    <header css={leftTopSection}>
+                    <header css={leftTopSection(isOwner)}>
                         <div>
                             <h3 css={labelStyle}>PASSENGER</h3>
-                            <p css={valueStyle}>{userNickname}</p>
+                            <p css={valueStyle}>{ownerNickname}</p>
                         </div>
                         <div>
                             <h3 css={labelStyle}>DATE</h3>
@@ -123,7 +124,7 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
                 </section>
 
                 <aside css={[rightSection, isAnimating && animateRight]}>
-                    <header css={rightTopSection}>
+                    <header css={rightTopSection(isOwner)}>
                         <h3 css={labelStyle}>FLIGHT</h3>
                         <p css={valueStyle}>TYCHE AIR</p>
                     </header>
@@ -133,20 +134,25 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
                 </aside>
             </article>
 
-            <footer css={buttonGroup}>
-                <button css={buttonStyle} onClick={() => setIsShareModalOpen(true)}>
-                    <Bell size={16} /> 티켓 공유
-                </button>
-                <button css={buttonStyle} onClick={handleImageUpload}>
-                    <ImagePlus size={16} /> 사진 관리
-                </button>
-                <button css={buttonStyle} onClick={handleTripEdit}>
-                    <FaPencilAlt size={12} /> 여행 수정
-                </button>
-                <button css={buttonStyle} onClick={handleTripDelete}>
-                    <FaTrashAlt size={12} /> 여행 삭제
-                </button>
-            </footer>
+            {isOwner ? (
+                <footer css={buttonGroup}>
+                    <button css={buttonStyle} onClick={() => setIsShareModalOpen(true)}>
+                        <Bell size={16} /> 티켓 공유
+                    </button>
+                    <button css={buttonStyle} onClick={handleImageUpload}>
+                        <ImagePlus size={16} /> 사진 관리
+                    </button>
+                    <button css={buttonStyle} onClick={handleTripEdit}>
+                        <FaPencilAlt size={12} /> 여행 수정
+                    </button>
+                    <button css={buttonStyle} onClick={handleTripDelete}>
+                        <FaTrashAlt size={12} /> 여행 삭제
+                    </button>
+                </footer>
+            ) : (
+                <div css={buttonGroup}></div>
+            )}
+
             {isModalOpen && (
                 <ConfirmModal
                     title='보더패스를 삭제하시겠습니까?'
@@ -215,12 +221,12 @@ const leftSection = css`
         -1px 1px 3px rgba(0, 0, 0, 0.08);
 `;
 
-const leftTopSection = css`
+const leftTopSection = (isOwner: boolean) => css`
     height: 48px;
     display: flex;
     justify-content: space-between;
     border-radius: 10px 0 0 0;
-    background-color: ${theme.COLORS.PRIMARY};
+    background-color: ${isOwner ? theme.COLORS.PRIMARY : theme.COLORS.SECONDARY};
     color: ${theme.COLORS.TEXT.WHITE};
     padding: 10px 12px;
 `;
@@ -299,10 +305,10 @@ const rightSection = css`
         1px 1px 3px rgba(0, 0, 0, 0.08);
 `;
 
-const rightTopSection = css`
+const rightTopSection = (isOwner: boolean) => css`
     height: 48px;
     padding: 10px 12px;
-    background-color: ${theme.COLORS.PRIMARY};
+    background-color: ${isOwner ? theme.COLORS.PRIMARY : theme.COLORS.SECONDARY};
     color: ${theme.COLORS.TEXT.WHITE};
     border-radius: 0 10px 0 0;
 `;

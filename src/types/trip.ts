@@ -6,6 +6,9 @@ export interface TripModel {
     endDate: string;
     hashtags: string[];
     imagesDate: string[];
+    ownerNickname: string;
+    userNickname: string;
+    sharedUserNicknames: string[];
 }
 
 export interface TripListModel {

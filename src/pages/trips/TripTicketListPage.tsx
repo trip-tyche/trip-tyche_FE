@@ -33,13 +33,16 @@ const TripTicketListPage = () => {
         await Promise.allSettled(deletePromises);
     };
 
-    const { validTripList, userNickname } = useMemo(() => {
+    const { validTripList } = useMemo(() => {
         if (!tripList) {
-            return { validTripList: [], userNickname: '' };
+            return { validTripList: [] };
         }
 
         const inValidTripList = tripList.trips.filter((trip: TripModel) => trip.tripTitle === 'N/A');
-        const validTripList = tripList.trips.filter((trip: TripModel) => trip.tripTitle !== 'N/A').reverse();
+        const validTripList = tripList.trips
+            .filter((trip: TripModel) => trip.tripTitle !== 'N/A')
+            .map((trip: TripModel) => ({ ...trip, userNickname: tripList.userNickName }))
+            .reverse();
 
         if (inValidTripList.length > 3) {
             deleteInValidTrips(tripList.trips);
@@ -48,7 +51,6 @@ const TripTicketListPage = () => {
 
         return {
             validTripList,
-            userNickname: tripList.userNickName,
         };
     }, [tripList, refetch]);
 
@@ -99,7 +101,7 @@ const TripTicketListPage = () => {
             {tripTicketCount > 0 ? (
                 <div css={tripListStyle}>
                     {validTripList.map((trip: TripModel) => (
-                        <TripTicket key={trip.tripId} trip={trip} userNickname={userNickname} />
+                        <TripTicket key={trip.tripId} tripInfo={trip} />
                     ))}
                 </div>
             ) : (
