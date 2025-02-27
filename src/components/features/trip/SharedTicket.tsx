@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
-import characterImg from '@/assets/images/character-1.png';
+import characterImg from '@/assets/images/character-ogami-1.png';
 import theme from '@/styles/theme';
 import { TripModelWithoutTripIdAndImagesDate } from '@/types/trip';
 import { formatToDot } from '@/utils/date';
@@ -39,10 +39,7 @@ const SharedTicket = ({ trip, userNickname }: IntroTicketProps) => {
                         <p>{country.split('/')[1]}</p>
                     </div>
                     <div css={contentStyle}>
-                        <div css={titleStyle}>
-                            <p css={titleLabelStyle}>Title</p>
-                            <p css={titleValueStyle}>{tripTitle}</p>
-                        </div>
+                        <p css={titleValueStyle}>{tripTitle}</p>
                         <p css={flagStyle}>{country.split('/')[0]}</p>
                     </div>
                     <div css={hashtagGroup}>
@@ -109,7 +106,7 @@ const labelStyle = css`
 `;
 
 const valueStyle = css`
-    font-size: ${theme.FONT_SIZES.SM};
+    font-size: 10px;
     font-weight: bold;
 `;
 
@@ -120,7 +117,7 @@ const contentContainer = css`
 const citiesStyle = css`
     display: flex;
     justify-content: space-between;
-    font-size: ${theme.FONT_SIZES.XXL};
+    font-size: ${theme.FONT_SIZES.LG};
     font-weight: bold;
 `;
 
@@ -128,17 +125,6 @@ const contentStyle = css`
     margin: 18px 0 22px 2px;
     display: flex;
     justify-content: space-between;
-`;
-
-const titleStyle = css`
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-`;
-
-const titleLabelStyle = css`
-    font-size: ${theme.FONT_SIZES.SM};
-    font-weight: bold;
 `;
 
 const titleValueStyle = css`

@@ -14,6 +14,7 @@ import Spinner from '@/components/common/Spinner';
 import IntroTicket from '@/components/features/trip/IntroTicket';
 import NickNameForm from '@/components/features/user/NickNameForm';
 import { ROUTES } from '@/constants/paths';
+import { COLORS } from '@/constants/theme';
 import { WELCOME_TICKET_DATA } from '@/constants/trip/form';
 import { NICKNAME_FORM } from '@/constants/ui/message';
 import useAuthStore from '@/stores/useAuthStore';
@@ -117,7 +118,7 @@ const MainPage = () => {
                 <main css={pageContainer}>
                     <div css={headerStyle}>
                         <div css={shareIconStyle}>
-                            {!!sharedTripsCount && <div css={count} />}
+                            {!!sharedTripsCount && <div css={count}>{sharedTripsCount}</div>}
                             <Bell css={settingIconStyle} onClick={() => navigate(ROUTES.PATH.SHARE)} />
                         </div>
                         <Settings css={settingIconStyle} onClick={() => navigate(ROUTES.PATH.SETTING)} />
@@ -168,10 +169,10 @@ const headerStyle = css`
     display: flex;
     gap: 8px;
     justify-content: flex-end;
-    padding-right: 4px;
 `;
 
 const settingIconStyle = css`
+    margin-right: 4px;
     cursor: pointer;
 `;
 
@@ -181,13 +182,19 @@ const shareIconStyle = css`
 `;
 
 const count = css`
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: red;
+    width: 12px;
+    height: 12px;
+    background-color: ${COLORS.TEXT.ERROR};
     position: absolute;
-    top: 1px;
-    right: 2px;
+    top: -2px;
+    right: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: bold;
+    color: white;
 `;
 
 const ticketContainerStyle = css`

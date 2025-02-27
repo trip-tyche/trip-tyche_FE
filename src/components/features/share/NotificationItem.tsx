@@ -20,9 +20,9 @@ interface NotificationProps {
 }
 
 const NotificationItem = ({ notificationInfo }: NotificationProps) => {
+    const [sharedTripInfo, setSharedTripInfo] = useState<SharedTripInfo>();
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [sharedTripInfo, setSharedTripInfo] = useState<SharedTripInfo>();
 
     const showToast = useToastStore((state) => state.showToast);
 
@@ -53,13 +53,13 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
     const handleShareApprove = async () => {
         await shareAPI.updateShareStatus(String(notificationInfo.referenceId), 'APPROVED');
         setIsDetailOpen(false);
-        showToast('여행 공유가 수락되었습니다');
+        showToast('여행 메이트가 되었어요! 🎉');
     };
 
     const handleShareReject = async () => {
         await shareAPI.updateShareStatus(String(notificationInfo.referenceId), 'REJECTED');
         setIsDetailOpen(false);
-        showToast('여행 공유가 거절되었습니다');
+        showToast('다음에 함께 여행해요 ✈️');
     };
 
     const handleDeleteClick = async (event: React.MouseEvent<HTMLDivElement>) => {
@@ -104,10 +104,10 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
 
             {isDeleteModalOpen && (
                 <ConfirmModal
-                    title='알림을 삭제하시겠습니까?'
-                    description='알림을 삭제하면 다시 확인할 수 없어요. 그래도 삭제하시겠습니까?'
-                    confirmText='삭제'
-                    cancelText='취소'
+                    title='이 알림을 지울까요?'
+                    description='지운 알림은 다시 볼 수 없어요. 괜찮으신가요?'
+                    confirmText='지우기'
+                    cancelText='그대로 두기'
                     confirmModal={handleNotificationRemove}
                     closeModal={() => setIsDeleteModalOpen(false)}
                 />
@@ -120,34 +120,22 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
                             userNickname={sharedTripInfo?.ownerNickname || ''}
                             trip={sharedTripInfo as SharedTripInfo}
                         />
-                        {sharedTripInfo?.status === 'PENDING' && (
+                        {sharedTripInfo?.status === 'PENDING' ? (
                             <div css={buttonGroup}>
                                 <Button text={'거절하기'} variant='white' onClick={handleShareReject} />
-                                <Button text={'수락하기'} onClick={handleShareApprove} />
+                                <Button text={'함께 여행하기'} onClick={handleShareApprove} />
                             </div>
-                        )}
-                        {sharedTripInfo?.status === 'REJECTED' && (
+                        ) : (
                             <>
-                                <p css={descriptionStyle}>이미 거절된 요청입니다</p>
-                                <div css={buttonGroup}>
-                                    <Button
-                                        text={'목록으로 돌아가기'}
-                                        variant='white'
-                                        onClick={() => setIsDetailOpen(false)}
-                                    />
-                                </div>
-                            </>
-                        )}
-                        {sharedTripInfo?.status === 'APPROVED' && (
-                            <>
-                                <p css={descriptionStyle}>이미 승인된 요청입니다</p>
-                                <div css={buttonGroup}>
-                                    <Button
-                                        text={'목록으로 돌아가기'}
-                                        variant='white'
-                                        onClick={() => setIsDetailOpen(false)}
-                                    />
-                                </div>
+                                <img
+                                    css={shareStatusStyle}
+                                    src={`/src/assets/images/passport-${sharedTripInfo?.status === 'REJECTED' ? 'rejected' : 'approved'}.png`}
+                                />
+                                <Button
+                                    text={'알림으로 돌아가기'}
+                                    variant='white'
+                                    onClick={() => setIsDetailOpen(false)}
+                                />
                             </>
                         )}
                     </div>
@@ -234,12 +222,11 @@ const buttonGroup = css`
     gap: 8px;
 `;
 
-const descriptionStyle = css`
-    text-align: center;
-    font-size: 14px;
-    font-weight: bold;
-    color: ${COLORS.TEXT.DESCRIPTION_LIGHT};
-    margin-bottom: 16px;
+const shareStatusStyle = css`
+    position: absolute;
+    width: 200px;
+    bottom: 100px;
+    left: 90px;
 `;
 
 export default NotificationItem;
