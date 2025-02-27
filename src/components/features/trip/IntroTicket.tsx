@@ -73,7 +73,6 @@ const IntroTicket = ({ trip, userNickname }: IntroTicketProps) => {
                 </div>
                 <div css={rightContent}>
                     <img css={imageStyle} src={characterImg} alt='캐릭터' />
-                    <p css={textStyle}>Move Ticket</p>
                 </div>
             </aside>
         </article>
@@ -200,13 +199,7 @@ const rightContent = css`
 `;
 
 const imageStyle = css`
-    width: 48px;
-`;
-
-const textStyle = css`
-    font-size: ${theme.FONT_SIZES.MD};
-    font-weight: 600;
-    color: ${theme.COLORS.TEXT.DESCRIPTION};
+    width: 52px;
 `;
 
 export default IntroTicket;

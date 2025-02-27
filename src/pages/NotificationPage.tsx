@@ -46,7 +46,12 @@ const NotificationPage = () => {
                         <div css={belloffIcon}>
                             <BellOff color='white' />
                         </div>
-                        <p css={emptyNotificationText}>새로운 알림이 없습니다</p>
+                        <strong css={emptyNotificationHeading}>새로운 알림이 없습니다</strong>
+                        <p css={emptyNotificationDescription}>
+                            트립티케의 다양한 알림을
+                            <br />
+                            이곳에서 모아볼 수 있어요
+                        </p>
                     </div>
                 )}
             </div>
@@ -70,13 +75,21 @@ const emptyNotification = css`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 18px;
 `;
 
-const emptyNotificationText = css`
+const emptyNotificationHeading = css`
+    margin-top: 18px;
     color: #303038;
     font-size: 18px;
     font-weight: bold;
+`;
+
+const emptyNotificationDescription = css`
+    margin-top: 8px;
+    color: #767678;
+    font-size: 15px;
+    line-height: 21px;
+    text-align: center;
 `;
 
 const belloffIcon = css`

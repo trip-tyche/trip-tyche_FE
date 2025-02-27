@@ -129,7 +129,6 @@ const TripTicket = ({ trip, userNickname }: TripTicketProps) => {
                     </header>
                     <div css={rightContent}>
                         <img css={imageStyle} src={characterImg} alt='캐릭터' />
-                        <p css={textStyle}>Click Ticket</p>
                     </div>
                 </aside>
             </article>
@@ -320,13 +319,7 @@ const rightContent = css`
 `;
 
 const imageStyle = css`
-    width: 48px;
-`;
-
-const textStyle = css`
-    font-size: ${theme.FONT_SIZES.MD};
-    font-weight: 600;
-    color: ${theme.COLORS.TEXT.DESCRIPTION};
+    width: 52px;
 `;
 
 const slideRight = keyframes`
