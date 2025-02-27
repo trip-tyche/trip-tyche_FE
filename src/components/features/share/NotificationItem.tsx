@@ -13,47 +13,26 @@ import { COLORS } from '@/constants/theme';
 import { useToastStore } from '@/stores/useToastStore';
 import { Notification, SharedTripInfo } from '@/types/notification';
 import { formatDateTime } from '@/utils/date';
+import { getMessageByType, getNotificationStyle } from '@/utils/notification';
 
 interface NotificationProps {
-    notification: Notification;
-    onClick?: () => void;
+    notificationInfo: Notification;
 }
 
-const NotificationItem = ({ notification }: NotificationProps) => {
+const NotificationItem = ({ notificationInfo }: NotificationProps) => {
+    const [sharedTripInfo, setSharedTripInfo] = useState<SharedTripInfo>();
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [sharedTripInfo, setSharedTripInfo] = useState<SharedTripInfo>();
 
     const showToast = useToastStore((state) => state.showToast);
 
-    const getMessageByType = (message: string) => {
-        if (!message) return;
-
-        switch (message) {
-            case 'SHARED_REQUEST':
-                return <p css={notificationMessage}>새로운 티켓 공유 요청이 도착했습니다</p>;
-            case 'SHARED_APPROVE':
-                return (
-                    <p css={notificationMessage}>
-                        상대방이 티켓 공유 요청을 <span css={statusStyle(true)}>승인</span>했어요
-                    </p>
-                );
-            case 'SHARED_REJECTED':
-                return (
-                    <p css={notificationMessage}>
-                        상대방이 티켓 공유 요청을 <span css={statusStyle(false)}>거절</span>했어요
-                    </p>
-                );
-        }
-    };
-
     const handleDetailShow = async () => {
-        if (notification.status === 'UNREAD') {
-            await shareAPI.updateNotificationStatus(String(notification.notificationId));
+        if (notificationInfo.status === 'UNREAD') {
+            await shareAPI.updateNotificationStatus(String(notificationInfo.notificationId));
         }
 
-        if (notification.referenceId) {
-            const response = await shareAPI.getShareDetail(String(notification.referenceId));
+        if (notificationInfo.referenceId) {
+            const response = await shareAPI.getShareDetail(String(notificationInfo.referenceId));
             const sharedTripInfo = response.data;
 
             const tripInfo = {
@@ -66,27 +45,21 @@ const NotificationItem = ({ notification }: NotificationProps) => {
                 hashtags: sharedTripInfo.hashtags.split(','),
             };
 
-            // if (notification.status === 'PENDING') {
             setSharedTripInfo(tripInfo);
             setIsDetailOpen(true);
-            // } else if (notification.status === 'REJECTED') {
-            //     showToast('이미 거절된 여행입니다');
-            // } else {
-            //     showToast('이미 승인된 여행입니다');
-            // }
         }
     };
 
     const handleShareApprove = async () => {
-        await shareAPI.updateShareStatus(String(notification.referenceId), 'APPROVED');
+        await shareAPI.updateShareStatus(String(notificationInfo.referenceId), 'APPROVED');
         setIsDetailOpen(false);
-        showToast('여행 공유가 수락되었습니다');
+        showToast('여행 메이트가 되었어요! 🎉');
     };
 
     const handleShareReject = async () => {
-        await shareAPI.updateShareStatus(String(notification.referenceId), 'REJECTED');
+        await shareAPI.updateShareStatus(String(notificationInfo.referenceId), 'REJECTED');
         setIsDetailOpen(false);
-        showToast('여행 공유가 거절되었습니다');
+        showToast('다음에 함께 여행해요 ✈️');
     };
 
     const handleDeleteClick = async (event: React.MouseEvent<HTMLDivElement>) => {
@@ -96,7 +69,7 @@ const NotificationItem = ({ notification }: NotificationProps) => {
     };
 
     const handleNotificationRemove = async () => {
-        const deletedNotification = [notification.notificationId];
+        const deletedNotification = [notificationInfo.notificationId];
         const response = await shareAPI.deleteNotification(deletedNotification);
 
         if (response.isSuccess) {
@@ -105,31 +78,36 @@ const NotificationItem = ({ notification }: NotificationProps) => {
         }
     };
 
+    const isRead = notificationInfo.status === 'READ';
+
     return (
         <>
-            <div key={notification.notificationId} css={container(notification.status)} onClick={handleDetailShow}>
-                <div css={header}>
-                    <div css={notificationInfo}>
+            <div
+                key={notificationInfo.notificationId}
+                css={[container, getNotificationStyle(isRead)]}
+                onClick={handleDetailShow}
+            >
+                <div css={info}>
+                    <div css={notification}>
                         <div css={ticketIcon}>
                             <TicketsPlane size={18} color={COLORS.PRIMARY} />
                         </div>
-                        <p css={sender}>{notification.senderNickname}</p>
-                        <p css={createdAt}>{formatDateTime(notification.createdAt).slice(6, 13)}</p>
+                        <p css={sender}>{notificationInfo.senderNickname}</p>
+                        <p css={createdAt}>{formatDateTime(notificationInfo.createdAt).slice(6, 13)}</p>
                     </div>
                     <div css={removeIcon} onClick={handleDeleteClick}>
                         <GoKebabHorizontal />
                     </div>
                 </div>
-
-                {getMessageByType(notification.message)}
+                {getMessageByType(notificationInfo.message)}
             </div>
 
             {isDeleteModalOpen && (
                 <ConfirmModal
-                    title='알림을 삭제하시겠습니까?'
-                    description='알림을 삭제하면 다시 확인할 수 없어요. 그래도 삭제하시겠습니까?'
-                    confirmText='삭제'
-                    cancelText='취소'
+                    title='이 알림을 지울까요?'
+                    description='지운 알림은 다시 볼 수 없어요. 괜찮으신가요?'
+                    confirmText='지우기'
+                    cancelText='그대로 두기'
                     confirmModal={handleNotificationRemove}
                     closeModal={() => setIsDeleteModalOpen(false)}
                 />
@@ -142,34 +120,22 @@ const NotificationItem = ({ notification }: NotificationProps) => {
                             userNickname={sharedTripInfo?.ownerNickname || ''}
                             trip={sharedTripInfo as SharedTripInfo}
                         />
-                        {sharedTripInfo?.status === 'PENDING' && (
+                        {sharedTripInfo?.status === 'PENDING' ? (
                             <div css={buttonGroup}>
                                 <Button text={'거절하기'} variant='white' onClick={handleShareReject} />
-                                <Button text={'수락하기'} onClick={handleShareApprove} />
+                                <Button text={'함께 여행하기'} onClick={handleShareApprove} />
                             </div>
-                        )}
-                        {sharedTripInfo?.status === 'REJECTED' && (
+                        ) : (
                             <>
-                                <p css={descriptionStyle}>이미 거절된 요청입니다</p>
-                                <div css={buttonGroup}>
-                                    <Button
-                                        text={'목록으로 돌아가기'}
-                                        variant='white'
-                                        onClick={() => setIsDetailOpen(false)}
-                                    />
-                                </div>
-                            </>
-                        )}
-                        {sharedTripInfo?.status === 'APPROVED' && (
-                            <>
-                                <p css={descriptionStyle}>이미 승인된 요청입니다</p>
-                                <div css={buttonGroup}>
-                                    <Button
-                                        text={'목록으로 돌아가기'}
-                                        variant='white'
-                                        onClick={() => setIsDetailOpen(false)}
-                                    />
-                                </div>
+                                <img
+                                    css={shareStatusStyle}
+                                    src={`/src/assets/images/passport-${sharedTripInfo?.status === 'REJECTED' ? 'rejected' : 'approved'}.png`}
+                                />
+                                <Button
+                                    text={'알림으로 돌아가기'}
+                                    variant='white'
+                                    onClick={() => setIsDetailOpen(false)}
+                                />
                             </>
                         )}
                     </div>
@@ -179,7 +145,7 @@ const NotificationItem = ({ notification }: NotificationProps) => {
     );
 };
 
-const container = (status: string) => css`
+const container = css`
     margin-bottom: 16px;
     padding: 15px 16px;
     border-radius: 12px;
@@ -188,17 +154,15 @@ const container = (status: string) => css`
     background-color: ${COLORS.BACKGROUND.WHITE};
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
     cursor: pointer;
-    color: ${status === 'READ' && COLORS.TEXT.DESCRIPTION};
-    opacity: ${status === 'READ' ? 0.5 : 1};
 `;
 
-const header = css`
+const info = css`
     display: flex;
     justify-content: space-between;
     align-items: center;
 `;
 
-const notificationInfo = css`
+const notification = css`
     display: flex;
     align-items: center;
 `;
@@ -247,19 +211,6 @@ const removeIcon = css`
     cursor: pointer;
 `;
 
-const notificationMessage = css`
-    margin-top: 10px;
-    margin-left: 2px;
-    font-size: 14px;
-    line-height: 1.3;
-`;
-
-const statusStyle = (isApproved: boolean) => css`
-    margin: 0 2px;
-    font-weight: bold;
-    color: ${isApproved ? COLORS.PRIMARY : COLORS.TEXT.ERROR};
-`;
-
 const sharedTripInfoStyle = css`
     width: 100%;
     padding: 8px;
@@ -271,12 +222,11 @@ const buttonGroup = css`
     gap: 8px;
 `;
 
-const descriptionStyle = css`
-    text-align: center;
-    font-size: 14px;
-    font-weight: bold;
-    color: ${COLORS.TEXT.DESCRIPTION_LIGHT};
-    margin-bottom: 16px;
+const shareStatusStyle = css`
+    position: absolute;
+    width: 200px;
+    bottom: 100px;
+    left: 90px;
 `;
 
 export default NotificationItem;
