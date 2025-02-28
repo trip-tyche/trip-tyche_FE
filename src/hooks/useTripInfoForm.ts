@@ -24,7 +24,8 @@ export const useTripInfoForm = (mode: FormMode) => {
 
     const queryClient = useQueryClient();
 
-    const [tripInfo, setTripInfo] = useState<Omit<TripModel, 'tripId'>>(initialState);
+    const [tripInfo, setTripInfo] =
+        useState<Omit<TripModel, 'tripId' | 'ownerNickname' | 'sharedUserNicknames'>>(initialState);
     const [isUploading, setIsUploading] = useState(false);
     const [isFormComplete, setIsFormComplete] = useState(false);
 

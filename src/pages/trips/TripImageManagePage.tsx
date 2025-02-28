@@ -2,13 +2,14 @@ import { useState, useEffect, Fragment, useMemo } from 'react';
 
 import { css } from '@emotion/react';
 // import { Trash2, Plus } from 'lucide-react';
+import { GoKebabHorizontal } from 'react-icons/go';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { tripImageAPI } from '@/api';
 import Header from '@/components/common/Header';
-import ImageGrid1 from '@/components/features/image/ImageGrid1';
+import MediaImageGrid from '@/components/features/image/ImageGrid1';
 import { ROUTES } from '@/constants/paths';
-import theme from '@/styles/theme';
+import { COLORS } from '@/constants/theme';
 import { MediaFile, MediaFileWithDate } from '@/types/media';
 import { formatToKorean } from '@/utils/date';
 
@@ -36,7 +37,7 @@ const TripImageManagePage = () => {
     }, [tripId]);
 
     const imageGroupByDate = useMemo(() => {
-        const grouped = tripImages.reduce<Record<string, MediaFileWithDate>>((acc, curr) => {
+        const group = tripImages.reduce<Record<string, MediaFileWithDate>>((acc, curr) => {
             const date = curr.recordDate.split('T')[0];
 
             if (!acc[date]) {
@@ -44,10 +45,14 @@ const TripImageManagePage = () => {
             } else {
                 acc[date].images = [...acc[date].images, curr];
             }
+
             return acc;
         }, {});
 
-        return Object.values(grouped);
+        return Object.values(group).sort(
+            (dateA: MediaFileWithDate, dateB: MediaFileWithDate) =>
+                new Date(dateA.recordDate).getTime() - new Date(dateB.recordDate).getTime(),
+        );
     }, [tripImages]);
 
     // const handleDeleteImages = async (imagesToDelete: MediaFile[]) => {
@@ -71,39 +76,27 @@ const TripImageManagePage = () => {
     if (!tripImages) return null;
 
     return (
-        <div css={containerStyle}>
+        <div css={container}>
             <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.TRIPS.ROOT)} />
             <main css={mainStyle}>
-                {/* <div css={header}>
-                    <Select
-                        defaultValue='모든 사진'
-                        data={['모든 사진', '위치 정보 없음', '날짜 정보 없음']}
-                        size='sm'
-                        radius='sm'
-                        allowDeselect={false}
-                        w={120}
-                        styles={{
-                            input: {},
-                        }}
-                    />
-                    <div css={selectButton}>선택</div>
-                </div> */}
                 {imageGroupByDate?.map((image) => (
                     <Fragment key={image.recordDate}>
                         <h2 css={dateStyle}>{formatToKorean(image.recordDate.split('T')[0])}</h2>
-                        <ImageGrid1
-                            displayedImages={image.images}
-                            selectedImages={[]}
-                            onHashtagSelect={() => console.log('select')}
-                        />
+                        <MediaImageGrid images={image.images} />
                     </Fragment>
                 ))}
             </main>
+            <div css={buttonGroup}>
+                <div css={buttonStyle}>선택</div>
+                <div css={buttonStyle}>
+                    <GoKebabHorizontal strokeWidth={1.5} />
+                </div>
+            </div>
         </div>
     );
 };
 
-const containerStyle = css`
+const container = css`
     height: 100dvh;
     display: flex;
     flex-direction: column;
@@ -116,34 +109,33 @@ const mainStyle = css`
     flex-direction: column;
 `;
 
-// const header = css`
-//     padding: 4px;
-//     position: relative;
-//     display: flex;
-//     justify-content: space-between;
-//     align-items: center;
-// `;
+const buttonGroup = css`
+    min-width: 428px;
+    height: 84px;
+    padding: 12px;
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    align-items: end;
+    background-image: linear-gradient(#00000000, #00000060);
+`;
 
-// const selectButton = css`
-//     padding: 8px 12px;
-//     position: fixed;
-//     right: calc(50% - 206px);
-//     top: 54px;
-//     background-color: ${COLORS.SECONDARY};
-//     color: ${COLORS.TEXT.WHITE};
-//     font-size: 14px;
-//     font-weight: 500;
-//     border-radius: 14px;
-//     z-index: 50;
-// `;
+const buttonStyle = css`
+    color: ${COLORS.TEXT.WHITE};
+    background-color: ${COLORS.TEXT.DESCRIPTION};
+    font-size: 12px;
+    padding: 8px 10px;
+    border-radius: 18px;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+`;
 
 const dateStyle = css`
-    font-size: ${theme.FONT_SIZES.XL};
     font-weight: bold;
-    padding: 12px 0 12px 12px;
-    background-color: #eee;
-    border-bottom: 1px solid ${theme.COLORS.BORDER};
-    border-top: 1px solid ${theme.COLORS.BORDER};
+    padding: 12px;
 `;
 
 export default TripImageManagePage;

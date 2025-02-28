@@ -7,7 +7,7 @@ export interface TripModel {
     hashtags: string[];
     imagesDate: string[];
     ownerNickname: string;
-    userNickname: string;
+    userNickname?: string;
     sharedUserNicknames: string[];
 }
 

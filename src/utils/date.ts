@@ -17,8 +17,12 @@ export const formatToKorean = (dateString: string, isIncludeYear = false) => {
     if (!year || !month || !day) {
         return;
     }
+    const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+    const dayOfWeek = daysOfWeek[new Date(dateString).getDay()];
 
-    return isIncludeYear ? `${year}년 ${month}월 ${day}일` : `${month}월 ${day}일`;
+    return isIncludeYear
+        ? `${year}년 ${Number(month)}월 ${Number(day)}일 `
+        : `${Number(month)}월 ${Number(day)}일 ${dayOfWeek}요일`;
 };
 
 // YYYY.MM.DD
