@@ -114,7 +114,7 @@ const TripImageManagePage = () => {
     };
 
     const updateImagesLocation = async (selectedImages: MediaFile[], location: Location) => {
-        if (!location) return;
+        if (!location || !tripId) return;
 
         const imagesWithUpdatedLocation = selectedImages.map((image) => {
             return {
@@ -124,7 +124,16 @@ const TripImageManagePage = () => {
             };
         });
 
-        console.log(imagesWithUpdatedLocation);
+        try {
+            await tripImageAPI.updateImages(tripId, imagesWithUpdatedLocation);
+
+            setIsMapVisible(false);
+            showToast(`${selectedImages.length}의 사진이 수정되었습니다`);
+            setSelectedImages([]);
+            setIsSelectionMode(false);
+        } catch (error) {
+            console.error('여행 이미지 삭제 실패', error);
+        }
     };
 
     const isSelectedImage = selectedImages.length > 0;

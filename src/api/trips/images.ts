@@ -4,7 +4,7 @@ import { apiClient } from '@/api/client';
 import { API_ENDPOINTS } from '@/constants/api/config';
 import { PresignedUrlRequest } from '@/types/image';
 import { GpsCoordinates } from '@/types/location';
-import { MediaFileModel, UnlocatedMediaFileModel } from '@/types/media';
+import { MediaFile, MediaFileModel, UnlocatedMediaFileModel } from '@/types/media';
 import { getToken } from '@/utils/auth';
 
 export const tripImageAPI = {
@@ -74,11 +74,19 @@ export const tripImageAPI = {
         const response = await apiClient.get(`/api/trips/${tripId}/media-files`);
         return response.data;
     },
+
     // 선택한 여행 이미지 삭제
     deleteImages: async (tripId: string, imagesToDelete: string[]) => {
-        console.log(imagesToDelete);
         const response = await apiClient.delete(`/api/trips/${tripId}/media-files`, {
             data: { mediaFileIds: imagesToDelete },
+        });
+        return response.data;
+    },
+
+    // 선택한 여행 이미지 수정
+    updateImages: async (tripId: string, imagesToUpdate: MediaFile[]) => {
+        const response = await apiClient.patch(`/api/trips/${tripId}/media-files`, {
+            mediaFiles: imagesToUpdate,
         });
         return response.data;
     },
