@@ -48,7 +48,13 @@ const TripImageUploadPage = () => {
 
     const navigateBeforePage = () => {
         isTripInfoEditing && setIsTripInfoEditing(false);
-        navigate(isFirstTicket ? ROUTES.PATH.MAIN : ROUTES.PATH.TRIPS.IMAGES(Number(tripId)));
+        navigate(
+            isFirstTicket
+                ? ROUTES.PATH.MAIN
+                : isTripInfoEditing
+                  ? ROUTES.PATH.TRIPS.IMAGES(Number(tripId))
+                  : ROUTES.PATH.TRIPS.ROOT,
+        );
     };
 
     const closeAlertModal = async () => {
@@ -78,7 +84,7 @@ const TripImageUploadPage = () => {
 
     return (
         <div css={containerStyle}>
-            <Header title={ROUTES.PATH_TITLE.TRIPS.NEW.IMAGES} isBackButton onBack={navigateBeforePage} />
+            <Header title={'사진 등록'} isBackButton onBack={navigateBeforePage} />
             <main css={mainStyle}>
                 <section css={sectionStyle}>
                     <h4>[사진 등록 가이드]</h4>
