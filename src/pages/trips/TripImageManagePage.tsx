@@ -10,24 +10,25 @@ import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import MediaImageGrid from '@/components/features/image/MediaImageGrid';
+import EditDate from '@/components/features/trip/EditDate';
 import LocationAddMap from '@/components/features/trip/LocationAddMap';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { useToastStore } from '@/stores/useToastStore';
-import { GpsCoordinates, Location } from '@/types/location';
+import { Location } from '@/types/location';
 import { MediaFile, MediaFileWithDate } from '@/types/media';
-import { formatToKorean } from '@/utils/date';
+import { formatToISOLocal, formatToKorean } from '@/utils/date';
 
 const TripImageManagePage = () => {
     const [tripImages, setTripImages] = useState<MediaFile[]>([]);
     const [isSelectionMode, setIsSelectionMode] = useState(false);
     const [selectedImages, setSelectedImages] = useState<MediaFile[]>([]);
     const [selectedLocation, setSelectedLocation] = useState<Location>(null);
-
-    console.log(selectedLocation);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
     const [isVisibleEditList, setIsVisibleEditList] = useState(false);
     const [isMapVisible, setIsMapVisible] = useState(false);
+    const [isDateVisible, setIsDateVisible] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const [isUploading, setIsUploading] = useState(false);
@@ -125,6 +126,7 @@ const TripImageManagePage = () => {
         });
 
         try {
+            setIsUploading(true);
             await tripImageAPI.updateImages(tripId, imagesWithUpdatedLocation);
 
             setIsMapVisible(false);
@@ -133,6 +135,33 @@ const TripImageManagePage = () => {
             setIsSelectionMode(false);
         } catch (error) {
             console.error('여행 이미지 삭제 실패', error);
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    const updateImagesDate = async (selectedImages: MediaFile[], date: Date | null) => {
+        if (!date || !tripId) return;
+
+        const imagesWithUpdatedDate = selectedImages.map((image) => {
+            return {
+                ...image,
+                recordDate: formatToISOLocal(date),
+            };
+        });
+
+        try {
+            setIsUploading(true);
+            await tripImageAPI.updateImages(tripId, imagesWithUpdatedDate);
+
+            setIsDateVisible(false);
+            showToast(`${selectedImages.length}장의 사진이 수정되었습니다`);
+            setSelectedImages([]);
+            setIsSelectionMode(false);
+        } catch (error) {
+            console.error('여행 이미지 삭제 실패', error);
+        } finally {
+            setIsUploading(false);
         }
     };
 
@@ -140,7 +169,15 @@ const TripImageManagePage = () => {
 
     if (!tripImages) return null;
 
-    return isMapVisible ? (
+    return isDateVisible ? (
+        <EditDate
+            defaultDate={selectedImages[0].recordDate}
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+            isUploading={isUploading}
+            uploadImagesWithDate={() => updateImagesDate(selectedImages, selectedDate)}
+        />
+    ) : isMapVisible ? (
         <LocationAddMap
             defaultLocation={{ latitude: tripImages[0].latitude, longitude: tripImages[0].longitude }}
             onLocationSelect={handleMapLocationSelect}
@@ -209,7 +246,7 @@ const TripImageManagePage = () => {
                                             transform: 'translateX(-4px)',
                                         }}
                                     />
-                                    <h3>날짜 및 시간 수정</h3>
+                                    <h3 onClick={() => setIsDateVisible(true)}>날짜 및 시간 수정</h3>
                                 </div>
                             )}
                         </div>
