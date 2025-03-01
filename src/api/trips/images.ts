@@ -74,4 +74,12 @@ export const tripImageAPI = {
         const response = await apiClient.get(`/api/trips/${tripId}/media-files`);
         return response.data;
     },
+    // 선택한 여행 이미지 삭제
+    deleteImages: async (tripId: string, imagesToDelete: string[]) => {
+        console.log(imagesToDelete);
+        const response = await apiClient.delete(`/api/trips/${tripId}/media-files`, {
+            data: { mediaFileIds: imagesToDelete },
+        });
+        return response.data;
+    },
 };

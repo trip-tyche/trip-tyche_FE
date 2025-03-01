@@ -8,9 +8,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { tripImageAPI } from '@/api';
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
+import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import MediaImageGrid from '@/components/features/image/MediaImageGrid';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
+import { useToastStore } from '@/stores/useToastStore';
 import { MediaFile, MediaFileWithDate } from '@/types/media';
 import { formatToKorean } from '@/utils/date';
 
@@ -18,6 +20,9 @@ const TripImageManagePage = () => {
     const [tripImages, setTripImages] = useState<MediaFile[]>([]);
     const [isSelectionMode, setIsSelectionMode] = useState(false);
     const [selectedImages, setSelectedImages] = useState<MediaFile[]>([]);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+    const { showToast } = useToastStore.getState();
 
     const navigate = useNavigate();
     const { tripId } = useParams();
@@ -85,6 +90,23 @@ const TripImageManagePage = () => {
     //     }
     // };
 
+    const deleteImages = async (selectedImages: MediaFile[]) => {
+        if (!tripId) return;
+        try {
+            await tripImageAPI.deleteImages(
+                tripId,
+                selectedImages.map((image) => image.mediaFileId),
+            );
+
+            setIsDeleteModalOpen(false);
+            showToast(`${selectedImages.length}의 사진이 삭제되었습니다`);
+            setSelectedImages([]);
+            setIsSelectionMode(false);
+        } catch (error) {
+            console.error('여행 이미지 삭제 실패', error);
+        }
+    };
+
     if (!tripImages) return null;
     const isSelectedImage = selectedImages.length > 0;
 
@@ -124,7 +146,7 @@ const TripImageManagePage = () => {
                             <Trash2
                                 size={20}
                                 color={isSelectedImage ? COLORS.PRIMARY : COLORS.TEXT.DESCRIPTION_LIGHT}
-                                onClick={isSelectedImage ? () => console.log('삭제') : () => null}
+                                onClick={isSelectedImage ? () => setIsDeleteModalOpen(true) : () => null}
                                 style={{
                                     cursor: isSelectedImage ? 'pointer' : 'default',
                                 }}
@@ -148,22 +170,17 @@ const TripImageManagePage = () => {
                     </>
                 )}
             </div>
-            {/* <div css={buttonGroup}>
-                {isSelectionMode ? (
-                    <div css={buttonStyle} onClick={() => setIsSelectionMode(false)}>
-                        취소
-                    </div>
-                ) : (
-                    <>
-                        <div css={buttonStyle} onClick={() => setIsSelectionMode(true)}>
-                            선택
-                        </div>
-                        <div css={buttonStyle}>
-                            <GoKebabHorizontal strokeWidth={1.5} />
-                        </div>
-                    </>
-                )}
-            </div> */}
+
+            {isDeleteModalOpen && (
+                <ConfirmModal
+                    title={`${selectedImages.length}장의 사진 삭제`}
+                    description='삭제한 여행 사진은 다시 복구할 수 없습니다. 그래도 삭제하시겠습니까?'
+                    confirmText='삭제'
+                    cancelText='취소'
+                    confirmModal={() => deleteImages(selectedImages)}
+                    closeModal={() => setIsDeleteModalOpen(false)}
+                />
+            )}
         </div>
     );
 };
