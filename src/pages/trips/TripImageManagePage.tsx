@@ -2,7 +2,7 @@ import { useState, useEffect, Fragment, useMemo } from 'react';
 
 import { css } from '@emotion/react';
 import { Trash2 } from 'lucide-react';
-import { GoKebabHorizontal } from 'react-icons/go';
+import { FaPencilAlt } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { tripImageAPI } from '@/api';
@@ -10,9 +10,11 @@ import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import MediaImageGrid from '@/components/features/image/MediaImageGrid';
+import LocationAddMap from '@/components/features/trip/LocationAddMap';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { useToastStore } from '@/stores/useToastStore';
+import { GpsCoordinates, Location } from '@/types/location';
 import { MediaFile, MediaFileWithDate } from '@/types/media';
 import { formatToKorean } from '@/utils/date';
 
@@ -20,7 +22,15 @@ const TripImageManagePage = () => {
     const [tripImages, setTripImages] = useState<MediaFile[]>([]);
     const [isSelectionMode, setIsSelectionMode] = useState(false);
     const [selectedImages, setSelectedImages] = useState<MediaFile[]>([]);
+    const [selectedLocation, setSelectedLocation] = useState<Location>(null);
+
+    console.log(selectedLocation);
+
+    const [isVisibleEditList, setIsVisibleEditList] = useState(false);
+    const [isMapVisible, setIsMapVisible] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+    const [isUploading, setIsUploading] = useState(false);
 
     const { showToast } = useToastStore.getState();
 
@@ -42,6 +52,16 @@ const TripImageManagePage = () => {
 
         getTripImages();
     }, [tripId]);
+
+    useEffect(() => {
+        setIsVisibleEditList(false);
+    }, [selectedImages.length]);
+
+    useEffect(() => {
+        if (!isMapVisible) {
+            setSelectedLocation(null);
+        }
+    }, [selectedLocation, isMapVisible]);
 
     const imageGroupByDate = useMemo(() => {
         const group = tripImages.reduce<Record<string, MediaFileWithDate>>((acc, curr) => {
@@ -72,23 +92,9 @@ const TripImageManagePage = () => {
         }
     };
 
-    // const handleDeleteImages = async (imagesToDelete: MediaFile[]) => {
-    //     try {
-    //         // TODO: API 호출로 이미지 삭제 구현
-    //         // await tripImageAPI.deleteImages(imagesToDelete.map(img => img.mediaFileId));
-
-    //         setTripImages((prev) =>
-    //             prev.filter(
-    //                 (image) => !imagesToDelete.some((deleteImage) => deleteImage.mediaFileId === image.mediaFileId),
-    //             ),
-    //         );
-    //         setSelectedImages([]);
-    //         setIsSelectionMode(false);
-    //     } catch (error) {
-    //         console.error('Failed to delete images:', error);
-    //         // TODO: 에러 처리 추가
-    //     }
-    // };
+    const handleMapLocationSelect = (latitude: number, longitude: number) => {
+        setSelectedLocation({ latitude, longitude });
+    };
 
     const deleteImages = async (selectedImages: MediaFile[]) => {
         if (!tripId) return;
@@ -107,10 +113,33 @@ const TripImageManagePage = () => {
         }
     };
 
-    if (!tripImages) return null;
+    const updateImagesLocation = async (selectedImages: MediaFile[], location: Location) => {
+        if (!location) return;
+
+        const imagesWithUpdatedLocation = selectedImages.map((image) => {
+            return {
+                ...image,
+                latitude: location.latitude,
+                longitude: location.longitude,
+            };
+        });
+
+        console.log(imagesWithUpdatedLocation);
+    };
+
     const isSelectedImage = selectedImages.length > 0;
 
-    return (
+    if (!tripImages) return null;
+
+    return isMapVisible ? (
+        <LocationAddMap
+            defaultLocation={{ latitude: tripImages[0].latitude, longitude: tripImages[0].longitude }}
+            onLocationSelect={handleMapLocationSelect}
+            setIsMapVisible={setIsMapVisible}
+            isUploading={isUploading}
+            uploadImagesWithLocation={() => updateImagesLocation(selectedImages, selectedLocation)}
+        />
+    ) : (
         <div css={container}>
             <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.TRIPS.ROOT)} />
             <main css={mainStyle}>
@@ -151,16 +180,29 @@ const TripImageManagePage = () => {
                                     cursor: isSelectedImage ? 'pointer' : 'default',
                                 }}
                             />
-                            <div onClick={isSelectedImage ? () => console.log('삭제') : () => null}>
-                                <GoKebabHorizontal
-                                    size={18}
-                                    color={isSelectedImage ? COLORS.PRIMARY : COLORS.TEXT.DESCRIPTION_LIGHT}
-                                    style={{
-                                        transform: 'rotate(90deg)',
-                                        cursor: isSelectedImage ? 'pointer' : 'default',
-                                    }}
-                                />
-                            </div>
+                            <FaPencilAlt
+                                size={16}
+                                color={isSelectedImage ? COLORS.PRIMARY : COLORS.TEXT.DESCRIPTION_LIGHT}
+                                onClick={isSelectedImage ? () => setIsVisibleEditList(!isVisibleEditList) : () => null}
+                                style={{
+                                    cursor: isSelectedImage ? 'pointer' : 'default',
+                                }}
+                            />
+                            {isSelectedImage && isVisibleEditList && (
+                                <div css={editList}>
+                                    <h3 onClick={() => setIsMapVisible(true)}>위치 수정</h3>
+                                    <div
+                                        style={{
+                                            width: 'calc(100% + 8px)',
+                                            height: '1px',
+                                            backgroundColor: `${COLORS.TEXT.DESCRIPTION_LIGHT}30`,
+                                            margin: '12px 0',
+                                            transform: 'translateX(-4px)',
+                                        }}
+                                    />
+                                    <h3>날짜 및 시간 수정</h3>
+                                </div>
+                            )}
                         </div>
                     </div>
                 ) : (
@@ -190,6 +232,7 @@ const container = css`
     display: flex;
     flex-direction: column;
     overflow: auto;
+    position: relative;
 `;
 
 const mainStyle = css`
@@ -225,8 +268,25 @@ const selectedText = css`
 `;
 
 const optionIcon = css`
+    position: relative;
     display: flex;
     gap: 14px;
+    align-items: center;
+`;
+
+const editList = css`
+    width: max-content;
+    padding: 12px;
+    position: absolute;
+    top: -88px;
+    right: -12px;
+    display: flex;
+    /* gap: 16px; */
+    flex-direction: column;
+    background-color: ${COLORS.BACKGROUND.WHITE};
+    border-radius: 8px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    cursor: pointer;
 `;
 
 const dateStyle = css`

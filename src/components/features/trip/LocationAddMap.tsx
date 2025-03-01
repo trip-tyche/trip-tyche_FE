@@ -17,7 +17,7 @@ interface LocationAddMapProps {
     defaultLocation: GpsCoordinates;
     onLocationSelect: (lat: number, lng: number) => void;
     setIsMapVisible: (isMapVisible: boolean) => void;
-    isUploading: boolean;
+    isUploading?: boolean;
     uploadImagesWithLocation: () => void;
 }
 
