@@ -14,10 +14,17 @@ interface EditDateProps {
     setSelectedDate: Dispatch<SetStateAction<Date | null>>;
     isUploading?: boolean;
     uploadImagesWithDate: () => void;
+    setIsDateVisible: (isDateVisible: boolean) => void;
 }
 
-const EditDate = ({ defaultDate, selectedDate, setSelectedDate, isUploading, uploadImagesWithDate }: EditDateProps) => {
-    // 컴포넌트 마운트 시 defaultDate로 초기화
+const EditDate = ({
+    defaultDate,
+    selectedDate,
+    setSelectedDate,
+    isUploading,
+    uploadImagesWithDate,
+    setIsDateVisible,
+}: EditDateProps) => {
     useEffect(() => {
         if (!selectedDate) {
             setSelectedDate(new Date(defaultDate));
@@ -35,7 +42,7 @@ const EditDate = ({ defaultDate, selectedDate, setSelectedDate, isUploading, upl
 
     return (
         <div css={container}>
-            <Header title='날짜 및 시간 수정' isBackButton />
+            <Header title='날짜 및 시간 수정' isBackButton onBack={() => setIsDateVisible(false)} />
             <main css={mainStyle}>
                 <div css={sectionStyle}>
                     <h2 css={sectionTitle}>사진 날짜 수정</h2>

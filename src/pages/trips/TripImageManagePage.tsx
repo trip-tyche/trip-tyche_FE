@@ -176,6 +176,7 @@ const TripImageManagePage = () => {
             setSelectedDate={setSelectedDate}
             isUploading={isUploading}
             uploadImagesWithDate={() => updateImagesDate(selectedImages, selectedDate)}
+            setIsDateVisible={setIsDateVisible}
         />
     ) : isMapVisible ? (
         <LocationAddMap
