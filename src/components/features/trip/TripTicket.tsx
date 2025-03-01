@@ -15,11 +15,11 @@ import { useTicketHandler } from '@/hooks/useTicketHandler';
 import { useTicketNavigation } from '@/hooks/useTicketNavigation';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
-import { TripModel } from '@/types/trip';
+import { Trip } from '@/types/trip';
 import { formatToDot } from '@/utils/date';
 
 interface TripTicketProps {
-    tripInfo: TripModel;
+    tripInfo: Trip;
 }
 
 const TripTicket = ({ tripInfo }: TripTicketProps) => {
@@ -32,7 +32,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
     const { showToast } = useToastStore.getState();
 
     const { isModalOpen, handleImageUpload, handleTripEdit, handleTripDelete, deleteTrip, closeModal } =
-        useTicketHandler(tripId);
+        useTicketHandler(tripId as string);
     const {
         isAnimating,
         isUnlocatedImageModalOpen,
@@ -40,7 +40,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
         confirmUnlocatedImageModal,
         closeUnlocatedImageModal,
         handleCardClick,
-    } = useTicketNavigation(tripId);
+    } = useTicketNavigation(tripId as string);
 
     const handleShareSuccess = () => {
         setInputValue('');
@@ -70,7 +70,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
             const searchResult = await shareAPI.searchUsers(inputValue);
 
             const recipientId = searchResult.data.userId;
-            await shareAPI.createShareRequest(tripId, recipientId);
+            await shareAPI.createShareRequest(tripId as string, recipientId);
 
             handleShareSuccess();
         } catch (error) {

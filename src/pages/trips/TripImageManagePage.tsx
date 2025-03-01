@@ -1,24 +1,26 @@
 import { useState, useEffect, Fragment, useMemo } from 'react';
 
 import { css } from '@emotion/react';
-// import { Trash2, Plus } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { GoKebabHorizontal } from 'react-icons/go';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { tripImageAPI } from '@/api';
+import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
-import MediaImageGrid from '@/components/features/image/ImageGrid1';
+import MediaImageGrid from '@/components/features/image/MediaImageGrid';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { MediaFile, MediaFileWithDate } from '@/types/media';
 import { formatToKorean } from '@/utils/date';
 
 const TripImageManagePage = () => {
+    const [tripImages, setTripImages] = useState<MediaFile[]>([]);
+    const [isSelectionMode, setIsSelectionMode] = useState(false);
+    const [selectedImages, setSelectedImages] = useState<MediaFile[]>([]);
+
     const navigate = useNavigate();
     const { tripId } = useParams();
-    const [tripImages, setTripImages] = useState<MediaFile[]>([]);
-    // const [selectedImages, setSelectedImages] = useState<MediaFile[]>([]);
-    // const [isSelectionMode, setIsSelectionMode] = useState(false);
 
     useEffect(() => {
         const getTripImages = async () => {
@@ -55,6 +57,16 @@ const TripImageManagePage = () => {
         );
     }, [tripImages]);
 
+    const handleImageToggle = (selectedImage: MediaFile) => {
+        const isAlreadySelected = selectedImages.some((image) => image.mediaFileId === selectedImage.mediaFileId);
+
+        if (isAlreadySelected) {
+            setSelectedImages((prev) => prev.filter((image) => image.mediaFileId !== selectedImage.mediaFileId));
+        } else {
+            setSelectedImages((prev) => [...prev, selectedImage]);
+        }
+    };
+
     // const handleDeleteImages = async (imagesToDelete: MediaFile[]) => {
     //     try {
     //         // TODO: API 호출로 이미지 삭제 구현
@@ -74,6 +86,7 @@ const TripImageManagePage = () => {
     // };
 
     if (!tripImages) return null;
+    const isSelectedImage = selectedImages.length > 0;
 
     return (
         <div css={container}>
@@ -82,16 +95,75 @@ const TripImageManagePage = () => {
                 {imageGroupByDate?.map((image) => (
                     <Fragment key={image.recordDate}>
                         <h2 css={dateStyle}>{formatToKorean(image.recordDate.split('T')[0])}</h2>
-                        <MediaImageGrid images={image.images} />
+                        <MediaImageGrid
+                            images={image.images}
+                            selectedImages={selectedImages}
+                            onImageClick={isSelectionMode ? handleImageToggle : () => null}
+                        />
                     </Fragment>
                 ))}
             </main>
-            <div css={buttonGroup}>
-                <div css={buttonStyle}>선택</div>
-                <div css={buttonStyle}>
-                    <GoKebabHorizontal strokeWidth={1.5} />
-                </div>
+
+            <div css={bottomSheet}>
+                {isSelectionMode ? (
+                    <div css={selectedStyle}>
+                        <p
+                            css={selectedText}
+                            onClick={() => {
+                                setIsSelectionMode(false);
+                                setSelectedImages([]);
+                            }}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            선택취소
+                        </p>
+                        <p css={selectedText}>
+                            {isSelectedImage ? `${selectedImages.length}장의 사진이 선택됨` : '항목 선택'}
+                        </p>
+                        <div css={optionIcon}>
+                            <Trash2
+                                size={20}
+                                color={isSelectedImage ? COLORS.PRIMARY : COLORS.TEXT.DESCRIPTION_LIGHT}
+                                onClick={isSelectedImage ? () => console.log('삭제') : () => null}
+                                style={{
+                                    cursor: isSelectedImage ? 'pointer' : 'default',
+                                }}
+                            />
+                            <div onClick={isSelectedImage ? () => console.log('삭제') : () => null}>
+                                <GoKebabHorizontal
+                                    size={18}
+                                    color={isSelectedImage ? COLORS.PRIMARY : COLORS.TEXT.DESCRIPTION_LIGHT}
+                                    style={{
+                                        transform: 'rotate(90deg)',
+                                        cursor: isSelectedImage ? 'pointer' : 'default',
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <>
+                        <Button text='사진 선택' variant='white' onClick={() => setIsSelectionMode(true)} />
+                        <Button text='새로운 사진 등록하기' />
+                    </>
+                )}
             </div>
+            {/* <div css={buttonGroup}>
+                {isSelectionMode ? (
+                    <div css={buttonStyle} onClick={() => setIsSelectionMode(false)}>
+                        취소
+                    </div>
+                ) : (
+                    <>
+                        <div css={buttonStyle} onClick={() => setIsSelectionMode(true)}>
+                            선택
+                        </div>
+                        <div css={buttonStyle}>
+                            <GoKebabHorizontal strokeWidth={1.5} />
+                        </div>
+                    </>
+                )}
+            </div> */}
         </div>
     );
 };
@@ -107,30 +179,37 @@ const mainStyle = css`
     flex: 1;
     display: flex;
     flex-direction: column;
+    padding-bottom: 108px;
 `;
 
-const buttonGroup = css`
-    min-width: 428px;
-    height: 84px;
-    padding: 12px;
-    position: absolute;
-    bottom: 0;
+const selectedStyle = css`
+    width: 100%;
+    padding: 2px 4px;
     display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-    align-items: end;
-    background-image: linear-gradient(#00000000, #00000060);
-`;
-
-const buttonStyle = css`
-    color: ${COLORS.TEXT.WHITE};
-    background-color: ${COLORS.TEXT.DESCRIPTION};
-    font-size: 12px;
-    padding: 8px 10px;
-    border-radius: 18px;
     justify-content: space-between;
     align-items: center;
-    cursor: pointer;
+`;
+
+const bottomSheet = css`
+    min-width: 428px;
+    position: fixed;
+    background-color: ${COLORS.BACKGROUND.WHITE};
+    border-radius: 10px 10px 0 0;
+    bottom: 0;
+    padding: 12px;
+    z-index: 10;
+    display: flex;
+    gap: 8px;
+`;
+
+const selectedText = css`
+    font-weight: 600;
+    color: ${COLORS.TEXT.BLACK};
+`;
+
+const optionIcon = css`
+    display: flex;
+    gap: 14px;
 `;
 
 const dateStyle = css`

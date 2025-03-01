@@ -21,7 +21,7 @@ import useAuthStore from '@/stores/useAuthStore';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
-import { TripModel } from '@/types/trip';
+import { Trip } from '@/types/trip';
 import { validateUserAuth } from '@/utils/validation';
 
 interface Notification {
@@ -80,7 +80,7 @@ const MainPage = () => {
 
         setSharedTripsCount(sharedTripsCount.length);
 
-        const validTripList = trips?.filter((trip: TripModel) => trip.tripTitle !== 'N/A');
+        const validTripList = trips?.filter((trip: Trip) => trip.tripTitle !== 'N/A');
         const latestTrip = validTripList[validTripList.length - 1];
 
         setUserNickName(userNickName);

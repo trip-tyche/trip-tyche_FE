@@ -14,15 +14,15 @@ import { HASHTAG_MENU } from '@/constants/trip/hashtags';
 import { useTripDateRange } from '@/hooks/useTripDateRange';
 import theme from '@/styles/theme';
 import { FormMode } from '@/types/common';
-import { TripModelWithoutTripId } from '@/types/trip';
+import { Trip } from '@/types/trip';
 import { formatToKorean } from '@/utils/date';
 
 type DateSelectType = 'range' | 'single';
 type DateChangeHandler = (value: DateValue | DatesRangeValue) => void;
 interface TripInfoFormProps {
     mode: FormMode;
-    tripInfo: TripModelWithoutTripId;
-    setTripInfo: Dispatch<SetStateAction<TripModelWithoutTripId>>;
+    tripInfo: Trip;
+    setTripInfo: Dispatch<SetStateAction<Trip>>;
 }
 
 const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
@@ -32,7 +32,9 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
     const [isSelectRange, setIsSelectRange] = useState<boolean>(true);
 
     const isEditing = mode === 'edit';
-    const imageDates = isEditing ? dates : (JSON.parse(localStorage.getItem('image-date') || '[]') as string[]);
+    const imageDates = isEditing
+        ? (dates as string[])
+        : (JSON.parse(localStorage.getItem('image-date') || '[]') as string[]);
     const defaultStartDate = imageDates[0];
     const defaultEndDate = imageDates[imageDates.length - 1];
 
@@ -55,7 +57,7 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
     }, [dateSelectType]);
 
     const handleHashtagSelect = (tag: string) => {
-        setTripInfo((prev: TripModelWithoutTripId) => {
+        setTripInfo((prev: Trip) => {
             if (prev.hashtags.includes(tag)) {
                 return { ...prev, hashtags: prev.hashtags.filter((hashtag) => hashtag !== tag) };
             }

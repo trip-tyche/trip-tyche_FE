@@ -72,7 +72,7 @@ const ImageListByDate = ({
             </div>
             {isModalOpen && (
                 <ConfirmModal
-                    title='여행티켓 리스트 페이지로 이동하시겠습니까?'
+                    title='티켓 목록 페이지로 이동하시겠습니까?'
                     description='위치 등록은 언제든지 다시 할 수 있습니다'
                     confirmText='이동하기'
                     cancelText='아니요'

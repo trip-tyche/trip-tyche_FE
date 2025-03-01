@@ -1,6 +1,6 @@
 import { apiClient } from '@/api/client';
 import { API_ENDPOINTS } from '@/constants/api/config';
-import { TripModelWithoutTripId } from '@/types/trip';
+import { Trip } from '@/types/trip';
 import { getToken } from '@/utils/auth';
 
 export const tripAPI = {
@@ -30,7 +30,7 @@ export const tripAPI = {
         );
         return data.data.tripId;
     },
-    createTripInfo: async (tripId: string, tripInfo: TripModelWithoutTripId) => {
+    createTripInfo: async (tripId: string, tripInfo: Trip) => {
         const token = getToken();
         const data = await apiClient.post(`${API_ENDPOINTS.TRIPS}/${tripId}/info`, tripInfo, {
             headers: {
@@ -39,7 +39,7 @@ export const tripAPI = {
         });
         return data;
     },
-    updateTripInfo: async (tripId: string, tripInfo: TripModelWithoutTripId) => {
+    updateTripInfo: async (tripId: string, tripInfo: Trip) => {
         const { country, endDate, startDate, tripTitle, hashtags } = tripInfo;
         const newTripInfo = { country, endDate, startDate, tripTitle, hashtags };
         const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripId}`, newTripInfo);

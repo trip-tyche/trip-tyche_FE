@@ -3,11 +3,11 @@ import { IoAirplaneSharp } from 'react-icons/io5';
 
 import characterImg from '@/assets/images/character-ogami-1.png';
 import theme from '@/styles/theme';
-import { TripModelWithoutTripIdAndImagesDate } from '@/types/trip';
+import { Trip } from '@/types/trip';
 import { formatToDot } from '@/utils/date';
 
 interface IntroTicketProps {
-    trip: TripModelWithoutTripIdAndImagesDate;
+    trip: Trip;
     userNickname: string;
 }
 

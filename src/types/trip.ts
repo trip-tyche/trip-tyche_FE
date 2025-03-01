@@ -1,20 +1,17 @@
-export interface TripModel {
-    readonly tripId: string;
+export interface Trip {
+    tripId?: string;
     tripTitle: string;
     country: string;
     startDate: string;
     endDate: string;
     hashtags: string[];
-    imagesDate: string[];
-    ownerNickname: string;
+    imagesDate?: string[];
     userNickname?: string;
-    sharedUserNicknames: string[];
+    ownerNickname: string;
+    sharedUserNicknames?: string[];
 }
 
-export interface TripListModel {
-    readonly userNickName: string;
-    readonly trips: TripModel[];
+export interface TripList {
+    userNickName: string;
+    trips: Trip[];
 }
-
-export type TripModelWithoutTripId = Omit<TripModel, 'tripId'>;
-export type TripModelWithoutTripIdAndImagesDate = Omit<TripModel, 'tripId' | 'imagesDate'>;

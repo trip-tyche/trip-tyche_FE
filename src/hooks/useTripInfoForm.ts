@@ -10,7 +10,7 @@ import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import { FormMode } from '@/types/common';
-import { TripModel } from '@/types/trip';
+import { Trip } from '@/types/trip';
 
 export const useTripInfoForm = (mode: FormMode) => {
     const initialState = {
@@ -20,12 +20,14 @@ export const useTripInfoForm = (mode: FormMode) => {
         endDate: '',
         hashtags: [],
         imagesDate: [],
+        ownerNickname: '',
     };
 
     const queryClient = useQueryClient();
 
     const [tripInfo, setTripInfo] =
-        useState<Omit<TripModel, 'tripId' | 'ownerNickname' | 'sharedUserNicknames'>>(initialState);
+        // useState<Omit<Trip, 'tripId' | 'ownerNickname' | 'sharedUserNicknames'>>(initialState);
+        useState<Trip>(initialState);
     const [isUploading, setIsUploading] = useState(false);
     const [isFormComplete, setIsFormComplete] = useState(false);
 

@@ -15,4 +15,5 @@ export const WELCOME_TICKET_DATA = {
     endDate: '2025-12-31',
     hashtags: ['나홀로', '버킷리스트', '계획무시'],
     imagesDate: [],
+    ownerNickname: '',
 };

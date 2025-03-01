@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { shareAPI } from '@/api/trips/share';
 import Header from '@/components/common/Header';
-import NotificationItem from '@/components/features/share/NotificationItem';
+import NotificationItem from '@/components/features/notification/NotificationItem';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { Notification } from '@/types/notification';

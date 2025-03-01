@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
+import { GoCheckCircleFill } from 'react-icons/go';
 
 import Spinner from '@/components/common/Spinner';
+import { COLORS } from '@/constants/theme';
 import { MediaFile } from '@/types/media';
 
 interface MediaImageGridProps {
     images: MediaFile[];
+    selectedImages?: MediaFile[];
+    onImageClick?: (image: MediaFile) => void;
 }
 
-const MediaImageGrid = ({ images }: MediaImageGridProps) => {
+const MediaImageGrid = ({ images, selectedImages, onImageClick }: MediaImageGridProps) => {
     const [displayedImages, setDisplayedImagesmages] = useState<MediaFile[]>([]);
     const [allImagesLoaded, setAllImagesLoaded] = useState(false);
     const [loadedImages, setLoadedImages] = useState<boolean[]>([]);
@@ -40,26 +44,21 @@ const MediaImageGrid = ({ images }: MediaImageGridProps) => {
     return (
         <div css={gridStyle}>
             {displayedImages.map((image, index) => (
-                <div
-                    key={image.mediaFileId}
-                    css={imageContainerStyle}
-                    // onClick={() => onHashtagSelect(displayedImages[index])}
-                >
+                <div key={image.mediaFileId} css={imageContainerStyle} onClick={() => onImageClick?.(image)}>
                     <img
                         src={image.mediaLink}
-                        alt={`이미지-${index}`}
+                        alt={`여행 사진 ${index}`}
                         onLoad={() => handleImageLoad(index)}
                         css={imageStyle}
                     />
-                    {/* {selectedImages.some(
-                        (selectedImage) => selectedImage.mediaFileId === displayedImages[index].mediaFileId,
-                    ) && (
-                        <div css={selectedOverlayStyle}>
-                            <span css={checkIconStyle}>
-                                <GoCheckCircleFill size={24} color={theme.COLORS.PRIMARY} />
-                            </span>
-                        </div>
-                    )} */}
+                    {selectedImages &&
+                        selectedImages.some((selectedImage) => selectedImage.mediaFileId === image.mediaFileId) && (
+                            <div css={selectedOverlayStyle}>
+                                <span css={checkIconStyle}>
+                                    <GoCheckCircleFill size={24} color={COLORS.PRIMARY} />
+                                </span>
+                            </div>
+                        )}
                 </div>
             ))}
         </div>
@@ -91,6 +90,26 @@ const imageStyle = css`
 
 const spinnerStyle = css`
     height: calc(100dvh - 154px);
+`;
+
+const selectedOverlayStyle = css`
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: end;
+    justify-content: end;
+    padding: 12px;
+`;
+
+const checkIconStyle = css`
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    background-color: white;
 `;
 
 export default MediaImageGrid;

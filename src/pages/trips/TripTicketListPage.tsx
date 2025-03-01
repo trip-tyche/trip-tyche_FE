@@ -15,7 +15,7 @@ import { BUTTON } from '@/constants/ui/buttons';
 import { useTripTicketList } from '@/hooks/queries/useTrip';
 import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
-import { TripModel } from '@/types/trip';
+import { Trip } from '@/types/trip';
 
 const TripTicketListPage = () => {
     const tripTicketCount = useUserDataStore((state) => state.tripTicketCount);
@@ -25,10 +25,10 @@ const TripTicketListPage = () => {
 
     const { data: tripList, refetch, isLoading } = useTripTicketList();
 
-    const deleteInValidTrips = async (trips: TripModel[]) => {
+    const deleteInValidTrips = async (trips: Trip[]) => {
         const deletePromises = trips
             .filter((trip) => trip.tripTitle === 'N/A')
-            .map((trip) => tripAPI.deleteTripTicket(trip.tripId));
+            .map((trip) => tripAPI.deleteTripTicket(trip.tripId as string));
 
         await Promise.allSettled(deletePromises);
     };
@@ -38,10 +38,10 @@ const TripTicketListPage = () => {
             return { validTripList: [] };
         }
 
-        const inValidTripList = tripList.trips.filter((trip: TripModel) => trip.tripTitle === 'N/A');
+        const inValidTripList = tripList.trips.filter((trip: Trip) => trip.tripTitle === 'N/A');
         const validTripList = tripList.trips
-            .filter((trip: TripModel) => trip.tripTitle !== 'N/A')
-            .map((trip: TripModel) => ({ ...trip, userNickname: tripList.userNickName }))
+            .filter((trip: Trip) => trip.tripTitle !== 'N/A')
+            .map((trip: Trip) => ({ ...trip, userNickname: tripList.userNickName }))
             .reverse();
 
         if (inValidTripList.length > 3) {
@@ -100,7 +100,7 @@ const TripTicketListPage = () => {
 
             {tripTicketCount > 0 ? (
                 <div css={tripListStyle}>
-                    {validTripList.map((trip: TripModel) => (
+                    {validTripList.map((trip: Trip) => (
                         <TripTicket key={trip.tripId} tripInfo={trip} />
                     ))}
                 </div>
