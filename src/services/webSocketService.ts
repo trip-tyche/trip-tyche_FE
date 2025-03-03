@@ -21,12 +21,12 @@ const state = {
 };
 
 // WebSocket 연결 상태 확인
-// const isConnected = () => state.isConnected;
+const isConnected = () => state.isConnected;
 
 // WebSocket 연결 설정
-const connect = (userId: string, serverUrl: string = 'http://43.200.110.25:80/ws'): Client | null => {
+const connect = (userId: string, serverUrl: string = import.meta.env.VITE_WEBSOCKET_URL): Client | null => {
     if (state.isConnected && state.userId === userId) {
-        console.log('이미 연결된 상태입니다.');
+        // console.log('이미 연결된 상태입니다.');
         return state.client;
     }
 
@@ -43,7 +43,7 @@ const connect = (userId: string, serverUrl: string = 'http://43.200.110.25:80/ws
     // 연결 성공 시 콜백
     state.client.onConnect = () => {
         state.isConnected = true;
-        console.log('WebSocket 연결 성공');
+        // console.log('WebSocket 연결 성공');
 
         // 사용자 ID에 대한 공유 알림 구독
         subscribeToShareNotifications(userId);
@@ -58,7 +58,7 @@ const connect = (userId: string, serverUrl: string = 'http://43.200.110.25:80/ws
     // 연결 종료 시 콜백
     state.client.onWebSocketClose = () => {
         state.isConnected = false;
-        console.log('WebSocket 연결 종료');
+        // console.log('WebSocket 연결 종료');
     };
 
     // 연결 시작
@@ -76,7 +76,7 @@ const disconnect = (): void => {
         // 연결 종료
         state.client.deactivate();
         state.isConnected = false;
-        console.log('WebSocket 연결 종료됨');
+        // console.log('WebSocket 연결 종료됨');
     }
 };
 
@@ -189,6 +189,7 @@ const webSocketService = {
     get connected() {
         return state.isConnected;
     },
+    isConnected,
     connect,
     disconnect,
     subscribeToShareNotifications,

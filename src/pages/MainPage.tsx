@@ -41,12 +41,34 @@ const MainPage = () => {
 
     useEffect(() => {
         const userId = localStorage.getItem('userId');
-        if (userId) {
-            webSocketService.requestNotificationCount(userId);
-            webSocketService.setUnreadCountCallback((count) => {
-                setSharedTripsCount(count);
-            });
-        }
+        if (!userId) return;
+
+        // connect가 Promise를 반환하지 않는 경우 처리
+        // console.log('웹소켓 연결 시도...');
+        webSocketService.connect(userId); // Promise가 아니므로 직접 호출
+
+        // 약간의 지연 후 알림 설정 (웹소켓 연결 시간 고려)
+        setTimeout(() => {
+            if (webSocketService.isConnected()) {
+                // console.log('알림 설정 시작...');
+
+                // 콜백 등록
+                webSocketService.setUnreadCountCallback((count) => {
+                    // console.log('콜백 호출됨, 카운트:', count);
+                    setSharedTripsCount(count);
+                });
+
+                // 요청 보내기
+                // console.log('알림 카운트 요청 보냄...');
+                webSocketService.requestNotificationCount(userId);
+            } else {
+                // console.log('웹소켓 연결 실패 또는 진행 중...');
+            }
+        }, 100); // 1초 지연
+
+        return () => {
+            webSocketService.setUnreadCountCallback(() => null);
+        };
     }, []);
 
     useEffect(() => {
