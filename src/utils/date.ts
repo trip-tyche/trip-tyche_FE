@@ -46,7 +46,7 @@ export const formatToISOLocal = (date: Date): string => {
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 };
 
-export const formatDateTime = (isoString: string): string => {
+export const formatDateTime = (isoString: string, includeTime = true): string => {
     const date = new Date(isoString);
 
     const year = date.getFullYear();
@@ -55,5 +55,5 @@ export const formatDateTime = (isoString: string): string => {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
 
-    return `${year}년 ${month}월 ${day}일 ${hours}시 ${minutes}분`;
+    return includeTime ? `${year}년 ${month}월 ${day}일 ${hours}시 ${minutes}분` : `${month}월 ${day}일`;
 };
