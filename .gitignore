@@ -8,6 +8,8 @@ dist-ssr
 # Environment
 *.local
 .env
+.env.development
+.env.production
 
 # Logs
 *.log
