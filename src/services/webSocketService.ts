@@ -109,22 +109,23 @@ const subscribeToShareNotifications = (userId: string): StompSubscription | null
             const data = JSON.parse(message.body);
             // console.log('메시지 수신:', data);
 
-            // const messageType = JSON.parse(data).type;
             if (data.unreadCount !== undefined && state.unreadCountCallback) {
                 state.unreadCountCallback(data.unreadCount);
             }
 
-            if (!data.type) return;
-            const messageType = data.type;
+            // 메세지는 JSON 타입
+            if (typeof data === 'string') {
+                const messageType = JSON.parse(data).type;
 
-            if (messageType === 'SHARED_REQUEST') {
-                useToastStore.getState().showToast('새로운 공유 요청이 도착했습니다.');
-                // 새 알림이 왔으므로 개수 업데이트 요청
-                if (state.userId) requestNotificationCount(state.userId);
-            } else if (messageType === 'SHARED_APPROVE') {
-                useToastStore.getState().showToast('공유 요청이 승인되었습니다.');
-            } else if (messageType === 'SHARED_REJECTED') {
-                useToastStore.getState().showToast('공유 요청이 거절되었습니다.');
+                if (messageType === 'SHARED_REQUEST') {
+                    useToastStore.getState().showToast('새로운 공유 요청이 도착했습니다.');
+                    // 새 알림이 왔으므로 개수 업데이트 요청
+                    if (state.userId) requestNotificationCount(state.userId);
+                } else if (messageType === 'SHARED_APPROVE') {
+                    useToastStore.getState().showToast('공유 요청이 승인되었습니다.');
+                } else if (messageType === 'SHARED_REJECTED') {
+                    useToastStore.getState().showToast('공유 요청이 거절되었습니다.');
+                }
             }
 
             // 콜백 호출
