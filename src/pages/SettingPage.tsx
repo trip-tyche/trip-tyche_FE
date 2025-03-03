@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { css } from '@emotion/react';
-import { User, MessageCircle, LogOut } from 'lucide-react';
+import { User, MessageCircle, LogOut, Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import character from '@/assets/images/character-ogami-1.png';

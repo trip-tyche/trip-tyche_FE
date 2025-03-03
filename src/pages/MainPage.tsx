@@ -7,7 +7,7 @@ import { GiRapidshareArrow } from 'react-icons/gi';
 import { useNavigate } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
-import { shareAPI } from '@/api/trips/share';
+// import { shareAPI } from '@/api/trips/share';
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
@@ -17,6 +17,7 @@ import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { WELCOME_TICKET_DATA } from '@/constants/trip/form';
 import { NICKNAME_FORM } from '@/constants/ui/message';
+import webSocketService from '@/services/webSocketService';
 import useAuthStore from '@/stores/useAuthStore';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserDataStore from '@/stores/useUserDataStore';
@@ -24,19 +25,11 @@ import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
 import { validateUserAuth } from '@/utils/validation';
 
-interface Notification {
-    notificationId: number;
-    shareId: number;
-    message: string;
-    status: string;
-    createdAt: string;
-}
-
 const MainPage = () => {
-    const [latestTrip, setLatestTrip] = useState(null);
-    const [tripCount, setTripCount] = useState(0);
-    const [isInitializing, setIsInitializing] = useState(true);
-    const [sharedTripsCount, setSharedTripsCount] = useState(0);
+    const [latestTrip, setLatestTrip] = useState<Trip | null>(null);
+    const [tripCount, setTripCount] = useState<number>(0);
+    const [isInitializing, setIsInitializing] = useState<boolean>(true);
+    const [sharedTripsCount, setSharedTripsCount] = useState<number>(0);
 
     const isLogin = useAuthStore((state) => state.isLogIn);
     const userNickName = useUserDataStore((state) => state.userNickName);
@@ -45,6 +38,16 @@ const MainPage = () => {
     const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+            webSocketService.requestNotificationCount(userId);
+            webSocketService.setUnreadCountCallback((count) => {
+                setSharedTripsCount(count);
+            });
+        }
+    }, []);
 
     useEffect(() => {
         if (!isLogin) {
@@ -63,9 +66,21 @@ const MainPage = () => {
             }
         };
         initializeMainPage();
-    }, []);
+    }, [isLogin, navigate, setLogout, showToast]);
 
-    const getUserInfoData = async () => {
+    // 알림 목록 불러오는 함수
+    // const fetchNotifications = async (): Promise<void> => {
+    //     try {
+    //         const userId = localStorage.getItem('userId') || '';
+    //         const response = await shareAPI.getNotifications(userId);
+    //         const sharedTripsCount = response.data.filter((trip: Notification) => trip.status === 'UNREAD');
+    //         setSharedTripsCount(sharedTripsCount.length);
+    //     } catch (error) {
+    //         console.error('알림 가져오기 오류:', error);
+    //     }
+    // };
+
+    const getUserInfoData = async (): Promise<void> => {
         const isValidUser = validateUserAuth();
 
         if (!isValidUser) {
@@ -74,11 +89,8 @@ const MainPage = () => {
         }
         const { userNickName, trips } = await tripAPI.fetchTripTicketList();
 
-        const userId = localStorage.getItem('userId') || '';
-        const response = await shareAPI.getNotifications(userId);
-        const sharedTripsCount = response.data.filter((trip: Notification) => trip.status === 'UNREAD');
-
-        setSharedTripsCount(sharedTripsCount.length);
+        // 알림 목록 불러오기
+        // await fetchNotifications();
 
         const validTripList = trips?.filter((trip: Trip) => trip.tripTitle !== 'N/A');
         const latestTrip = validTripList[validTripList.length - 1];
@@ -88,7 +100,7 @@ const MainPage = () => {
         setLatestTrip(latestTrip);
     };
 
-    const handleButtonClick = async () => {
+    const handleButtonClick = async (): Promise<void> => {
         if (latestTrip) {
             navigate(ROUTES.PATH.TRIPS.ROOT);
             return;

@@ -36,4 +36,7 @@ export default defineConfig({
             transformMixedEsModules: true,
         },
     },
+    define: {
+        global: 'window', // global을 window로 정의
+    },
 });
