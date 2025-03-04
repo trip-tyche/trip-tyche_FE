@@ -63,12 +63,9 @@ const TripTicketListPage = () => {
         navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`);
     };
 
-    if (isLoading) {
-        return <Spinner />;
-    }
-
     return (
         <div css={pageContainer}>
+            {isLoading && <Spinner />}
             <Header title='나의 여행 티켓' isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
 
             <div css={listHeaderStyle}>

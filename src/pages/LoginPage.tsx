@@ -89,7 +89,7 @@ const overlay = css`
     height: 100%;
     position: absolute;
     inset: 0;
-    background-color: #00000050;
+    background-color: #00000010;
     z-index: 10;
 `;
 
@@ -127,7 +127,7 @@ const buttonGroup = css`
 
 const pStyle = css`
     width: max-content;
-    margin: 44px 0 0 14px;
+    margin: 24px 0 0 14px;
     color: #dddddd;
     font-size: 12px;
     text-align: start;

@@ -32,7 +32,7 @@ const headerStyle = css`
     position: relative;
     border-bottom: 1px solid ${theme.COLORS.BORDER};
     background-color: ${theme.COLORS.BACKGROUND.WHITE};
-    z-index: 998;
+    z-index: 30;
 `;
 
 const titleStyle = css`
