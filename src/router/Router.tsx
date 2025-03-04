@@ -170,7 +170,7 @@ const LoginCheck = ({ children }: { children: JSX.Element }) => {
             const isValid = validateUserAuth();
             const lastLoginTime = localStorage.getItem('lastLoginTime') || '';
 
-            console.log(lastLoginTime);
+            // console.log(isValid, lastLoginTime);
 
             if (!isValid || !lastLoginTime) {
                 navigate(ROUTES.PATH.AUTH.LOGIN, {

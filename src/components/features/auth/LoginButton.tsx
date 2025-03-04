@@ -24,10 +24,11 @@ const LoginButton = ({ provider, onClick }: LoginButtonProps) => (
 
 const loginButtonStyles = (provider: ProviderType) => css`
     color: ${theme.COLORS.TEXT.BLACK};
-    border-radius: 12px;
-    line-height: 1.5rem;
-    font-weight: 600;
-    width: 80%;
+    /* border-radius: 12px; */
+    /* line-height: 1.5rem; */
+    font-size: 14px;
+    /* font-weight: 500; */
+    letter-spacing: -0.5px;
     position: relative;
     background-color: ${provider === 'kakao' ? '#fee500' : '#fdfdfd'};
     @media (hover: hover) {
@@ -42,9 +43,9 @@ const loginButtonStyles = (provider: ProviderType) => css`
 
 const iconStyle = css`
     position: absolute;
-    left: 1.5rem;
-    width: 20px;
-    height: 20px;
+    left: 20px;
+    width: 18px;
+    height: 18px;
     margin-right: 0px;
 `;
 

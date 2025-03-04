@@ -1,12 +1,10 @@
 import { css } from '@emotion/react';
 
-import character1 from '@/assets/images/character-ogami-1.png';
-import character2 from '@/assets/images/character-ogami-2.png';
 import LoginButton from '@/components/features/auth/LoginButton';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import { OAUTH_CONFIG } from '@/constants/api/oauth';
+import { COLORS } from '@/constants/theme';
 import useBrowserCheck from '@/hooks/useBrowserCheck';
-import theme from '@/styles/theme';
 
 const LoginPage = () => {
     const { isModalOpen, closeModal } = useBrowserCheck({ showOnce: true });
@@ -17,23 +15,19 @@ const LoginPage = () => {
 
     return (
         <div css={container}>
-            <div css={contentStyle}>
-                <div>
-                    <div css={imageContainerStyle}>
-                        <img css={imageStyle} src={character1} alt='여행 캐릭터 1' />
-                        <img css={imageStyle} src={character2} alt='여행 캐릭터 2' />
-                    </div>
-                </div>
-                <div>
-                    <h1 css={titleStyle}>사진으로 그려지는 여행 지도</h1>
-                    <p css={subtitleStyle}>지도 위에 그려진 추억을 다시 걸어보세요</p>
-                </div>
+            <div css={textContainer}>
+                <p css={logo}>TRIPTYCHE</p>
+                <h3 css={titleStyle}>
+                    사진 찍을 때마다 <br /> 그려지는 <strong css={strong}>나만의 여행 지도</strong>
+                </h3>
             </div>
             <div css={buttonGroup}>
                 <LoginButton provider='kakao' onClick={() => handleLoginButtonClick('KAKAO')} />
                 <LoginButton provider='google' onClick={() => handleLoginButtonClick('GOOGLE')} />
+                <p css={pStyle}>비회원으로 둘러보기</p>
             </div>
-            <p css={companyNameStyle}>© 2024 Vagabond. All rights reserved.</p>
+            {/* <p css={companyNameStyle}>© 2024 Vagabond. All rights reserved.</p> */}
+
             {isModalOpen && (
                 <ConfirmModal
                     title='브라우저 변경 안내'
@@ -42,6 +36,8 @@ const LoginPage = () => {
                     confirmModal={closeModal}
                 />
             )}
+
+            <div css={overlay} />
         </div>
     );
 };
@@ -49,61 +45,73 @@ const LoginPage = () => {
 const container = css`
     width: 100%;
     height: 100dvh;
+    padding: 44px 24px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     position: relative;
     gap: 72px;
+    background-image: url('/src/assets/images/background-image-mobile-2.webp');
+    background-size: cover;
 `;
 
-const contentStyle = css`
+const overlay = css`
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+    background-color: #00000050;
+    z-index: 10;
+`;
+
+const textContainer = css`
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
     gap: 24px;
+    flex-direction: column;
+    align-self: flex-start;
+    color: ${COLORS.TEXT.WHITE};
+    z-index: 20;
 `;
 
-const imageContainerStyle = css`
-    display: flex;
-    gap: 6px;
-    margin: 12px 0;
-`;
-
-const imageStyle = css`
-    width: 50px;
-    height: auto;
-    margin-right: 8px;
+const logo = css`
+    font-weight: bold;
+    letter-spacing: 0.2px;
 `;
 
 const titleStyle = css`
-    color: ${theme.COLORS.TEXT.BLACK};
-    font-size: ${theme.FONT_SIZES.XXXL};
-    font-weight: bold;
+    font-size: 24px;
     margin-bottom: 22px;
+    line-height: 1.4;
 `;
 
-const subtitleStyle = css`
-    color: ${theme.COLORS.TEXT.DESCRIPTION};
+const strong = css`
+    font-weight: 700;
 `;
 
 const buttonGroup = css`
     width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     gap: 18px;
+    z-index: 20;
 `;
 
-const companyNameStyle = css`
-    position: absolute;
-    bottom: 16px;
-    text-align: center;
-    font-size: ${theme.FONT_SIZES.SM};
-    color: #868e96;
+const pStyle = css`
+    margin: 30px 0 0 14px;
+    color: ${COLORS.TEXT.DESCRIPTION_LIGHT};
+    font-size: 12px;
+    text-align: start;
+    text-decoration: underline;
 `;
+
+// const companyNameStyle = css`
+//     position: absolute;
+//     bottom: 16px;
+//     text-align: center;
+//     font-size: ${theme.FONT_SIZES.SM};
+//     color: ${COLORS.TEXT.DESCRIPTION_LIGHT};
+//     z-index: 20;
+// `;
 
 export default LoginPage;

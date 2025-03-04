@@ -50,19 +50,19 @@ const MainPage = () => {
         // 약간의 지연 후 알림 설정 (웹소켓 연결 시간 고려)
         setTimeout(() => {
             if (webSocketService.isConnected()) {
-                // console.log('알림 설정 시작...');
+                console.log('알림 설정 시작...');
 
                 // 콜백 등록
                 webSocketService.setUnreadCountCallback((count) => {
-                    // console.log('콜백 호출됨, 카운트:', count);
+                    console.log('콜백 호출됨, 카운트:', count);
                     setSharedTripsCount(count);
                 });
 
                 // 요청 보내기
-                // console.log('알림 카운트 요청 보냄...');
+                console.log('알림 카운트 요청 보냄...');
                 webSocketService.requestNotificationCount(userId);
             } else {
-                // console.log('웹소켓 연결 실패 또는 진행 중...');
+                console.log('웹소켓 연결 실패 또는 진행 중...');
             }
         }, 200); // 1초 지연
 

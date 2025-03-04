@@ -8,8 +8,8 @@ export const OAUTH_CONFIG = {
         GOOGLE: `${ENV.API_BASE_URL}/${OAUTH_URL}/google`,
     },
     LABELS: {
-        KAKAO: '카카오 계정으로 로그인',
-        GOOGLE: 'Google 계정으로 로그인',
+        KAKAO: '카카오로 5초안에 시작하기',
+        GOOGLE: 'Google 계정으로 시작하기',
     },
     STORAGE_KEYS: {
         TOKEN: 'token',

@@ -5,17 +5,17 @@ import Toast from '@/components/common/Toast';
 import theme from '@/styles/theme';
 
 const RootLayout = () => (
-    <div css={containerStyle}>
+    <div css={container}>
         <Outlet />
         <Toast />
     </div>
 );
-const containerStyle = css`
+const container = css`
     max-width: 428px;
+    /* max-width: 600px; */
     min-height: 100dvh;
     margin: 0 auto;
-    background-color: ${theme.COLORS.TEXT.WHITE};
-    box-shadow: ${theme.COLORS.BOX_SHADOW};
+    background-color: ${theme.COLORS.BACKGROUND.WHITE};
 `;
 
 export default RootLayout;

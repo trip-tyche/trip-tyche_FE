@@ -31,7 +31,7 @@ const headerStyle = css`
     min-height: 48px;
     position: relative;
     border-bottom: 1px solid ${theme.COLORS.BORDER};
-    background-color: ${theme.COLORS.TEXT.WHITE};
+    background-color: ${theme.COLORS.BACKGROUND.WHITE};
     z-index: 998;
 `;
 
