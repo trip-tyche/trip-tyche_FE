@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 
+import backgroundImage from '@/assets/images/background-mobile-2.webp';
 import LoginButton from '@/components/features/auth/LoginButton';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import { OAUTH_CONFIG } from '@/constants/api/oauth';
@@ -52,7 +53,7 @@ const container = css`
     align-items: center;
     position: relative;
     gap: 72px;
-    background-image: url('/src/assets/images/background-mobile-2.webp');
+    background-image: url(${backgroundImage});
     background-size: cover;
 `;
 
@@ -99,7 +100,7 @@ const buttonGroup = css`
 
 const pStyle = css`
     margin: 30px 0 0 14px;
-    color: ${COLORS.TEXT.DESCRIPTION_LIGHT};
+    color: #dddddd;
     font-size: 12px;
     text-align: start;
     text-decoration: underline;
