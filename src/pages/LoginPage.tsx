@@ -52,7 +52,7 @@ const container = css`
     align-items: center;
     position: relative;
     gap: 72px;
-    background-image: url('/src/assets/images/background-image-mobile-2.webp');
+    background-image: url('/src/assets/images/background-mobile-2.webp');
     background-size: cover;
 `;
 
