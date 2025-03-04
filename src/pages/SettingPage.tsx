@@ -10,6 +10,7 @@ import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import NickNameForm from '@/components/features/user/NickNameForm';
 import SettingButton from '@/components/features/user/SettingButton';
 import { ROUTES } from '@/constants/paths';
+import { COLORS } from '@/constants/theme';
 import { LOGOUT_MODAL, NICKNAME_FORM } from '@/constants/ui/message';
 import useAuthStore from '@/stores/useAuthStore';
 import { useModalStore } from '@/stores/useModalStore';
@@ -70,25 +71,26 @@ const SettingPage = () => {
                         </p>
                     </div>
 
-                    <div css={buttonGroup}>
-                        <div css={optionList}>
-                            {settingButtons.map((button, index) => (
-                                <SettingButton
-                                    key={index}
-                                    text={button.text}
-                                    icon={button.icon}
-                                    onClick={button.handleButtonClick}
-                                />
-                            ))}
-                        </div>
+                    <ul css={optionList}>
+                        {settingButtons.map((button, index) => (
+                            <SettingButton
+                                key={index}
+                                text={button.text}
+                                icon={button.icon}
+                                onClick={button.handleButtonClick}
+                            />
+                        ))}
+                    </ul>
+                    <ul css={optionList}>
                         <SettingButton
                             text='로그아웃'
                             icon={<LogOut size={20} color={theme.COLORS.TEXT.BLACK} />}
                             onClick={handleLogout}
                         />
-                    </div>
+                    </ul>
                 </main>
             )}
+
             {isModalOpen && (
                 <ConfirmModal
                     title={LOGOUT_MODAL.TITLE}
@@ -111,16 +113,18 @@ const pageContainer = css`
 
 const mainStyle = css`
     height: calc(100% - 44px);
-    padding: 20px;
+    background-color: ${COLORS.BACKGROUND.WHITE_SECONDARY};
 `;
 
 const userInfoContainer = css`
-    height: 38px;
+    margin-bottom: 14px;
+    padding: 16px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 18px;
+    gap: 14px;
     font-size: ${theme.FONT_SIZES.XL};
+    background-color: ${COLORS.BACKGROUND.WHITE};
+    border-bottom: 1px solid rgb(233, 233, 233);
 `;
 
 const characterStyle = css`
@@ -130,7 +134,7 @@ const characterStyle = css`
 
 const nickNameWrapper = css`
     align-self: flex-end;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
 `;
 
 const nickNameStyle = css`
@@ -155,16 +159,10 @@ const nickNameStyle = css`
     }
 `;
 
-const buttonGroup = css`
-    height: calc(100% - 54px);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-`;
-
 const optionList = css`
     display: flex;
     flex-direction: column;
+    margin-bottom: 14px;
 `;
 
 export default SettingPage;

@@ -12,6 +12,7 @@ export const COLORS = {
     BACKGROUND: {
         BLACK: '#090909',
         WHITE: '#FFFFFF',
+        WHITE_SECONDARY: '#F8F8F8',
     },
     BORDER: '#DDDDDD',
     BOX_SHADOW: 'rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;',

@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 
+import { COLORS } from '@/constants/theme';
 import theme from '@/styles/theme';
 
 interface SettingButtonProps {
@@ -10,21 +11,22 @@ interface SettingButtonProps {
 
 const SettingButton = ({ text, icon, onClick }: SettingButtonProps) => {
     return (
-        <button css={buttonStyle} onClick={onClick}>
+        <li css={buttonStyle} onClick={onClick}>
             {icon}
             <p css={textStyle}>{text}</p>
-        </button>
+        </li>
     );
 };
 
 const buttonStyle = css`
+    height: 44px;
+    padding: 10px 18px;
     display: flex;
     align-items: center;
-    border: none;
-    background-color: transparent;
-    padding: 15px 4px;
-    cursor: pointer;
     color: ${theme.COLORS.TEXT.BLACK};
+    background-color: ${COLORS.BACKGROUND.WHITE};
+    border-bottom: 1px solid rgb(233, 233, 233);
+    cursor: pointer;
 `;
 
 const textStyle = css`

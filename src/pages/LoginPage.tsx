@@ -46,7 +46,7 @@ const LoginPage = () => {
 const container = css`
     width: 100%;
     height: 100dvh;
-    padding: 44px 24px;
+    padding: 44px 24px 60px 24px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -55,6 +55,7 @@ const container = css`
     gap: 72px;
     background-image: url(${backgroundImage});
     background-size: cover;
+    user-select: none;
 `;
 
 const overlay = css`
@@ -99,11 +100,17 @@ const buttonGroup = css`
 `;
 
 const pStyle = css`
-    margin: 30px 0 0 14px;
+    margin: 44px 0 0 14px;
     color: #dddddd;
     font-size: 12px;
     text-align: start;
     text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.5s;
+
+    :hover {
+        color: ${COLORS.TEXT.WHITE};
+    }
 `;
 
 // const companyNameStyle = css`
