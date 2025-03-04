@@ -1,6 +1,9 @@
-import { css } from '@emotion/react';
+import { useEffect, useState } from 'react';
 
-import backgroundImage from '@/assets/images/background-mobile-2.webp';
+import { css } from '@emotion/react';
+import { Tooltip } from '@mantine/core';
+
+import backgroundImage from '@/assets/images/background-mobile-3.webp';
 import LoginButton from '@/components/features/auth/LoginButton';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import { OAUTH_CONFIG } from '@/constants/api/oauth';
@@ -8,7 +11,16 @@ import { COLORS } from '@/constants/theme';
 import useBrowserCheck from '@/hooks/useBrowserCheck';
 
 const LoginPage = () => {
+    const [isTooltipOpen, setIsTooltipOpen] = useState(false);
     const { isModalOpen, closeModal } = useBrowserCheck({ showOnce: true });
+
+    useEffect(() => {
+        if (isTooltipOpen) {
+            setTimeout(() => {
+                setIsTooltipOpen(false);
+            }, 2000);
+        }
+    }, [isTooltipOpen]);
 
     const handleLoginButtonClick = (provider: keyof typeof OAUTH_CONFIG.PATH) => {
         window.location.href = OAUTH_CONFIG.PATH[provider];
@@ -25,7 +37,21 @@ const LoginPage = () => {
             <div css={buttonGroup}>
                 <LoginButton provider='kakao' onClick={() => handleLoginButtonClick('KAKAO')} />
                 <LoginButton provider='google' onClick={() => handleLoginButtonClick('GOOGLE')} />
-                <p css={pStyle}>비회원으로 둘러보기</p>
+                <Tooltip
+                    label='준비 중인 기능입니다.'
+                    color={COLORS.PRIMARY}
+                    opened={isTooltipOpen}
+                    position='top-start'
+                    offset={{ mainAxis: 12 }}
+                    withArrow
+                    arrowOffset={44}
+                    arrowSize={6}
+                    transitionProps={{ duration: 300, transition: 'pop' }}
+                >
+                    <p css={pStyle} onClick={() => setIsTooltipOpen(true)}>
+                        비회원으로 둘러보기
+                    </p>
+                </Tooltip>
             </div>
             {/* <p css={companyNameStyle}>© 2024 Vagabond. All rights reserved.</p> */}
 
@@ -100,6 +126,7 @@ const buttonGroup = css`
 `;
 
 const pStyle = css`
+    width: max-content;
     margin: 44px 0 0 14px;
     color: #dddddd;
     font-size: 12px;
