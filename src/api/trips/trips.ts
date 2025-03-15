@@ -19,28 +19,17 @@ export const tripAPI = {
         const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/info`);
         return data.data;
     },
+    // tripId 생성
     createTrip: async () => {
-        const token = getToken();
-        const data = await apiClient.post(
-            `${API_ENDPOINTS.TRIPS}`,
-            {},
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            },
-        );
+        const data = await apiClient.post(`${API_ENDPOINTS.TRIPS}`);
         return data.data.tripId;
     },
-    createTripInfo: async (tripId: string, tripInfo: Trip) => {
-        const token = getToken();
-        const data = await apiClient.post(`${API_ENDPOINTS.TRIPS}/${tripId}/info`, tripInfo, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        return data;
-    },
+    // 여행 정보 등록
+    // createTripInfo: async (tripId: string, tripInfo: Trip) => {
+    //     const data = await apiClient.post(`${API_ENDPOINTS.TRIPS}/${tripId}/info`, tripInfo);
+    //     return data;
+    // },
+    // 여행 정보 수정
     updateTripInfo: async (tripId: string, tripInfo: Trip) => {
         const { country, endDate, startDate, tripTitle, hashtags } = tripInfo;
         const newTripInfo = { country, endDate, startDate, tripTitle, hashtags };
