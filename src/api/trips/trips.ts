@@ -4,10 +4,12 @@ import { Trip } from '@/types/trip';
 import { getToken } from '@/utils/auth';
 
 export const tripAPI = {
+    // 여행정보 수정을 위한 조회
     fetchTripTicketInfo: async (tripId: string) => {
         const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}`);
         return data.data;
     },
+    // 사용자 여행 정보 조회
     fetchTripTicketList: async () => {
         const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}`);
 

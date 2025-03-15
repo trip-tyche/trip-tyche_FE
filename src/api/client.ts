@@ -1,11 +1,11 @@
 import axios from 'axios';
 
 import { setupRequestInterceptor, setupResponseInterceptor } from '@/api/interceptors';
-import { DEFAULT_HEADERS, ENV } from '@/constants/api/config';
+import { ENV } from '@/constants/api/config';
 
 export const apiClient = axios.create({
     baseURL: ENV.API_BASE_URL,
-    headers: DEFAULT_HEADERS,
+    // headers: DEFAULT_HEADERS,
     timeout: 15000,
 });
 

@@ -9,7 +9,7 @@ export const API_ENDPOINTS = {
 } as const;
 
 export const DEFAULT_HEADERS = {
-    accept: '*/*',
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE',
+    // accept: '*/*',
+    // 'Content-Type': 'application/json',
+    // 'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE',
 };
