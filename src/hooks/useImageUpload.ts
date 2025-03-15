@@ -173,6 +173,7 @@ export const useImageUpload = () => {
             }));
 
             const presignedUrls = await tripImageAPI.requestPresignedUploadUrls(tripId, files);
+            console.log(presignedUrls);
 
             console.time(`S3 업로드 시간`);
             await Promise.all(

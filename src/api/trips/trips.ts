@@ -15,6 +15,7 @@ export const tripAPI = {
 
         return data.data;
     },
+    // Map 페이지 정보 조회
     fetchTripTimeline: async (tripId: string) => {
         const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/info`);
         return data.data;
@@ -36,6 +37,7 @@ export const tripAPI = {
         const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripId}`, newTripInfo);
         return data;
     },
+    // 여행 정보 삭제
     deleteTripTicket: async (tripId: string) => {
         const token = getToken();
         const data = await apiClient.delete(`${API_ENDPOINTS.TRIPS}/${tripId}`, {

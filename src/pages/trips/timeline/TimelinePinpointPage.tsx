@@ -28,6 +28,7 @@ const TimelinePinpointPage = () => {
                 return;
             }
             const pinPointData = await tripImageAPI.fetchImagesByPinPoint(tripId, pinPointId);
+            console.log(pinPointData);
             const { imagesLink } = pinPointData.images;
 
             const sortedImages = imagesLink.sort((dateA: PinpointMediaModel, dateB: PinpointMediaModel) =>

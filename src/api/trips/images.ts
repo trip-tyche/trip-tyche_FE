@@ -8,6 +8,7 @@ import { MediaFile, MediaFileModel, UnlocatedMediaFileModel } from '@/types/medi
 import { getToken } from '@/utils/auth';
 
 export const tripImageAPI = {
+    // 핀포인트 슬라이드
     fetchImagesByPinPoint: async (tripId: string, pinPoint: string) => {
         const token = getToken();
         const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/pinpoints/${pinPoint}/images`, {
@@ -17,11 +18,14 @@ export const tripImageAPI = {
         });
         return data.data;
     },
+    // 날짜별 이미지 조회
     fetchImagesByDate: async (tripId: string, date: string) => {
         const formattedDate = date.slice(0, 10);
         const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/map?date=${formattedDate}`);
         return data.data;
     },
+
+    // 첫번째 이미지 좌표[위치정보⭕️]
     fetchDefaultLocation: async (tripId: string) => {
         const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/images/firstimage`);
         return data.data;
@@ -30,6 +34,10 @@ export const tripImageAPI = {
         const data = await apiClient.get<UnlocatedMediaFileModel[]>(
             `${API_ENDPOINTS.TRIPS}/${tripId}/images/unlocated`,
         );
+        return data.data;
+    },
+    updateUnlocatedImages: async (tripId: string, mediaFileId: string, location: GpsCoordinates) => {
+        const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripId}/images/unlocated/${mediaFileId}`, location);
         return data.data;
     },
 
@@ -46,21 +54,12 @@ export const tripImageAPI = {
         });
         return data;
     },
+
     requestPresignedUploadUrls: async (tripId: string, files: PresignedUrlRequest[]) => {
         const formattedData = { tripId, files };
         const data = await apiClient.post(`/api/trips/${tripId}/presigned-url`, formattedData);
         return data.data.presignedUrls;
     },
-    registerTripMediaFiles: async (tripId: string, files: MediaFileModel[]) => {
-        const data = await apiClient.post(`/api/trips/${tripId}/media-files`, files);
-        return data;
-    },
-
-    updateUnlocatedImages: async (tripId: string, mediaFileId: string, location: GpsCoordinates) => {
-        const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripId}/images/unlocated/${mediaFileId}`, location);
-        return data.data;
-    },
-
     uploadToS3: async (presignedUrl: string, file: File) => {
         const data = await axios.put(presignedUrl, file, {
             headers: {
@@ -69,6 +68,11 @@ export const tripImageAPI = {
         });
         return data;
     },
+    registerTripMediaFiles: async (tripId: string, files: MediaFileModel[]) => {
+        const data = await apiClient.post(`/api/trips/${tripId}/media-files`, files);
+        return data;
+    },
+
     // 여행에 등록된 모든 이미지 조회
     getTripImages: async (tripId: string) => {
         const response = await apiClient.get(`/api/trips/${tripId}/media-files`);
