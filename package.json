@@ -21,7 +21,6 @@
         "axios": "^1.7.4",
         "browser-image-compression": "^2.0.2",
         "dayjs": "^1.11.13",
-        "heic2any": "^0.0.4",
         "lottie-react": "^2.4.1",
         "lucide-react": "^0.438.0",
         "piexifjs": "^1.0.6",

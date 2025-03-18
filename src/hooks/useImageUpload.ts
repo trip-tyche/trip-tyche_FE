@@ -51,16 +51,13 @@ export const useImageUpload = () => {
 
         const extractedImages = await Promise.all(
             Array.from(images).map(async (image) => {
+                console.log(image);
+                if (image.name.startsWith('temp')) {
+                    console.log('image/heic');
+                }
+
                 const location = await getImageLocation(image);
                 const date = await extractDateFromImage(image);
-                // console.log('location', location);
-                // console.log('date', date);
-                console.log('파일 정보:', {
-                    name: image.name,
-                    type: image.type,
-                    size: image.size,
-                    lastModified: new Date(image.lastModified).toISOString(),
-                });
                 let formattedDate = '';
 
                 if (date) {
