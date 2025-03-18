@@ -53,6 +53,14 @@ export const useImageUpload = () => {
             Array.from(images).map(async (image) => {
                 const location = await getImageLocation(image);
                 const date = await extractDateFromImage(image);
+                // console.log('location', location);
+                // console.log('date', date);
+                console.log('파일 정보:', {
+                    name: image.name,
+                    type: image.type,
+                    size: image.size,
+                    lastModified: new Date(image.lastModified).toISOString(),
+                });
                 let formattedDate = '';
 
                 if (date) {
