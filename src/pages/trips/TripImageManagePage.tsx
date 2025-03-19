@@ -301,7 +301,8 @@ const selectedStyle = css`
 `;
 
 const bottomSheet = css`
-    min-width: 428px;
+    max-width: 428px;
+    width: 100%;
     position: fixed;
     background-color: ${COLORS.BACKGROUND.WHITE};
     border-radius: 10px 10px 0 0;
