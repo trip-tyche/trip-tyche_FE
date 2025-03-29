@@ -34,7 +34,7 @@ const MainPage = () => {
     const isLogin = useAuthStore((state) => state.isLogIn);
     const userNickName = useUserDataStore((state) => state.userNickName);
     const setLogout = useAuthStore((state) => state.setLogout);
-    const setUserNickName = useUserDataStore((state) => state.setUserNickName);
+    // const setUserNickName = useUserDataStore((state) => state.setUserNickName);
     const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();
@@ -109,15 +109,18 @@ const MainPage = () => {
             navigate(ROUTES.PATH.AUTH.LOGIN);
             return;
         }
-        const { userNickName, trips } = await tripAPI.fetchTripTicketList();
+
+        const result = await tripAPI.fetchTripTicketList();
+
+        const trips = result.data;
 
         // 알림 목록 불러오기
         // await fetchNotifications();
 
-        const validTripList = trips?.filter((trip: Trip) => trip.tripTitle !== 'N/A');
+        const validTripList = trips?.filter((trip: Trip) => trip.tripTitle !== 'N/A') as Trip[];
         const latestTrip = validTripList[validTripList.length - 1];
 
-        setUserNickName(userNickName);
+        // setUserNickName(userNickName);
         setTripCount(validTripList.length);
         setLatestTrip(latestTrip);
     };
