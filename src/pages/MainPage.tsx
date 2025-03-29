@@ -17,6 +17,7 @@ import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { WELCOME_TICKET_DATA } from '@/constants/trip/form';
 import { NICKNAME_FORM } from '@/constants/ui/message';
+// import webSocketService from '@/services/webSocketService';
 import webSocketService from '@/services/webSocketService';
 import useAuthStore from '@/stores/useAuthStore';
 import { useToastStore } from '@/stores/useToastStore';
@@ -39,37 +40,37 @@ const MainPage = () => {
 
     const navigate = useNavigate();
 
-    // useEffect(() => {
-    //     const userId = localStorage.getItem('userId');
-    //     if (!userId) return;
+    useEffect(() => {
+        const userId = localStorage.getItem('userId');
+        if (!userId) return;
 
-    //     // connect가 Promise를 반환하지 않는 경우 처리
-    //     // console.log('웹소켓 연결 시도...');
-    //     webSocketService.connect(userId); // Promise가 아니므로 직접 호출
+        // connect가 Promise를 반환하지 않는 경우 처리
+        // console.log('웹소켓 연결 시도...');
+        webSocketService.connect(userId); // Promise가 아니므로 직접 호출
 
-    //     // 약간의 지연 후 알림 설정 (웹소켓 연결 시간 고려)
-    //     setTimeout(() => {
-    //         if (webSocketService.isConnected()) {
-    //             console.log('알림 설정 시작...');
+        // 약간의 지연 후 알림 설정 (웹소켓 연결 시간 고려)
+        setTimeout(() => {
+            if (webSocketService.isConnected()) {
+                console.log('알림 설정 시작...');
 
-    //             // 콜백 등록
-    //             webSocketService.setUnreadCountCallback((count) => {
-    //                 console.log('콜백 호출됨, 카운트:', count);
-    //                 setSharedTripsCount(count);
-    //             });
+                // 콜백 등록
+                webSocketService.setUnreadCountCallback((count) => {
+                    console.log('콜백 호출됨, 카운트:', count);
+                    setSharedTripsCount(count);
+                });
 
-    //             // 요청 보내기
-    //             console.log('알림 카운트 요청 보냄...');
-    //             webSocketService.requestNotificationCount(userId);
-    //         } else {
-    //             console.log('웹소켓 연결 실패 또는 진행 중...');
-    //         }
-    //     }, 200); // 1초 지연
+                // 요청 보내기
+                console.log('알림 카운트 요청 보냄...');
+                webSocketService.requestNotificationCount(userId);
+            } else {
+                console.log('웹소켓 연결 실패 또는 진행 중...');
+            }
+        }, 200); // 1초 지연
 
-    //     return () => {
-    //         webSocketService.setUnreadCountCallback(() => null);
-    //     };
-    // }, []);
+        return () => {
+            webSocketService.setUnreadCountCallback(() => null);
+        };
+    }, []);
 
     useEffect(() => {
         if (!isLogin) {
@@ -114,17 +115,13 @@ const MainPage = () => {
 
         const result = await tripAPI.fetchTripTicketList();
 
-        console.log('1111', result);
-
         const trips = result.data;
 
         // 알림 목록 불러오기
         // await fetchNotifications();
 
         const validTripList = trips?.filter((trip: Trip) => trip.tripTitle !== 'N/A') as Trip[];
-        console.log('2222', validTripList);
         const latestTrip = validTripList[validTripList.length - 1];
-        console.log('3333', latestTrip);
 
         // setUserNickName(userNickName);
         setTripCount(validTripList.length);

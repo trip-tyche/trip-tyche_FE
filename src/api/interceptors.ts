@@ -8,9 +8,8 @@ export const setupRequestInterceptor = (instance: AxiosInstance) => {
     instance.interceptors.request.use(
         (config: InternalAxiosRequestConfig) => {
             const jwtToken = getToken();
-            if (!config.skipAuth) {
-                config.headers.Authorization = `Bearer ${jwtToken}`;
-            }
+            config.headers.Authorization = `Bearer ${jwtToken}`;
+
             return config;
         },
         (error: AxiosError) => {
