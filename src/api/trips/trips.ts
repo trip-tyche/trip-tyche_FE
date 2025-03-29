@@ -1,51 +1,42 @@
 import { apiClient } from '@/api/client';
 import { API_ENDPOINTS } from '@/constants/api/config';
 import { Trip } from '@/types/trip';
-import { getToken } from '@/utils/auth';
 
 export const tripAPI = {
-    // 여행정보 수정을 위한 조회
-    fetchTripTicketInfo: async (tripId: string) => {
-        const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}`);
-        return data.data;
-    },
-    // 사용자 여행 정보 조회
+    // 사용자의 전체 여행 티켓 목록 조회
     fetchTripTicketList: async () => {
-        const data = await apiClient.get(`/v1/trips`);
-        // const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}`);
+        const response = await apiClient.get(`/v1/trips`);
 
-        return data.data;
+        return response.data;
     },
-    // Map 페이지 정보 조회
-    fetchTripTimeline: async (tripId: string) => {
-        const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/info`);
-        return data.data;
+    // 특정 여행의 티켓 상세 정보 조회
+    fetchTripTicketInfo: async (tripId: string) => {
+        const response = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}`);
+
+        return response.data;
     },
-    // tripId 생성
-    createTrip: async () => {
-        const data = await apiClient.post(`${API_ENDPOINTS.TRIPS}`);
-        return data.data.tripId;
+    // 새 티켓 등록을 위한 tripId 생성
+    createTripTicket: async () => {
+        const response = await apiClient.post(`${API_ENDPOINTS.TRIPS}`);
+
+        return response.data.tripId;
     },
-    // 여행 정보 등록
-    // createTripInfo: async (tripId: string, tripInfo: Trip) => {
-    //     const data = await apiClient.post(`${API_ENDPOINTS.TRIPS}/${tripId}/info`, tripInfo);
-    //     return data;
-    // },
-    // 여행 정보 수정
-    updateTripInfo: async (tripId: string, tripInfo: Trip) => {
-        const { country, endDate, startDate, tripTitle, hashtags } = tripInfo;
-        const newTripInfo = { country, endDate, startDate, tripTitle, hashtags };
-        const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripId}`, newTripInfo);
-        return data;
+    // 기존 여행 티켓 정보 수정
+    updateTripTicketInfo: async (tripId: string, tripInfo: Trip) => {
+        const response = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripId}`, tripInfo);
+
+        return response;
     },
-    // 여행 정보 삭제
+    // 여행 티켓 삭제
     deleteTripTicket: async (tripId: string) => {
-        const token = getToken();
-        const data = await apiClient.delete(`${API_ENDPOINTS.TRIPS}/${tripId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        return data;
+        const response = await apiClient.delete(`${API_ENDPOINTS.TRIPS}/${tripId}`);
+
+        return response;
+    },
+
+    // 여행 타임라인 및 지도 표시용 정보 조회
+    fetchTripTimeline: async (tripId: string) => {
+        const response = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/info`);
+        return response.data;
     },
 };

@@ -63,7 +63,7 @@ export const useTripInfoForm = (mode: FormMode) => {
         }
 
         if (mode === 'create') {
-            await tripAPI.updateTripInfo(tripId, tripInfo);
+            await tripAPI.updateTripTicketInfo(tripId, tripInfo);
 
             setIsUploading(true);
             await waitForCompletion();
@@ -80,7 +80,7 @@ export const useTripInfoForm = (mode: FormMode) => {
             );
         } else {
             try {
-                await tripAPI.updateTripInfo(tripId, tripInfo);
+                await tripAPI.updateTripTicketInfo(tripId, tripInfo);
                 queryClient.invalidateQueries({ queryKey: ['trip-ticket-info'] });
                 showToast('여행 정보가 성공적으로 수정되었습니다.');
             } catch (error) {

@@ -15,7 +15,7 @@ export const updateTripDate = async (tripId: string, datesOfImages: string[]) =>
     const newEndDate = earliestNewDate.localeCompare(startDate) > 0 ? latestNewDate : endDate;
 
     if (newStartDate !== startDate || newEndDate !== endDate) {
-        await tripAPI.updateTripInfo(tripId, {
+        await tripAPI.updateTripTicketInfo(tripId, {
             ...tripInfo,
             startDate: newStartDate,
             endDate: newEndDate,

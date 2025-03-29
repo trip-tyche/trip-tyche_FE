@@ -128,7 +128,7 @@ const MainPage = () => {
             return;
         }
 
-        const tripId = await tripAPI.createTrip();
+        const tripId = await tripAPI.createTripTicket();
         navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`, { state: 'first-ticket' });
     };
 
