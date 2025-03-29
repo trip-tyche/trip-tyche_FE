@@ -1,20 +1,19 @@
 import { apiClient } from '@/api/client';
-import { API_ENDPOINTS } from '@/constants/api/config';
-import { getToken } from '@/utils/auth';
 
 export const userAPI = {
-    createUserNickName: async (userNickName: string) => {
-        const token = getToken();
-        const data = await apiClient.post(`${API_ENDPOINTS.USERS}/updateUserNickName`, userNickName, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'text/plain',
-            },
-        });
-        return data;
+    // 사용자 닉네임 등록 및 수정
+    createUserNickName: async (nickname: string) => {
+        const response = await apiClient.patch(`/v1/users/me`, { nickname });
+        return response;
     },
-    checkDuplication: async (userNickName: string) => {
-        const response = await apiClient.get(`${API_ENDPOINTS.USERS}/check-nickname?userNickName=${userNickName}`);
+    // 사용자 닉네임 중복확인
+    checkDuplication: async (nickname: string) => {
+        const params = {
+            nickname,
+        };
+        const response = await apiClient.get(`/v1/nicknames`, {
+            params,
+        });
 
         return response;
     },

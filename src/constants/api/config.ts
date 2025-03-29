@@ -7,9 +7,3 @@ export const API_ENDPOINTS = {
     USERS: '/api/user',
     TRIPS: '/api/trips',
 } as const;
-
-export const DEFAULT_HEADERS = {
-    // accept: '*/*',
-    // 'Content-Type': 'application/json',
-    // 'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE',
-};

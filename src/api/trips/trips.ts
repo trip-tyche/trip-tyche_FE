@@ -11,7 +11,8 @@ export const tripAPI = {
     },
     // 사용자 여행 정보 조회
     fetchTripTicketList: async () => {
-        const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}`);
+        const data = await apiClient.get(`/v1/trips`);
+        // const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}`);
 
         return data.data;
     },
