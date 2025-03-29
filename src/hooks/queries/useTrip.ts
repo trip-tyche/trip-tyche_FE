@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { tripAPI } from '@/api';
+import { Result } from '@/types/apis/common';
+import { Trip } from '@/types/trip';
 
 export const useTripTicketList = () => {
-    return useQuery({
+    return useQuery<Result<Trip[]>, Error, Trip[]>({
         queryKey: ['ticket-list'],
         queryFn: () => tripAPI.fetchTripTicketList(),
         select: (result) => {

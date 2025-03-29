@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 
 import { ThemeProvider } from '@emotion/react';
 import { MantineProvider } from '@mantine/core';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from 'react-router-dom';
 
+import TanStackProvider from '@/providers/TanStackProvider';
 import router from '@/router/Router';
 import webSocketService from '@/services/webSocketService';
 import GlobalStyle from '@/styles/GlobalStyle';
@@ -13,8 +13,6 @@ import theme from '@/styles/theme';
 
 import '@mantine/dates/styles.css';
 import '@mantine/core/styles.css';
-
-const queryClient = new QueryClient();
 
 const App = () => {
     useEffect(() => {
@@ -30,7 +28,7 @@ const App = () => {
     }, []);
 
     return (
-        <QueryClientProvider client={queryClient}>
+        <TanStackProvider>
             <MantineProvider>
                 <ThemeProvider theme={theme}>
                     <GlobalStyle />
@@ -38,7 +36,7 @@ const App = () => {
                     <RouterProvider router={router} />
                 </ThemeProvider>
             </MantineProvider>
-        </QueryClientProvider>
+        </TanStackProvider>
     );
 };
 
