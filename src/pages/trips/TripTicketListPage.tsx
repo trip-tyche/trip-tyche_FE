@@ -23,7 +23,7 @@ const TripTicketListPage = () => {
 
     const navigate = useNavigate();
 
-    const { data: tripList, refetch, isLoading } = useTripTicketList();
+    const { data: tripList, refetch, isLoading, error } = useTripTicketList();
 
     const deleteInValidTrips = async (trips: Trip[]) => {
         const deletePromises = trips
@@ -38,14 +38,14 @@ const TripTicketListPage = () => {
             return { validTripList: [] };
         }
 
-        const inValidTripList = tripList.trips.filter((trip: Trip) => trip.tripTitle === 'N/A');
-        const validTripList = tripList.trips
+        const inValidTripList = tripList.filter((trip: Trip) => trip.tripTitle === 'N/A');
+        const validTripList = tripList
             .filter((trip: Trip) => trip.tripTitle !== 'N/A')
-            .map((trip: Trip) => ({ ...trip, userNickname: tripList.userNickName }))
+            // .map((trip: Trip) => ({ ...trip, userNickname: tripList.userNickName }))
             .reverse();
 
         if (inValidTripList.length > 3) {
-            deleteInValidTrips(tripList.trips);
+            deleteInValidTrips(tripList);
             refetch();
         }
 
@@ -62,6 +62,8 @@ const TripTicketListPage = () => {
         const tripId = await tripAPI.createTripTicket();
         navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`);
     };
+
+    if (error) return;
 
     return (
         <div css={pageContainer}>

@@ -190,14 +190,14 @@ export const useImageUpload = () => {
 
             const uploadedFiles = presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) => ({
                 mediaLink: urlInfo.presignedPutUrl.split('?')[0],
+                mediaType: resizedImages[index].image.type,
+                recordDate: resizedImages[index].formattedDate,
                 latitude: resizedImages[index].location ? resizedImages[index]?.location.latitude : 0,
                 longitude: resizedImages[index].location ? resizedImages[index]?.location.longitude : 0,
-                recordDate: resizedImages[index].formattedDate,
-                mediaType: resizedImages[index].image.type,
             }));
 
             console.time(`서버 데이터 전송 시간`);
-            await tripImageAPI.registerTripMediaFiles(tripId, uploadedFiles);
+            await tripImageAPI.postMediaFileMetadata(tripId, uploadedFiles);
             console.timeEnd(`서버 데이터 전송 시간`);
             setUploadStatus('completed');
         } catch (error) {

@@ -4,7 +4,7 @@ import { apiClient } from '@/api/client';
 import { API_ENDPOINTS } from '@/constants/api/config';
 import { PresignedUrlRequest } from '@/types/image';
 import { GpsCoordinates } from '@/types/location';
-import { MediaFile, MediaFileModel, UnlocatedMediaFileModel } from '@/types/media';
+import { MediaFile, MediaFileModel, RealMediaFile, UnlocatedMediaFileModel } from '@/types/media';
 import { getToken } from '@/utils/auth';
 
 export const tripImageAPI = {
@@ -40,7 +40,6 @@ export const tripImageAPI = {
         const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripId}/images/unlocated/${mediaFileId}`, location);
         return data.data;
     },
-
     requestPresignedUploadUrls: async (tripId: string, files: PresignedUrlRequest[]) => {
         const formattedData = { tripId, files };
         const data = await apiClient.post(`/api/trips/${tripId}/presigned-url`, formattedData);
@@ -54,9 +53,11 @@ export const tripImageAPI = {
         });
         return data;
     },
-    registerTripMediaFiles: async (tripId: string, files: MediaFileModel[]) => {
-        const data = await apiClient.post(`/api/trips/${tripId}/media-files`, files);
-        return data;
+    // 미디어 파일의 메타데이터 등록
+    postMediaFileMetadata: async (tripId: string, mediaFiles: RealMediaFile[]) => {
+        const response = await apiClient.post(`/api/trips/${tripId}/media-files`, mediaFiles);
+
+        return response;
     },
 
     // 여행에 등록된 모든 이미지 조회

@@ -14,6 +14,7 @@ export const useTripTicketList = () => {
             }
             return result.data;
         },
+        staleTime: 10 * 60 * 1000,
     });
 };
 

@@ -6,18 +6,19 @@ import { Trip } from '@/types/trip';
 export const tripAPI = {
     // 사용자의 전체 여행 티켓 목록 조회
     fetchTripTicketList: async (): Promise<Result<Trip[]>> => {
-        const response = await apiClient.get(`/v1/trips`);
-        const { data } = response;
+        try {
+            const response = await apiClient.get(`/v1/trips`);
+            const { data } = response;
 
-        if (!data.isSuccess) {
-            return { isSuccess: false, error: data.errorMessag };
+            if (!data.result) {
+                return { isSuccess: false, error: '데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해 주세요.' };
+            }
+
+            return { isSuccess: true, data: data.trips };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
         }
-
-        if (!data.result) {
-            return { isSuccess: false, error: '데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해 주세요.' };
-        }
-
-        return { isSuccess: true, data: data.result };
     },
     // 특정 여행의 티켓 상세 정보 조회
     fetchTripTicketInfo: async (tripId: string) => {

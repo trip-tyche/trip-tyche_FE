@@ -41,24 +41,24 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
             if (error.response) {
                 const { status } = error.response.data;
 
-                switch (status) {
-                    case 401:
-                    case 403:
-                        setLogout();
-                        showToast('로그인이 필요합니다.');
-                        window.location.href = '/login';
-                        return;
-                    // break;
+                // TODO: 액세스 토큰 재발급 로직 추가
+                if (status === 401) {
+                    setLogout();
+                    showToast('로그인이 필요합니다.');
+                    window.location.href = '/login';
+                    return;
+                }
 
-                    case 500:
-                    case 502:
-                    case 503:
-                        showToast('서버에 일시적인 문제가 발생했습니다.');
-                        return;
-                    //break
+                if (status === 403) {
+                    setLogout();
+                    showToast('자동 로그아웃 되었습니다.');
+                    window.location.href = '/login';
+                    return;
+                }
 
-                    // default:
-                    // showToast('예기치 않은 오류가 발생했습니다.');
+                if (status === 500) {
+                    showToast('서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+                    return Promise.reject(error);
                 }
             }
 
