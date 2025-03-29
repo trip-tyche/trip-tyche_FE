@@ -41,20 +41,6 @@ export const tripImageAPI = {
         return data.data;
     },
 
-    // createTripImages: async (tripId: string, images: File[]) => {
-    //     const formData = new FormData();
-    //     images.forEach((image) => {
-    //         formData.append('files', image);
-    //     });
-
-    //     const data = await apiClient.post(`${API_ENDPOINTS.TRIPS}/${tripId}/upload`, formData, {
-    //         headers: {
-    //             'Content-Type': 'multipart/form-data',
-    //         },
-    //     });
-    //     return data;
-    // },
-
     requestPresignedUploadUrls: async (tripId: string, files: PresignedUrlRequest[]) => {
         const formattedData = { tripId, files };
         const data = await apiClient.post(`/api/trips/${tripId}/presigned-url`, formattedData);

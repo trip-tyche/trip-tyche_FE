@@ -10,8 +10,3 @@ export interface Trip {
     ownerNickname: string;
     sharedUserNicknames?: string[];
 }
-
-export interface TripList {
-    userNickName: string;
-    trips: Trip[];
-}
