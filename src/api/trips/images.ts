@@ -4,7 +4,7 @@ import { apiClient } from '@/api/client';
 import { API_ENDPOINTS } from '@/constants/api/config';
 import { PresignedUrlRequest } from '@/types/image';
 import { GpsCoordinates } from '@/types/location';
-import { MediaFile, MediaFileModel, RealMediaFile, UnlocatedMediaFileModel } from '@/types/media';
+import { MediaFile, RealMediaFile, UnlocatedMediaFileModel } from '@/types/media';
 import { getToken } from '@/utils/auth';
 
 export const tripImageAPI = {
