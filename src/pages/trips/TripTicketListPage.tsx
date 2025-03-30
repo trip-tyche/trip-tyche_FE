@@ -59,8 +59,12 @@ const TripTicketListPage = () => {
     }, [validTripList, setTripTicketCount]);
 
     const handleTicketCreate = async () => {
-        const tripId = await tripAPI.createTripTicket();
-        navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`);
+        const response = await tripAPI.createTripTicket();
+        const tripId = response.data;
+
+        if (tripId) {
+            navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`);
+        }
     };
 
     if (error) return;

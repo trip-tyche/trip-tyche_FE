@@ -119,7 +119,6 @@ const MainPage = () => {
 
         // 알림 목록 불러오기
         // await fetchNotifications();
-
         const validTripList = trips?.filter((trip: Trip) => trip.tripTitle !== 'N/A') as Trip[];
         const latestTrip = validTripList[validTripList.length - 1];
 

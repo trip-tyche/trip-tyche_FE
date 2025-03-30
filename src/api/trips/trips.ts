@@ -10,7 +10,7 @@ export const tripAPI = {
             const response = await apiClient.get(`/v1/trips`);
             const { data } = response;
 
-            if (!data.result) {
+            if (!data) {
                 return { isSuccess: false, error: '데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해 주세요.' };
             }
 
@@ -27,10 +27,19 @@ export const tripAPI = {
         return response.data;
     },
     // 새 티켓 등록을 위한 tripId 생성
-    createTripTicket: async () => {
-        const response = await apiClient.post(`${API_ENDPOINTS.TRIPS}`);
+    createTripTicket: async (): Promise<Result<number>> => {
+        try {
+            const response = await apiClient.post(`/v1/trips`);
+            const { data } = response;
 
-        return response.data.tripId;
+            if (!data) {
+                return { isSuccess: false, error: '데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해 주세요.' };
+            }
+
+            return { isSuccess: true, data: data.tripId };
+        } catch (error) {
+            return { isSuccess: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
+        }
     },
     // 기존 여행 티켓 정보 수정
     updateTripTicketInfo: async (tripId: string, tripInfo: Trip) => {
