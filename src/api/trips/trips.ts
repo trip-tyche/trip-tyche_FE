@@ -43,7 +43,6 @@ export const tripAPI = {
     },
     // 기존 여행 티켓 정보 수정
     updateTripTicketInfo: async (tripId: string, tripInfo: Trip) => {
-        console.log(tripInfo);
         const response = await apiClient.put(`/v1/trips/${tripId}`, tripInfo);
 
         return response;
