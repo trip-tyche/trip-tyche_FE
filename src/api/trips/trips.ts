@@ -49,8 +49,7 @@ export const tripAPI = {
     },
     // 여행 티켓 최종 등록
     finalizeTripTicekt: async (tripId: string) => {
-        const response = await apiClient.patch(`/v1/trips/${tripId}/finalize`);
-        console.log(response);
+        await apiClient.patch(`/v1/trips/${tripId}/finalize`);
     },
     // 여행 티켓 삭제
     deleteTripTicket: async (tripId: string) => {
@@ -61,7 +60,7 @@ export const tripAPI = {
 
     // 여행 타임라인 및 지도 표시용 정보 조회
     fetchTripTimeline: async (tripId: string) => {
-        const response = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/info`);
+        const response = await apiClient.get(`/v1/trips/${tripId}/info`);
         return response.data;
     },
 };
