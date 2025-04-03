@@ -35,7 +35,6 @@ const MainPage = () => {
     const isLogin = useAuthStore((state) => state.isLogIn);
     const userNickName = useUserDataStore((state) => state.userNickName);
     const setLogout = useAuthStore((state) => state.setLogout);
-    const setUserNickName = useUserDataStore((state) => state.setUserNickName);
     const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();

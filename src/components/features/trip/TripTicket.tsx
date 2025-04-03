@@ -14,6 +14,7 @@ import { COLORS } from '@/constants/theme';
 import { useTicketHandler } from '@/hooks/useTicketHandler';
 import { useTicketNavigation } from '@/hooks/useTicketNavigation';
 import { useToastStore } from '@/stores/useToastStore';
+import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
 import { formatToDot } from '@/utils/date';
@@ -23,13 +24,14 @@ interface TripTicketProps {
 }
 
 const TripTicket = ({ tripInfo }: TripTicketProps) => {
-    const { tripId, tripTitle, country, startDate, endDate, hashtags, ownerNickname, userNickname } = tripInfo;
+    const { tripId, tripTitle, country, startDate, endDate, hashtags, ownerNickname } = tripInfo;
 
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { showToast } = useToastStore.getState();
+    const userNickName = useUserDataStore((state) => state.userNickName);
 
     const { isModalOpen, handleImageUpload, handleTripEdit, handleTripDelete, deleteTrip, closeModal } =
         useTicketHandler(tripId as string);
@@ -80,7 +82,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
         }
     };
 
-    const isOwner = userNickname === ownerNickname;
+    const isOwner = userNickName === ownerNickname;
 
     return (
         <div css={ticketContainer}>
