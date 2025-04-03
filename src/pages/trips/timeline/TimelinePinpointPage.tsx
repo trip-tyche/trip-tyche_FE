@@ -27,11 +27,10 @@ const TimelinePinpointPage = () => {
             if (!(tripId && pinPointId)) {
                 return;
             }
-            const pinPointData = await tripImageAPI.fetchImagesByPinPoint(tripId, pinPointId);
-            console.log(pinPointData);
-            const { imagesLink } = pinPointData.images;
+            const result = await tripImageAPI.fetchImagesByPinPoint(tripId, pinPointId);
+            const { mediaFiles } = result;
 
-            const sortedImages = imagesLink.sort((dateA: PinpointMediaModel, dateB: PinpointMediaModel) =>
+            const sortedImages = mediaFiles.sort((dateA: PinpointMediaModel, dateB: PinpointMediaModel) =>
                 dateA.recordDate.localeCompare(dateB.recordDate),
             );
 

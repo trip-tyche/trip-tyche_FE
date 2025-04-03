@@ -12,7 +12,7 @@ export const tripImageAPI = {
     // 핀포인트 슬라이드
     fetchImagesByPinPoint: async (tripId: string, pinPoint: string) => {
         const token = getToken();
-        const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/pinpoints/${pinPoint}/images`, {
+        const data = await apiClient.get(`/v1/trips/${tripId}/pinpoints/${pinPoint}/images`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -22,7 +22,7 @@ export const tripImageAPI = {
     // 날짜별 이미지 조회
     fetchImagesByDate: async (tripId: string, date: string) => {
         const formattedDate = date.slice(0, 10);
-        const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/map?date=${formattedDate}`);
+        const data = await apiClient.get(`/v1/trips/${tripId}/map?date=${formattedDate}`);
         return data.data;
     },
 
