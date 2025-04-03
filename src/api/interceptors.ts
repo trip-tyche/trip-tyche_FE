@@ -21,7 +21,6 @@ export const setupRequestInterceptor = (instance: AxiosInstance) => {
 export const setupResponseInterceptor = (instance: AxiosInstance) => {
     instance.interceptors.response.use(
         (response) => {
-            console.log('response', response);
             return response.data;
         },
         (error) => {

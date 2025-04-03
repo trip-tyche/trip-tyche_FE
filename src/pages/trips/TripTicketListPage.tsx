@@ -13,6 +13,7 @@ import TripTicket from '@/components/features/trip/TripTicket';
 import { ROUTES } from '@/constants/paths';
 import { BUTTON } from '@/constants/ui/buttons';
 import { useTripTicketList } from '@/hooks/queries/useTrip';
+import { useToastStore } from '@/stores/useToastStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
@@ -20,6 +21,7 @@ import { Trip } from '@/types/trip';
 const TripTicketListPage = () => {
     const tripTicketCount = useUserDataStore((state) => state.tripTicketCount);
     const setTripTicketCount = useUserDataStore((state) => state.setTripTicketCount);
+    const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();
 
@@ -59,11 +61,17 @@ const TripTicketListPage = () => {
     }, [validTripList, setTripTicketCount]);
 
     const handleTicketCreate = async () => {
-        const response = await tripAPI.createTripTicket();
-        const tripId = response.data;
+        try {
+            const result = await tripAPI.createTripTicket();
+            if (!result.isSuccess) throw new Error(result.error);
 
-        if (tripId) {
-            navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`);
+            const tripId = result.data;
+            if (tripId) {
+                navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`, { state: 'first-ticket' });
+            }
+        } catch (error) {
+            console.error(error);
+            showToast('다시 한번 시도해주세요');
         }
     };
 

@@ -30,7 +30,7 @@ export const tripAPI = {
     createTripTicket: async (): Promise<Result<number>> => {
         try {
             const response = await apiClient.post(`/v1/trips`);
-            const { data } = response;
+            const { data } = response.data;
 
             if (!data) {
                 return { isSuccess: false, error: '데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해 주세요.' };
