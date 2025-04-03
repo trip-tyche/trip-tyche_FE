@@ -40,10 +40,12 @@ export const tripImageAPI = {
         const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripId}/images/unlocated/${mediaFileId}`, location);
         return data.data;
     },
-    requestPresignedUploadUrls: async (tripId: string, files: PresignedUrlRequest[]) => {
-        const formattedData = { tripId, files };
-        const data = await apiClient.post(`/api/trips/${tripId}/presigned-url`, formattedData);
-        return data.data.presignedUrls;
+
+    // 이미지 업로드에 필요한 Presigned URL 생성
+    requestPresignedUrls: async (tripId: string, fileNames: PresignedUrlRequest[]) => {
+        const response = await apiClient.post(`/v1/trips/${tripId}/presigned-url`, fileNames);
+
+        return response.data.presignedUrls;
     },
     uploadToS3: async (presignedUrl: string, file: File) => {
         const data = await axios.put(presignedUrl, file, {

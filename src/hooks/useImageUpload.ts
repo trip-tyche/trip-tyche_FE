@@ -172,13 +172,11 @@ export const useImageUpload = () => {
             const resizedImages = await resizeImage(images);
             console.timeEnd(`리사이징 시간`);
 
-            const files = resizedImages.map((image) => ({
+            const fileNames = resizedImages.map((image) => ({
                 fileName: image.image.name,
-                fileType: image.image.type,
             }));
 
-            const presignedUrls = await tripImageAPI.requestPresignedUploadUrls(tripId, files);
-            console.log(presignedUrls);
+            const presignedUrls = await tripImageAPI.requestPresignedUrls(tripId, fileNames);
 
             console.time(`S3 업로드 시간`);
             await Promise.all(

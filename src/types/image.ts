@@ -16,8 +16,8 @@ export type ImageGroupByDate = Record<string, UnlocatedMediaFileModel[]>;
 
 export interface PresignedUrlRequest {
     fileName: string;
-    fileType: string;
 }
+
 export interface PresignedUrlResponse {
     fileKey: string;
     presignedPutUrl: string;

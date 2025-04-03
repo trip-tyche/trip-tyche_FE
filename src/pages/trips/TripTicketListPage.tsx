@@ -64,14 +64,13 @@ const TripTicketListPage = () => {
         try {
             const result = await tripAPI.createTripTicket();
             if (!result.isSuccess) throw new Error(result.error);
-
             const tripId = result.data;
             if (tripId) {
                 navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`, { state: 'first-ticket' });
             }
         } catch (error) {
             console.error(error);
-            showToast('다시 한번 시도해주세요');
+            showToast('잠시 후 다시 시도해주세요.');
         }
     };
 

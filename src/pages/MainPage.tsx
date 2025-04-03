@@ -35,7 +35,7 @@ const MainPage = () => {
     const isLogin = useAuthStore((state) => state.isLogIn);
     const userNickName = useUserDataStore((state) => state.userNickName);
     const setLogout = useAuthStore((state) => state.setLogout);
-    // const setUserNickName = useUserDataStore((state) => state.setUserNickName);
+    const setUserNickName = useUserDataStore((state) => state.setUserNickName);
     const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();
@@ -143,7 +143,7 @@ const MainPage = () => {
             }
         } catch (error) {
             console.error(error);
-            showToast('다시 한번 시도해주세요');
+            showToast('잠시 후 다시 시도해주세요.');
         }
     };
 
