@@ -82,7 +82,7 @@ const MainPage = () => {
             try {
                 await getUserInfoData();
             } catch (error) {
-                console.log('컴포넌트 catch!', error);
+                // console.log('컴포넌트 catch!', error);
                 navigate(ROUTES.PATH.AUTH.LOGIN);
                 // showToast('오류가 발생했습니다. 다시 시도해주세요.');
             } finally {
