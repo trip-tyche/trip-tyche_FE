@@ -1,6 +1,7 @@
 import { tripAPI } from '@/api';
 
 export const updateTripDate = async (tripId: string, datesOfImages: string[]) => {
+    console.log('datesOfImages', datesOfImages);
     if (!tripId) {
         return;
     }

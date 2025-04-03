@@ -51,10 +51,10 @@ export const useImageUpload = () => {
 
         const extractedImages = await Promise.all(
             Array.from(images).map(async (image) => {
-                console.log(image);
-                if (image.name.startsWith('temp')) {
-                    console.log('image/heic');
-                }
+                // console.log(image);
+                // if (image.name.startsWith('temp')) {
+                // console.log('image/heic');
+                // }
 
                 const location = await getImageLocation(image);
                 const date = await extractDateFromImage(image);

@@ -70,7 +70,7 @@ export const useTripInfoForm = (mode: FormMode) => {
             setIsUploading(false);
 
             localStorage.removeItem('image-date');
-            queryClient.invalidateQueries({ queryKey: ['trip-ticket-info'] });
+            queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
 
             navigate(ROUTES.PATH.TRIPS.ROOT);
             showToast(
@@ -81,7 +81,7 @@ export const useTripInfoForm = (mode: FormMode) => {
         } else {
             try {
                 await tripAPI.updateTripTicketInfo(tripId, tripInfo);
-                queryClient.invalidateQueries({ queryKey: ['trip-ticket-info'] });
+                queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
                 showToast('여행 정보가 성공적으로 수정되었습니다.');
             } catch (error) {
                 showToast('여행 정보 수정에 실패했습니다. 다시 시도해 주세요.');

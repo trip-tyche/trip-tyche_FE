@@ -65,7 +65,7 @@ export const tripImageAPI = {
     },
     // 미디어 파일 메타데이터 등록 (mediaLink, latitude, longitude, recordDate)
     createMediaFileMetadata: async (tripId: string, metaDatas: MediaFileMetaData[]) => {
-        await apiClient.post(`/v1/trips/${tripId}/media-fildes`, metaDatas);
+        await apiClient.post(`/v1/trips/${tripId}/media-files`, metaDatas);
     },
 
     // 여행에 등록된 모든 이미지 조회
