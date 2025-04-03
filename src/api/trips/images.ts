@@ -2,9 +2,10 @@ import axios from 'axios';
 
 import { apiClient } from '@/api/client';
 import { API_ENDPOINTS } from '@/constants/api/config';
-import { PresignedUrlRequest } from '@/types/image';
+import { Result } from '@/types/apis/common';
+import { PresignedUrlRequest, PresignedUrlResponse } from '@/types/image';
 import { GpsCoordinates } from '@/types/location';
-import { MediaFile, RealMediaFile, UnlocatedMediaFileModel } from '@/types/media';
+import { MediaFile, MediaFileMetaData, UnlocatedMediaFileModel } from '@/types/media';
 import { getToken } from '@/utils/auth';
 
 export const tripImageAPI = {
@@ -41,25 +42,30 @@ export const tripImageAPI = {
         return data.data;
     },
 
-    // 이미지 업로드에 필요한 Presigned URL 생성
-    requestPresignedUrls: async (tripId: string, fileNames: PresignedUrlRequest[]) => {
-        const response = await apiClient.post(`/v1/trips/${tripId}/presigned-url`, fileNames);
-
-        return response.data.presignedUrls;
+    // 미디어 파일 업로드를 위한 Presigned URL 생성
+    requestPresignedUrls: async (
+        tripId: string,
+        fileNames: PresignedUrlRequest[],
+    ): Promise<Result<PresignedUrlResponse[]>> => {
+        try {
+            const response = await apiClient.post(`/v1/trips/${tripId}/presigned-url`, { files: fileNames });
+            return { isSuccess: true, data: response.data.presignedUrls };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
+        }
     },
+    // S3 스토리지로 미디어 파일 업로드
     uploadToS3: async (presignedUrl: string, file: File) => {
-        const data = await axios.put(presignedUrl, file, {
+        await axios.put(presignedUrl, file, {
             headers: {
                 'Content-Type': file.type,
             },
         });
-        return data;
     },
-    // 미디어 파일의 메타데이터 등록
-    postMediaFileMetadata: async (tripId: string, mediaFiles: RealMediaFile[]) => {
-        const response = await apiClient.post(`/api/trips/${tripId}/media-files`, mediaFiles);
-
-        return response;
+    // 미디어 파일 메타데이터 등록 (mediaLink, latitude, longitude, recordDate)
+    createMediaFileMetadata: async (tripId: string, metaDatas: MediaFileMetaData[]) => {
+        await apiClient.post(`/v1/trips/${tripId}/media-fildes`, metaDatas);
     },
 
     // 여행에 등록된 모든 이미지 조회

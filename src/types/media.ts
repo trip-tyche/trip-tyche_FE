@@ -40,9 +40,8 @@ export interface MediaFileWithDate {
 }
 
 // TODO: API 수정 후, 위 MediaFileModel, MediaFile 삭제하기
-export interface RealMediaFile {
+export interface MediaFileMetaData {
     mediaLink: string;
-    mediaType: string;
     recordDate: string;
     latitude: number;
     longitude: number;

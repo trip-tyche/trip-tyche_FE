@@ -176,7 +176,9 @@ export const useImageUpload = () => {
                 fileName: image.image.name,
             }));
 
-            const presignedUrls = await tripImageAPI.requestPresignedUrls(tripId, fileNames);
+            const result = await tripImageAPI.requestPresignedUrls(tripId, fileNames);
+            if (!result.data) throw new Error(result.error);
+            const { data: presignedUrls } = result;
 
             console.time(`S3 업로드 시간`);
             await Promise.all(
@@ -186,19 +188,24 @@ export const useImageUpload = () => {
             );
             console.timeEnd(`S3 업로드 시간`);
 
-            const uploadedFiles = presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) => ({
-                mediaLink: urlInfo.presignedPutUrl.split('?')[0],
-                mediaType: resizedImages[index].image.type,
-                recordDate: resizedImages[index].formattedDate,
-                latitude: resizedImages[index].location ? resizedImages[index]?.location.latitude : 0,
-                longitude: resizedImages[index].location ? resizedImages[index]?.location.longitude : 0,
-            }));
+            const metaDatas = presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) => {
+                const { formattedDate: recordDate, location } = resizedImages[index];
+                const { latitude = 0, longitude = 0 } = location || {};
+
+                return {
+                    mediaLink: urlInfo.presignedPutUrl.split('?')[0], // URL 뒤 불필요한 정보 제거
+                    latitude,
+                    longitude,
+                    recordDate,
+                };
+            });
 
             console.time(`서버 데이터 전송 시간`);
-            await tripImageAPI.postMediaFileMetadata(tripId, uploadedFiles);
+            await tripImageAPI.createMediaFileMetadata(tripId, metaDatas);
             console.timeEnd(`서버 데이터 전송 시간`);
             setUploadStatus('completed');
         } catch (error) {
+            console.error(error);
             setUploadStatus('error');
         }
     };
