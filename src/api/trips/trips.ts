@@ -47,6 +47,11 @@ export const tripAPI = {
 
         return response;
     },
+    // 여행 티켓 최종 등록
+    finalizeTripTicekt: async (tripId: string) => {
+        const response = await apiClient.patch(`/v1/trips/${tripId}/finalize`);
+        console.log(response);
+    },
     // 여행 티켓 삭제
     deleteTripTicket: async (tripId: string) => {
         const response = await apiClient.delete(`/v1/trips/${tripId}`);

@@ -25,7 +25,7 @@ const TripTicketListPage = () => {
 
     const navigate = useNavigate();
 
-    const { data: tripList, refetch, isLoading, error } = useTripTicketList();
+    const { data: tripList, isLoading, error } = useTripTicketList();
 
     const deleteInValidTrips = async (trips: Trip[]) => {
         const deletePromises = trips
@@ -41,20 +41,22 @@ const TripTicketListPage = () => {
         }
 
         const inValidTripList = tripList.filter((trip: Trip) => trip.tripTitle === 'N/A');
+
         const validTripList = tripList
             .filter((trip: Trip) => trip.tripTitle !== 'N/A')
             // .map((trip: Trip) => ({ ...trip, userNickname: tripList.userNickName }))
             .reverse();
 
+        console.log(tripList);
         if (inValidTripList.length > 3) {
             deleteInValidTrips(tripList);
-            refetch();
+            // refetch();
         }
 
         return {
             validTripList,
         };
-    }, [tripList, refetch]);
+    }, [tripList]);
 
     useEffect(() => {
         setTripTicketCount(validTripList.length);

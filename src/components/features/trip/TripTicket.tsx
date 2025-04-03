@@ -37,10 +37,10 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
         useTicketHandler(tripId as string);
     const {
         isAnimating,
-        isUnlocatedImageModalOpen,
-        unlocatedImagesCount,
-        confirmUnlocatedImageModal,
-        closeUnlocatedImageModal,
+        // isUnlocatedImageModalOpen,
+        // unlocatedImagesCount,
+        // confirmUnlocatedImageModal,
+        // closeUnlocatedImageModal,
         handleCardClick,
     } = useTicketNavigation(tripId as string);
 
@@ -166,7 +166,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
                     closeModal={closeModal}
                 />
             )}
-            {isUnlocatedImageModalOpen && (
+            {/* {isUnlocatedImageModalOpen && (
                 <ConfirmModal
                     title={`위치정보 없는 사진이 ${unlocatedImagesCount} 장 있어요!`}
                     description='사진에 직접 위치를 등록할 수 있어요. 지금 등록하시겠습니까? 등록은 언제든지 할 수 있어요'
@@ -175,7 +175,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
                     confirmModal={confirmUnlocatedImageModal}
                     closeModal={closeUnlocatedImageModal}
                 />
-            )}
+            )} */}
             {isShareModalOpen && (
                 <InputModal
                     error={error}

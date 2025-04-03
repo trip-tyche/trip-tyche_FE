@@ -180,7 +180,10 @@ const MainPage = () => {
                     </div>
                     {tripCount ? (
                         <p css={ticketGuideStyle}>
-                            지금까지 <span css={tripCountStyle}>{tripCount}</span>장의 여행 티켓을 만들었어요!
+                            {/* TODO: tripCount에 잘못된 title 제외되지 않음 */}
+                            지금까지 <span css={tripCountStyle}>
+                                {tripCount}
+                            </span>장의 여행 티켓을 만들었어요!
                         </p>
                     ) : (
                         <p css={ticketGuideStyle}>

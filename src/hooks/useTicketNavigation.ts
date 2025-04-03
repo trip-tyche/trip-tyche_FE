@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-import { tripImageAPI } from '@/api';
+// import { tripImageAPI } from '@/api';
 import { ROUTES } from '@/constants/paths';
 
 export const useTicketNavigation = (tripId: string) => {
     const [isAnimating, setIsAnimating] = useState(false);
     const [isUnlocatedImageModalOpen, setIsUnlocatedImageModalOpen] = useState(false);
-    const [unlocatedImagesCount, setUnlocatedImagesCount] = useState(0);
+    // const [unlocatedImagesCount, setUnlocatedImagesCount] = useState(0);
 
     const navigate = useNavigate();
 
@@ -23,16 +23,16 @@ export const useTicketNavigation = (tripId: string) => {
     }, [isAnimating, tripId, navigate]);
 
     const handleCardClick = async () => {
-        const unlocatedImagesDate = await tripImageAPI.fetchUnlocatedImages(tripId);
-        if (!unlocatedImagesDate) {
-            setIsAnimating(true);
-            return;
-        }
+        // const unlocatedImagesDate = await tripImageAPI.fetchUnlocatedImages(tripId);
+        // if (!unlocatedImagesDate) {
+        setIsAnimating(true);
+        // return;
+        // }
 
-        const unlocatedImages = unlocatedImagesDate.map((image) => image.media);
+        // const unlocatedImages = unlocatedImagesDate.map((image) => image.media);
 
-        setUnlocatedImagesCount(unlocatedImages.length);
-        setIsUnlocatedImageModalOpen(true);
+        // setUnlocatedImagesCount(unlocatedImages.length);
+        // setIsUnlocatedImageModalOpen(true);
     };
 
     const confirmUnlocatedImageModal = () => {
@@ -50,7 +50,7 @@ export const useTicketNavigation = (tripId: string) => {
     return {
         isAnimating,
         isUnlocatedImageModalOpen,
-        unlocatedImagesCount,
+        // unlocatedImagesCount,
         confirmUnlocatedImageModal,
         closeUnlocatedImageModal,
         handleCardClick,
