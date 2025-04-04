@@ -96,10 +96,9 @@ export const tripImageAPI = {
             return { isSuccess: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
         }
     },
-
     // 선택한 여행 이미지 수정
     updateImages: async (tripId: string, imagesToUpdate: MediaFileMetaData[]) => {
-        const response = await apiClient.patch(`/api/trips/${tripId}/media-files`, {
+        const response = await apiClient.patch(`/v1/trips/${tripId}/media-files`, {
             mediaFiles: imagesToUpdate,
         });
         return response.data;

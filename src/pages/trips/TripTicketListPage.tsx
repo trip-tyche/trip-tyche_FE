@@ -25,7 +25,7 @@ const TripTicketListPage = () => {
 
     const navigate = useNavigate();
 
-    const { data: tripList, isFetching, isPending, error } = useTripTicketList();
+    const { data: tripList, isFetching, error } = useTripTicketList();
 
     const deleteInValidTrips = async (trips: Trip[]) => {
         const deletePromises = trips
@@ -68,7 +68,7 @@ const TripTicketListPage = () => {
             if (result.isSuccess) {
                 const tripId = result.data;
                 if (tripId) {
-                    navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`, { state: 'first-ticket' });
+                    navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`);
                 }
             } else {
                 showToast('잠시 후 다시 시도해주세요.');
