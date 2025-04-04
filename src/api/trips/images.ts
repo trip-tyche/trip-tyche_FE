@@ -74,7 +74,7 @@ export const tripImageAPI = {
             if (response.status !== 200 || !response.data) {
                 return { isSuccess: false, error: '사진을 불러오는 중 오류가 발생했습니다.' };
             }
-            return { isSuccess: true, data: response.data };
+            return { isSuccess: true, data: response.data.mediaFiles };
         } catch (error) {
             console.error(error);
             return { isSuccess: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };

@@ -21,8 +21,7 @@ export const useImagesDelete = () => {
             tripImageAPI.deleteImages(tripId, images),
 
         onSuccess: () => {
-            // queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
-            console.log('deleteeeeeeeeee');
+            queryClient.invalidateQueries({ queryKey: ['trip-images'] });
         },
     });
 };

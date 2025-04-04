@@ -8,6 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { tripImageAPI } from '@/api';
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
+import Spinner from '@/components/common/Spinner';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import MediaImageGrid from '@/components/features/image/MediaImageGrid';
 import EditDate from '@/components/features/trip/EditDate';
@@ -15,13 +16,14 @@ import LocationAddMap from '@/components/features/trip/LocationAddMap';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { useImagesDelete } from '@/hooks/mutations/useTrip';
+import { useTripImages } from '@/hooks/queries/useImage';
 import { useToastStore } from '@/stores/useToastStore';
 import { Location } from '@/types/location';
 import { MediaFileMetaData, MediaFileWithDate } from '@/types/media';
 import { formatToISOLocal, formatToKorean } from '@/utils/date';
 
 const TripImageManagePage = () => {
-    const [tripImages, setTripImages] = useState<MediaFileMetaData[]>([]);
+    // const [tripImages, setTripImages] = useState<MediaFileMetaData[]>([]);
     const [isSelectionMode, setIsSelectionMode] = useState(false);
     const [selectedImages, setSelectedImages] = useState<MediaFileMetaData[]>([]);
     const [selectedLocation, setSelectedLocation] = useState<Location>(null);
@@ -40,27 +42,15 @@ const TripImageManagePage = () => {
     const navigate = useNavigate();
     const { tripId } = useParams();
 
+    const { data: tripImages = [], isFetching, isError, error } = useTripImages(tripId!);
+
     useEffect(() => {
-        const getTripImages = async () => {
-            try {
-                if (!tripId) return;
-
-                const result = await tripImageAPI.getTripImages(tripId);
-
-                if (result.isSuccess) {
-                    setTripImages(result.data.mediaFiles);
-                } else {
-                    console.error(result.error);
-                    navigate(-1);
-                    showToast(result.error as string);
-                }
-            } catch (error) {
-                showToast('사진을 불러오는데 실패하였습니다.');
-            }
-        };
-
-        getTripImages();
-    }, [tripId]);
+        if (isError) {
+            console.error(error);
+            navigate(-1);
+            showToast(error.message || '사진을 불러오는데 실패하였습니다.');
+        }
+    }, [isError]);
 
     useEffect(() => {
         setIsVisibleEditList(false);
@@ -180,7 +170,9 @@ const TripImageManagePage = () => {
 
     const isSelectedImage = selectedImages.length > 0;
 
-    if (!tripImages) return null;
+    if (isFetching) {
+        return <Spinner />;
+    }
 
     return isDateVisible ? (
         <EditDate
