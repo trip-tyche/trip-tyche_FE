@@ -15,7 +15,7 @@ export const useTicketHandler = (tripId: string) => {
     const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();
-    const { mutate } = useTripDelete();
+    const { mutate, isPending } = useTripDelete();
 
     const handleImageUpload = () => {
         setIsTripInfoEditing(true);
@@ -52,6 +52,7 @@ export const useTicketHandler = (tripId: string) => {
 
     return {
         isModalOpen,
+        isPending,
         handleImageUpload,
         handleTripEdit,
         handleTripDelete,

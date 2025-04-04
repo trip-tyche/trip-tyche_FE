@@ -25,7 +25,7 @@ const TripTicketListPage = () => {
 
     const navigate = useNavigate();
 
-    const { data: tripList, isLoading, error } = useTripTicketList();
+    const { data: tripList, isFetching, isPending, error } = useTripTicketList();
 
     const deleteInValidTrips = async (trips: Trip[]) => {
         const deletePromises = trips
@@ -47,7 +47,6 @@ const TripTicketListPage = () => {
             // .map((trip: Trip) => ({ ...trip, userNickname: tripList.userNickName }))
             .reverse();
 
-        console.log(tripList);
         if (inValidTripList.length > 3) {
             deleteInValidTrips(tripList);
             // refetch();
@@ -80,9 +79,8 @@ const TripTicketListPage = () => {
 
     return (
         <div css={pageContainer}>
-            {isLoading && <Spinner />}
+            {isFetching && <Spinner />}
             <Header title='나의 여행 티켓' isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
-
             <div css={listHeaderStyle}>
                 <div css={listSummaryStyle}>
                     <TicketsPlane size={20} />
@@ -107,9 +105,7 @@ const TripTicketListPage = () => {
                     `}
                 />
             </div>
-
             <p css={guideStyle}>* 티켓을 클릭하시면 해당 여행의 타임라인으로 이동합니다.</p>
-
             {tripTicketCount > 0 ? (
                 <div css={tripListStyle}>
                     {validTripList.map((trip: Trip) => (

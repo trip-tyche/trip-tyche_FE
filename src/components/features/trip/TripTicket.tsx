@@ -8,6 +8,7 @@ import { IoAirplaneSharp } from 'react-icons/io5';
 
 import { shareAPI } from '@/api/trips/share';
 import characterImg from '@/assets/images/character-ogami-1.png';
+import Spinner from '@/components/common/Spinner';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import InputModal from '@/components/features/guide/InputModal';
 import { COLORS } from '@/constants/theme';
@@ -33,7 +34,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
     const { showToast } = useToastStore.getState();
     const userNickName = useUserDataStore((state) => state.userNickName);
 
-    const { isModalOpen, handleImageUpload, handleTripEdit, handleTripDelete, deleteTrip, closeModal } =
+    const { isModalOpen, isPending, handleImageUpload, handleTripEdit, handleTripDelete, deleteTrip, closeModal } =
         useTicketHandler(tripId as string);
     const {
         isAnimating,
@@ -86,6 +87,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
 
     return (
         <div css={ticketContainer}>
+            {isPending && <Spinner />}
             <article css={ticketStyle} onClick={handleCardClick}>
                 <section css={leftSection}>
                     <header css={leftTopSection(isOwner)}>
