@@ -26,14 +26,6 @@ export interface UnlocatedMediaFileModel {
 
 export type PinpointMediaModel = Pick<BaseLocationMedia, 'mediaLink' | 'recordDate'>;
 
-// export interface MediaFile {
-//     mediaFileId: string;
-//     mediaLink?: string;
-//     recordDate: string;
-//     latitude: number;
-//     longitude: number;
-// }
-
 export interface MediaFileWithDate {
     recordDate: string;
     images: MediaFileMetaData[];

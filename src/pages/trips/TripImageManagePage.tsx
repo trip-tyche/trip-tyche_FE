@@ -104,19 +104,25 @@ const TripImageManagePage = () => {
     };
 
     const deleteImages = async (selectedImages: MediaFileMetaData[]) => {
-        if (!tripId) return;
+        if (!tripId) throw new Error('TripId가 필요합니다.');
         try {
-            await tripImageAPI.deleteImages(
+            const result = await tripImageAPI.deleteImages(
                 tripId,
                 selectedImages.map((image) => image.mediaFileId),
             );
 
-            setIsDeleteModalOpen(false);
-            showToast(`${selectedImages.length}의 사진이 삭제되었습니다`);
-            setSelectedImages([]);
-            setIsSelectionMode(false);
+            if (result.isSuccess) {
+                setIsDeleteModalOpen(false);
+                showToast(result.data as string);
+                setSelectedImages([]);
+                setIsSelectionMode(false);
+            } else {
+                setIsDeleteModalOpen(false);
+                showToast(result.error as string);
+            }
         } catch (error) {
-            console.error('여행 이미지 삭제 실패', error);
+            console.error(error);
+            showToast('사진을 삭제하는데 실패하였습니다.');
         }
     };
 
