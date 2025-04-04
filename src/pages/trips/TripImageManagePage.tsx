@@ -16,13 +16,13 @@ import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { useToastStore } from '@/stores/useToastStore';
 import { Location } from '@/types/location';
-import { MediaFile, MediaFileWithDate } from '@/types/media';
+import { MediaFileMetaData, MediaFileWithDate } from '@/types/media';
 import { formatToISOLocal, formatToKorean } from '@/utils/date';
 
 const TripImageManagePage = () => {
-    const [tripImages, setTripImages] = useState<MediaFile[]>([]);
+    const [tripImages, setTripImages] = useState<MediaFileMetaData[]>([]);
     const [isSelectionMode, setIsSelectionMode] = useState(false);
-    const [selectedImages, setSelectedImages] = useState<MediaFile[]>([]);
+    const [selectedImages, setSelectedImages] = useState<MediaFileMetaData[]>([]);
     const [selectedLocation, setSelectedLocation] = useState<Location>(null);
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
@@ -43,11 +43,17 @@ const TripImageManagePage = () => {
             try {
                 if (!tripId) return;
 
-                const response = await tripImageAPI.getTripImages(tripId);
-                setTripImages(response.mediaFiles);
+                const result = await tripImageAPI.getTripImages(tripId);
+
+                if (result.isSuccess) {
+                    setTripImages(result.data.mediaFiles);
+                } else {
+                    console.error(result.error);
+                    navigate(-1);
+                    showToast(result.error as string);
+                }
             } catch (error) {
-                console.error('여행 이미지 조회 실패', error);
-                // TODO: 에러 처리 추가
+                showToast('사진을 불러오는데 실패하였습니다.');
             }
         };
 
@@ -83,7 +89,7 @@ const TripImageManagePage = () => {
         );
     }, [tripImages]);
 
-    const handleImageToggle = (selectedImage: MediaFile) => {
+    const handleImageToggle = (selectedImage: MediaFileMetaData) => {
         const isAlreadySelected = selectedImages.some((image) => image.mediaFileId === selectedImage.mediaFileId);
 
         if (isAlreadySelected) {
@@ -97,7 +103,7 @@ const TripImageManagePage = () => {
         setSelectedLocation({ latitude, longitude });
     };
 
-    const deleteImages = async (selectedImages: MediaFile[]) => {
+    const deleteImages = async (selectedImages: MediaFileMetaData[]) => {
         if (!tripId) return;
         try {
             await tripImageAPI.deleteImages(
@@ -114,7 +120,7 @@ const TripImageManagePage = () => {
         }
     };
 
-    const updateImagesLocation = async (selectedImages: MediaFile[], location: Location) => {
+    const updateImagesLocation = async (selectedImages: MediaFileMetaData[], location: Location) => {
         if (!location || !tripId) return;
 
         const imagesWithUpdatedLocation = selectedImages.map((image) => {
@@ -140,7 +146,7 @@ const TripImageManagePage = () => {
         }
     };
 
-    const updateImagesDate = async (selectedImages: MediaFile[], date: Date | null) => {
+    const updateImagesDate = async (selectedImages: MediaFileMetaData[], date: Date | null) => {
         if (!date || !tripId) return;
 
         const imagesWithUpdatedDate = selectedImages.map((image) => {

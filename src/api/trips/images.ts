@@ -5,7 +5,7 @@ import { API_ENDPOINTS } from '@/constants/api/config';
 import { Result } from '@/types/apis/common';
 import { PresignedUrlRequest, PresignedUrlResponse } from '@/types/image';
 import { GpsCoordinates } from '@/types/location';
-import { MediaFile, MediaFileMetaData, UnlocatedMediaFileModel } from '@/types/media';
+import { MediaFileMetaData, UnlocatedMediaFileModel } from '@/types/media';
 import { getToken } from '@/utils/auth';
 
 export const tripImageAPI = {
@@ -64,14 +64,21 @@ export const tripImageAPI = {
         });
     },
     // 미디어 파일 메타데이터 등록 (mediaLink, latitude, longitude, recordDate)
-    createMediaFileMetadata: async (tripId: string, metaDatas: MediaFileMetaData[]) => {
+    createMediaFileMetadata: async (tripId: string, metaDatas: Omit<MediaFileMetaData, 'mediaFileId'>[]) => {
         await apiClient.post(`/v1/trips/${tripId}/media-files`, metaDatas);
     },
-
     // 여행에 등록된 모든 이미지 조회
     getTripImages: async (tripId: string) => {
-        const response = await apiClient.get(`/api/trips/${tripId}/media-files`);
-        return response.data;
+        try {
+            const response = await apiClient.get(`/v1/trips/${tripId}/media-files`);
+            if (response.status !== 200) {
+                return { isSuccess: false, error: '사진을 불러오는 중 오류가 발생했습니다.' };
+            }
+            return { isSuccess: true, data: response.data };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
+        }
     },
 
     // 선택한 여행 이미지 삭제
@@ -83,7 +90,7 @@ export const tripImageAPI = {
     },
 
     // 선택한 여행 이미지 수정
-    updateImages: async (tripId: string, imagesToUpdate: MediaFile[]) => {
+    updateImages: async (tripId: string, imagesToUpdate: MediaFileMetaData[]) => {
         const response = await apiClient.patch(`/api/trips/${tripId}/media-files`, {
             mediaFiles: imagesToUpdate,
         });

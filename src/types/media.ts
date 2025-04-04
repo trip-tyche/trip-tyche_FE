@@ -26,21 +26,22 @@ export interface UnlocatedMediaFileModel {
 
 export type PinpointMediaModel = Pick<BaseLocationMedia, 'mediaLink' | 'recordDate'>;
 
-export interface MediaFile {
-    mediaFileId: string;
-    mediaLink?: string;
-    recordDate: string;
-    latitude: number;
-    longitude: number;
-}
+// export interface MediaFile {
+//     mediaFileId: string;
+//     mediaLink?: string;
+//     recordDate: string;
+//     latitude: number;
+//     longitude: number;
+// }
 
 export interface MediaFileWithDate {
     recordDate: string;
-    images: MediaFile[];
+    images: MediaFileMetaData[];
 }
 
 // TODO: API 수정 후, 위 MediaFileModel, MediaFile 삭제하기
 export interface MediaFileMetaData {
+    mediaFileId: string;
     mediaLink: string;
     recordDate: string;
     latitude: number;
