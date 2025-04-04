@@ -14,6 +14,7 @@ import EditDate from '@/components/features/trip/EditDate';
 import LocationAddMap from '@/components/features/trip/LocationAddMap';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
+import { useImagesDelete } from '@/hooks/mutations/useTrip';
 import { useToastStore } from '@/stores/useToastStore';
 import { Location } from '@/types/location';
 import { MediaFileMetaData, MediaFileWithDate } from '@/types/media';
@@ -30,10 +31,11 @@ const TripImageManagePage = () => {
     const [isMapVisible, setIsMapVisible] = useState(false);
     const [isDateVisible, setIsDateVisible] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
     const [isUploading, setIsUploading] = useState(false);
 
     const { showToast } = useToastStore.getState();
+
+    const { mutate } = useImagesDelete();
 
     const navigate = useNavigate();
     const { tripId } = useParams();
@@ -103,27 +105,26 @@ const TripImageManagePage = () => {
         setSelectedLocation({ latitude, longitude });
     };
 
-    const deleteImages = async (selectedImages: MediaFileMetaData[]) => {
-        if (!tripId) throw new Error('TripId가 필요합니다.');
-        try {
-            const result = await tripImageAPI.deleteImages(
+    const deleteImages = (selectedImages: MediaFileMetaData[]) => {
+        if (!tripId) return;
+        mutate(
+            {
                 tripId,
-                selectedImages.map((image) => image.mediaFileId),
-            );
-
-            if (result.isSuccess) {
-                setIsDeleteModalOpen(false);
-                showToast(result.data as string);
-                setSelectedImages([]);
-                setIsSelectionMode(false);
-            } else {
-                setIsDeleteModalOpen(false);
-                showToast(result.error as string);
-            }
-        } catch (error) {
-            console.error(error);
-            showToast('사진을 삭제하는데 실패하였습니다.');
-        }
+                images: selectedImages.map((image) => image.mediaFileId),
+            },
+            {
+                onSuccess: (result) => {
+                    setIsDeleteModalOpen(false);
+                    showToast(result.data as string);
+                    setSelectedImages([]);
+                    setIsSelectionMode(false);
+                },
+                onError: () => {
+                    setIsDeleteModalOpen(false);
+                    showToast(`사진을 삭제하는데 실패하였습니다.`);
+                },
+            },
+        );
     };
 
     const updateImagesLocation = async (selectedImages: MediaFileMetaData[], location: Location) => {
