@@ -10,7 +10,7 @@ import { getToken } from '@/utils/auth';
 export const shareAPI = {
     // 사용자 검색(닉네임)
     searchUsers: async (userNickName: string) => {
-        const response = await apiClient.get(`/api/share/users`, {
+        const response = await apiClient.get(`/v1/share/users`, {
             params: {
                 userNickName,
             },
@@ -25,7 +25,7 @@ export const shareAPI = {
 
     // 다른 사용자에게 여행 공유 요청
     createShareRequest: async (tripId: string, recipientId: string) => {
-        await apiClient.post(`/api/trips/share`, {
+        await apiClient.post(`/v1/trips/share`, {
             tripId,
             recipientId,
         });
@@ -35,14 +35,14 @@ export const shareAPI = {
 
     // 공유 알림 목록 조회
     getNotifications: async (userId: string) => {
-        const response = await apiClient.get(`/api/notifications/${userId}`);
+        const response = await apiClient.get(`/v1/notifications/${userId}`);
 
         return { isSuccess: true, data: response.data };
     },
 
     // 공유 상세 조회
     getShareDetail: async (shareId: string) => {
-        const response = await apiClient.get(`/api/shares/${shareId}`);
+        const response = await apiClient.get(`/v1/shares/${shareId}`);
 
         return { isSuccess: true, data: response.data };
     },
@@ -51,7 +51,7 @@ export const shareAPI = {
     updateNotificationStatus: async (notificationId: string) => {
         const token = getToken();
 
-        const response = await apiClient.patch(`/api/notifications/${notificationId}`, {
+        const response = await apiClient.patch(`/v1/notifications/${notificationId}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -64,7 +64,7 @@ export const shareAPI = {
     deleteNotification: async (notificationId: number[]) => {
         const token = getToken();
 
-        const response = await apiClient.patch(`/api/notifications/delete`, notificationId, {
+        const response = await apiClient.patch(`/v1/notifications/delete`, notificationId, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -80,7 +80,7 @@ export const shareAPI = {
         };
 
         const token = getToken();
-        const response = await apiClient.patch(`/api/shares/${shareId}`, null, {
+        const response = await apiClient.patch(`/v1/shares/${shareId}`, null, {
             params,
             headers: {
                 Authorization: `Bearer ${token}`,

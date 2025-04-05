@@ -187,9 +187,7 @@ export const useImageUpload = () => {
                     tripImageAPI.uploadToS3(urlInfo.presignedPutUrl, resizedImages[index].image),
                 ),
             );
-            // presignedUrls.forEach((urlInfo: PresignedUrlResponse, index: number) =>
-            //     tripImageAPI.uploadToS3(urlInfo.presignedPutUrl, resizedImages[index].image),
-            // ),
+
             console.timeEnd(`S3 업로드 시간`);
 
             const metaDatas = presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) => {
