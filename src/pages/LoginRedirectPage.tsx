@@ -10,6 +10,7 @@ import { useToastStore } from '@/stores/useToastStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 
 const LoginRedirectPage = () => {
+    console.log('LoginRedirectPage');
     const setLogin = useAuthStore((state) => state.setLogin);
     const setUserNickName = useUserDataStore((state) => state.setUserNickName);
     const { showToast } = useToastStore();

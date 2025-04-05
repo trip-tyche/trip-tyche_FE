@@ -2,21 +2,6 @@ import { apiClient } from '@/api/client';
 import { getToken } from '@/utils/auth';
 
 export const shareAPI = {
-    // 사용자 검색(닉네임)
-    searchUsers: async (userNickName: string) => {
-        const response = await apiClient.get(`/v1/share/users`, {
-            params: {
-                userNickName,
-            },
-        });
-
-        if (response.status === 404) {
-            return { isSuccess: false, error: '존재하지 않는 여행자입니다' };
-        }
-
-        return { isSuccess: true, data: response.data };
-    },
-
     // 다른 사용자에게 여행 공유 요청
     createShareRequest: async (tripId: string, recipientId: string) => {
         await apiClient.post(`/v1/trips/share`, {

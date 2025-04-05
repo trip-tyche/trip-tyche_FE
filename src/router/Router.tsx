@@ -118,16 +118,16 @@
 
 // export default router;
 
-import { useEffect, lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 
-import { createBrowserRouter, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { createBrowserRouter, Outlet } from 'react-router-dom';
 
 import Spinner from '@/components/common/Spinner';
 import { ROUTES } from '@/constants/paths';
 import RootLayout from '@/layouts/RootLayout';
 import NotificationPage from '@/pages/NotificationPage';
-import { useToastStore } from '@/stores/useToastStore';
-import { validateUserAuth } from '@/utils/validation';
+// import { useToastStore } from '@/stores/useToastStore';
+// import { validateUserAuth } from '@/utils/validation';
 
 // 로딩 컴포넌트
 const LoadingSpinner = () => <Spinner />;
@@ -157,46 +157,46 @@ const TimelinePages = {
     TimelineDatePage: lazy(() => import('@/pages/trips/timeline/TimelineDatePage')),
 };
 
-const LOGIN_TIMEOUT = 100 * 60 * 1000; // 10분
-const LOGIN_CHECK = 10 * 60 * 1000; // 1분
+// const LOGIN_TIMEOUT = 100 * 60 * 1000; // 10분
+// const LOGIN_CHECK = 10 * 60 * 1000; // 1분
 
 const LoginCheck = ({ children }: { children: JSX.Element }) => {
-    const navigate = useNavigate();
-    const { pathname, search } = useLocation();
-    const showToast = useToastStore((state) => state.showToast);
+    // const navigate = useNavigate();
+    // const { pathname, search } = useLocation();
+    // const showToast = useToastStore((state) => state.showToast);
 
-    useEffect(() => {
-        const checkLoginStatus = () => {
-            const isValid = validateUserAuth();
-            const lastLoginTime = localStorage.getItem('lastLoginTime') || '';
+    // useEffect(() => {
+    //     const checkLoginStatus = () => {
+    //         const isValid = validateUserAuth();
+    //         const lastLoginTime = localStorage.getItem('lastLoginTime') || '';
 
-            // console.log(isValid, lastLoginTime);
+    //         // console.log(isValid, lastLoginTime);
 
-            if (!isValid || !lastLoginTime) {
-                navigate(ROUTES.PATH.AUTH.LOGIN, {
-                    replace: true,
-                    state: pathname + search,
-                });
-                return;
-            }
+    //         if (!isValid || !lastLoginTime) {
+    //             navigate(ROUTES.PATH.AUTH.LOGIN, {
+    //                 replace: true,
+    //                 state: pathname + search,
+    //             });
+    //             return;
+    //         }
 
-            const currentTime = new Date().getTime();
-            const isTimeout = currentTime - parseInt(lastLoginTime) > LOGIN_TIMEOUT;
+    //         const currentTime = new Date().getTime();
+    //         const isTimeout = currentTime - parseInt(lastLoginTime) > LOGIN_TIMEOUT;
 
-            if (isTimeout) {
-                localStorage.clear();
-                navigate(ROUTES.PATH.AUTH.LOGIN, {
-                    replace: true,
-                    state: pathname + search,
-                });
-                showToast('자동 로그아웃되었습니다. 다시 로그인해 주세요.');
-            }
-        };
+    //         if (isTimeout) {
+    //             localStorage.clear();
+    //             navigate(ROUTES.PATH.AUTH.LOGIN, {
+    //                 replace: true,
+    //                 state: pathname + search,
+    //             });
+    //             showToast('자동 로그아웃되었습니다. 다시 로그인해 주세요.');
+    //         }
+    //     };
 
-        checkLoginStatus();
-        const intervalId = setInterval(checkLoginStatus, LOGIN_CHECK);
-        return () => clearInterval(intervalId);
-    }, [navigate, pathname, search, showToast]);
+    //     checkLoginStatus();
+    //     const intervalId = setInterval(checkLoginStatus, LOGIN_CHECK);
+    //     return () => clearInterval(intervalId);
+    // }, [navigate, pathname, search, showToast]);
 
     return <>{children}</>;
 };

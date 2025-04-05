@@ -14,23 +14,24 @@ import Spinner from '@/components/common/Spinner';
 import IntroTicket from '@/components/features/trip/IntroTicket';
 import NickNameForm from '@/components/features/user/NickNameForm';
 import { ROUTES } from '@/constants/paths';
-import { COLORS } from '@/constants/theme';
+// import { COLORS } from '@/constants/theme';
 import { WELCOME_TICKET_DATA } from '@/constants/trip/form';
 import { NICKNAME_FORM } from '@/constants/ui/message';
 // import webSocketService from '@/services/webSocketService';
-import webSocketService from '@/services/webSocketService';
+// import webSocketService from '@/services/webSocketService';
 import useAuthStore from '@/stores/useAuthStore';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
-import { validateUserAuth } from '@/utils/validation';
+// import { validateUserAuth } from '@/utils/validation';
 
 const MainPage = () => {
+    console.log('MainPage');
     const [latestTrip, setLatestTrip] = useState<Trip | null>(null);
     const [tripCount, setTripCount] = useState<number>(0);
     const [isInitializing, setIsInitializing] = useState<boolean>(true);
-    const [sharedTripsCount, setSharedTripsCount] = useState<number>(0);
+    // const [sharedTripsCount, setSharedTripsCount] = useState<number>(0);
 
     const isLogin = useAuthStore((state) => state.isLogIn);
     const userNickName = useUserDataStore((state) => state.userNickName);
@@ -39,44 +40,52 @@ const MainPage = () => {
 
     const navigate = useNavigate();
 
+    // useEffect(() => {
+    //     // const userId = localStorage.getItem('userId');
+    //     // if (!userId) return;
+
+    //     const getUserInfo = async () => {
+    //         const result = await userAPI.fetchUserInfo();
+    //         const { userId } = result.data;
+    //         return userId;
+    //     };
+
+    //     const userId = await getUserInfo();
+
+    //     // connect가 Promise를 반환하지 않는 경우 처리
+    //     // console.log('웹소켓 연결 시도...');
+    //     webSocketService.connect(userId); // Promise가 아니므로 직접 호출
+
+    //     // 약간의 지연 후 알림 설정 (웹소켓 연결 시간 고려)
+    //     setTimeout(() => {
+    //         if (webSocketService.isConnected()) {
+    //             console.log('알림 설정 시작...');
+
+    //             // 콜백 등록
+    //             webSocketService.setUnreadCountCallback((count) => {
+    //                 console.log('콜백 호출됨, 카운트:', count);
+    //                 setSharedTripsCount(count);
+    //             });
+
+    //             // 요청 보내기
+    //             console.log('알림 카운트 요청 보냄...');
+    //             webSocketService.requestNotificationCount(userId);
+    //         } else {
+    //             console.log('웹소켓 연결 실패 또는 진행 중...');
+    //         }
+    //     }, 200); // 1초 지연
+
+    //     return () => {
+    //         webSocketService.setUnreadCountCallback(() => null);
+    //     };
+    // }, []);
+
     useEffect(() => {
-        const userId = localStorage.getItem('userId');
-        if (!userId) return;
-
-        // connect가 Promise를 반환하지 않는 경우 처리
-        // console.log('웹소켓 연결 시도...');
-        webSocketService.connect(userId); // Promise가 아니므로 직접 호출
-
-        // 약간의 지연 후 알림 설정 (웹소켓 연결 시간 고려)
-        setTimeout(() => {
-            if (webSocketService.isConnected()) {
-                console.log('알림 설정 시작...');
-
-                // 콜백 등록
-                webSocketService.setUnreadCountCallback((count) => {
-                    console.log('콜백 호출됨, 카운트:', count);
-                    setSharedTripsCount(count);
-                });
-
-                // 요청 보내기
-                console.log('알림 카운트 요청 보냄...');
-                webSocketService.requestNotificationCount(userId);
-            } else {
-                console.log('웹소켓 연결 실패 또는 진행 중...');
-            }
-        }, 200); // 1초 지연
-
-        return () => {
-            webSocketService.setUnreadCountCallback(() => null);
-        };
-    }, []);
-
-    useEffect(() => {
-        if (!isLogin) {
-            setLogout();
-            navigate(ROUTES.PATH.AUTH.LOGIN);
-            return;
-        }
+        // if (!isLogin) {
+        //     setLogout();
+        //     navigate(ROUTES.PATH.AUTH.LOGIN);
+        //     return;
+        // }
 
         const initializeMainPage = async () => {
             try {
@@ -105,12 +114,12 @@ const MainPage = () => {
     // };
 
     const getUserInfoData = async (): Promise<void> => {
-        const isValidUser = validateUserAuth();
+        // const isValidUser = validateUserAuth();
 
-        if (!isValidUser) {
-            navigate(ROUTES.PATH.AUTH.LOGIN);
-            return;
-        }
+        // if (!isValidUser) {
+        //     navigate(ROUTES.PATH.AUTH.LOGIN);
+        //     return;
+        // }
 
         const result = await tripAPI.fetchTripTicketList();
 
@@ -166,7 +175,7 @@ const MainPage = () => {
                 <main css={pageContainer}>
                     <div css={headerStyle}>
                         <div css={shareIconStyle}>
-                            {!!sharedTripsCount && <div css={count}>{sharedTripsCount}</div>}
+                            {/* {!!sharedTripsCount && <div css={count}>{sharedTripsCount}</div>} */}
                             <Bell css={settingIconStyle} onClick={() => navigate(ROUTES.PATH.SHARE)} />
                         </div>
                         <Settings css={settingIconStyle} onClick={() => navigate(ROUTES.PATH.SETTING)} />
@@ -232,21 +241,21 @@ const shareIconStyle = css`
     cursor: pointer;
 `;
 
-const count = css`
-    width: 12px;
-    height: 12px;
-    background-color: ${COLORS.TEXT.ERROR};
-    position: absolute;
-    top: -2px;
-    right: 4px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    font-size: 10px;
-    font-weight: bold;
-    color: white;
-`;
+// const count = css`
+//     width: 12px;
+//     height: 12px;
+//     background-color: ${COLORS.TEXT.ERROR};
+//     position: absolute;
+//     top: -2px;
+//     right: 4px;
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//     border-radius: 50%;
+//     font-size: 10px;
+//     font-weight: bold;
+//     color: white;
+// `;
 
 const ticketContainerStyle = css`
     flex: 1;

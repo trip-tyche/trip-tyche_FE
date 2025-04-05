@@ -6,7 +6,7 @@ import { ImagePlus, Share2 } from 'lucide-react';
 import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
-import { shareAPI } from '@/api';
+import { shareAPI, userAPI } from '@/api';
 import characterImg from '@/assets/images/character-ogami-1.png';
 import Spinner from '@/components/common/Spinner';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
@@ -70,7 +70,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
         try {
             setIsLoading(true);
 
-            const searchResult = await shareAPI.searchUsers(inputValue);
+            const searchResult = await userAPI.searchUsers(inputValue);
 
             const recipientId = searchResult.data.userId;
             await shareAPI.createShareRequest(tripId as string, recipientId);

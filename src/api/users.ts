@@ -2,6 +2,9 @@ import { apiClient } from '@/api/client';
 
 export const userAPI = {
     // 사용자 정보 조회
+    // "nickname": "string",
+    // "tripsCount": 0,
+    // "recentTrip": { }
     fetchUserInfo: async () => {
         try {
             const response = await apiClient.get(`/v1/users/me/summary`);
@@ -16,6 +19,20 @@ export const userAPI = {
             console.error(error);
             return { isSuccess: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
         }
+    },
+    // 닉네임을 통한 사용자 조회 (userId, userNickName)
+    searchUsers: async (userNickName: string) => {
+        const response = await apiClient.get(`/v1/share/users`, {
+            params: {
+                userNickName,
+            },
+        });
+
+        if (response.status === 404) {
+            return { isSuccess: false, error: '존재하지 않는 여행자입니다' };
+        }
+
+        return { isSuccess: true, data: response.data };
     },
     // 사용자 닉네임 등록 및 수정
     createUserNickName: async (nickname: string) => {
