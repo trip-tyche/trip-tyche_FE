@@ -5,16 +5,16 @@ import { GoCheckCircleFill } from 'react-icons/go';
 
 import Spinner from '@/components/common/Spinner';
 import { COLORS } from '@/constants/theme';
-import { MediaFile } from '@/types/media';
+import { MediaFileMetaData } from '@/types/media';
 
 interface MediaImageGridProps {
-    images: MediaFile[];
-    selectedImages?: MediaFile[];
-    onImageClick?: (image: MediaFile) => void;
+    images: MediaFileMetaData[];
+    selectedImages?: MediaFileMetaData[];
+    onImageClick?: (image: MediaFileMetaData) => void;
 }
 
 const MediaImageGrid = ({ images, selectedImages, onImageClick }: MediaImageGridProps) => {
-    const [displayedImages, setDisplayedImagesmages] = useState<MediaFile[]>([]);
+    const [displayedImages, setDisplayedImagesmages] = useState<MediaFileMetaData[]>([]);
     const [allImagesLoaded, setAllImagesLoaded] = useState(false);
     const [loadedImages, setLoadedImages] = useState<boolean[]>([]);
 

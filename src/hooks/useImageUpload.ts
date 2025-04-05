@@ -116,7 +116,7 @@ export const useImageUpload = () => {
         }
 
         const resizedImages: ImageModel[] = [];
-        const batchSize = 1;
+        const batchSize = 10;
 
         for (let i = 0; i < extractedImages.length; i += batchSize) {
             const batch = extractedImages.slice(i, i + batchSize);
@@ -169,8 +169,8 @@ export const useImageUpload = () => {
             setUploadStatus('pending');
 
             console.time(`리사이징 시간`);
-            const resizedImages = images;
-            // const resizedImages = await resizeImage(images);
+            // const resizedImages = images;
+            const resizedImages = await resizeImage(images);
             console.timeEnd(`리사이징 시간`);
 
             const fileNames = resizedImages.map((image) => ({
