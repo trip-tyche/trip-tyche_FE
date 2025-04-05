@@ -6,7 +6,7 @@ import { FaArrowCircleDown } from 'react-icons/fa';
 import { GiRapidshareArrow } from 'react-icons/gi';
 import { useNavigate } from 'react-router-dom';
 
-import { tripAPI } from '@/api';
+import { tripAPI, userAPI } from '@/api';
 // import { shareAPI } from '@/api';
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
@@ -27,7 +27,6 @@ import { Trip } from '@/types/trip';
 // import { validateUserAuth } from '@/utils/validation';
 
 const MainPage = () => {
-    console.log('MainPage');
     const [latestTrip, setLatestTrip] = useState<Trip | null>(null);
     const [tripCount, setTripCount] = useState<number>(0);
     const [isInitializing, setIsInitializing] = useState<boolean>(true);
@@ -37,8 +36,15 @@ const MainPage = () => {
     const userNickName = useUserDataStore((state) => state.userNickName);
     const setLogout = useAuthStore((state) => state.setLogout);
     const showToast = useToastStore((state) => state.showToast);
+    const setUserNickName = useUserDataStore((state) => state.setUserNickName);
 
     const navigate = useNavigate();
+
+    const getUserInfo = async () => {
+        const result = await userAPI.fetchUserInfo();
+        const { nickname } = result.data;
+        setUserNickName(nickname);
+    };
 
     // useEffect(() => {
     //     // const userId = localStorage.getItem('userId');
@@ -89,6 +95,7 @@ const MainPage = () => {
 
         const initializeMainPage = async () => {
             try {
+                await getUserInfo();
                 await getUserInfoData();
             } catch (error) {
                 // console.log('컴포넌트 catch!', error);
@@ -120,7 +127,6 @@ const MainPage = () => {
         //     navigate(ROUTES.PATH.AUTH.LOGIN);
         //     return;
         // }
-
         const result = await tripAPI.fetchTripTicketList();
 
         const trips = result.data;
