@@ -27,30 +27,30 @@ const TripTicketListPage = () => {
 
     const { data: tripList, isFetching, error } = useTripTicketList();
 
-    const deleteInValidTrips = async (trips: Trip[]) => {
-        const deletePromises = trips
-            .filter((trip) => trip.tripTitle === 'N/A')
-            .map((trip) => tripAPI.deleteTripTicket(trip.tripId as string));
+    // const deleteInValidTrips = async (trips: Trip[]) => {
+    //     const deletePromises = trips
+    //         .filter((trip) => trip.country === '미정')
+    //         .map((trip) => tripAPI.deleteTripTicket(trip.tripId as string));
 
-        await Promise.allSettled(deletePromises);
-    };
+    //     await Promise.allSettled(deletePromises);
+    // };
 
     const { validTripList } = useMemo(() => {
         if (!tripList) {
             return { validTripList: [] };
         }
 
-        const inValidTripList = tripList.filter((trip: Trip) => trip.tripTitle === 'N/A');
+        // const inValidTripList = tripList.filter((trip: Trip) => trip.country === '미정');
 
         const validTripList = tripList
-            .filter((trip: Trip) => trip.tripTitle !== 'N/A')
+            .filter((trip: Trip) => trip.country !== '미정')
             // .map((trip: Trip) => ({ ...trip, userNickname: tripList.userNickName }))
             .reverse();
 
-        if (inValidTripList.length > 3) {
-            deleteInValidTrips(tripList);
-            // refetch();
-        }
+        // if (inValidTripList.length > 3) {
+        // deleteInValidTrips(tripList);
+        // refetch();
+        // }
 
         return {
             validTripList,

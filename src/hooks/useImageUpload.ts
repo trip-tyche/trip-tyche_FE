@@ -169,7 +169,8 @@ export const useImageUpload = () => {
             setUploadStatus('pending');
 
             console.time(`리사이징 시간`);
-            const resizedImages = await resizeImage(images);
+            const resizedImages = images;
+            // const resizedImages = await resizeImage(images);
             console.timeEnd(`리사이징 시간`);
 
             const fileNames = resizedImages.map((image) => ({
@@ -186,6 +187,9 @@ export const useImageUpload = () => {
                     tripImageAPI.uploadToS3(urlInfo.presignedPutUrl, resizedImages[index].image),
                 ),
             );
+            // presignedUrls.forEach((urlInfo: PresignedUrlResponse, index: number) =>
+            //     tripImageAPI.uploadToS3(urlInfo.presignedPutUrl, resizedImages[index].image),
+            // ),
             console.timeEnd(`S3 업로드 시간`);
 
             const metaDatas = presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) => {

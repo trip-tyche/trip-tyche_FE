@@ -1,5 +1,4 @@
 import { apiClient } from '@/api/client';
-import { API_ENDPOINTS } from '@/constants/api/config';
 import { Result } from '@/types/apis/common';
 import { Trip } from '@/types/trip';
 
@@ -22,7 +21,7 @@ export const tripAPI = {
     },
     // 특정 여행의 티켓 상세 정보 조회
     fetchTripTicketInfo: async (tripId: string) => {
-        const response = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}`);
+        const response = await apiClient.get(`/v1/trips/${tripId}`);
 
         return response.data;
     },

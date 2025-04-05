@@ -81,15 +81,15 @@ export const tripImageAPI = {
         }
     },
     // 선택한 여행 이미지 삭제
-    deleteImages: async (tripId: string, imagesToDelete: string[]): Promise<Result<string>> => {
+    deleteImages: async (tripId: string, images: string[]): Promise<Result<string>> => {
         try {
             const response = await apiClient.delete(`/v1/trips/${tripId}/media-files`, {
-                data: { mediaFileIds: imagesToDelete },
+                data: { mediaFileIds: images },
             });
             if (response.status !== 200 || !response.data) {
                 return { isSuccess: false, error: `사진 삭제에 실패하였습니다.` };
             } else {
-                return { isSuccess: true, data: `${imagesToDelete.length}장의 사진이 성공적으로 삭제되었습니다.` };
+                return { isSuccess: true, data: `${images.length}장의 사진이 성공적으로 삭제되었습니다.` };
             }
         } catch (error) {
             console.error(error);
@@ -97,10 +97,19 @@ export const tripImageAPI = {
         }
     },
     // 선택한 여행 이미지 수정
-    updateImages: async (tripId: string, imagesToUpdate: MediaFileMetaData[]) => {
-        const response = await apiClient.patch(`/v1/trips/${tripId}/media-files`, {
-            mediaFiles: imagesToUpdate,
-        });
-        return response.data;
+    updateImages: async (tripId: string, images: MediaFileMetaData[]) => {
+        try {
+            const response = await apiClient.patch(`/v1/trips/${tripId}/media-files`, {
+                mediaFiles: images,
+            });
+            if (response.status !== 200 || !response.data) {
+                return { isSuccess: false, error: `사진 삭제에 실패하였습니다.` };
+            } else {
+                return { isSuccess: true, data: `${images.length}장의 사진이 성공적으로 삭제되었습니다.` };
+            }
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
+        }
     },
 };
