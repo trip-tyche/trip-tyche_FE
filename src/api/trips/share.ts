@@ -1,12 +1,6 @@
 import { apiClient } from '@/api/client';
 import { getToken } from '@/utils/auth';
 
-// interface Result<T> {
-//     isSuccess: boolean;
-//     data?: T;
-//     error?: string;
-// }
-
 export const shareAPI = {
     // 사용자 검색(닉네임)
     searchUsers: async (userNickName: string) => {

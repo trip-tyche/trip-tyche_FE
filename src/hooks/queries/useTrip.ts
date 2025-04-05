@@ -4,6 +4,7 @@ import { tripAPI } from '@/api';
 import { Result } from '@/types/apis/common';
 import { Trip } from '@/types/trip';
 
+// 여행 티켓 목록 조회
 export const useTripTicketList = () => {
     return useQuery<Result<Trip[]>, Error, Trip[]>({
         queryKey: ['ticket-list'],
@@ -14,16 +15,15 @@ export const useTripTicketList = () => {
             }
             return result.data;
         },
-        staleTime: 10 * 60 * 1000,
     });
 };
 
+// 특정 여행 정보 조회
 export const useTripTicketInfo = (tripId: string, enabled: boolean) => {
     return useQuery({
         queryKey: ['ticket-info', tripId],
         queryFn: () => tripAPI.fetchTripTicketInfo(tripId),
         enabled,
-        staleTime: 5 * 60 * 1000,
     });
 };
 
