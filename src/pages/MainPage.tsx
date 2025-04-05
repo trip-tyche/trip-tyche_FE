@@ -7,7 +7,7 @@ import { GiRapidshareArrow } from 'react-icons/gi';
 import { useNavigate } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
-// import { shareAPI } from '@/api/trips/share';
+// import { shareAPI } from '@/api';
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';

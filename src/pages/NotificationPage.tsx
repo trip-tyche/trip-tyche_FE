@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { BellOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import { shareAPI } from '@/api/trips/share';
+import { shareAPI } from '@/api';
 import Header from '@/components/common/Header';
 import NotificationItem from '@/components/features/notification/NotificationItem';
 import { ROUTES } from '@/constants/paths';

@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { TicketsPlane } from 'lucide-react';
 import { GoKebabHorizontal } from 'react-icons/go';
 
-import { shareAPI } from '@/api/trips/share';
+import { shareAPI } from '@/api';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';

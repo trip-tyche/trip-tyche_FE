@@ -6,7 +6,7 @@ import { ImagePlus, Share2 } from 'lucide-react';
 import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
-import { shareAPI } from '@/api/trips/share';
+import { shareAPI } from '@/api';
 import characterImg from '@/assets/images/character-ogami-1.png';
 import Spinner from '@/components/common/Spinner';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
