@@ -2,14 +2,10 @@ import { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 import useAuthStore from '@/stores/useAuthStore';
 import { useToastStore } from '@/stores/useToastStore';
-import { getToken } from '@/utils/auth';
 
 export const setupRequestInterceptor = (instance: AxiosInstance) => {
     instance.interceptors.request.use(
         (config: InternalAxiosRequestConfig) => {
-            const jwtToken = getToken();
-            // config.headers.Authorization = `Bearer ${jwtToken}`;
-
             return config;
         },
         (error: AxiosError) => {
@@ -23,7 +19,7 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
         (response) => {
             return response.data;
         },
-        (error) => {
+        async (error) => {
             const { setLogout } = useAuthStore.getState();
             const { showToast } = useToastStore.getState();
 
@@ -40,10 +36,12 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
             if (error.response) {
                 const { status } = error.response.data;
 
-                // TODO: 액세스 토큰 재발급 로직 추가
-                if (status === 401) {
+                // TODO: 401로 변경 및 에러 전파 방지
+                if (status === 404) {
                     setLogout();
                     showToast('로그인이 필요합니다.');
+                    // await apiClient.get(`/v1/auth/refresh`);
+                    // return apiClient(error.config);
                     window.location.href = '/login';
                     return;
                 }

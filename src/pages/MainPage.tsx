@@ -42,6 +42,7 @@ const MainPage = () => {
 
     const getUserInfo = async () => {
         const result = await userAPI.fetchUserInfo();
+        console.log('zcvcvcvcv', result);
         const { nickname } = result.data;
         setUserNickName(nickname);
     };

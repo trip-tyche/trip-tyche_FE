@@ -1,0 +1,46 @@
+import fs from 'fs';
+import { resolve } from 'path';
+import react from '@vitejs/plugin-react';
+import { visualizer } from 'rollup-plugin-visualizer';
+import { defineConfig } from 'vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
+export default defineConfig({
+    server: {
+        port: 3000,
+        host: '0.0.0.0',
+        https: {
+            key: fs.readFileSync('certificates/local.triptyche.world-key.pem'),
+            cert: fs.readFileSync('certificates/local.triptyche.world.pem'),
+        },
+    },
+    plugins: [
+        react({
+            jsxImportSource: '@emotion/react',
+            babel: {
+                plugins: ['@emotion/babel-plugin'],
+            },
+        }),
+        tsconfigPaths(),
+        visualizer({
+            open: true,
+            gzipSize: true,
+        }),
+    ],
+    resolve: {
+        alias: [{ find: '@', replacement: resolve(__dirname, 'src') }],
+    },
+    optimizeDeps: {
+        include: ['@emotion/react'],
+    },
+    build: {
+        target: 'esnext',
+        minify: 'esbuild',
+        sourcemap: false,
+        commonjsOptions: {
+            transformMixedEsModules: true,
+        },
+    },
+    define: {
+        global: 'window', // global을 window로 정의
+    },
+});
