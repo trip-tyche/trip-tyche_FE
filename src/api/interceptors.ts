@@ -8,7 +8,7 @@ export const setupRequestInterceptor = (instance: AxiosInstance) => {
     instance.interceptors.request.use(
         (config: InternalAxiosRequestConfig) => {
             const jwtToken = getToken();
-            config.headers.Authorization = `Bearer ${jwtToken}`;
+            // config.headers.Authorization = `Bearer ${jwtToken}`;
 
             return config;
         },

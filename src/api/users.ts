@@ -1,10 +1,7 @@
 import { apiClient } from '@/api/client';
 
 export const userAPI = {
-    // 사용자 정보 조회
-    // "nickname": "string",
-    // "tripsCount": 0,
-    // "recentTrip": { }
+    // 사용자 정보 조회 (nickname, tripsCount, recentTrip)
     fetchUserInfo: async () => {
         try {
             const response = await apiClient.get(`/v1/users/me/summary`);
@@ -20,11 +17,11 @@ export const userAPI = {
             return { isSuccess: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
         }
     },
-    // 닉네임을 통한 사용자 조회 (userId, userNickName)
-    searchUsers: async (userNickName: string) => {
+    // 닉네임을 통한 사용자 검색 (userId, nickname)
+    searchUsers: async (nickname: string) => {
         const response = await apiClient.get(`/v1/share/users`, {
             params: {
-                userNickName,
+                nickname,
             },
         });
 

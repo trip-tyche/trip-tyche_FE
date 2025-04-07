@@ -6,6 +6,7 @@ import { ENV } from '@/constants/api/config';
 export const apiClient = axios.create({
     baseURL: ENV.API_BASE_URL,
     timeout: 15000,
+    withCredentials: true,
 });
 
 setupRequestInterceptor(apiClient);
