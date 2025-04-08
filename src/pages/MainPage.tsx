@@ -12,10 +12,10 @@ import Spinner from '@/components/common/Spinner';
 import IntroTicket from '@/components/features/trip/IntroTicket';
 import NickNameForm from '@/components/features/user/NickNameForm';
 import { ROUTES } from '@/constants/paths';
-import { COLORS } from '@/constants/theme';
+// import { COLORS } from '@/constants/theme';
 import { WELCOME_TICKET_DATA } from '@/constants/trip/form';
 import { NICKNAME_FORM } from '@/constants/ui/message';
-import webSocketService from '@/services/webSocketService';
+// import webSocketService from '@/services/webSocketService';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
@@ -187,21 +187,21 @@ const shareIconStyle = css`
     cursor: pointer;
 `;
 
-const count = css`
-    width: 12px;
-    height: 12px;
-    background-color: ${COLORS.TEXT.ERROR};
-    position: absolute;
-    top: -2px;
-    right: 4px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    font-size: 10px;
-    font-weight: bold;
-    color: white;
-`;
+// const count = css`
+//     width: 12px;
+//     height: 12px;
+//     background-color: ${COLORS.TEXT.ERROR};
+//     position: absolute;
+//     top: -2px;
+//     right: 4px;
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//     border-radius: 50%;
+//     font-size: 10px;
+//     font-weight: bold;
+//     color: white;
+// `;
 
 const ticketContainerStyle = css`
     flex: 1;
