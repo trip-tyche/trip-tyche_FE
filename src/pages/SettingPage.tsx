@@ -12,15 +12,15 @@ import SettingButton from '@/components/features/user/SettingButton';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { LOGOUT_MODAL, NICKNAME_FORM } from '@/constants/ui/message';
-import useAuthStore from '@/stores/useAuthStore';
 import { useModalStore } from '@/stores/useModalStore';
 import useUserDataStore from '@/stores/useUserDataStore';
+import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
 
 const SettingPage = () => {
     const [isEditing, setIsEditing] = useState(false);
 
-    const setLogout = useAuthStore((state) => state.setLogout);
+    const logout = useUserStore((state) => state.logout);
     const userNickName = useUserDataStore((state) => state.userNickName) || '';
     const { isModalOpen, openModal, closeModal } = useModalStore();
 
@@ -34,7 +34,7 @@ const SettingPage = () => {
 
     const confirmLogoutModal = () => {
         closeModal();
-        setLogout();
+        logout();
         navigate(ROUTES.PATH.AUTH.LOGIN);
     };
 

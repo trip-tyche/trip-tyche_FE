@@ -1,8 +1,8 @@
 import { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 import { apiClient } from '@/api/client';
-import useAuthStore from '@/stores/useAuthStore';
 import { useToastStore } from '@/stores/useToastStore';
+import useUserStore from '@/stores/useUserStore';
 
 interface ErrorResponse {
     status: number;
@@ -33,7 +33,7 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
             return response.data;
         },
         async (error: AxiosError<ErrorResponse>) => {
-            const { setLogout } = useAuthStore.getState();
+            const { logout } = useUserStore.getState();
             const { showToast } = useToastStore.getState();
 
             const originalRequest = error.config as CustomRequestConfing;
@@ -59,8 +59,8 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
                     }
 
                     if (status === 403) {
-                        setLogout();
-                        window.location.href = '/login';
+                        logout();
+                        // window.location.href = '/login';
                         return;
                     }
 

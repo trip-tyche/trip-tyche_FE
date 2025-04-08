@@ -19,9 +19,9 @@ import { WELCOME_TICKET_DATA } from '@/constants/trip/form';
 import { NICKNAME_FORM } from '@/constants/ui/message';
 // import webSocketService from '@/services/webSocketService';
 // import webSocketService from '@/services/webSocketService';
-import useAuthStore from '@/stores/useAuthStore';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserDataStore from '@/stores/useUserDataStore';
+import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
 // import { validateUserAuth } from '@/utils/validation';
@@ -32,9 +32,9 @@ const MainPage = () => {
     const [isInitializing, setIsInitializing] = useState<boolean>(true);
     // const [sharedTripsCount, setSharedTripsCount] = useState<number>(0);
 
-    const isLogin = useAuthStore((state) => state.isLogIn);
+    const isAuthenticated = useUserStore((state) => state.isAuthenticated);
     const userNickName = useUserDataStore((state) => state.userNickName);
-    const setLogout = useAuthStore((state) => state.setLogout);
+    const logout = useUserStore((state) => state.logout);
     const showToast = useToastStore((state) => state.showToast);
     const setUserNickName = useUserDataStore((state) => state.setUserNickName);
 
@@ -88,8 +88,8 @@ const MainPage = () => {
     // }, []);
 
     useEffect(() => {
-        // if (!isLogin) {
-        //     setLogout();
+        // if (!isAuthenticated) {
+        //     logout();
         //     navigate(ROUTES.PATH.AUTH.LOGIN);
         //     return;
         // }
@@ -107,7 +107,7 @@ const MainPage = () => {
             }
         };
         initializeMainPage();
-    }, [isLogin, navigate, setLogout, showToast]);
+    }, [isAuthenticated, navigate, logout, showToast]);
 
     // 알림 목록 불러오는 함수
     // const fetchNotifications = async (): Promise<void> => {
