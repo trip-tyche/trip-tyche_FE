@@ -9,8 +9,6 @@ interface AuthState {
 const useAuthStore = create<AuthState>()((set) => ({
     isLogIn: false,
     setLogin: (userId, token) => {
-        localStorage.setItem('userId', JSON.stringify(userId));
-        localStorage.setItem('token', token);
         set(() => ({ isLogIn: true }));
     },
     setLogout: () => {

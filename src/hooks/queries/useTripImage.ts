@@ -17,7 +17,5 @@ export const useTripDefaultLocation = (tripId: string) => {
                 }
             }
         },
-        staleTime: Infinity,
-        gcTime: Infinity,
     });
 };

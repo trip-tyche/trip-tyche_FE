@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 export const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            staleTime: Infinity,
+            staleTime: 60 * 60 * 1000, // 액세스 토큰 만료시간
         },
     },
 });
