@@ -1,5 +1,6 @@
 import { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
+import { apiClient } from '@/api/client';
 import useAuthStore from '@/stores/useAuthStore';
 import { useToastStore } from '@/stores/useToastStore';
 
@@ -36,26 +37,28 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
             if (error.response) {
                 const { status } = error.response.data;
 
-                // TODO: 401로 변경 및 에러 전파 방지
-                if (status === 404) {
-                    setLogout();
-                    showToast('로그인이 필요합니다.');
-                    // await apiClient.get(`/v1/auth/refresh`);
-                    // return apiClient(error.config);
-                    window.location.href = '/login';
-                    return;
-                }
+                try {
+                    // TODO: 401로 변경 및 에러 전파 방지
+                    if (status === 401) {
+                        setLogout();
+                        showToast('로그인이 필요합니다.');
+                        await apiClient.post(`/v1/auth/refresh`);
+                        return apiClient(error.config);
+                    }
 
-                if (status === 403) {
-                    setLogout();
-                    showToast('자동 로그아웃 되었습니다.');
-                    window.location.href = '/login';
-                    return;
-                }
+                    if (status === 403) {
+                        setLogout();
+                        showToast('자동 로그아웃 되었습니다.');
+                        window.location.href = '/login';
+                        return;
+                    }
 
-                if (status === 500) {
-                    showToast('서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
-                    return Promise.reject(error);
+                    if (status === 500) {
+                        showToast('서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+                        return Promise.reject(error);
+                    }
+                } catch (error) {
+                    console.log('hello');
                 }
             }
 
