@@ -4,6 +4,18 @@ import { apiClient } from '@/api/client';
 import useAuthStore from '@/stores/useAuthStore';
 import { useToastStore } from '@/stores/useToastStore';
 
+interface ErrorResponse {
+    status: number;
+    code: string;
+    message: string;
+    data: string;
+    httpStatus: string;
+}
+
+interface CustomRequestConfing extends InternalAxiosRequestConfig {
+    isAlreadyRequest?: boolean;
+}
+
 export const setupRequestInterceptor = (instance: AxiosInstance) => {
     instance.interceptors.request.use(
         (config: InternalAxiosRequestConfig) => {
@@ -20,9 +32,11 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
         (response) => {
             return response.data;
         },
-        async (error) => {
+        async (error: AxiosError<ErrorResponse>) => {
             const { setLogout } = useAuthStore.getState();
             const { showToast } = useToastStore.getState();
+
+            const originalRequest = error.config as CustomRequestConfing;
 
             if (error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK') {
                 showToast('네트워크 연결을 확인해주세요.');
@@ -34,19 +48,18 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
                 return Promise.reject(error);
             }
 
-            if (error.response) {
+            if (error.response && originalRequest && !originalRequest.isAlreadyRequest) {
+                originalRequest.isAlreadyRequest = true;
                 const { status } = error.response.data;
 
                 try {
                     // TODO: 에러 전파 방지
                     if (status === 401) {
                         await apiClient.post(`/v1/auth/refresh`);
-                        return apiClient(error.config);
                     }
 
                     if (status === 403) {
                         setLogout();
-                        showToast('자동 로그아웃 되었습니다.');
                         window.location.href = '/login';
                         return;
                     }
