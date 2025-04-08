@@ -38,7 +38,7 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
                 const { status } = error.response.data;
 
                 try {
-                    // TODO: 401로 변경 및 에러 전파 방지
+                    // TODO: 에러 전파 방지
                     if (status === 401) {
                         setLogout();
                         showToast('로그인이 필요합니다.');

@@ -11,8 +11,8 @@ export default defineConfig({
         port: 3000,
         host: '0.0.0.0',
         https: {
-            key: fs.readFileSync('certificates/local.triptyche.world-key.pem'),
-            cert: fs.readFileSync('certificates/local.triptyche.world.pem'),
+            key: fs.readFileSync('certificates/local.triptychetest.shop-key.pem'),
+            cert: fs.readFileSync('certificates/local.triptychetest.shop.pem'),
         },
     },
     plugins: [
