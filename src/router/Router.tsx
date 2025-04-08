@@ -134,7 +134,6 @@ const LoadingSpinner = () => <Spinner />;
 
 // 지연 로딩할 컴포넌트들
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
-const LoginRedirectPage = lazy(() => import('@/pages/LoginRedirectPage'));
 const MainPage = lazy(() => import('@/pages/MainPage'));
 const Onboarding = lazy(() => import('@/pages/Onboarding'));
 const PageNotFound = lazy(() => import('@/pages/PageNotFound'));
@@ -232,14 +231,6 @@ const router = createBrowserRouter([
                 element: (
                     <Suspense fallback={<LoadingSpinner />}>
                         <LoginPage />
-                    </Suspense>
-                ),
-            },
-            {
-                path: ROUTES.PATH.AUTH.LOGIN_REDIRECT,
-                element: (
-                    <Suspense fallback={<LoadingSpinner />}>
-                        <LoginRedirectPage />
                     </Suspense>
                 ),
             },
