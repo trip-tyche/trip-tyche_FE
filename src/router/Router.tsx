@@ -246,7 +246,7 @@ const router = createBrowserRouter([
                         element: <SettingPage />,
                     },
                     {
-                        path: ROUTES.PATH.SHARE,
+                        path: `notification/:userId`,
                         element: <NotificationPage />,
                     },
                     {

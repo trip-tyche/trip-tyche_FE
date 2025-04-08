@@ -7,143 +7,85 @@ import { GiRapidshareArrow } from 'react-icons/gi';
 import { useNavigate } from 'react-router-dom';
 
 import { tripAPI, userAPI } from '@/api';
-// import { shareAPI } from '@/api';
 import Button from '@/components/common/Button';
-import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
 import IntroTicket from '@/components/features/trip/IntroTicket';
 import NickNameForm from '@/components/features/user/NickNameForm';
 import { ROUTES } from '@/constants/paths';
-// import { COLORS } from '@/constants/theme';
+import { COLORS } from '@/constants/theme';
 import { WELCOME_TICKET_DATA } from '@/constants/trip/form';
 import { NICKNAME_FORM } from '@/constants/ui/message';
-// import webSocketService from '@/services/webSocketService';
-// import webSocketService from '@/services/webSocketService';
+import webSocketService from '@/services/webSocketService';
 import { useToastStore } from '@/stores/useToastStore';
-import useUserDataStore from '@/stores/useUserDataStore';
 import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
-// import { validateUserAuth } from '@/utils/validation';
+
+interface UserInfo {
+    nickname: string;
+    userId: number;
+    tripsCount: number;
+    recentTrip: Trip;
+}
 
 const MainPage = () => {
-    const [latestTrip, setLatestTrip] = useState<Trip | null>(null);
-    const [tripCount, setTripCount] = useState<number>(0);
+    const [userInfo, setUserInfo] = useState({} as UserInfo);
+    // const [notificationCount, setNotificationCount] = useState(0);
     const [isInitializing, setIsInitializing] = useState<boolean>(true);
-    // const [sharedTripsCount, setSharedTripsCount] = useState<number>(0);
 
-    const isAuthenticated = useUserStore((state) => state.isAuthenticated);
-    const userNickName = useUserDataStore((state) => state.userNickName);
-    const logout = useUserStore((state) => state.logout);
     const showToast = useToastStore((state) => state.showToast);
-    const setUserNickName = useUserDataStore((state) => state.setUserNickName);
+    const setNickname = useUserStore((state) => state.setNickname);
 
     const navigate = useNavigate();
 
-    const getUserInfo = async () => {
-        const result = await userAPI.fetchUserInfo();
-        console.log('zcvcvcvcv', result);
-        const { nickname } = result.data;
-        setUserNickName(nickname);
-    };
+    useEffect(() => {
+        initializePage();
+    }, []);
 
     // useEffect(() => {
-    //     // const userId = localStorage.getItem('userId');
-    //     // if (!userId) return;
-
-    //     const getUserInfo = async () => {
-    //         const result = await userAPI.fetchUserInfo();
-    //         const { userId } = result.data;
-    //         return userId;
-    //     };
-
-    //     const userId = await getUserInfo();
-
     //     // connect가 Promise를 반환하지 않는 경우 처리
     //     // console.log('웹소켓 연결 시도...');
-    //     webSocketService.connect(userId); // Promise가 아니므로 직접 호출
+    //     webSocketService.connect(String(userInfo.userId)); // Promise가 아니므로 직접 호출
 
     //     // 약간의 지연 후 알림 설정 (웹소켓 연결 시간 고려)
     //     setTimeout(() => {
     //         if (webSocketService.isConnected()) {
-    //             console.log('알림 설정 시작...');
+    //             // console.log('알림 설정 시작...');
 
     //             // 콜백 등록
     //             webSocketService.setUnreadCountCallback((count) => {
-    //                 console.log('콜백 호출됨, 카운트:', count);
-    //                 setSharedTripsCount(count);
+    //                 // console.log('콜백 호출됨, 카운트:', count);
+    //                 setNotificationCount(count);
     //             });
 
     //             // 요청 보내기
-    //             console.log('알림 카운트 요청 보냄...');
-    //             webSocketService.requestNotificationCount(userId);
+    //             // console.log('알림 카운트 요청 보냄...');
+    //             webSocketService.requestNotificationCount(String(userInfo.userId));
     //         } else {
-    //             console.log('웹소켓 연결 실패 또는 진행 중...');
+    //             // console.log('웹소켓 연결 실패 또는 진행 중...');
     //         }
     //     }, 200); // 1초 지연
 
     //     return () => {
     //         webSocketService.setUnreadCountCallback(() => null);
     //     };
-    // }, []);
+    // }, [userInfo]);
 
-    useEffect(() => {
-        // if (!isAuthenticated) {
-        //     logout();
-        //     navigate(ROUTES.PATH.AUTH.LOGIN);
-        //     return;
-        // }
-
-        const initializeMainPage = async () => {
-            try {
-                await getUserInfo();
-                await getUserInfoData();
-            } catch (error) {
-                // console.log('컴포넌트 catch!', error);
-                // navigate(ROUTES.PATH.AUTH.LOGIN);
-                // showToast('오류가 발생했습니다. 다시 시도해주세요.');
-            } finally {
-                setIsInitializing(false);
-            }
-        };
-        initializeMainPage();
-    }, [isAuthenticated, navigate, logout, showToast]);
-
-    // 알림 목록 불러오는 함수
-    // const fetchNotifications = async (): Promise<void> => {
-    //     try {
-    //         const userId = localStorage.getItem('userId') || '';
-    //         const response = await shareAPI.getNotifications(userId);
-    //         const sharedTripsCount = response.data.filter((trip: Notification) => trip.status === 'UNREAD');
-    //         setSharedTripsCount(sharedTripsCount.length);
-    //     } catch (error) {
-    //         console.error('알림 가져오기 오류:', error);
-    //     }
-    // };
-
-    const getUserInfoData = async (): Promise<void> => {
-        // const isValidUser = validateUserAuth();
-
-        // if (!isValidUser) {
-        //     navigate(ROUTES.PATH.AUTH.LOGIN);
-        //     return;
-        // }
-        const result = await tripAPI.fetchTripTicketList();
-
-        const trips = result.data;
-
-        // 알림 목록 불러오기
-        // await fetchNotifications();
-        const validTripList = trips?.filter((trip: Trip) => trip.tripTitle !== 'N/A') as Trip[];
-        const latestTrip = validTripList[validTripList.length - 1];
-
-        // setUserNickName(userNickName);
-        setTripCount(validTripList.length);
-        setLatestTrip(latestTrip);
+    const initializePage = async () => {
+        await getUserInfo();
+        setIsInitializing(false);
     };
 
-    const handleButtonClick = async (): Promise<void> => {
-        if (latestTrip) {
+    const getUserInfo = async () => {
+        const result = await userAPI.fetchUserInfo();
+        const { nickname, userId, tripsCount, recentTrip } = result.data || {};
+
+        setNickname(nickname);
+        setUserInfo({ nickname, userId, tripsCount, recentTrip });
+    };
+
+    const handleBottomButtonClick = async (): Promise<void> => {
+        if (userInfo?.recentTrip) {
             navigate(ROUTES.PATH.TRIPS.ROOT);
             return;
         }
@@ -168,22 +110,22 @@ const MainPage = () => {
 
     return (
         <>
-            {!userNickName ? (
-                <main css={nickNameFormContainer}>
-                    <Header title='닉네임 등록' />
-                    <NickNameForm
-                        mode='create'
-                        title={`반가워요! ${NICKNAME_FORM.TITLE}`}
-                        buttonText='등록 완료'
-                        getUserInfoData={getUserInfoData}
-                    />
-                </main>
+            {!userInfo?.nickname ? (
+                <NickNameForm
+                    mode='create'
+                    title={`반가워요! ${NICKNAME_FORM.TITLE}`}
+                    buttonText='등록 완료'
+                    // getUserInfoData={getUserInfoData}
+                />
             ) : (
                 <main css={pageContainer}>
                     <div css={headerStyle}>
                         <div css={shareIconStyle}>
-                            {/* {!!sharedTripsCount && <div css={count}>{sharedTripsCount}</div>} */}
-                            <Bell css={settingIconStyle} onClick={() => navigate(ROUTES.PATH.SHARE)} />
+                            {/* {!!notificationCount && <div css={count}>{notificationCount}</div>} */}
+                            <Bell
+                                css={settingIconStyle}
+                                onClick={() => navigate(ROUTES.PATH.NOTIFICATION(userInfo.userId))}
+                            />
                         </div>
                         <Settings css={settingIconStyle} onClick={() => navigate(ROUTES.PATH.SETTING)} />
                     </div>
@@ -192,13 +134,16 @@ const MainPage = () => {
                             <GiRapidshareArrow />
                             아래 티켓을 움직여보세요!
                         </p>
-                        <IntroTicket trip={latestTrip || WELCOME_TICKET_DATA} userNickname={userNickName} />
+                        <IntroTicket
+                            trip={userInfo?.recentTrip || WELCOME_TICKET_DATA}
+                            userNickname={userInfo.nickname}
+                        />
                     </div>
-                    {tripCount ? (
+                    {userInfo?.tripsCount ? (
                         <p css={ticketGuideStyle}>
                             {/* TODO: tripCount에 잘못된 title 제외되지 않음 */}
                             지금까지 <span css={tripCountStyle}>
-                                {tripCount}
+                                {userInfo.tripsCount}
                             </span>장의 여행 티켓을 만들었어요!
                         </p>
                     ) : (
@@ -209,8 +154,8 @@ const MainPage = () => {
                     )}
                     <div css={buttonWrapper}>
                         <Button
-                            text={latestTrip ? '여행 티켓 보러가기' : '새로운 여행 등록하기'}
-                            onClick={handleButtonClick}
+                            text={userInfo?.tripsCount ? '여행 티켓 보러가기' : '새로운 여행 등록하기'}
+                            onClick={handleBottomButtonClick}
                         />
                     </div>
                 </main>
@@ -218,12 +163,6 @@ const MainPage = () => {
         </>
     );
 };
-
-const nickNameFormContainer = css`
-    display: flex;
-    flex-direction: column;
-    height: 100dvh;
-`;
 
 const pageContainer = css`
     display: flex;
@@ -248,21 +187,21 @@ const shareIconStyle = css`
     cursor: pointer;
 `;
 
-// const count = css`
-//     width: 12px;
-//     height: 12px;
-//     background-color: ${COLORS.TEXT.ERROR};
-//     position: absolute;
-//     top: -2px;
-//     right: 4px;
-//     display: flex;
-//     justify-content: center;
-//     align-items: center;
-//     border-radius: 50%;
-//     font-size: 10px;
-//     font-weight: bold;
-//     color: white;
-// `;
+const count = css`
+    width: 12px;
+    height: 12px;
+    background-color: ${COLORS.TEXT.ERROR};
+    position: absolute;
+    top: -2px;
+    right: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: bold;
+    color: white;
+`;
 
 const ticketContainerStyle = css`
     flex: 1;

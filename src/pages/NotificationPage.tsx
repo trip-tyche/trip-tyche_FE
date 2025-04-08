@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { BellOff } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { shareAPI } from '@/api';
 import Header from '@/components/common/Header';
@@ -15,12 +15,11 @@ const NotificationPage = () => {
     const [notifications, setNotifications] = useState<Notification[]>();
 
     const navigate = useNavigate();
+    const { userId } = useParams();
 
     useEffect(() => {
         const getSharedTrips = async () => {
-            const userId = localStorage.getItem('userId') || '';
-            const result = await shareAPI.getNotifications(userId);
-
+            const result = await shareAPI.getNotifications(userId || '');
             const notifications = result.data;
             setNotifications(notifications);
         };

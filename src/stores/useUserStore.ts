@@ -1,8 +1,11 @@
 import { create } from 'zustand';
 
+import { queryClient } from '@/providers/TanStackProvider';
+
 interface UserState {
     isAuthenticated: boolean;
     nickname: string | null;
+    setNickname: (nickname: string) => void;
     logout: () => void;
 }
 
@@ -15,6 +18,7 @@ const useUserStore = create<UserState>()((set) => ({
     },
     logout: async () => {
         // TODO: 로그아웃 API 요청 추가
+        queryClient.clear();
         window.location.href = '/login';
         set(() => ({
             isAuthenticated: false,

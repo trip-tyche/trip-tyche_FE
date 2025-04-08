@@ -9,7 +9,7 @@ import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { NICKNAME_FORM } from '@/constants/ui/message';
 import { useToastStore } from '@/stores/useToastStore';
-import useUserDataStore from '@/stores/useUserDataStore';
+// import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
 import { FormMode } from '@/types/common';
 
@@ -18,15 +18,15 @@ interface NickNameFormProps {
     title: string;
     buttonText: string;
     placeholder?: string;
-    getUserInfoData?: () => void;
+    // getUserInfoData?: () => void;
     setIsEditing?: (isEditing: boolean) => void;
 }
 
-const NickNameForm = ({ mode, title, buttonText, placeholder, getUserInfoData, setIsEditing }: NickNameFormProps) => {
+const NickNameForm = ({ mode, title, buttonText, placeholder, setIsEditing }: NickNameFormProps) => {
     const [inputValue, setInputValue] = useState('');
     const [isInvalid, setIsInvalid] = useState(false);
 
-    const setUserNickName = useUserDataStore((state) => state.setUserNickName);
+    // const setUserNickName = useUserDataStore((state) => state.setUserNickName);
     const showToast = useToastStore((state) => state.showToast);
 
     const handleCancelButtonClick = () => setInputValue('');
@@ -51,7 +51,7 @@ const NickNameForm = ({ mode, title, buttonText, placeholder, getUserInfoData, s
     };
 
     const submitUserNickName = async () => {
-        setUserNickName(inputValue);
+        // setUserNickName(inputValue);
 
         try {
             await userAPI.checkDuplication(inputValue);
@@ -62,7 +62,7 @@ const NickNameForm = ({ mode, title, buttonText, placeholder, getUserInfoData, s
 
         try {
             await userAPI.createUserNickName(inputValue);
-            mode === 'edit' ? showToast('닉네임이 변경되었습니다.') : getUserInfoData && getUserInfoData();
+            // mode === 'edit' ? showToast('닉네임이 변경되었습니다.') : getUserInfoData && getUserInfoData();
         } catch (error: unknown) {
             handleError(error as AxiosError);
         }
@@ -94,11 +94,12 @@ const NickNameForm = ({ mode, title, buttonText, placeholder, getUserInfoData, s
 };
 
 const formContainer = css`
+    height: 100dvh;
+    padding: 8px;
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 8px;
 `;
 
 const inputContainer = css`

@@ -15,7 +15,7 @@ import { COLORS } from '@/constants/theme';
 import { useTicketHandler } from '@/hooks/useTicketHandler';
 import { useTicketNavigation } from '@/hooks/useTicketNavigation';
 import { useToastStore } from '@/stores/useToastStore';
-import useUserDataStore from '@/stores/useUserDataStore';
+import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
 import { formatToDot } from '@/utils/date';
@@ -32,7 +32,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { showToast } = useToastStore.getState();
-    const userNickName = useUserDataStore((state) => state.userNickName);
+    const nickname = useUserStore((state) => state.nickname);
 
     const { isModalOpen, isPending, handleImageUpload, handleTripEdit, handleTripDelete, deleteTrip, closeModal } =
         useTicketHandler(tripId as string);
@@ -83,7 +83,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
         }
     };
 
-    const isOwner = userNickName === ownerNickname;
+    const isOwner = nickname === ownerNickname;
 
     return (
         <div css={ticketContainer}>
