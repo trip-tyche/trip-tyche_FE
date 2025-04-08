@@ -36,35 +36,20 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
 
             if (error.response) {
                 const { status } = error.response.data;
-                const { code } = error.response.data;
 
                 try {
-                    // TODO: 에러 전파 방지, 403 로직 처리
-                    // AT만료 code: 1001
-                    // RT만료 code;: 2008
+                    // TODO: 에러 전파 방지
                     if (status === 401) {
-                        switch (code) {
-                            case 1001: {
-                                await apiClient.post(`/v1/auth/refresh`);
-                                return apiClient(error.config);
-                            }
-                            case 2008: {
-                                setLogout();
-                                showToast('자동 로그아웃 되었습니다.');
-                                window.location.href = '/login';
-                                return;
-                            }
-                            default:
-                                return;
-                        }
+                        await apiClient.post(`/v1/auth/refresh`);
+                        return apiClient(error.config);
                     }
 
-                    // if (status === 403) {
-                    //     setLogout();
-                    //     showToast('자동 로그아웃 되었습니다.');
-                    //     window.location.href = '/login';
-                    //     return;
-                    // }
+                    if (status === 403) {
+                        setLogout();
+                        showToast('자동 로그아웃 되었습니다.');
+                        window.location.href = '/login';
+                        return;
+                    }
 
                     if (status === 500) {
                         showToast('서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
