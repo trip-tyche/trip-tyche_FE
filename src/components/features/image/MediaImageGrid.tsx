@@ -38,7 +38,7 @@ const MediaImageGrid = ({ images, selectedImages, onImageClick }: MediaImageGrid
     };
 
     if (!allImagesLoaded) {
-        return <Spinner containerStyle={spinnerStyle} />;
+        return <Spinner />;
     }
 
     return (
@@ -86,10 +86,6 @@ const imageStyle = css`
     width: 100%;
     height: 100%;
     object-fit: cover;
-`;
-
-const spinnerStyle = css`
-    height: calc(100dvh - 154px);
 `;
 
 const selectedOverlayStyle = css`

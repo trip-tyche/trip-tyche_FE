@@ -35,11 +35,12 @@ const MainPage = () => {
 
     const showToast = useToastStore((state) => state.showToast);
     const setNickname = useUserStore((state) => state.setNickname);
+    const logout = useUserStore((state) => state.logout);
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        initializePage();
+        getUserInfo();
     }, []);
 
     // useEffect(() => {
@@ -71,17 +72,17 @@ const MainPage = () => {
     //     };
     // }, [userInfo]);
 
-    const initializePage = async () => {
-        await getUserInfo();
-        setIsInitializing(false);
-    };
-
     const getUserInfo = async () => {
         const result = await userAPI.fetchUserInfo();
-        const { nickname, userId, tripsCount, recentTrip } = result.data || {};
+        if (result.error) {
+            logout();
+            return;
+        }
 
+        const { nickname, userId, tripsCount, recentTrip } = result.data || {};
         setNickname(nickname);
         setUserInfo({ nickname, userId, tripsCount, recentTrip });
+        setIsInitializing(false);
     };
 
     const handleBottomButtonClick = async (): Promise<void> => {
@@ -104,8 +105,8 @@ const MainPage = () => {
         }
     };
 
-    if (isInitializing) {
-        return <Spinner />;
+    if (!isInitializing) {
+        return <Spinner loadingText='안녕하세요!' />;
     }
 
     return (

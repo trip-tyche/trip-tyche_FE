@@ -42,7 +42,7 @@ const ImageGrid = ({ imageSize = 3, displayedImages, selectedImages, onHashtagSe
     };
 
     if (!allImagesLoaded) {
-        return <Spinner containerStyle={spinnerStyle} />;
+        return <Spinner />;
     }
 
     return (
@@ -119,10 +119,6 @@ const checkIconStyle = css`
     width: 24px;
     height: 24px;
     background-color: white;
-`;
-
-const spinnerStyle = css`
-    height: calc(100dvh - 154px);
 `;
 
 export default ImageGrid;
