@@ -105,7 +105,7 @@ const MainPage = () => {
         }
     };
 
-    if (!isInitializing) {
+    if (isInitializing) {
         return <Spinner loadingText='안녕하세요!' />;
     }
 
