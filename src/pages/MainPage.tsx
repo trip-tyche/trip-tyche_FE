@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-
 import { css } from '@emotion/react';
 import { Settings, Bell } from 'lucide-react';
 import { FaArrowCircleDown } from 'react-icons/fa';
