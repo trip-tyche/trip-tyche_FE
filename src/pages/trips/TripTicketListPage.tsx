@@ -26,7 +26,6 @@ const TripTicketListPage = () => {
     const navigate = useNavigate();
 
     const { data: tripList, isFetching, error } = useTripTicketList();
-
     // const deleteInValidTrips = async (trips: Trip[]) => {
     //     const deletePromises = trips
     //         .filter((trip) => trip.country === '미정')
