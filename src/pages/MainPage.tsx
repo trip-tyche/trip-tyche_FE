@@ -6,9 +6,8 @@ import { FaArrowCircleDown } from 'react-icons/fa';
 import { GiRapidshareArrow } from 'react-icons/gi';
 import { useNavigate } from 'react-router-dom';
 
-import { tripAPI, userAPI } from '@/api';
+import { tripAPI } from '@/api';
 import Button from '@/components/common/Button';
-import Spinner from '@/components/common/Spinner';
 import IntroTicket from '@/components/features/trip/IntroTicket';
 import NickNameForm from '@/components/features/user/NickNameForm';
 import { ROUTES } from '@/constants/paths';
@@ -19,29 +18,18 @@ import { NICKNAME_FORM } from '@/constants/ui/message';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
-import { Trip } from '@/types/trip';
-
-interface UserInfo {
-    nickname: string;
-    userId: number;
-    tripsCount: number;
-    recentTrip: Trip;
-}
 
 const MainPage = () => {
-    const [userInfo, setUserInfo] = useState({} as UserInfo);
     // const [notificationCount, setNotificationCount] = useState(0);
-    const [isInitializing, setIsInitializing] = useState<boolean>(true);
 
     const showToast = useToastStore((state) => state.showToast);
-    const setNickname = useUserStore((state) => state.setNickname);
-    const logout = useUserStore((state) => state.logout);
+    const { userInfo } = useUserStore();
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        getUserInfo();
-    }, []);
+    // useEffect(() => {
+    //     getUserInfo();
+    // }, []);
 
     // useEffect(() => {
     //     // connect가 Promise를 반환하지 않는 경우 처리
@@ -72,19 +60,13 @@ const MainPage = () => {
     //     };
     // }, [userInfo]);
 
-    const getUserInfo = async () => {
-        const result = await userAPI.fetchUserInfo();
-        // console.log('result', result);
-        if (result.error) {
-            logout();
-            return;
-        }
+    // const getUserInfo = async () => {
+    //     const result = await userAPI.fetchUserInfo();
 
-        const { nickname, userId, tripsCount, recentTrip } = result.data || {};
-        setNickname(nickname);
-        setUserInfo({ nickname, userId, tripsCount, recentTrip });
-        setIsInitializing(false);
-    };
+    //     const { nickname, userId, tripsCount, recentTrip } = result.data || {};
+    //     setUserInfo({ nickname, userId, tripsCount, recentTrip });
+    //     setIsInitializing(false);
+    // };
 
     const handleBottomButtonClick = async (): Promise<void> => {
         if (userInfo?.recentTrip) {
@@ -105,12 +87,6 @@ const MainPage = () => {
             showToast('잠시 후 다시 시도해주세요.');
         }
     };
-
-    // console.log(isInitializing);
-
-    if (isInitializing) {
-        return <Spinner loadingText='안녕하세요!' />;
-    }
 
     return (
         <>

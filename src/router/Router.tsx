@@ -45,8 +45,8 @@ const ProtectedRoute = () => {
         const checkAuth = async () => {
             try {
                 if (isAuthenticated) return;
-                const { nickname, userId } = (await userAPI.fetchUserInfo()).data;
-                login(nickname, userId);
+                const userInfo = (await userAPI.fetchUserInfo()).data;
+                login(userInfo);
             } catch (error) {
                 logout();
             } finally {

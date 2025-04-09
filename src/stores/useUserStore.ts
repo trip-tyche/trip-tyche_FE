@@ -1,26 +1,22 @@
 import { create } from 'zustand';
 
 import { queryClient } from '@/providers/TanStackProvider';
+import { UserInfo } from '@/types/user';
 
 interface UserState {
     isAuthenticated: boolean;
-    nickname: string | null;
-    userId: number | null;
-    setNickname: (nickname: string) => void;
-    login: (nickname: string, userId: number) => void;
+    userInfo: UserInfo | null;
+    login: (userInfo: UserInfo) => void;
     logout: () => void;
 }
 
 const useUserStore = create<UserState>()((set) => ({
     isAuthenticated: false,
-    nickname: null,
-    userId: null,
-    setNickname: (nickname: string) => set({ nickname }),
-    login: (nickname, userId) => {
+    userInfo: null,
+    login: (userInfo: UserInfo) => {
         set(() => ({
             isAuthenticated: true,
-            nickname,
-            userId,
+            userInfo,
         }));
     },
     logout: async () => {
@@ -29,8 +25,7 @@ const useUserStore = create<UserState>()((set) => ({
         window.location.href = '/login';
         set(() => ({
             isAuthenticated: false,
-            nickname: null,
-            userId: null,
+            userInfo: null,
         }));
     },
 }));

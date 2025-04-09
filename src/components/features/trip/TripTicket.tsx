@@ -32,7 +32,8 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { showToast } = useToastStore.getState();
-    const nickname = useUserStore((state) => state.nickname);
+
+    const userInfo = useUserStore((state) => state.userInfo);
 
     const { isModalOpen, isPending, handleImageUpload, handleTripEdit, handleTripDelete, deleteTrip, closeModal } =
         useTicketHandler(tripId as string);
@@ -83,7 +84,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
         }
     };
 
-    const isOwner = nickname === ownerNickname;
+    const isOwner = userInfo?.nickname === ownerNickname;
 
     return (
         <div css={ticketContainer}>
