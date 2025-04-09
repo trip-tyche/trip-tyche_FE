@@ -74,7 +74,7 @@ const MainPage = () => {
 
     const getUserInfo = async () => {
         const result = await userAPI.fetchUserInfo();
-        console.log('result', result);
+        // console.log('result', result);
         if (result.error) {
             logout();
             return;
@@ -106,7 +106,7 @@ const MainPage = () => {
         }
     };
 
-    console.log(isInitializing);
+    // console.log(isInitializing);
 
     if (isInitializing) {
         return <Spinner loadingText='안녕하세요!' />;

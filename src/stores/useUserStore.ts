@@ -6,6 +6,7 @@ interface UserState {
     isAuthenticated: boolean;
     nickname: string | null;
     setNickname: (nickname: string) => void;
+    login: () => void;
     logout: () => void;
 }
 
