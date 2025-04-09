@@ -51,17 +51,25 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
             if (error.response && originalRequest && !originalRequest.isAlreadyRequest) {
                 originalRequest.isAlreadyRequest = true;
                 const { status } = error.response.data;
+                // console.log('res');
 
                 try {
                     // TODO: 에러 전파 방지
                     if (status === 401) {
+                        // try {
                         await apiClient.post(`/v1/auth/refresh`);
+                        // console.log('401 try');
+                        return apiClient(originalRequest);
+                        // } catch (error) {
+                        // console.log('401 error');
+                        logout();
+                        // }
                     }
 
                     if (status === 403) {
                         logout();
-                        // window.location.href = '/login';
-                        return;
+                        // console.log('403');
+                        return Promise.resolve();
                     }
 
                     if (status === 500) {

@@ -74,6 +74,7 @@ const MainPage = () => {
 
     const getUserInfo = async () => {
         const result = await userAPI.fetchUserInfo();
+        console.log('result', result);
         if (result.error) {
             logout();
             return;
@@ -104,6 +105,8 @@ const MainPage = () => {
             showToast('잠시 후 다시 시도해주세요.');
         }
     };
+
+    console.log(isInitializing);
 
     if (isInitializing) {
         return <Spinner loadingText='안녕하세요!' />;

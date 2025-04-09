@@ -130,12 +130,11 @@ import NotificationPage from '@/pages/NotificationPage';
 // import { validateUserAuth } from '@/utils/validation';
 
 // 로딩 컴포넌트
-const LoadingSpinner = () => <Spinner />;
+const LoadingSpinner = () => <Spinner loadingText='로딩 중...' />;
 
 // 지연 로딩할 컴포넌트들
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
 const MainPage = lazy(() => import('@/pages/MainPage'));
-const Onboarding = lazy(() => import('@/pages/Onboarding'));
 const PageNotFound = lazy(() => import('@/pages/PageNotFound'));
 const SettingPage = lazy(() => import('@/pages/SettingPage'));
 
@@ -218,14 +217,6 @@ const router = createBrowserRouter([
             </Suspense>
         ),
         children: [
-            {
-                path: ROUTES.PATH.ONBOARDING,
-                element: (
-                    <Suspense fallback={<LoadingSpinner />}>
-                        <Onboarding />
-                    </Suspense>
-                ),
-            },
             {
                 path: ROUTES.PATH.AUTH.LOGIN,
                 element: (
