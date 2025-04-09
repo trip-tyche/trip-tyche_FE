@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 
+import { userAPI } from '@/api';
 import { queryClient } from '@/providers/TanStackProvider';
 import { UserInfo } from '@/types/user';
 
@@ -20,7 +21,7 @@ const useUserStore = create<UserState>()((set) => ({
         }));
     },
     logout: async () => {
-        // TODO: 로그아웃 API 요청 추가
+        await userAPI.requestLogout();
         queryClient.clear();
         window.location.href = '/login';
         set(() => ({

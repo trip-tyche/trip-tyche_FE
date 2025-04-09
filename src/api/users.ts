@@ -47,4 +47,7 @@ export const userAPI = {
 
         return response;
     },
+    requestLogout: async () => {
+        await apiClient.post(`/v1/auth/logout`);
+    },
 };
