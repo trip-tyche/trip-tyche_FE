@@ -45,8 +45,8 @@ const ProtectedRoute = () => {
         const checkAuth = async () => {
             try {
                 if (isAuthenticated) return;
-                await userAPI.fetchUserInfo();
-                login();
+                const { nickname, userId } = (await userAPI.fetchUserInfo()).data;
+                login(nickname, userId);
             } catch (error) {
                 logout();
             } finally {
@@ -62,25 +62,12 @@ const ProtectedRoute = () => {
         return <LoadingSpinner />;
     }
 
-    console.log(isAuthenticated);
-
-    // return <>{children}</>;
     return (
         <Suspense fallback={<LoadingSpinner />}>
             <Outlet />
         </Suspense>
     );
 };
-
-// const ProtectedRoute = () => {
-//     return (
-//         <LoginCheck>
-//             <Suspense fallback={<LoadingSpinner />}>
-//                 <Outlet />
-//             </Suspense>
-//         </LoginCheck>
-//     );
-// };
 
 const router = createBrowserRouter([
     {
