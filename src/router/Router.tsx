@@ -8,8 +8,6 @@ import { ROUTES } from '@/constants/paths';
 import RootLayout from '@/layouts/RootLayout';
 import NotificationPage from '@/pages/NotificationPage';
 import useUserStore from '@/stores/useUserStore';
-// import { useToastStore } from '@/stores/useToastStore';
-// import { validateUserAuth } from '@/utils/validation';
 
 // 로딩 컴포넌트
 const LoadingSpinner = () => <Spinner loadingText='불러오는 중...' />;
@@ -37,7 +35,7 @@ const TimelinePages = {
     TimelineDatePage: lazy(() => import('@/pages/trips/timeline/TimelineDatePage')),
 };
 
-const LoginCheck = ({ children }: { children: JSX.Element }) => {
+const ProtectedRoute = () => {
     const [isChecking, setIsChecking] = useState(true);
     const { login, logout, isAuthenticated } = useUserStore();
 
@@ -46,10 +44,7 @@ const LoginCheck = ({ children }: { children: JSX.Element }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                if (isAuthenticated) {
-                    return;
-                }
-
+                if (isAuthenticated) return;
                 await userAPI.fetchUserInfo();
                 login();
             } catch (error) {
@@ -67,18 +62,25 @@ const LoginCheck = ({ children }: { children: JSX.Element }) => {
         return <LoadingSpinner />;
     }
 
-    return isAuthenticated ? <>{children}</> : null;
-};
+    console.log(isAuthenticated);
 
-const ProtectedRoute = () => {
+    // return <>{children}</>;
     return (
-        <LoginCheck>
-            <Suspense fallback={<LoadingSpinner />}>
-                <Outlet />
-            </Suspense>
-        </LoginCheck>
+        <Suspense fallback={<LoadingSpinner />}>
+            <Outlet />
+        </Suspense>
     );
 };
+
+// const ProtectedRoute = () => {
+//     return (
+//         <LoginCheck>
+//             <Suspense fallback={<LoadingSpinner />}>
+//                 <Outlet />
+//             </Suspense>
+//         </LoginCheck>
+//     );
+// };
 
 const router = createBrowserRouter([
     {

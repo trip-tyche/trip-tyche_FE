@@ -11,8 +11,4 @@ export const OAUTH_CONFIG = {
         KAKAO: '카카오로 5초안에 시작하기',
         GOOGLE: 'Google 계정으로 시작하기',
     },
-    STORAGE_KEYS: {
-        TOKEN: 'token',
-        USER_ID: 'userId',
-    },
 } as const;

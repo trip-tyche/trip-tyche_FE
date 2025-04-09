@@ -1,5 +1,4 @@
 import { apiClient } from '@/api/client';
-import { getToken } from '@/utils/auth';
 
 export const shareAPI = {
     // 다른 사용자에게 여행 공유 요청
@@ -28,26 +27,14 @@ export const shareAPI = {
 
     // 알림 상태 변경 (READ / UNREAD)
     updateNotificationStatus: async (notificationId: string) => {
-        const token = getToken();
-
-        const response = await apiClient.patch(`/v1/notifications/${notificationId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        const response = await apiClient.patch(`/v1/notifications/${notificationId}`);
 
         return { isSuccess: true, data: response.data };
     },
 
     // 알림 삭제
     deleteNotification: async (notificationId: number[]) => {
-        const token = getToken();
-
-        const response = await apiClient.patch(`/v1/notifications/delete`, notificationId, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        const response = await apiClient.patch(`/v1/notifications/delete`, notificationId);
 
         return { isSuccess: true, data: response.data };
     },
@@ -58,12 +45,8 @@ export const shareAPI = {
             status,
         };
 
-        const token = getToken();
         const response = await apiClient.patch(`/v1/shares/${shareId}`, null, {
             params,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
         });
 
         return { isSuccess: true, data: response.data };

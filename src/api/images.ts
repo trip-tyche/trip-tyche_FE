@@ -6,17 +6,11 @@ import { Result } from '@/types/apis/common';
 import { PresignedUrlRequest, PresignedUrlResponse } from '@/types/image';
 import { GpsCoordinates } from '@/types/location';
 import { MediaFileMetaData, UnlocatedMediaFileModel } from '@/types/media';
-import { getToken } from '@/utils/auth';
 
 export const tripImageAPI = {
     // 핀포인트 슬라이드
     fetchImagesByPinPoint: async (tripId: string, pinPoint: string) => {
-        const token = getToken();
-        const data = await apiClient.get(`/v1/trips/${tripId}/pinpoints/${pinPoint}/images`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        const data = await apiClient.get(`/v1/trips/${tripId}/pinpoints/${pinPoint}/images`);
         return data.data;
     },
     // 날짜별 이미지 조회
