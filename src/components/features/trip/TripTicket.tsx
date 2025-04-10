@@ -85,6 +85,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
     };
 
     const isOwner = userInfo?.nickname === ownerNickname;
+    console.log(userInfo, isOwner);
 
     return (
         <div css={ticketContainer}>

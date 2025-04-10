@@ -7,13 +7,25 @@ import { UserInfo } from '@/types/user';
 interface UserState {
     isAuthenticated: boolean;
     userInfo: UserInfo | null;
+    updateNickname: (nickname: string) => void;
     login: (userInfo: UserInfo) => void;
     logout: () => void;
 }
 
-const useUserStore = create<UserState>()((set) => ({
+const useUserStore = create<UserState>()((set, get) => ({
     isAuthenticated: false,
     userInfo: null,
+    updateNickname: (nickname: string) => {
+        const { userInfo } = get();
+        if (!userInfo) return;
+
+        set(() => ({
+            userInfo: {
+                ...userInfo,
+                nickname,
+            },
+        }));
+    },
     login: (userInfo: UserInfo) => {
         set(() => ({
             isAuthenticated: true,

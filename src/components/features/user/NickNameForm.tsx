@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { css } from '@emotion/react';
+import { useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { MdCancel } from 'react-icons/md';
 
@@ -10,6 +11,7 @@ import Input from '@/components/common/Input';
 import { NICKNAME_FORM } from '@/constants/ui/message';
 import { useToastStore } from '@/stores/useToastStore';
 // import useUserDataStore from '@/stores/useUserDataStore';
+import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
 import { FormMode } from '@/types/common';
 
@@ -25,11 +27,13 @@ interface NickNameFormProps {
 const NickNameForm = ({ mode, title, buttonText, placeholder, setIsEditing }: NickNameFormProps) => {
     const [inputValue, setInputValue] = useState('');
     const [isInvalid, setIsInvalid] = useState(false);
+    const updateNickname = useUserStore((state) => state.updateNickname);
 
     // const setUserNickName = useUserDataStore((state) => state.setUserNickName);
     const showToast = useToastStore((state) => state.showToast);
 
     const handleCancelButtonClick = () => setInputValue('');
+    const queryClient = useQueryClient();
 
     const handleError = (error: AxiosError) => {
         if (error && typeof error === 'object' && 'response' in error) {
@@ -68,6 +72,8 @@ const NickNameForm = ({ mode, title, buttonText, placeholder, setIsEditing }: Ni
         }
 
         setIsEditing && setIsEditing(false);
+        updateNickname(inputValue);
+        queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
     };
 
     return (
