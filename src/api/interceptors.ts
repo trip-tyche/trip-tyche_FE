@@ -76,7 +76,7 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
                     }
 
                     if (status === 500) {
-                        error.response.data.message = '500이다~~~';
+                        error.response.data.message = '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요';
                         return Promise.reject(error);
                     }
                 } catch (error) {

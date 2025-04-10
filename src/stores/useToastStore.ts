@@ -11,6 +11,7 @@ export const useToastStore = create<ToastProps>((set) => ({
     isVisible: false,
     message: '',
     showToast: (message: string) => {
+        console.log('useToastStore!');
         set({ isVisible: true, message });
     },
     hideToast: () => set({ isVisible: false, message: '' }),

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { TicketsPlane, PlaneTakeoff } from 'lucide-react';
@@ -14,53 +14,56 @@ import { ROUTES } from '@/constants/paths';
 import { BUTTON } from '@/constants/ui/buttons';
 import { useTripTicketList } from '@/hooks/queries/useTrip';
 import { useToastStore } from '@/stores/useToastStore';
-import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
 
 const TripTicketListPage = () => {
-    const tripTicketCount = useUserDataStore((state) => state.tripTicketCount);
-    const setTripTicketCount = useUserDataStore((state) => state.setTripTicketCount);
+    const [tripList, setTripList] = useState<Trip[]>([]);
     const showToast = useToastStore((state) => state.showToast);
+    const { data: result, isFetching } = useTripTicketList();
 
     const navigate = useNavigate();
 
-    const { data: result, isFetching } = useTripTicketList();
-
-    const getTripList = () => {
-        if (result?.success) {
-            return result.data;
-        } else {
-            console.log(result?.error);
-            // showToast(result?.error as string);
-            return [];
-        }
-    };
-
-    const tripList = getTripList();
-    // const tripList = result?.success ? result.data : showToast(result?.error as string);
-
     useEffect(() => {
-        setTripTicketCount(tripList.length);
-    }, [setTripTicketCount]);
+        if (!result?.success) {
+            showToast(result?.error as string);
+        }
 
-    const handleTicketCreate = async () => {
-        try {
-            const result = await tripAPI.createTripTicket();
+        setTripList(() => (result?.success ? result?.data : []));
+    }, [result, showToast]);
 
-            if (result.success) {
-                const tripId = result.data;
-                if (tripId) {
-                    navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`);
-                }
-            } else {
-                showToast('잠시 후 다시 시도해주세요.');
+    // const createNewTrip = async () => {
+    //     try {
+    //         const result = await tripAPI.createTripTicket();
+
+    //         if (result.success) {
+    //             const tripId = result.data;
+    //             if (tripId) {
+    //                 navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`);
+    //             }
+    //         } else {
+    //             showToast('잠시 후 다시 시도해주세요.');
+    //         }
+    //     } catch (error) {
+    //         console.error(error);
+    //         showToast('잠시 후 다시 시도해주세요.');
+    //     }
+    // };
+
+    const createNewTrip = async () => {
+        const result = await tripAPI.createTripTicket();
+
+        if (result.success) {
+            const tripId = result.data;
+            if (tripId) {
+                navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`);
             }
-        } catch (error) {
-            console.error(error);
+        } else {
             showToast('잠시 후 다시 시도해주세요.');
         }
     };
+
+    const tripTicketCount = tripList.length;
 
     return (
         <div css={pageContainer}>
@@ -79,7 +82,7 @@ const TripTicketListPage = () => {
                 </div>
                 <Button
                     text={BUTTON.NEW_TRIP}
-                    onClick={handleTicketCreate}
+                    onClick={createNewTrip}
                     icon={<LuPlus size={16} />}
                     css={css`
                         width: auto;

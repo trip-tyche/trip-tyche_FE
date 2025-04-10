@@ -10,18 +10,6 @@ export interface ApiResponse<T> {
     httpStatus: string;
 }
 
-// export const toResult = async <T>(fn: () => Promise<ApiResponse<T>>): Promise<Result<T>> => {
-//     try {
-//         const response = await fn();
-//         const { data } = response;
-//         console.log('data', data);
-//         return { success: true, data };
-//     } catch (error) {
-//         console.error(error);
-//         return { success: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
-//     }
-// };
-
 export const toResult = async <T>(fn: () => Promise<ApiResponse<T>>): Promise<Result<T>> => {
     try {
         const { data } = await fn();

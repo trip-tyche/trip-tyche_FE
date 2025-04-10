@@ -1,21 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { tripAPI } from '@/api';
-import { toResult } from '@/api/utils';
+import { resultToast, toResult } from '@/api/utils';
 
 // 여행 티켓 목록 조회
 export const useTripTicketList = () => {
     return useQuery({
-        retry: 3,
         queryKey: ['ticket-list'],
         queryFn: () => toResult(() => tripAPI.fetchTripTicketList()),
-        select: (result) =>
-            result.success
+        select: (result) => {
+            return result.success
                 ? {
                       ...result,
                       data: result.data.trips,
                   }
-                : result,
+                : result;
+        },
     });
 };
 

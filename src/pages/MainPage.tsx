@@ -23,8 +23,6 @@ const MainPage = () => {
     const showToast = useToastStore((state) => state.showToast);
     const { userInfo } = useUserStore();
 
-    console.log(userInfo);
-
     const navigate = useNavigate();
 
     // useEffect(() => {

@@ -9,12 +9,13 @@ interface TripList {
 
 export const tripAPI = {
     // 사용자의 전체 여행 티켓 목록 조회
-    fetchTripTicketList: async (): Promise<ApiResponse<TripList>> => await apiClient.get(`/v1/trxips`),
+    fetchTripTicketList: async (): Promise<ApiResponse<TripList>> => {
+        console.log('api');
+        return await apiClient.get(`/v1/trips`);
+    },
     // 특정 여행의 티켓 상세 정보 조회
     fetchTripTicketInfo: async (tripId: string) => {
         const response = await apiClient.get(`/v1/trips/${tripId}`);
-
-        console.log('response', response);
 
         return response.data;
     },
