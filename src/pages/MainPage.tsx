@@ -60,7 +60,7 @@ const MainPage = () => {
         const result = await toResult(() => tripAPI.createNewTrip());
         if (result.success) {
             const { tripId } = result.data;
-            navigate(`${(ROUTES.PATH.TRIPS.NEW.IMAGES(tripId), { state: 'first-ticket' })}`);
+            navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`, { state: 'first-ticket' });
         } else {
             showToast(result.error);
         }

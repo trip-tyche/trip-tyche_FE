@@ -31,7 +31,7 @@ const TripTicketListPage = () => {
             showToast(result?.error as string);
         }
 
-        setTripList(() => (result?.success ? result?.data : []));
+        setTripList(() => (result?.success ? result?.data.reverse() : []));
     }, [result, showToast]);
 
     const handleCreateTripButtonClick = async () => {
