@@ -20,7 +20,7 @@ export const useTripImages = (tripId: string) => {
         select: (result) => {
             if (!result.success) {
                 // throw new Error(result.error);
-                console.log(result.error);
+                console.error(result.error);
             } else {
                 return result.data.mediaFiles;
             }

@@ -6,6 +6,8 @@ export interface Trip {
     endDate: string;
     hashtags: string[];
     imagesDate?: string[];
+    // TODO: meidaFilesDates 오타
+    meidaFilesDates?: string[];
     userNickname?: string;
     ownerNickname: string;
     sharedUserNicknames?: string[];

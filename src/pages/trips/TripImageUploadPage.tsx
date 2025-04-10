@@ -74,7 +74,12 @@ const TripImageUploadPage = () => {
                 return;
             }
 
-            navigate(`${ROUTES.PATH.TRIPS.NEW.INFO(Number(tripId))}`);
+            const imageDates = imageFile.map((image) => image.formattedDate.split('T')[0]);
+            const uniqueDates = Array.from(new Set(imageDates)).sort(
+                (dateA, dateB) => new Date(dateA).getTime() - new Date(dateB).getTime(),
+            );
+
+            navigate(`${ROUTES.PATH.TRIPS.NEW.INFO(Number(tripId))}`, { state: uniqueDates });
             return;
         } else {
             setIsAlertModalModalOpen(false);

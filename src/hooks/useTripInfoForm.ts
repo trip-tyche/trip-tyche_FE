@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
 import { ROUTES } from '@/constants/paths';
@@ -19,8 +19,8 @@ export const useTripInfoForm = (mode: FormMode) => {
         startDate: '',
         endDate: '',
         hashtags: [],
-        imagesDate: [],
         ownerNickname: '',
+        meidaFilesDates: [],
     };
 
     const queryClient = useQueryClient();
@@ -38,6 +38,20 @@ export const useTripInfoForm = (mode: FormMode) => {
 
     const { tripId } = useParams();
     const navigate = useNavigate();
+    const { state } = useLocation();
+
+    useEffect(() => {
+        if (mode !== 'edit') {
+            setTripInfo(() => {
+                return {
+                    ...tripInfo,
+                    // startDate: state[0],
+                    // endDate: state[state.length - 1],
+                    meidaFilesDates: state,
+                };
+            });
+        }
+    }, [state]);
 
     const { data: tripInfoData, isLoading } = useTripTicketInfo(tripId as string, !!tripId && mode === 'edit');
 
@@ -83,6 +97,8 @@ export const useTripInfoForm = (mode: FormMode) => {
             try {
                 await tripAPI.updateTripTicketInfo(tripId, tripInfo);
                 queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
+                queryClient.invalidateQueries({ queryKey: ['ticket-info'] });
+
                 showToast('여행 정보가 성공적으로 수정되었습니다.');
             } catch (error) {
                 showToast('여행 정보 수정에 실패했습니다. 다시 시도해 주세요.');

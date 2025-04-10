@@ -23,7 +23,6 @@ export const useLocationAdd = () => {
     const { tripId } = useParams();
 
     const { data: defaultLocation } = useTripDefaultLocation(tripId as string);
-    console.log(defaultLocation);
     const queryClient = useQueryClient();
 
     useEffect(() => {

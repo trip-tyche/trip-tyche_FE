@@ -26,18 +26,12 @@ interface TripInfoFormProps {
 }
 
 const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
-    const { tripTitle, country, startDate, endDate, hashtags } = tripInfo;
+    const { tripTitle, country, startDate, endDate, hashtags, meidaFilesDates: imageDates = [] } = tripInfo;
 
     const [dateSelectType, setDateSelectType] = useState<DateSelectType>('range');
     const [isSelectRange, setIsSelectRange] = useState<boolean>(true);
 
     const isEditing = mode === 'edit';
-    // const imageDates = isEditing
-    //     ? (dates as string[])
-    //     : (JSON.parse(localStorage.getItem('image-date') || '[]') as string[]) || ['2024-09-09', '2024-09-12'];
-
-    // TODO: 지금 하드코딩
-    const imageDates = ['2024-09-09', '2024-09-12'];
 
     const defaultStartDate = imageDates[0];
     const defaultEndDate = imageDates[imageDates.length - 1];
@@ -150,7 +144,7 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
                     value={
                         datePickerProps.isInitialized
                             ? isSelectRange
-                                ? [startDate ? new Date(startDate) : null, endDate ? new Date(startDate) : null]
+                                ? [startDate ? new Date(startDate) : null, endDate ? new Date(endDate) : null]
                                 : startDate
                                   ? new Date(startDate)
                                   : null
