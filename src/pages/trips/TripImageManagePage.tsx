@@ -103,9 +103,9 @@ const TripImageManagePage = () => {
                 images: selectedImages.map((image) => image.mediaFileId),
             },
             {
-                onSuccess: (result) => {
+                onSuccess: () => {
                     setIsDeleteModalOpen(false);
-                    showToast(result.data as string);
+                    // showToast(result.data as string);
                     setSelectedImages([]);
                     setIsSelectionMode(false);
                 },

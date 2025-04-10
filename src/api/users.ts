@@ -1,8 +1,6 @@
 import { AxiosError } from 'axios';
 
 import { apiClient } from '@/api/client';
-import { ApiResponse } from '@/api/utils';
-import { UserInfo } from '@/types/user';
 
 export const userAPI = {
     // 사용자 정보 조회 (nickname, tripsCount, recentTrip)

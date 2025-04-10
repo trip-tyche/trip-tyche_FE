@@ -1,11 +1,18 @@
 import axios from 'axios';
 
 import { apiClient } from '@/api/client';
+import { ApiResponse } from '@/api/utils';
 import { API_ENDPOINTS } from '@/constants/api/config';
 import { Result } from '@/types/apis/common';
 import { PresignedUrlRequest, PresignedUrlResponse } from '@/types/image';
 import { GpsCoordinates } from '@/types/location';
 import { MediaFileMetaData, UnlocatedMediaFileModel } from '@/types/media';
+
+interface MediaFile {
+    startDate: string;
+    endDate: string;
+    mediaFiles: MediaFileMetaData[];
+}
 
 export const tripImageAPI = {
     // 핀포인트 슬라이드
@@ -62,18 +69,20 @@ export const tripImageAPI = {
         await apiClient.post(`/v1/trips/${tripId}/media-files`, metaDatas);
     },
     // 여행에 등록된 모든 이미지 조회
-    getTripImages: async (tripId: string) => {
-        try {
-            const response = await apiClient.get(`/v1/trips/${tripId}/media-files`);
-            if (response.status !== 200 || !response.data) {
-                return { success: false, error: '사진을 불러오는 중 오류가 발생했습니다.' };
-            }
-            return { success: true, data: response.data.mediaFiles };
-        } catch (error) {
-            console.error(error);
-            return { success: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
-        }
-    },
+    // getTripImages: async (tripId: string) => {
+    //     try {
+    //         const response = await apiClient.get(`/v1/trips/${tripId}/media-files`);
+    //         if (response.status !== 200 || !response.data) {
+    //             return { success: false, error: '사진을 불러오는 중 오류가 발생했습니다.' };
+    //         }
+    //         return { success: true, data: response.data.mediaFiles };
+    //     } catch (error) {
+    //         console.error(error);
+    //         return { success: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
+    //     }
+    // },
+    getTripImages: async (tripId: string): Promise<ApiResponse<MediaFile>> =>
+        await apiClient.get(`/v1/trips/${tripId}/media-files`),
     // 선택한 여행 이미지 삭제
     deleteImages: async (tripId: string, images: string[]): Promise<Result<string>> => {
         try {

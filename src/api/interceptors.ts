@@ -1,4 +1,4 @@
-import axios, { Axios, AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 import { apiClient } from '@/api/client';
 import { ENV } from '@/constants/api/config';
