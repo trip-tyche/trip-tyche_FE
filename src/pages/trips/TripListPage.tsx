@@ -18,7 +18,7 @@ import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { Trip } from '@/types/trip';
 
-const TripTicketListPage = () => {
+const TripListPage = () => {
     const [tripList, setTripList] = useState<Trip[]>([]);
     const showToast = useToastStore((state) => state.showToast);
     const { data: result, isFetching } = useTripTicketList();
@@ -146,4 +146,4 @@ const emptyTripListStyle = css`
     color: ${theme.COLORS.TEXT.DESCRIPTION};
 `;
 
-export default TripTicketListPage;
+export default TripListPage;
