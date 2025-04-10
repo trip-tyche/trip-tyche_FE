@@ -13,15 +13,13 @@ import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { LOGOUT_MODAL, NICKNAME_FORM } from '@/constants/ui/message';
 import { useModalStore } from '@/stores/useModalStore';
-import useUserDataStore from '@/stores/useUserDataStore';
 import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
 
 const SettingPage = () => {
     const [isEditing, setIsEditing] = useState(false);
-
+    const nickname = useUserStore((state) => state.userInfo?.nickname);
     const logout = useUserStore((state) => state.logout);
-    const userNickName = useUserDataStore((state) => state.userNickName) || '';
     const { isModalOpen, openModal, closeModal } = useModalStore();
 
     const navigate = useNavigate();
@@ -35,7 +33,6 @@ const SettingPage = () => {
     const confirmLogoutModal = () => {
         closeModal();
         logout();
-        navigate(ROUTES.PATH.AUTH.LOGIN);
     };
 
     const settingButtons = [
@@ -59,7 +56,7 @@ const SettingPage = () => {
                     mode='edit'
                     title={NICKNAME_FORM.TITLE}
                     buttonText='변경 완료'
-                    placeholder={userNickName}
+                    placeholder={nickname}
                     setIsEditing={setIsEditing}
                 />
             ) : (
@@ -67,7 +64,7 @@ const SettingPage = () => {
                     <div css={userInfoContainer}>
                         <img css={characterStyle} src={character} alt='캐릭터' />
                         <p css={nickNameWrapper}>
-                            여행자,<span css={nickNameStyle}>{userNickName}</span>
+                            여행자,<span css={nickNameStyle}>{nickname}</span>
                         </p>
                     </div>
 
