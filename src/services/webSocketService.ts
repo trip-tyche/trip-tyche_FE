@@ -58,7 +58,7 @@ const connect = (userId: string, serverUrl: string = import.meta.env.VITE_WEBSOC
     // 연결 종료 시 콜백
     state.client.onWebSocketClose = () => {
         state.isConnected = false;
-        console.log('WebSocket 연결 종료');
+        // console.log('WebSocket 연결 종료');
     };
 
     // 연결 시작
@@ -76,7 +76,7 @@ const disconnect = (): void => {
         // 연결 종료
         state.client.deactivate();
         state.isConnected = false;
-        // console.log('WebSocket 연결 종료됨');
+        console.log('WebSocket 연결 종료됨');
     }
 };
 
@@ -107,7 +107,7 @@ const subscribeToShareNotifications = (userId: string): StompSubscription | null
         try {
             // console.log('메시지 도착! 원본 데이터:', message); // 원본 메시지 전체 출력
             const data = JSON.parse(message.body);
-            console.log('메시지 수신:', data);
+            // console.log('메시지 수신:', data);
 
             if (data.unreadCount !== undefined && state.unreadCountCallback) {
                 state.unreadCountCallback(data.unreadCount);

@@ -12,21 +12,7 @@ export const tripAPI = {
         return response.data;
     },
     // 새 여행 등록을 위한 tripId 생성
-    createNewTrip: async (): Promise<ApiResponse<{ tripId: number }>> => {
-        // try {
-        //     const response = await apiClient.post(`/v1/trips`);
-        //     const { data } = response;
-
-        //     if (!data) {
-        //         return { success: false, error: '데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해 주세요.' };
-        //     }
-
-        //     return { success: true, data: data.tripId };
-        // } catch (error) {
-        //     return { success: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
-        // }
-        return await apiClient.post(`/v1/trips`);
-    },
+    createNewTrip: async (): Promise<ApiResponse<{ tripId: number }>> => await apiClient.post(`/v1/trips`),
     // 기존 여행 티켓 정보 수정
     updateTripTicketInfo: async (tripId: string, tripInfo: Trip) => {
         const response = await apiClient.put(`/v1/trips/${tripId}`, tripInfo);

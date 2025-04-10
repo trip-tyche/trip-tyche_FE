@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { css } from '@emotion/react';
 import { Settings, Bell } from 'lucide-react';
 import { FaArrowCircleDown } from 'react-icons/fa';
@@ -10,49 +12,49 @@ import Button from '@/components/common/Button';
 import IntroTicket from '@/components/features/trip/IntroTicket';
 import NickNameForm from '@/components/features/user/NickNameForm';
 import { ROUTES } from '@/constants/paths';
-// import { COLORS } from '@/constants/theme';
+import { COLORS } from '@/constants/theme';
 import { WELCOME_TICKET_DATA } from '@/constants/trip/form';
 import { NICKNAME_FORM } from '@/constants/ui/message';
-// import webSocketService from '@/services/webSocketService';
+import webSocketService from '@/services/webSocketService';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
 
 const MainPage = () => {
-    // const [notificationCount, setNotificationCount] = useState(0);
+    const [notificationCount, setNotificationCount] = useState(0);
     const { userInfo } = useUserStore();
     const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();
 
-    // useEffect(() => {
-    //     // connect가 Promise를 반환하지 않는 경우 처리
-    //     // console.log('웹소켓 연결 시도...');
-    //     webSocketService.connect(String(userInfo.userId)); // Promise가 아니므로 직접 호출
+    useEffect(() => {
+        // connect가 Promise를 반환하지 않는 경우 처리
+        // console.log('웹소켓 연결 시도...');
+        webSocketService.connect(String(userInfo?.userId)); // Promise가 아니므로 직접 호출
 
-    //     // 약간의 지연 후 알림 설정 (웹소켓 연결 시간 고려)
-    //     setTimeout(() => {
-    //         if (webSocketService.isConnected()) {
-    //             // console.log('알림 설정 시작...');
+        // 약간의 지연 후 알림 설정 (웹소켓 연결 시간 고려)
+        setTimeout(() => {
+            if (webSocketService.isConnected()) {
+                // console.log('알림 설정 시작...');
 
-    //             // 콜백 등록
-    //             webSocketService.setUnreadCountCallback((count) => {
-    //                 // console.log('콜백 호출됨, 카운트:', count);
-    //                 setNotificationCount(count);
-    //             });
+                // 콜백 등록
+                webSocketService.setUnreadCountCallback((count) => {
+                    // console.log('콜백 호출됨, 카운트:', count);
+                    setNotificationCount(count);
+                });
 
-    //             // 요청 보내기
-    //             // console.log('알림 카운트 요청 보냄...');
-    //             webSocketService.requestNotificationCount(String(userInfo.userId));
-    //         } else {
-    //             // console.log('웹소켓 연결 실패 또는 진행 중...');
-    //         }
-    //     }, 200); // 1초 지연
+                // 요청 보내기
+                // console.log('알림 카운트 요청 보냄...');
+                webSocketService.requestNotificationCount(String(userInfo?.userId));
+            } else {
+                // console.log('웹소켓 연결 실패 또는 진행 중...');
+            }
+        }, 200); // 1초 지연
 
-    //     return () => {
-    //         webSocketService.setUnreadCountCallback(() => null);
-    //     };
-    // }, [userInfo]);
+        return () => {
+            webSocketService.setUnreadCountCallback(() => null);
+        };
+    }, [userInfo]);
 
     const handleCreateTripButtonClick = async () => {
         const result = await toResult(() => tripAPI.createNewTrip());
@@ -72,7 +74,7 @@ const MainPage = () => {
                 <main css={pageContainer}>
                     <div css={headerStyle}>
                         <div css={shareIconStyle}>
-                            {/* {!!notificationCount && <div css={count}>{notificationCount}</div>} */}
+                            {!!notificationCount && <div css={count}>{notificationCount}</div>}
                             <Bell
                                 css={settingIconStyle}
                                 onClick={() => navigate(ROUTES.PATH.NOTIFICATION(userInfo.userId))}
@@ -139,21 +141,21 @@ const shareIconStyle = css`
     cursor: pointer;
 `;
 
-// const count = css`
-//     width: 12px;
-//     height: 12px;
-//     background-color: ${COLORS.TEXT.ERROR};
-//     position: absolute;
-//     top: -2px;
-//     right: 4px;
-//     display: flex;
-//     justify-content: center;
-//     align-items: center;
-//     border-radius: 50%;
-//     font-size: 10px;
-//     font-weight: bold;
-//     color: white;
-// `;
+const count = css`
+    width: 12px;
+    height: 12px;
+    background-color: ${COLORS.TEXT.ERROR};
+    position: absolute;
+    top: -2px;
+    right: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: bold;
+    color: white;
+`;
 
 const ticketContainerStyle = css`
     flex: 1;
