@@ -6,6 +6,7 @@ import { LuPlus } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
+import { toResult } from '@/api/utils';
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
@@ -25,45 +26,25 @@ const TripTicketListPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!result?.success) {
+        if (!result) return;
+        if (!result.success) {
             showToast(result?.error as string);
         }
 
         setTripList(() => (result?.success ? result?.data : []));
     }, [result, showToast]);
 
-    // const createNewTrip = async () => {
-    //     try {
-    //         const result = await tripAPI.createTripTicket();
-
-    //         if (result.success) {
-    //             const tripId = result.data;
-    //             if (tripId) {
-    //                 navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`);
-    //             }
-    //         } else {
-    //             showToast('잠시 후 다시 시도해주세요.');
-    //         }
-    //     } catch (error) {
-    //         console.error(error);
-    //         showToast('잠시 후 다시 시도해주세요.');
-    //     }
-    // };
-
-    const createNewTrip = async () => {
-        const result = await tripAPI.createTripTicket();
-
+    const handleCreateTripButtonClick = async () => {
+        const result = await toResult(() => tripAPI.createNewTrip());
         if (result.success) {
-            const tripId = result.data;
-            if (tripId) {
-                navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`);
-            }
+            const { tripId } = result.data;
+            navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`);
         } else {
-            showToast('잠시 후 다시 시도해주세요.');
+            showToast(result.error);
         }
     };
 
-    const tripTicketCount = tripList.length;
+    const tripCount = tripList.length;
 
     return (
         <div css={pageContainer}>
@@ -72,9 +53,9 @@ const TripTicketListPage = () => {
             <div css={listHeaderStyle}>
                 <div css={listSummaryStyle}>
                     <TicketsPlane size={20} />
-                    {tripTicketCount ? (
+                    {tripCount ? (
                         <p>
-                            <span css={listCountStyle}>{tripTicketCount}</span> 장의 티켓을 만들었어요!
+                            <span css={listCountStyle}>{tripCount}</span> 장의 티켓을 만들었어요!
                         </p>
                     ) : (
                         <p>아직 만든 티켓이 없어요!</p>
@@ -82,7 +63,7 @@ const TripTicketListPage = () => {
                 </div>
                 <Button
                     text={BUTTON.NEW_TRIP}
-                    onClick={createNewTrip}
+                    onClick={handleCreateTripButtonClick}
                     icon={<LuPlus size={16} />}
                     css={css`
                         width: auto;
@@ -94,17 +75,19 @@ const TripTicketListPage = () => {
                 />
             </div>
             <p css={guideStyle}>* 티켓을 클릭하시면 해당 여행의 타임라인으로 이동합니다.</p>
-            {tripTicketCount > 0 ? (
+            {tripCount > 0 ? (
                 <div css={tripListStyle}>
                     {tripList.map((trip: Trip) => (
                         <TripTicket key={trip.tripId} tripInfo={trip} />
                     ))}
                 </div>
             ) : (
-                <div css={emptyTripListStyle}>
-                    <PlaneTakeoff size={24} />
-                    <p>등록된 여행이 아직 없습니다.</p>
-                </div>
+                !isFetching && (
+                    <div css={emptyTripListStyle}>
+                        <PlaneTakeoff size={24} />
+                        <p>등록된 여행이 아직 없습니다.</p>
+                    </div>
+                )
             )}
         </div>
     );

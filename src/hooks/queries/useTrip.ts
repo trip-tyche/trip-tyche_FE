@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { tripAPI } from '@/api';
-import { resultToast, toResult } from '@/api/utils';
+import { toResult } from '@/api/utils';
 
 // 여행 티켓 목록 조회
 export const useTripTicketList = () => {

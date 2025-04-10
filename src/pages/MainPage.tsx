@@ -5,6 +5,7 @@ import { GiRapidshareArrow } from 'react-icons/gi';
 import { useNavigate } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
+import { toResult } from '@/api/utils';
 import Button from '@/components/common/Button';
 import IntroTicket from '@/components/features/trip/IntroTicket';
 import NickNameForm from '@/components/features/user/NickNameForm';
@@ -19,15 +20,10 @@ import theme from '@/styles/theme';
 
 const MainPage = () => {
     // const [notificationCount, setNotificationCount] = useState(0);
-
-    const showToast = useToastStore((state) => state.showToast);
     const { userInfo } = useUserStore();
+    const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();
-
-    // useEffect(() => {
-    //     getUserInfo();
-    // }, []);
 
     // useEffect(() => {
     //     // connect가 Promise를 반환하지 않는 경우 처리
@@ -58,43 +54,20 @@ const MainPage = () => {
     //     };
     // }, [userInfo]);
 
-    // const getUserInfo = async () => {
-    //     const result = await userAPI.fetchUserInfo();
-
-    //     const { nickname, userId, tripsCount, recentTrip } = result.data || {};
-    //     setUserInfo({ nickname, userId, tripsCount, recentTrip });
-    //     setIsInitializing(false);
-    // };
-
-    const handleBottomButtonClick = async (): Promise<void> => {
-        if (userInfo?.recentTrip) {
-            navigate(ROUTES.PATH.TRIPS.ROOT);
-            return;
-        }
-
-        try {
-            const result = await tripAPI.createTripTicket();
-            if (!result.success) throw new Error(result.error);
-
-            const tripId = result.data;
-            if (tripId) {
-                navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`, { state: 'first-ticket' });
-            }
-        } catch (error) {
-            console.error(error);
-            showToast('잠시 후 다시 시도해주세요.');
+    const handleCreateTripButtonClick = async () => {
+        const result = await toResult(() => tripAPI.createNewTrip());
+        if (result.success) {
+            const { tripId } = result.data;
+            navigate(`${(ROUTES.PATH.TRIPS.NEW.IMAGES(tripId), { state: 'first-ticket' })}`);
+        } else {
+            showToast(result.error);
         }
     };
 
     return (
         <>
             {!userInfo?.nickname ? (
-                <NickNameForm
-                    mode='create'
-                    title={`반가워요! ${NICKNAME_FORM.TITLE}`}
-                    buttonText='등록 완료'
-                    // getUserInfoData={getUserInfoData}
-                />
+                <NickNameForm mode='create' title={`반가워요! ${NICKNAME_FORM.TITLE}`} buttonText='등록 완료' />
             ) : (
                 <main css={pageContainer}>
                     <div css={headerStyle}>
@@ -119,10 +92,7 @@ const MainPage = () => {
                     </div>
                     {userInfo?.tripsCount ? (
                         <p css={ticketGuideStyle}>
-                            {/* TODO: tripCount에 잘못된 title 제외되지 않음 */}
-                            지금까지 <span css={tripCountStyle}>
-                                {userInfo.tripsCount}
-                            </span>장의 여행 티켓을 만들었어요!
+                            지금까지 <span css={tripCountStyle}>{userInfo.tripsCount}</span>장의 여행 티켓을 만들었어요!
                         </p>
                     ) : (
                         <p css={ticketGuideStyle}>
@@ -133,7 +103,11 @@ const MainPage = () => {
                     <div css={buttonWrapper}>
                         <Button
                             text={userInfo?.tripsCount ? '여행 티켓 보러가기' : '새로운 여행 등록하기'}
-                            onClick={handleBottomButtonClick}
+                            onClick={
+                                userInfo.recentTrip
+                                    ? () => navigate(ROUTES.PATH.TRIPS.ROOT)
+                                    : handleCreateTripButtonClick
+                            }
                         />
                     </div>
                 </main>
