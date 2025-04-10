@@ -19,7 +19,6 @@ import theme from '@/styles/theme';
 
 const TimelineDatePage = () => {
     const [currentDate, setCurrentDate] = useState('');
-    const [startDate, setStartDate] = useState('');
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [datesWithImages, setDatesWithImages] = useState<string[]>([]);
 
@@ -28,7 +27,7 @@ const TimelineDatePage = () => {
 
     const { tripId } = useParams();
     const {
-        state: { imagesByDates: imageDates, pinPointId },
+        state: { startDate, imagesByDates: imageDates, pinPointId },
     } = useLocation();
 
     const navigate = useNavigate();
@@ -49,7 +48,7 @@ const TimelineDatePage = () => {
         }
 
         setDatesWithImages(imageDates);
-        setStartDate(imageDates[0]);
+        // setStartDate(imageDates[0]);
         setCurrentDate(imageDates[0]);
     }, [imageDates]);
 

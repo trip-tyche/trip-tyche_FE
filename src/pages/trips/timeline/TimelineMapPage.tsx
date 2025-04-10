@@ -24,6 +24,7 @@ const TimelineMapPage = () => {
     const [tripTitle, setTripTitle] = useState();
     const [pinPointsInfo, setPinPointsInfo] = useState<PinPointModel[]>([]);
     const [tripImages, setTripImages] = useState<MediaFileModel[]>([]);
+    const [startDate, setStartDate] = useState('');
 
     const [characterPosition, setCharacterPosition] = useState<LatLng>();
 
@@ -69,6 +70,7 @@ const TimelineMapPage = () => {
 
             const { tripTitle, startDate, pinPoints, mediaFiles: images } = await tripAPI.fetchTripTimeline(tripId);
 
+            setStartDate(startDate);
             if (pinPoints.length === 0) {
                 showToast('여행에 등록된 사진이 없습니다.');
                 navigate(ROUTES.PATH.TRIPS.ROOT);
@@ -89,9 +91,7 @@ const TimelineMapPage = () => {
 
             const imageDates = validLocationImages.map((image: MediaFileModel) => image.recordDate.split('T')[0]);
 
-            const uniqueImageDates = [...new Set<string>([startDate, ...imageDates])].sort((a, b) =>
-                a.localeCompare(b),
-            );
+            const uniqueImageDates = [...new Set<string>([...imageDates])].sort((a, b) => a.localeCompare(b));
 
             setTripTitle(tripTitle);
             setTripImages(validLocationImages);
@@ -216,8 +216,10 @@ const TimelineMapPage = () => {
 
     const handleImageByDateButtonClick = useCallback(() => {
         const pinPointId = String(pinPointsInfo[currentPinPointIndex].pinPointId);
-        navigate(`${ROUTES.PATH.TRIPS.TIMELINE.DATE(Number(tripId))}`, { state: { imagesByDates, pinPointId } });
-    }, [tripId, imagesByDates, navigate, pinPointsInfo, currentPinPointIndex]);
+        navigate(`${ROUTES.PATH.TRIPS.TIMELINE.DATE(Number(tripId))}`, {
+            state: { startDate, imagesByDates, pinPointId },
+        });
+    }, [tripId, startDate, imagesByDates, navigate, pinPointsInfo, currentPinPointIndex]);
 
     const handleIndividualMarkerClick = (marker: BaseLocationMedia) => {
         setSelectedIndividualMarker(marker);
