@@ -1,27 +1,20 @@
 import { apiClient } from '@/api/client';
+import { ApiResponse } from '@/api/utils';
 import { Result } from '@/types/apis/common';
 import { Trip } from '@/types/trip';
 
+interface TripList {
+    trips: Trip[];
+}
+
 export const tripAPI = {
     // 사용자의 전체 여행 티켓 목록 조회
-    fetchTripTicketList: async (): Promise<Result<Trip[]>> => {
-        try {
-            const response = await apiClient.get(`/v1/trips`);
-            const { data } = response;
-
-            if (!data) {
-                return { isSuccess: false, error: '데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해 주세요.' };
-            }
-
-            return { isSuccess: true, data: data.trips };
-        } catch (error) {
-            console.error(error);
-            return { isSuccess: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
-        }
-    },
+    fetchTripTicketList: async (): Promise<ApiResponse<TripList>> => await apiClient.get(`/v1/trxips`),
     // 특정 여행의 티켓 상세 정보 조회
     fetchTripTicketInfo: async (tripId: string) => {
         const response = await apiClient.get(`/v1/trips/${tripId}`);
+
+        console.log('response', response);
 
         return response.data;
     },
@@ -32,12 +25,12 @@ export const tripAPI = {
             const { data } = response;
 
             if (!data) {
-                return { isSuccess: false, error: '데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해 주세요.' };
+                return { success: false, error: '데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해 주세요.' };
             }
 
-            return { isSuccess: true, data: data.tripId };
+            return { success: true, data: data.tripId };
         } catch (error) {
-            return { isSuccess: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
+            return { success: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
         }
     },
     // 기존 여행 티켓 정보 수정

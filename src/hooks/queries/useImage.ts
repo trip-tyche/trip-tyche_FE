@@ -10,7 +10,7 @@ export const useTripImages = (tripId: string) => {
         queryFn: () => tripImageAPI.getTripImages(tripId),
         enabled: !!tripId,
         select: (result) => {
-            if (!result.isSuccess || !result.data) {
+            if (!result.success || !result.data) {
                 throw new Error(result.error);
             }
             return result.data;

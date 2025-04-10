@@ -23,6 +23,8 @@ const MainPage = () => {
     const showToast = useToastStore((state) => state.showToast);
     const { userInfo } = useUserStore();
 
+    console.log(userInfo);
+
     const navigate = useNavigate();
 
     // useEffect(() => {
@@ -74,7 +76,7 @@ const MainPage = () => {
 
         try {
             const result = await tripAPI.createTripTicket();
-            if (!result.isSuccess) throw new Error(result.error);
+            if (!result.success) throw new Error(result.error);
 
             const tripId = result.data;
             if (tripId) {

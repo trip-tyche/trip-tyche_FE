@@ -19,7 +19,6 @@ export const useImagesDelete = () => {
     return useMutation({
         mutationFn: ({ tripId, images }: { tripId: string; images: string[] }) =>
             tripImageAPI.deleteImages(tripId, images),
-
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['trip-images'] });
         },

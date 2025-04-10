@@ -72,7 +72,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
         const deletedNotification = [notificationInfo.notificationId];
         const response = await shareAPI.deleteNotification(deletedNotification);
 
-        if (response.isSuccess) {
+        if (response.success) {
             showToast('알림이 삭제되었습니다');
             setIsDeleteModalOpen(false);
         }

@@ -25,46 +25,30 @@ const TripTicketListPage = () => {
 
     const navigate = useNavigate();
 
-    const { data: tripList, isFetching, error } = useTripTicketList();
-    // const deleteInValidTrips = async (trips: Trip[]) => {
-    //     const deletePromises = trips
-    //         .filter((trip) => trip.country === '미정')
-    //         .map((trip) => tripAPI.deleteTripTicket(trip.tripId as string));
+    const { data: result, isFetching } = useTripTicketList();
 
-    //     await Promise.allSettled(deletePromises);
-    // };
-
-    const { validTripList } = useMemo(() => {
-        if (!tripList) {
-            return { validTripList: [] };
+    const getTripList = () => {
+        if (result?.success) {
+            return result.data;
+        } else {
+            console.log(result?.error);
+            // showToast(result?.error as string);
+            return [];
         }
+    };
 
-        // const inValidTripList = tripList.filter((trip: Trip) => trip.country === '미정');
-
-        const validTripList = tripList
-            .filter((trip: Trip) => trip.country !== '미정')
-            // .map((trip: Trip) => ({ ...trip, userNickname: tripList.userNickName }))
-            .reverse();
-
-        // if (inValidTripList.length > 3) {
-        // deleteInValidTrips(tripList);
-        // refetch();
-        // }
-
-        return {
-            validTripList,
-        };
-    }, [tripList]);
+    const tripList = getTripList();
+    // const tripList = result?.success ? result.data : showToast(result?.error as string);
 
     useEffect(() => {
-        setTripTicketCount(validTripList.length);
-    }, [validTripList, setTripTicketCount]);
+        setTripTicketCount(tripList.length);
+    }, [setTripTicketCount]);
 
     const handleTicketCreate = async () => {
         try {
             const result = await tripAPI.createTripTicket();
 
-            if (result.isSuccess) {
+            if (result.success) {
                 const tripId = result.data;
                 if (tripId) {
                     navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`);
@@ -77,8 +61,6 @@ const TripTicketListPage = () => {
             showToast('잠시 후 다시 시도해주세요.');
         }
     };
-
-    if (error) return;
 
     return (
         <div css={pageContainer}>
@@ -111,7 +93,7 @@ const TripTicketListPage = () => {
             <p css={guideStyle}>* 티켓을 클릭하시면 해당 여행의 타임라인으로 이동합니다.</p>
             {tripTicketCount > 0 ? (
                 <div css={tripListStyle}>
-                    {validTripList.map((trip: Trip) => (
+                    {tripList.map((trip: Trip) => (
                         <TripTicket key={trip.tripId} tripInfo={trip} />
                     ))}
                 </div>

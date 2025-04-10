@@ -1,5 +1,1 @@
-export interface Result<T> {
-    isSuccess: boolean;
-    data?: T;
-    error?: string;
-}
+export type Result<T> = { success: true; data: T } | { success: false; error: string };

@@ -43,10 +43,10 @@ export const tripImageAPI = {
     ): Promise<Result<PresignedUrlResponse[]>> => {
         try {
             const response = await apiClient.post(`/v1/trips/${tripId}/presigned-url`, { files: fileNames });
-            return { isSuccess: true, data: response.data.presignedUrls };
+            return { success: true, data: response.data.presignedUrls };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
+            return { success: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
         }
     },
     // S3 스토리지로 미디어 파일 업로드
@@ -66,12 +66,12 @@ export const tripImageAPI = {
         try {
             const response = await apiClient.get(`/v1/trips/${tripId}/media-files`);
             if (response.status !== 200 || !response.data) {
-                return { isSuccess: false, error: '사진을 불러오는 중 오류가 발생했습니다.' };
+                return { success: false, error: '사진을 불러오는 중 오류가 발생했습니다.' };
             }
-            return { isSuccess: true, data: response.data.mediaFiles };
+            return { success: true, data: response.data.mediaFiles };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
+            return { success: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
         }
     },
     // 선택한 여행 이미지 삭제
@@ -81,13 +81,13 @@ export const tripImageAPI = {
                 data: { mediaFileIds: images },
             });
             if (response.status !== 200 || !response.data) {
-                return { isSuccess: false, error: `사진 삭제에 실패하였습니다.` };
+                return { success: false, error: `사진 삭제에 실패하였습니다.` };
             } else {
-                return { isSuccess: true, data: `${images.length}장의 사진이 성공적으로 삭제되었습니다.` };
+                return { success: true, data: `${images.length}장의 사진이 성공적으로 삭제되었습니다.` };
             }
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
+            return { success: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
         }
     },
     // 선택한 여행 이미지 수정
@@ -97,13 +97,13 @@ export const tripImageAPI = {
                 mediaFiles: images,
             });
             if (response.status !== 200 || !response.data) {
-                return { isSuccess: false, error: `사진 삭제에 실패하였습니다.` };
+                return { success: false, error: `사진 삭제에 실패하였습니다.` };
             } else {
-                return { isSuccess: true, data: `${images.length}장의 사진이 성공적으로 삭제되었습니다.` };
+                return { success: true, data: `${images.length}장의 사진이 성공적으로 삭제되었습니다.` };
             }
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
+            return { success: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
         }
     },
 };

@@ -1,15 +1,15 @@
-import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import axios, { Axios, AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 import { apiClient } from '@/api/client';
 import { ENV } from '@/constants/api/config';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserStore from '@/stores/useUserStore';
 
-interface ErrorResponse {
+interface ErrorResponse<T> {
     status: number;
     code: string;
     message: string;
-    data: string;
+    data: T;
     httpStatus: string;
 }
 
@@ -33,7 +33,7 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
         (response) => {
             return response.data;
         },
-        async (error: AxiosError<ErrorResponse>) => {
+        async (error: AxiosError<ErrorResponse<null>>) => {
             const { logout } = useUserStore.getState();
             const { showToast } = useToastStore.getState();
 
@@ -76,7 +76,7 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
                     }
 
                     if (status === 500) {
-                        showToast('서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+                        error.response.data.message = '500이다~~~';
                         return Promise.reject(error);
                     }
                 } catch (error) {

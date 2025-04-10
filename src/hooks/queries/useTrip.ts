@@ -1,20 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { tripAPI } from '@/api';
-import { Result } from '@/types/apis/common';
-import { Trip } from '@/types/trip';
+import { toResult } from '@/api/utils';
 
 // 여행 티켓 목록 조회
 export const useTripTicketList = () => {
-    return useQuery<Result<Trip[]>, Error, Trip[]>({
+    return useQuery({
+        retry: 3,
         queryKey: ['ticket-list'],
-        queryFn: () => tripAPI.fetchTripTicketList(),
-        select: (result) => {
-            if (!result.isSuccess || !result.data) {
-                throw new Error(result.error);
-            }
-            return result.data;
-        },
+        queryFn: () => toResult(() => tripAPI.fetchTripTicketList()),
+        select: (result) =>
+            result.success
+                ? {
+                      ...result,
+                      data: result.data.trips,
+                  }
+                : result,
     });
 };
 
@@ -27,9 +28,9 @@ export const useTripTicketInfo = (tripId: string, enabled: boolean) => {
     });
 };
 
-export const useTripTimeline = (tripId: string) => {
-    return useQuery({
-        queryKey: ['trip-timeline', tripId],
-        queryFn: () => tripAPI.fetchTripTimeline(tripId),
-    });
-};
+// export const useTripTimeline = (tripId: string) => {
+//     return useQuery({
+//         queryKey: ['trip-timeline', tripId],
+//         queryFn: () => tripAPI.fetchTripTimeline(tripId),
+//     });
+// };
