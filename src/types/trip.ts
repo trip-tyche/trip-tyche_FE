@@ -6,7 +6,7 @@ export interface Trip {
     endDate: string;
     hashtags: string[];
     imagesDate?: string[];
-    // TODO: meidaFilesDates 오타
+    // TODO: meidaFilesDates -> mediaFilesDates 오타 수정 요청 필요
     meidaFilesDates?: string[];
     userNickname?: string;
     ownerNickname: string;
