@@ -20,17 +20,17 @@ export const useTripTicketList = () => {
 };
 
 // 특정 여행 정보 조회
-export const useTripTicketInfo = (tripId: string, enabled: boolean) => {
+export const useTripTicketInfo = (tripKey: string, enabled: boolean) => {
     return useQuery({
-        queryKey: ['ticket-info', tripId],
-        queryFn: () => tripAPI.fetchTripTicketInfo(tripId),
+        queryKey: ['ticket-info', tripKey],
+        queryFn: () => tripAPI.fetchTripTicketInfo(tripKey),
         enabled,
     });
 };
 
-// export const useTripTimeline = (tripId: string) => {
+// export const useTripTimeline = (tripKey: string) => {
 //     return useQuery({
-//         queryKey: ['trip-timeline', tripId],
-//         queryFn: () => tripAPI.fetchTripTimeline(tripId),
+//         queryKey: ['trip-timeline', tripKey],
+//         queryFn: () => tripAPI.fetchTripTimeline(tripKey),
 //     });
 // };

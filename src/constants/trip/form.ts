@@ -8,7 +8,7 @@ export const TRIP_FORM = {
 };
 
 export const WELCOME_TICKET_DATA = {
-    tripId: '',
+    tripKey: '',
     tripTitle: '첫 티켓이 발급되었습니다',
     country: '👋/트립티케/TRIP TYCHE',
     startDate: '2025-01-01',

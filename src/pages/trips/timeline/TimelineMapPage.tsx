@@ -51,7 +51,7 @@ const TimelineMapPage = () => {
     const autoPlayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const navigate = useNavigate();
-    const { tripId } = useParams();
+    const { tripKey } = useParams();
 
     const isLastPinPoint = currentPinPointIndex === pinPointsInfo.length - 1;
 
@@ -64,11 +64,11 @@ const TimelineMapPage = () => {
     // 데이터 패칭
     useEffect(() => {
         const getTimelineMapData = async () => {
-            if (!tripId) {
+            if (!tripKey) {
                 return;
             }
 
-            const { tripTitle, startDate, pinPoints, mediaFiles: images } = await tripAPI.fetchTripTimeline(tripId);
+            const { tripTitle, startDate, pinPoints, mediaFiles: images } = await tripAPI.fetchTripTimeline(tripKey);
 
             setStartDate(startDate);
             if (pinPoints.length === 0) {
@@ -216,10 +216,10 @@ const TimelineMapPage = () => {
 
     const handleImageByDateButtonClick = useCallback(() => {
         const pinPointId = String(pinPointsInfo[currentPinPointIndex].pinPointId);
-        navigate(`${ROUTES.PATH.TRIPS.TIMELINE.DATE(Number(tripId))}`, {
+        navigate(`${ROUTES.PATH.TRIPS.TIMELINE.DATE(tripKey as string)}`, {
             state: { startDate, imagesByDates, pinPointId },
         });
-    }, [tripId, startDate, imagesByDates, navigate, pinPointsInfo, currentPinPointIndex]);
+    }, [tripKey, startDate, imagesByDates, navigate, pinPointsInfo, currentPinPointIndex]);
 
     const handleIndividualMarkerClick = (marker: BaseLocationMedia) => {
         setSelectedIndividualMarker(marker);
@@ -354,7 +354,7 @@ const TimelineMapPage = () => {
                                         alt='포토카드 이미지'
                                         onClick={() =>
                                             navigate(
-                                                `${ROUTES.PATH.TRIPS.TIMELINE.PINPOINT(Number(tripId), point.pinPointId)}`,
+                                                `${ROUTES.PATH.TRIPS.TIMELINE.PINPOINT(tripKey as string, point.pinPointId)}`,
                                             )
                                         }
                                     />

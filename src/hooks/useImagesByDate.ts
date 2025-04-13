@@ -4,7 +4,7 @@ import { tripImageAPI } from '@/api';
 import { LatLng } from '@/types/maps';
 import { MediaFileModel } from '@/types/media';
 
-export const useImagesByDate = (tripId: string, currentDate: string) => {
+export const useImagesByDate = (tripKey: string, currentDate: string) => {
     const [imagesByDate, setImagesByDate] = useState<MediaFileModel[]>([]);
     const [imageLocation, setImageLocation] = useState<LatLng>();
 
@@ -13,13 +13,13 @@ export const useImagesByDate = (tripId: string, currentDate: string) => {
 
     useEffect(() => {
         const getImagesByDate = async () => {
-            if (!(tripId && currentDate)) {
+            if (!(tripKey && currentDate)) {
                 return;
             }
             setLoadedImageCount(0);
             setIsImageLoaded(false);
 
-            const result = await tripImageAPI.fetchImagesByDate(tripId, currentDate);
+            const result = await tripImageAPI.fetchImagesByDate(tripKey, currentDate);
             const { mediaFiles: images } = result;
 
             const validLocationImages = images.filter(
@@ -34,7 +34,7 @@ export const useImagesByDate = (tripId: string, currentDate: string) => {
         };
 
         getImagesByDate();
-    }, [tripId, currentDate]);
+    }, [tripKey, currentDate]);
 
     useEffect(() => {
         if (loadedImageCount === imagesByDate.length) {

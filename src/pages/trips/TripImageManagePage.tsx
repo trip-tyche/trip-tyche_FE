@@ -40,9 +40,9 @@ const TripImageManagePage = () => {
     const { mutate } = useImagesDelete();
 
     const navigate = useNavigate();
-    const { tripId } = useParams();
+    const { tripKey } = useParams();
 
-    const { data: tripImages = [], isFetching, isError, error } = useTripImages(tripId!);
+    const { data: tripImages = [], isFetching, isError, error } = useTripImages(tripKey!);
 
     useEffect(() => {
         if (isError) {
@@ -96,10 +96,10 @@ const TripImageManagePage = () => {
     };
 
     const deleteImages = (selectedImages: MediaFileMetaData[]) => {
-        if (!tripId) return;
+        if (!tripKey) return;
         mutate(
             {
-                tripId,
+                tripKey,
                 images: selectedImages.map((image) => image.mediaFileId),
             },
             {
@@ -118,7 +118,7 @@ const TripImageManagePage = () => {
     };
 
     const updateImagesLocation = async (selectedImages: MediaFileMetaData[], location: Location) => {
-        if (!location || !tripId) return;
+        if (!location || !tripKey) return;
 
         const imagesWithUpdatedLocation = selectedImages.map((image) => {
             return {
@@ -130,7 +130,7 @@ const TripImageManagePage = () => {
 
         try {
             setIsUploading(true);
-            await tripImageAPI.updateImages(tripId, imagesWithUpdatedLocation);
+            await tripImageAPI.updateImages(tripKey, imagesWithUpdatedLocation);
 
             setIsMapVisible(false);
             showToast(`${selectedImages.length}의 사진이 수정되었습니다`);
@@ -144,7 +144,7 @@ const TripImageManagePage = () => {
     };
 
     const updateImagesDate = async (selectedImages: MediaFileMetaData[], date: Date | null) => {
-        if (!date || !tripId) return;
+        if (!date || !tripKey) return;
 
         const imagesWithUpdatedDate = selectedImages.map((image) => {
             return {
@@ -155,7 +155,7 @@ const TripImageManagePage = () => {
 
         try {
             setIsUploading(true);
-            await tripImageAPI.updateImages(tripId, imagesWithUpdatedDate);
+            await tripImageAPI.updateImages(tripKey, imagesWithUpdatedDate);
 
             setIsDateVisible(false);
             showToast(`${selectedImages.length}장의 사진이 수정되었습니다`);
@@ -262,7 +262,7 @@ const TripImageManagePage = () => {
                         <Button text='사진 선택' variant='white' onClick={() => setIsSelectionMode(true)} />
                         <Button
                             text='새로운 사진 등록하기'
-                            onClick={() => navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(Number(tripId))}`)}
+                            onClick={() => navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripKey!)}`)}
                         />
                     </>
                 )}

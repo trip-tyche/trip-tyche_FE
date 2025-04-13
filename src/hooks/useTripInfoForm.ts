@@ -26,7 +26,7 @@ export const useTripInfoForm = (mode: FormMode) => {
     const queryClient = useQueryClient();
 
     const [tripInfo, setTripInfo] =
-        // useState<Omit<Trip, 'tripId' | 'ownerNickname' | 'sharedUserNicknames'>>(initialState);
+        // useState<Omit<Trip, 'tripKey' | 'ownerNickname' | 'sharedUserNicknames'>>(initialState);
         useState<Trip>(initialState);
     const [isUploading, setIsUploading] = useState(false);
     const [isFormComplete, setIsFormComplete] = useState(false);
@@ -36,7 +36,7 @@ export const useTripInfoForm = (mode: FormMode) => {
     const setIsTripInfoEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
     const showToast = useToastStore((state) => state.showToast);
 
-    const { tripId } = useParams();
+    const { tripKey } = useParams();
     const navigate = useNavigate();
     const { state } = useLocation();
 
@@ -53,7 +53,7 @@ export const useTripInfoForm = (mode: FormMode) => {
         }
     }, [state]);
 
-    const { data: tripInfoData, isLoading } = useTripTicketInfo(tripId as string, !!tripId && mode === 'edit');
+    const { data: tripInfoData, isLoading } = useTripTicketInfo(tripKey as string, !!tripKey && mode === 'edit');
 
     useEffect(() => {
         const { tripTitle, country, startDate, endDate, hashtags } = tripInfo;
@@ -66,19 +66,19 @@ export const useTripInfoForm = (mode: FormMode) => {
 
     useEffect(() => {
         if (mode === 'edit' && tripInfoData) {
-            const { tripId: _, ...rest } = tripInfoData;
+            const { tripKey: _, ...rest } = tripInfoData;
             setTripInfo(rest);
         }
     }, [tripInfoData, mode, showToast]);
 
     const handleTripInfoSubmit = async () => {
-        if (!tripId) {
+        if (!tripKey) {
             return;
         }
 
         if (mode === 'create') {
-            await tripAPI.updateTripTicketInfo(tripId, tripInfo);
-            await tripAPI.finalizeTripTicekt(tripId);
+            await tripAPI.updateTripTicketInfo(tripKey, tripInfo);
+            await tripAPI.finalizeTripTicekt(tripKey);
 
             setIsUploading(true);
             await waitForCompletion();
@@ -95,7 +95,7 @@ export const useTripInfoForm = (mode: FormMode) => {
             );
         } else {
             try {
-                await tripAPI.updateTripTicketInfo(tripId, tripInfo);
+                await tripAPI.updateTripTicketInfo(tripKey, tripInfo);
                 queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
                 queryClient.invalidateQueries({ queryKey: ['ticket-info'] });
 
@@ -111,7 +111,7 @@ export const useTripInfoForm = (mode: FormMode) => {
 
     const navigateBeforePage = () => {
         if (mode === 'create') {
-            navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(Number(tripId))}`);
+            navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripKey!)}`);
         } else {
             setIsTripInfoEditing(false);
             navigate(ROUTES.PATH.TRIPS.ROOT);

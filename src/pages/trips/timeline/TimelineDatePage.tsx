@@ -25,7 +25,7 @@ const TimelineDatePage = () => {
     const { isLoaded, loadError } = useGoogleMaps();
     const showToast = useToastStore((state) => state.showToast);
 
-    const { tripId } = useParams();
+    const { tripKey } = useParams();
     const {
         state: { startDate, imagesByDates: imageDates, pinPointId },
     } = useLocation();
@@ -35,7 +35,7 @@ const TimelineDatePage = () => {
     const imageListRef = useRef<HTMLDivElement>(null);
 
     const { imagesByDate, imageLocation, isImageLoaded, setImageLocation, handleImageLoad } = useImagesByDate(
-        tripId || '',
+        tripKey || '',
         currentDate,
     );
     const { isHintOverlayVisible, isFirstLoad } = useScrollHint(imageListRef, isLoaded, isImageLoaded);
@@ -54,11 +54,11 @@ const TimelineDatePage = () => {
 
     const handleArrowButtonClick = useCallback(() => {
         setIsTransitioning(true);
-        navigate(`${ROUTES.PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`);
+        navigate(`${ROUTES.PATH.TRIPS.TIMELINE.MAP(tripKey as string)}`);
 
         setLastPinPointId(pinPointId);
         localStorage.setItem('lastPinPointId', pinPointId);
-    }, [navigate, tripId, pinPointId, setLastPinPointId]);
+    }, [navigate, tripKey, pinPointId, setLastPinPointId]);
 
     const handleDateButtonClick = useCallback((date: string) => {
         setCurrentDate(date);

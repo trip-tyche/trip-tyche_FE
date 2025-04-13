@@ -4,7 +4,7 @@ import { useLocationAdd } from '@/hooks/useLocationAdd';
 
 const TripLocationAddPage = () => {
     const {
-        tripId,
+        tripKey,
         imageGroupByDate,
         defaultLocation,
         selectedImages,
@@ -22,7 +22,7 @@ const TripLocationAddPage = () => {
             selectedImages={selectedImages}
             onHashtagSelect={handleHashtagSelect}
             setIsMapVisible={setIsMapVisible}
-            tripId={tripId}
+            tripKey={tripKey}
         />
     ) : (
         <LocationAddMap

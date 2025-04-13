@@ -4,12 +4,12 @@ import { AxiosError } from 'axios';
 import { tripImageAPI } from '@/api';
 import { DEFAULT_CENTER } from '@/constants/maps/config';
 
-export const useTripDefaultLocation = (tripId: string) => {
+export const useTripDefaultLocation = (tripKey: string) => {
     return useQuery({
-        queryKey: ['trip-default-location', tripId],
+        queryKey: ['trip-default-location', tripKey],
         queryFn: async () => {
             try {
-                const response = await tripImageAPI.fetchDefaultLocation(tripId);
+                const response = await tripImageAPI.fetchDefaultLocation(tripKey);
                 return response;
             } catch (error) {
                 if (error instanceof AxiosError && error?.response?.data.status) {

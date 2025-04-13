@@ -107,7 +107,7 @@ const router = createBrowserRouter([
                         element: <TripPages.TripListPage />,
                     },
                     {
-                        path: 'trips/:tripId',
+                        path: 'trips/:tripKey',
                         children: [
                             {
                                 path: 'images',

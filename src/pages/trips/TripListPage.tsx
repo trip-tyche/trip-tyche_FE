@@ -37,8 +37,8 @@ const TripListPage = () => {
     const handleCreateTripButtonClick = async () => {
         const result = await toResult(() => tripAPI.createNewTrip());
         if (result.success) {
-            const { tripId } = result.data;
-            navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`);
+            const { tripKey } = result.data;
+            navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripKey)}`);
         } else {
             showToast(result.error);
         }
@@ -78,7 +78,7 @@ const TripListPage = () => {
             {tripCount > 0 ? (
                 <div css={tripListStyle}>
                     {tripList.map((trip: Trip) => (
-                        <TripTicket key={trip.tripId} tripInfo={trip} />
+                        <TripTicket key={trip.tripKey} tripInfo={trip} />
                     ))}
                 </div>
             ) : (

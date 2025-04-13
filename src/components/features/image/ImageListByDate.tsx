@@ -15,7 +15,7 @@ import { formatToKorean } from '@/utils/date';
 interface ImageListByDateProps {
     // imageGroupByDate: [string, ImageModel[]][];
     imageGroupByDate: UnlocatedMediaFileModel[];
-    tripId: string | undefined;
+    tripKey: string | undefined;
     // selectedImages: ImageModel[];
     selectedImages: UnlocatedMediaFile[];
     onHashtagSelect: (image: UnlocatedMediaFile) => void;

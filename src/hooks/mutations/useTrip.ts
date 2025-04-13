@@ -6,7 +6,7 @@ export const useTripDelete = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (tripId: string) => tripAPI.deleteTripTicket(tripId),
+        mutationFn: (tripKey: string) => tripAPI.deleteTripTicket(tripKey),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
         },
@@ -17,8 +17,8 @@ export const useImagesDelete = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({ tripId, images }: { tripId: string; images: string[] }) =>
-            tripImageAPI.deleteImages(tripId, images),
+        mutationFn: ({ tripKey, images }: { tripKey: string; images: string[] }) =>
+            tripImageAPI.deleteImages(tripKey, images),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['trip-images'] });
         },

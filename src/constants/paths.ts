@@ -1,5 +1,6 @@
-type TripIdType = number;
-type PinPointIdType = number;
+type UserId = number;
+type TripKey = string;
+type PinPointId = number;
 
 export const ROUTES = {
     PATH: {
@@ -10,21 +11,21 @@ export const ROUTES = {
             LOGIN_REDIRECT: '/login/redirect',
         },
         SETTING: '/setting',
-        NOTIFICATION: (userId: number) => `notification/${userId}`,
+        NOTIFICATION: (userId: UserId) => `notification/${userId}`,
         TRIPS: {
             ROOT: '/trips',
-            IMAGES: (tripId: TripIdType) => `/trips/${tripId}/images`,
+            IMAGES: (tripKey: TripKey) => `/trips/${tripKey}/images`,
             NEW: {
-                IMAGES: (tripId: TripIdType) => `/trips/${tripId}/new/images`,
-                LOCATIONS: (tripId: TripIdType) => `/trips/${tripId}/new/locations`,
-                INFO: (tripId: TripIdType) => `/trips/${tripId}/new/info`,
+                IMAGES: (tripKey: TripKey) => `/trips/${tripKey}/new/images`,
+                LOCATIONS: (tripKey: TripKey) => `/trips/${tripKey}/new/locations`,
+                INFO: (tripKey: TripKey) => `/trips/${tripKey}/new/info`,
             },
-            EDIT: (tripId: TripIdType) => `/trips/${tripId}/edit`,
+            EDIT: (tripKey: TripKey) => `/trips/${tripKey}/edit`,
             TIMELINE: {
-                MAP: (tripId: TripIdType) => `/trips/${tripId}/timeline/map`,
-                PINPOINT: (tripId: TripIdType, pinPointId: PinPointIdType) =>
-                    `/trips/${tripId}/timeline/pinpoint/${pinPointId}`,
-                DATE: (tripId: TripIdType) => `/trips/${tripId}/timeline/date`,
+                MAP: (tripKey: TripKey) => `/trips/${tripKey}/timeline/map`,
+                PINPOINT: (tripKey: TripKey, pinPointId: PinPointId) =>
+                    `/trips/${tripKey}/timeline/pinpoint/${pinPointId}`,
+                DATE: (tripKey: TripKey) => `/trips/${tripKey}/timeline/date`,
             },
         },
     },

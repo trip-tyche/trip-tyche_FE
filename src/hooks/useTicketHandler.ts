@@ -7,7 +7,7 @@ import { useTripDelete } from '@/hooks/mutations/useTrip';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 
-export const useTicketHandler = (tripId: string) => {
+export const useTicketHandler = (tripKey: string) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const setIsTripInfoEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
@@ -19,12 +19,12 @@ export const useTicketHandler = (tripId: string) => {
 
     const handleImageUpload = () => {
         setIsTripInfoEditing(true);
-        navigate(`${ROUTES.PATH.TRIPS.IMAGES(Number(tripId))}`);
+        navigate(`${ROUTES.PATH.TRIPS.IMAGES(tripKey)}`);
     };
 
     const handleTripEdit = () => {
         setIsTripInfoEditing(true);
-        navigate(`${ROUTES.PATH.TRIPS.EDIT(Number(tripId))}`);
+        navigate(`${ROUTES.PATH.TRIPS.EDIT(tripKey)}`);
     };
 
     const handleTripDelete = () => {
@@ -33,7 +33,7 @@ export const useTicketHandler = (tripId: string) => {
 
     const deleteTrip = async () => {
         try {
-            mutate(tripId, {
+            mutate(tripKey, {
                 onSuccess: () => {
                     deleteTripTicket();
                     showToast('여행이 삭제되었습니다.');

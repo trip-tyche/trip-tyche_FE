@@ -59,8 +59,8 @@ const MainPage = () => {
     const handleCreateTripButtonClick = async () => {
         const result = await toResult(() => tripAPI.createNewTrip());
         if (result.success) {
-            const { tripId } = result.data;
-            navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripId)}`, { state: 'first-ticket' });
+            const { tripKey } = result.data;
+            navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripKey!)}`, { state: 'first-ticket' });
         } else {
             showToast(result.error);
         }

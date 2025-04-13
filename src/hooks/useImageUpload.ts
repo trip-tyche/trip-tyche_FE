@@ -24,7 +24,7 @@ export const useImageUpload = () => {
     const setUploadStatus = useUploadStore((state) => state.setUploadStatus);
     const isTripInfoEditing = useUserDataStore((state) => state.isTripInfoEditing);
 
-    const { tripId } = useParams();
+    const { tripKey } = useParams();
 
     const removeDuplicateImages = (images: FileList): FileList => {
         const imageMap = new Map();
@@ -154,13 +154,13 @@ export const useImageUpload = () => {
     };
 
     const uploadImages = async (images: ImageModel[]) => {
-        if (!tripId || !images.length) {
+        if (!tripKey || !images.length) {
             return;
         }
 
         if (isTripInfoEditing) {
             await updateTripDate(
-                tripId,
+                tripKey,
                 images.map((image) => image.formattedDate.split('T')[0]),
             );
         }
@@ -177,7 +177,7 @@ export const useImageUpload = () => {
                 fileName: image.image.name,
             }));
 
-            const result = await tripImageAPI.requestPresignedUrls(tripId, fileNames);
+            const result = await tripImageAPI.requestPresignedUrls(tripKey, fileNames);
             if (!result.success) throw new Error(result.error);
             const { data: presignedUrls } = result;
 
@@ -203,7 +203,7 @@ export const useImageUpload = () => {
             });
 
             console.time(`서버 데이터 전송 시간`);
-            await tripImageAPI.createMediaFileMetadata(tripId, metaDatas);
+            await tripImageAPI.createMediaFileMetadata(tripKey, metaDatas);
             console.timeEnd(`서버 데이터 전송 시간`);
             setUploadStatus('completed');
         } catch (error) {
@@ -213,7 +213,7 @@ export const useImageUpload = () => {
     };
 
     return {
-        tripId,
+        tripKey,
         imageCount,
         imagesWithLocationAndDate,
         imagesNoLocationWithDate,

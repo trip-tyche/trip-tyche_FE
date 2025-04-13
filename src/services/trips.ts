@@ -1,11 +1,11 @@
 import { tripAPI } from '@/api';
 
-export const updateTripDate = async (tripId: string, datesOfImages: string[]) => {
-    if (!tripId) {
+export const updateTripDate = async (tripKey: string, datesOfImages: string[]) => {
+    if (!tripKey) {
         return;
     }
-    const tripInfoWithTripId = await tripAPI.fetchTripTicketInfo(tripId);
-    const { tripId: _, ...tripInfo } = tripInfoWithTripId;
+    const tripInfoWithTripKey = await tripAPI.fetchTripTicketInfo(tripKey);
+    const { tripKey: _, ...tripInfo } = tripInfoWithTripKey;
     const { startDate, endDate } = tripInfo;
 
     const sortedDates = datesOfImages.sort((a, b) => a.localeCompare(b));
@@ -15,7 +15,7 @@ export const updateTripDate = async (tripId: string, datesOfImages: string[]) =>
     const newEndDate = earliestNewDate.localeCompare(startDate) > 0 ? latestNewDate : endDate;
 
     if (newStartDate !== startDate || newEndDate !== endDate) {
-        await tripAPI.updateTripTicketInfo(tripId, {
+        await tripAPI.updateTripTicketInfo(tripKey, {
             ...tripInfo,
             startDate: newStartDate,
             endDate: newEndDate,

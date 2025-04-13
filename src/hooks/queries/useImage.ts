@@ -11,12 +11,12 @@ interface MediaFile {
     mediaFiles: MediaFileMetaData[];
 }
 
-export const useTripImages = (tripId: string) => {
+export const useTripImages = (tripKey: string) => {
     return useQuery<Result<MediaFile>, Error, MediaFileMetaData[] | undefined>({
-        queryKey: ['trip-images', tripId],
-        // queryFn: () => tripImageAPI.getTripImages(tripId),
-        queryFn: () => toResult(() => tripImageAPI.getTripImages(tripId)),
-        enabled: !!tripId,
+        queryKey: ['trip-images', tripKey],
+        // queryFn: () => tripImageAPI.getTripImages(tripKey),
+        queryFn: () => toResult(() => tripImageAPI.getTripImages(tripKey)),
+        enabled: !!tripKey,
         select: (result) => {
             if (!result.success) {
                 // throw new Error(result.error);

@@ -16,40 +16,40 @@ interface MediaFile {
 
 export const tripImageAPI = {
     // 핀포인트 슬라이드
-    fetchImagesByPinPoint: async (tripId: string, pinPoint: string) => {
-        const data = await apiClient.get(`/v1/trips/${tripId}/pinpoints/${pinPoint}/images`);
+    fetchImagesByPinPoint: async (tripKey: string, pinPoint: string) => {
+        const data = await apiClient.get(`/v1/trips/${tripKey}/pinpoints/${pinPoint}/images`);
         return data.data;
     },
     // 날짜별 이미지 조회
-    fetchImagesByDate: async (tripId: string, date: string) => {
+    fetchImagesByDate: async (tripKey: string, date: string) => {
         const formattedDate = date.slice(0, 10);
-        const data = await apiClient.get(`/v1/trips/${tripId}/map?date=${formattedDate}`);
+        const data = await apiClient.get(`/v1/trips/${tripKey}/map?date=${formattedDate}`);
         return data.data;
     },
 
     // 첫번째 이미지 좌표[위치정보⭕️]
-    fetchDefaultLocation: async (tripId: string) => {
-        const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripId}/images/firstimage`);
+    fetchDefaultLocation: async (tripKey: string) => {
+        const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripKey}/images/firstimage`);
         return data.data;
     },
-    fetchUnlocatedImages: async (tripId: string): Promise<UnlocatedMediaFileModel[]> => {
+    fetchUnlocatedImages: async (tripKey: string): Promise<UnlocatedMediaFileModel[]> => {
         const data = await apiClient.get<UnlocatedMediaFileModel[]>(
-            `${API_ENDPOINTS.TRIPS}/${tripId}/images/unlocated`,
+            `${API_ENDPOINTS.TRIPS}/${tripKey}/images/unlocated`,
         );
         return data.data;
     },
-    updateUnlocatedImages: async (tripId: string, mediaFileId: string, location: GpsCoordinates) => {
-        const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripId}/images/unlocated/${mediaFileId}`, location);
+    updateUnlocatedImages: async (tripKey: string, mediaFileId: string, location: GpsCoordinates) => {
+        const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripKey}/images/unlocated/${mediaFileId}`, location);
         return data.data;
     },
 
     // 미디어 파일 업로드를 위한 Presigned URL 생성
     requestPresignedUrls: async (
-        tripId: string,
+        tripKey: string,
         fileNames: PresignedUrlRequest[],
     ): Promise<Result<PresignedUrlResponse[]>> => {
         try {
-            const response = await apiClient.post(`/v1/trips/${tripId}/presigned-url`, { files: fileNames });
+            const response = await apiClient.post(`/v1/trips/${tripKey}/presigned-url`, { files: fileNames });
             return { success: true, data: response.data.presignedUrls };
         } catch (error) {
             console.error(error);
@@ -65,13 +65,13 @@ export const tripImageAPI = {
         });
     },
     // 미디어 파일 메타데이터 등록 (mediaLink, latitude, longitude, recordDate)
-    createMediaFileMetadata: async (tripId: string, metaDatas: Omit<MediaFileMetaData, 'mediaFileId'>[]) => {
-        await apiClient.post(`/v1/trips/${tripId}/media-files`, metaDatas);
+    createMediaFileMetadata: async (tripKey: string, metaDatas: Omit<MediaFileMetaData, 'mediaFileId'>[]) => {
+        await apiClient.post(`/v1/trips/${tripKey}/media-files`, metaDatas);
     },
     // 여행에 등록된 모든 이미지 조회
-    // getTripImages: async (tripId: string) => {
+    // getTripImages: async (tripKey: string) => {
     //     try {
-    //         const response = await apiClient.get(`/v1/trips/${tripId}/media-files`);
+    //         const response = await apiClient.get(`/v1/trips/${tripKey}/media-files`);
     //         if (response.status !== 200 || !response.data) {
     //             return { success: false, error: '사진을 불러오는 중 오류가 발생했습니다.' };
     //         }
@@ -81,12 +81,12 @@ export const tripImageAPI = {
     //         return { success: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
     //     }
     // },
-    getTripImages: async (tripId: string): Promise<ApiResponse<MediaFile>> =>
-        await apiClient.get(`/v1/trips/${tripId}/media-files`),
+    getTripImages: async (tripKey: string): Promise<ApiResponse<MediaFile>> =>
+        await apiClient.get(`/v1/trips/${tripKey}/media-files`),
     // 선택한 여행 이미지 삭제
-    deleteImages: async (tripId: string, images: string[]): Promise<Result<string>> => {
+    deleteImages: async (tripKey: string, images: string[]): Promise<Result<string>> => {
         try {
-            const response = await apiClient.delete(`/v1/trips/${tripId}/media-files`, {
+            const response = await apiClient.delete(`/v1/trips/${tripKey}/media-files`, {
                 data: { mediaFileIds: images },
             });
             if (response.status !== 200 || !response.data) {
@@ -100,9 +100,9 @@ export const tripImageAPI = {
         }
     },
     // 선택한 여행 이미지 수정
-    updateImages: async (tripId: string, images: MediaFileMetaData[]) => {
+    updateImages: async (tripKey: string, images: MediaFileMetaData[]) => {
         try {
-            const response = await apiClient.patch(`/v1/trips/${tripId}/media-files`, {
+            const response = await apiClient.patch(`/v1/trips/${tripKey}/media-files`, {
                 mediaFiles: images,
             });
             if (response.status !== 200 || !response.data) {

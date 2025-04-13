@@ -26,7 +26,7 @@ const TripImageUploadPage = () => {
     const showToast = useToastStore((state) => state.showToast);
 
     const {
-        tripId,
+        tripKey,
         imageCount,
         imagesWithLocationAndDate,
         imagesNoLocationWithDate,
@@ -52,7 +52,7 @@ const TripImageUploadPage = () => {
             isFirstTicket
                 ? ROUTES.PATH.MAIN
                 : isTripInfoEditing
-                  ? ROUTES.PATH.TRIPS.IMAGES(Number(tripId))
+                  ? ROUTES.PATH.TRIPS.IMAGES(tripKey!)
                   : ROUTES.PATH.TRIPS.ROOT,
         );
     };
@@ -79,7 +79,7 @@ const TripImageUploadPage = () => {
                 (dateA, dateB) => new Date(dateA).getTime() - new Date(dateB).getTime(),
             );
 
-            navigate(`${ROUTES.PATH.TRIPS.NEW.INFO(Number(tripId))}`, { state: uniqueDates });
+            navigate(`${ROUTES.PATH.TRIPS.NEW.INFO(tripKey!)}`, { state: uniqueDates });
             return;
         } else {
             setIsAlertModalModalOpen(false);

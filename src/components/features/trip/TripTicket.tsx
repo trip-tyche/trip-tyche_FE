@@ -25,7 +25,7 @@ interface TripTicketProps {
 }
 
 const TripTicket = ({ tripInfo }: TripTicketProps) => {
-    const { tripId, tripTitle, country, startDate, endDate, hashtags, ownerNickname } = tripInfo;
+    const { tripKey, tripTitle, country, startDate, endDate, hashtags, ownerNickname } = tripInfo;
 
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
@@ -36,7 +36,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
     const userInfo = useUserStore((state) => state.userInfo);
 
     const { isModalOpen, isPending, handleImageUpload, handleTripEdit, handleTripDelete, deleteTrip, closeModal } =
-        useTicketHandler(tripId as string);
+        useTicketHandler(tripKey as string);
     const {
         isAnimating,
         // isUnlocatedImageModalOpen,
@@ -44,7 +44,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
         // confirmUnlocatedImageModal,
         // closeUnlocatedImageModal,
         handleCardClick,
-    } = useTicketNavigation(tripId as string);
+    } = useTicketNavigation(tripKey as string);
 
     const handleShareSuccess = () => {
         setInputValue('');
@@ -74,7 +74,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
             const searchResult = await userAPI.searchUsers(inputValue);
 
             const recipientId = searchResult.data.userId;
-            await shareAPI.createShareRequest(tripId as string, recipientId);
+            await shareAPI.createShareRequest(tripKey as string, recipientId);
 
             handleShareSuccess();
         } catch (error) {

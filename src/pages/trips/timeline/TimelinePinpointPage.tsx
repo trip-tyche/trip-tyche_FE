@@ -19,15 +19,15 @@ const TimelinePinpointPage = () => {
 
     const setLastPinPointId = useTimelineStore((state) => state.setLastPinPointId);
 
-    const { tripId, pinPointId } = useParams();
+    const { tripKey, pinPointId } = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
         const getPinPointImagesData = async () => {
-            if (!(tripId && pinPointId)) {
+            if (!(tripKey && pinPointId)) {
                 return;
             }
-            const result = await tripImageAPI.fetchImagesByPinPoint(tripId, pinPointId);
+            const result = await tripImageAPI.fetchImagesByPinPoint(tripKey, pinPointId);
             const { mediaFiles } = result;
 
             const sortedImages = mediaFiles.sort((dateA: PinpointMediaModel, dateB: PinpointMediaModel) =>
@@ -41,10 +41,12 @@ const TimelinePinpointPage = () => {
         localStorage.setItem('lastPinPointId', pinPointId || '');
 
         getPinPointImagesData();
-    }, [tripId, pinPointId, setLastPinPointId]);
+    }, [tripKey, pinPointId, setLastPinPointId]);
 
     const navigateBeforePage = () => {
-        navigate(`${ROUTES.PATH.TRIPS.TIMELINE.MAP(Number(tripId))}`);
+        if (typeof tripKey === 'string') {
+            navigate(`${ROUTES.PATH.TRIPS.TIMELINE.MAP(tripKey)}`);
+        }
     };
 
     return (

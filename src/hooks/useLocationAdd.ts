@@ -20,9 +20,9 @@ export const useLocationAdd = () => {
     const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();
-    const { tripId } = useParams();
+    const { tripKey } = useParams();
 
-    const { data: defaultLocation } = useTripDefaultLocation(tripId as string);
+    const { data: defaultLocation } = useTripDefaultLocation(tripKey as string);
     const queryClient = useQueryClient();
 
     useEffect(() => {
@@ -30,11 +30,11 @@ export const useLocationAdd = () => {
     }, []);
 
     const getUnlocatedImagesData = async () => {
-        if (!tripId) {
+        if (!tripKey) {
             return;
         }
 
-        const unlocatedImages = await tripImageAPI.fetchUnlocatedImages(tripId);
+        const unlocatedImages = await tripImageAPI.fetchUnlocatedImages(tripKey);
         if (!unlocatedImages) {
             navigate(`${ROUTES.PATH.TRIPS.ROOT}`);
             return;
@@ -68,13 +68,13 @@ export const useLocationAdd = () => {
         setIsUploading(true);
         try {
             const uploadPromise = selectedImages.map((image) =>
-                tripImageAPI.updateUnlocatedImages(tripId as string, String(image.mediaFileId), selectedLocation),
+                tripImageAPI.updateUnlocatedImages(tripKey as string, String(image.mediaFileId), selectedLocation),
             );
 
             await Promise.allSettled(uploadPromise);
             await getUnlocatedImagesData();
 
-            queryClient.invalidateQueries({ queryKey: ['trip-default-location', tripId] });
+            queryClient.invalidateQueries({ queryKey: ['trip-default-location', tripKey] });
 
             showToast('위치가 등록되었습니다');
         } catch (error) {
@@ -102,7 +102,7 @@ export const useLocationAdd = () => {
     }, [displayedImages]);
 
     return {
-        tripId,
+        tripKey,
         imageGroupByDate,
         selectedImages,
         defaultLocation,
