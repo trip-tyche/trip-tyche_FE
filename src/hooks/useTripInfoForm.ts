@@ -20,7 +20,7 @@ export const useTripInfoForm = (mode: FormMode) => {
         endDate: '',
         hashtags: [],
         ownerNickname: '',
-        meidaFilesDates: [],
+        mediaFilesDates: [],
     };
 
     const queryClient = useQueryClient();
@@ -47,7 +47,7 @@ export const useTripInfoForm = (mode: FormMode) => {
                     ...tripInfo,
                     // startDate: state[0],
                     // endDate: state[state.length - 1],
-                    meidaFilesDates: state,
+                    mediaFilesDates: state,
                 };
             });
         }
