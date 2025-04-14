@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 
-import { Result } from '@/types/apis/common';
+import { Result } from '@/api/types';
 
 export interface ApiResponse<T> {
     status: number;

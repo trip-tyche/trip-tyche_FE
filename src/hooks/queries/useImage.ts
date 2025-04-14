@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { tripImageAPI } from '@/api';
+import { Result } from '@/api/types';
 import { toResult } from '@/api/utils';
-import { Result } from '@/types/apis/common';
 import { MediaFileMetaData } from '@/types/media';
 
 interface MediaFile {

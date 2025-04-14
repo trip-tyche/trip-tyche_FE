@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 import { apiClient } from '@/api/client';
+import { Result } from '@/api/types';
 import { ApiResponse } from '@/api/utils';
 import { API_ENDPOINTS } from '@/constants/api/config';
-import { Result } from '@/types/apis/common';
 import { PresignedUrlRequest, PresignedUrlResponse } from '@/types/image';
 import { GpsCoordinates } from '@/types/location';
 import { MediaFileMetaData, UnlocatedMediaFileModel } from '@/types/media';
