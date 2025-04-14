@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { createBrowserRouter, Outlet, useLocation } from 'react-router-dom';
 
 import { userAPI } from '@/api';
+import { toResult } from '@/api/utils';
 import Spinner from '@/components/common/Spinner';
 import { ROUTES } from '@/constants/paths';
 import RootLayout from '@/layouts/RootLayout';
@@ -36,29 +37,33 @@ const TimelinePages = {
 };
 
 const ProtectedRoute = () => {
-    const [isChecking, setIsChecking] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
     const { login, logout, isAuthenticated } = useUserStore();
 
     const location = useLocation();
-
     useEffect(() => {
         const checkAuth = async () => {
-            try {
-                if (isAuthenticated) return;
-                const userInfo = (await userAPI.fetchUserInfo()).data;
-                login(userInfo);
-            } catch (error) {
+            if (isAuthenticated) return;
+
+            setIsLoading(true);
+            const result = await toResult(() => userAPI.fetchUserInfo(), {
+                onFinally: () => {
+                    setIsLoading(false);
+                },
+            });
+            if (!result.success) {
                 logout();
-            } finally {
-                setIsChecking(false);
+                return;
             }
+
+            const userInfo = result.data;
+            login(userInfo);
         };
 
-        setIsChecking(true);
         checkAuth();
     }, [location.pathname, isAuthenticated, login, logout]);
 
-    if (isChecking) {
+    if (isLoading) {
         return <LoadingSpinner />;
     }
 

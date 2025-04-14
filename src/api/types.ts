@@ -1,4 +1,12 @@
-type SuccessResponse<T> = { success: true; data: T };
-type FailureResponse = { success: false; error: string };
+export interface ApiResponse<T> {
+    status: number;
+    code: number;
+    message: string;
+    data: T;
+    httpStatus: string;
+}
 
-export type Result<T> = SuccessResponse<T> | FailureResponse;
+type Success<T> = { success: true; data: T };
+type Error = { success: false; error: string };
+
+export type Result<T> = Success<T> | Error;

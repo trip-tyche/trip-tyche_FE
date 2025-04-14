@@ -1,26 +1,29 @@
 import { AxiosError } from 'axios';
 
 import { apiClient } from '@/api/client';
+import { ApiResponse } from '@/api/types';
+import { UserInfo } from '@/types/user';
 
 export const userAPI = {
     // 사용자 정보 조회 (nickname, tripsCount, recentTrip)
-    fetchUserInfo: async () => {
-        try {
-            const response = await apiClient.get(`/v1/users/me/summary`);
-            const { data } = response;
-            if (!data) {
-                return { success: false, error: '데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해 주세요.' };
-            }
+    // fetchUserInfo: async () => {
+    //     try {
+    //         const response = await apiClient.get(`/v1/users/me/summary`);
+    //         const { data } = response;
+    //         if (!data) {
+    //             return { success: false, error: '데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해 주세요.' };
+    //         }
 
-            return { success: true, data };
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                const errorResponse = error?.response?.data;
-                return { success: false, error: errorResponse.message };
-            }
-            return { success: false, error: '알 수 없는 오류가 발생하였습니다' };
-        }
-    },
+    //         return { success: true, data };
+    //     } catch (error) {
+    //         if (error instanceof AxiosError) {
+    //             const errorResponse = error?.response?.data;
+    //             return { success: false, error: errorResponse.message };
+    //         }
+    //         return { success: false, error: '알 수 없는 오류가 발생하였습니다' };
+    //     }
+    // },
+    fetchUserInfo: async (): Promise<ApiResponse<UserInfo>> => await apiClient.get(`/v1/users/me/summary`),
     // 닉네임을 통한 사용자 검색 (userId, nickname)
     searchUsers: async (nickname: string) => {
         const response = await apiClient.get(`/v1/share/users`, {

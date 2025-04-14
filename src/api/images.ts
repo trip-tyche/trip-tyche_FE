@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 import { apiClient } from '@/api/client';
-import { Result } from '@/api/types';
-import { ApiResponse } from '@/api/utils';
+import { ApiResponse, Result } from '@/api/types';
 import { API_ENDPOINTS } from '@/constants/api/config';
 import { PresignedUrlRequest, PresignedUrlResponse } from '@/types/image';
 import { GpsCoordinates } from '@/types/location';

@@ -1,24 +1,29 @@
 import { AxiosError } from 'axios';
 
-import { Result } from '@/api/types';
+import { ApiResponse, Result } from '@/api/types';
 
-export interface ApiResponse<T> {
-    status: number;
-    code: number;
-    message: string;
-    data: T;
-    httpStatus: string;
-}
+export const toResult = async <T>(
+    fn: () => Promise<ApiResponse<T>>,
+    callback?: {
+        onSuccess?: () => void;
+        onError?: () => void;
+        onFinally?: () => void;
+    },
+): Promise<Result<T>> => {
+    const { onSuccess, onError, onFinally } = callback || {};
 
-export const toResult = async <T>(fn: () => Promise<ApiResponse<T>>): Promise<Result<T>> => {
     try {
         const { data } = await fn();
+        onSuccess?.();
         return { success: true, data };
     } catch (error) {
         if (error instanceof AxiosError) {
             const errorResponse = error?.response?.data;
+            onError?.();
             return { success: false, error: errorResponse.message };
         }
         return { success: false, error: '알 수 없는 오류가 발생하였습니다' };
+    } finally {
+        onFinally?.();
     }
 };

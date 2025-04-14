@@ -1,5 +1,5 @@
 import { apiClient } from '@/api/client';
-import { ApiResponse } from '@/api/utils';
+import { ApiResponse } from '@/api/types';
 import { Trip } from '@/types/trip';
 
 export const tripAPI = {

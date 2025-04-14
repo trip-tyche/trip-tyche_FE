@@ -21,6 +21,7 @@ import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
 
 const MainPage = () => {
+    console.log('main');
     const [notificationCount, setNotificationCount] = useState(0);
     const { userInfo } = useUserStore();
     const showToast = useToastStore((state) => state.showToast);
