@@ -4,7 +4,7 @@ import imageCompression from 'browser-image-compression';
 import { useParams } from 'react-router-dom';
 
 import { tripImageAPI } from '@/api';
-import { COMPRESSION_OPTIONS } from '@/constants/images';
+import { COMPRESSION_OPTIONS } from '@/constants/media';
 import { updateTripDate } from '@/services/trips';
 import { useUploadStore } from '@/stores/useUploadingStore';
 import useUserDataStore from '@/stores/useUserDataStore';

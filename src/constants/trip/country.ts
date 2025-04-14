@@ -1,6 +1,6 @@
-import { CountryOption } from '@/types/country';
+import { Country } from '@/types/trip';
 
-export const COUNTRY_OPTIONS: CountryOption[] = [
+export const COUNTRIES: Country[] = [
     {
         emoji: '🇬🇭',
         nameKo: '가나',

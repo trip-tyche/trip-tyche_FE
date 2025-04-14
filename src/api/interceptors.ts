@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 import { apiClient } from '@/api/client';
-import { ENV } from '@/constants/api/config';
+import { API_BASE_URL } from '@/api/constants';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserStore from '@/stores/useUserStore';
 
@@ -57,7 +57,7 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
                     if (status === 401) {
                         try {
                             await axios.post(
-                                `${ENV.API_BASE_URL}/v1/auth/refresh`,
+                                `${API_BASE_URL}/v1/auth/refresh`,
                                 {},
                                 {
                                     withCredentials: true,

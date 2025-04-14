@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import { Tooltip } from '@mantine/core';
 
+import { OAUTH_CONFIG } from '@/api/constants';
 import backgroundImage from '@/assets/images/background-mobile-3.webp';
 import LoginButton from '@/components/features/auth/LoginButton';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
-import { OAUTH_CONFIG } from '@/constants/api/oauth';
 import { COLORS } from '@/constants/theme';
 import useBrowserCheck from '@/hooks/useBrowserCheck';
 

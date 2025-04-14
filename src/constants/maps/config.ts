@@ -1,10 +1,11 @@
 import { Libraries } from '@react-google-maps/api';
 
-import { ENV } from '@/constants/api/config';
 import { MapOption } from '@/types/maps';
 
+export const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
 export const GOOGLE_MAPS_CONFIG = {
-    googleMapsApiKey: ENV.GOOGLE_MAPS_API_KEY || '',
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY || '',
     libraries: ['places'] as Libraries,
     language: 'ko',
     region: 'KR',

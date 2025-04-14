@@ -21,4 +21,8 @@ export const BUTTON = {
     NEXT: '다음',
     UPDATE_TRIP: '수정하기',
     LOGOUT: '로그아웃',
+    OAUTH: {
+        KAKAO: '카카오로 5초안에 시작하기',
+        GOOGLE: 'Google 계정으로 시작하기',
+    },
 } as const;

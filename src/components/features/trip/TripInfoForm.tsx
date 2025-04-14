@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 import { Plane, Calendar, Globe } from 'lucide-react';
 
 import Input from '@/components/common/Input';
-import { COUNTRY_OPTIONS } from '@/constants/trip/country';
+import { COUNTRIES } from '@/constants/trip/country';
 import { TRIP_FORM } from '@/constants/trip/form';
 import { HASHTAG_MENU } from '@/constants/trip/hashtags';
 import { useTripDateRange } from '@/hooks/useTripDateRange';
@@ -103,7 +103,7 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
         );
     };
 
-    const countryData = COUNTRY_OPTIONS.map((country) => ({
+    const countryData = COUNTRIES.map((country) => ({
         value: `${country.value}`,
         label: `${country.emoji} ${country.nameKo}`,
     }));

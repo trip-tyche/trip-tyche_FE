@@ -11,3 +11,10 @@ export interface Trip {
     ownerNickname: string;
     sharedUserNicknames?: string[];
 }
+
+export interface Country {
+    emoji: string;
+    nameKo: string;
+    nameEn: string;
+    value: string;
+}
