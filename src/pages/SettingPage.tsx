@@ -49,13 +49,7 @@ const SettingPage = () => {
         <div css={pageContainer}>
             <Header title={isEditing ? '닉네임 변경' : '설정'} isBackButton onBack={navigateBeforePage} />
             {isEditing ? (
-                <NickNameForm
-                    mode='edit'
-                    title={MESSAGE.NICKNAME_FORM.TITLE}
-                    buttonText='변경 완료'
-                    placeholder={nickname}
-                    setIsEditing={setIsEditing}
-                />
+                <NickNameForm mode='edit' setIsEditing={setIsEditing} />
             ) : (
                 <main css={mainStyle}>
                     <div css={userInfoContainer}>

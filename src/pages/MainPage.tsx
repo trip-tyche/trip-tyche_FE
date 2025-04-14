@@ -69,7 +69,7 @@ const MainPage = () => {
     return (
         <>
             {!userInfo?.nickname ? (
-                <NickNameForm mode='create' title={`반가워요! ${MESSAGE.NICKNAME_FORM.TITLE}`} buttonText='등록 완료' />
+                <NickNameForm mode='create' />
             ) : (
                 <main css={pageContainer}>
                     <div css={headerStyle}>

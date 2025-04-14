@@ -2,13 +2,12 @@ import { useState } from 'react';
 
 import { css } from '@emotion/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
 import { MdCancel } from 'react-icons/md';
 
-import { userAPI } from '@/api';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { MESSAGE } from '@/constants/ui';
+import { useNickname } from '@/domain/user/hooks/useNickname';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
@@ -16,79 +15,56 @@ import { FormMode } from '@/types/common';
 
 interface NickNameFormProps {
     mode: FormMode;
-    title: string;
-    buttonText: string;
-    placeholder?: string;
     setIsEditing?: (isEditing: boolean) => void;
 }
 
-const NickNameForm = ({ mode, title, buttonText, placeholder, setIsEditing }: NickNameFormProps) => {
+const NickNameForm = ({ mode, setIsEditing }: NickNameFormProps) => {
     const [inputValue, setInputValue] = useState('');
     const [isInvalid, setIsInvalid] = useState(false);
-    const updateNickname = useUserStore((state) => state.updateNickname);
+    const nickname = useUserStore((state) => state.userInfo?.nickname);
     const showToast = useToastStore((state) => state.showToast);
+    const { isSubmitting, error, submitNickname } = useNickname(inputValue, onSubmitSuccess);
 
     const queryClient = useQueryClient();
 
     const isEditing = mode === 'edit';
 
-    const handleError = (error: AxiosError) => {
-        if (error && typeof error === 'object' && 'response' in error) {
-            const errorData = error.response?.data as {
-                code: number;
-                data: null;
-                httpStatus: string;
-                message: string;
-                status: number;
-            };
-
-            if (errorData?.code === 3002) {
-                showToast(errorData.message);
-                return;
-            } else {
-                showToast(`닉네임 ${isEditing ? '수정' : '등록'}이 실패했습니다. 다시 시도해주세요.`);
-            }
-        }
-    };
-
-    const submitUserNickName = async () => {
-        try {
-            await userAPI.checkNicknameDuplication(inputValue);
-        } catch (error: unknown) {
-            handleError(error as AxiosError);
-            return;
-        }
-
-        try {
-            await userAPI.createNickName(inputValue);
-            isEditing && showToast('닉네임이 변경되었습니다.');
-        } catch (error: unknown) {
-            handleError(error as AxiosError);
-        }
-
-        setIsEditing && setIsEditing(false);
-        updateNickname(inputValue);
+    function onSubmitSuccess() {
         queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
-    };
+
+        if (isEditing) {
+            showToast('닉네임이 변경되었습니다');
+            setIsEditing?.(false);
+        }
+    }
+
+    if (error) showToast(error);
 
     return (
         <div css={formContainer}>
             <div css={inputContainer}>
-                <h1 css={titleStyle}>{title}</h1>
+                <h1 css={titleStyle}>
+                    {isEditing ? MESSAGE.NICKNAME_FORM.TITLE : `반가워요! ${MESSAGE.NICKNAME_FORM.TITLE}`}
+                </h1>
                 <Input
                     value={inputValue}
                     onChange={setInputValue}
                     variant='error'
                     setIsInvalid={setIsInvalid}
                     maxLength={15}
-                    placeholder={placeholder || MESSAGE.NICKNAME_FORM.TITLE}
+                    placeholder={nickname || MESSAGE.NICKNAME_FORM.PLACEHOLDER}
+                    readOnly={isSubmitting}
                     rightSection={
                         <MdCancel size={16} onClick={() => setInputValue('')} style={{ cursor: 'pointer' }} />
                     }
                 />
             </div>
             <div css={buttonWrapper}>
-                <Button text={buttonText} onClick={submitUserNickName} disabled={isInvalid} />
+                <Button
+                    text={`닉네임 ${isEditing ? '변경' : '등록'}하기`}
+                    onClick={submitNickname}
+                    disabled={isInvalid || isSubmitting}
+                />
             </div>
         </div>
     );
