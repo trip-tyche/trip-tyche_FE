@@ -11,7 +11,7 @@ import NickNameForm from '@/components/features/user/NickNameForm';
 import SettingButton from '@/components/features/user/SettingButton';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
-import { LOGOUT_MODAL, NICKNAME_FORM } from '@/constants/ui/message';
+import { MESSAGE } from '@/constants/ui';
 import { useModalStore } from '@/stores/useModalStore';
 import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
@@ -54,7 +54,7 @@ const SettingPage = () => {
             {isEditing ? (
                 <NickNameForm
                     mode='edit'
-                    title={NICKNAME_FORM.TITLE}
+                    title={MESSAGE.NICKNAME_FORM.TITLE}
                     buttonText='변경 완료'
                     placeholder={nickname}
                     setIsEditing={setIsEditing}
@@ -90,10 +90,10 @@ const SettingPage = () => {
 
             {isModalOpen && (
                 <ConfirmModal
-                    title={LOGOUT_MODAL.TITLE}
-                    description={LOGOUT_MODAL.MESSAGE}
-                    confirmText={LOGOUT_MODAL.CONFIRM_TEXT}
-                    cancelText={LOGOUT_MODAL.CANCEL_TEXT}
+                    title={MESSAGE.LOGOUT_MODAL.TITLE}
+                    description={MESSAGE.LOGOUT_MODAL.MESSAGE}
+                    confirmText={MESSAGE.LOGOUT_MODAL.CONFIRM_TEXT}
+                    cancelText={MESSAGE.LOGOUT_MODAL.CANCEL_TEXT}
                     confirmModal={confirmLogoutModal}
                     closeModal={closeModal}
                 />

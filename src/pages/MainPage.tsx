@@ -14,7 +14,7 @@ import NickNameForm from '@/components/features/user/NickNameForm';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { WELCOME_TICKET_DATA } from '@/constants/trip/form';
-import { NICKNAME_FORM } from '@/constants/ui/message';
+import { MESSAGE } from '@/constants/ui';
 import webSocketService from '@/services/webSocketService';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserStore from '@/stores/useUserStore';
@@ -70,7 +70,7 @@ const MainPage = () => {
     return (
         <>
             {!userInfo?.nickname ? (
-                <NickNameForm mode='create' title={`반가워요! ${NICKNAME_FORM.TITLE}`} buttonText='등록 완료' />
+                <NickNameForm mode='create' title={`반가워요! ${MESSAGE.NICKNAME_FORM.TITLE}`} buttonText='등록 완료' />
             ) : (
                 <main css={pageContainer}>
                     <div css={headerStyle}>

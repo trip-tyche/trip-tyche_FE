@@ -9,7 +9,7 @@ import Header from '@/components/common/Header';
 import AlertModal from '@/components/features/guide/AlertModal';
 import UploadingSpinner from '@/components/features/guide/UploadingSpinner';
 import { ROUTES } from '@/constants/paths';
-import { TRIP_IMAGES_UPLOAD } from '@/constants/ui/message';
+import { MESSAGE } from '@/constants/ui';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
@@ -109,7 +109,7 @@ const TripImageUploadPage = () => {
                         {!isExtracting ? (
                             <label htmlFor='imageUpload' css={uploadLabelStyle}>
                                 <ImageUp size={32} />
-                                <span css={uploadedStyle}>{TRIP_IMAGES_UPLOAD.message}</span>
+                                <span css={uploadedStyle}>{MESSAGE.TRIP_IMAGES_UPLOAD.message}</span>
                             </label>
                         ) : (
                             <label htmlFor='imageUpload' css={uploadLabelStyle}>

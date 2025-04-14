@@ -8,7 +8,7 @@ import { MdCancel } from 'react-icons/md';
 import { userAPI } from '@/api';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
-import { NICKNAME_FORM } from '@/constants/ui/message';
+import { MESSAGE } from '@/constants/ui';
 import { useToastStore } from '@/stores/useToastStore';
 // import useUserDataStore from '@/stores/useUserDataStore';
 import useUserStore from '@/stores/useUserStore';
@@ -86,7 +86,7 @@ const NickNameForm = ({ mode, title, buttonText, placeholder, setIsEditing }: Ni
                     variant='error'
                     setIsInvalid={setIsInvalid}
                     maxLength={15}
-                    placeholder={placeholder || NICKNAME_FORM.TITLE}
+                    placeholder={placeholder || MESSAGE.NICKNAME_FORM.TITLE}
                     rightSection={
                         <MdCancel size={16} onClick={handleCancelButtonClick} style={{ cursor: 'pointer' }} />
                     }

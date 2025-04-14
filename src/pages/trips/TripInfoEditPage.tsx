@@ -6,7 +6,7 @@ import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
 import TripInfoForm from '@/components/features/trip/TripInfoForm';
 import { ROUTES } from '@/constants/paths';
-import { BUTTON } from '@/constants/ui/buttons';
+import { BUTTON } from '@/constants/ui';
 import { useTripInfoForm } from '@/hooks/useTripInfoForm';
 
 const TripInfoEditPage = () => {

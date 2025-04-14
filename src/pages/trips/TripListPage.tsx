@@ -12,7 +12,7 @@ import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
 import TripTicket from '@/components/features/trip/TripTicket';
 import { ROUTES } from '@/constants/paths';
-import { BUTTON } from '@/constants/ui/buttons';
+import { BUTTON } from '@/constants/ui';
 import { useTripTicketList } from '@/hooks/queries/useTrip';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
