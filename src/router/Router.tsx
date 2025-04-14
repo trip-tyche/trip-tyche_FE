@@ -6,6 +6,7 @@ import { userAPI } from '@/api';
 import { toResult } from '@/api/utils';
 import Spinner from '@/components/common/Spinner';
 import { ROUTES } from '@/constants/paths';
+import { useCheckAuth } from '@/hooks/useCheckAuth';
 import RootLayout from '@/layouts/RootLayout';
 import NotificationPage from '@/pages/NotificationPage';
 import useUserStore from '@/stores/useUserStore';
@@ -37,34 +38,9 @@ const TimelinePages = {
 };
 
 const ProtectedRoute = () => {
-    const [isLoading, setIsLoading] = useState(true);
-    const { login, logout, isAuthenticated } = useUserStore();
+    const { isChecking } = useCheckAuth();
 
-    const location = useLocation();
-
-    useEffect(() => {
-        const checkAuth = async () => {
-            if (isAuthenticated) return;
-
-            setIsLoading(true);
-            const result = await toResult(() => userAPI.fetchUserInfo(), {
-                onFinally: () => {
-                    setIsLoading(false);
-                },
-            });
-            if (!result.success) {
-                logout();
-                return;
-            }
-
-            const userInfo = result.data;
-            login(userInfo);
-        };
-
-        checkAuth();
-    }, [location.pathname, isAuthenticated, login, logout]);
-
-    if (isLoading) {
+    if (isChecking) {
         return <LoadingSpinner />;
     }
 
