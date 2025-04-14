@@ -18,7 +18,7 @@ import useTimelineStore from '@/stores/useTimelineStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { LatLng, Map } from '@/types/maps';
-import { BaseLocationMedia, MediaFileModel, PinPointModel } from '@/types/media';
+import { BaseLocationMedia, MediaFileModel, PinPointModel } from '@/domain/media/types';
 
 const TimelineMapPage = () => {
     const [tripTitle, setTripTitle] = useState();

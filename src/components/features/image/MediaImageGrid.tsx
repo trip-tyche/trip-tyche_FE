@@ -5,7 +5,7 @@ import { GoCheckCircleFill } from 'react-icons/go';
 
 import Spinner from '@/components/common/Spinner';
 import { COLORS } from '@/constants/theme';
-import { MediaFileMetaData } from '@/types/media';
+import { MediaFileMetaData } from '@/domain/media/types';
 
 interface MediaImageGridProps {
     images: MediaFileMetaData[];

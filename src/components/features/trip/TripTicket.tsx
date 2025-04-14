@@ -12,12 +12,12 @@ import InputModal from '@/components/features/guide/InputModal';
 import { COLORS } from '@/constants/theme';
 import { TICKET } from '@/constants/trips';
 import { useTripShare } from '@/domain/share/hooks/useTripShare';
+import { Trip } from '@/domain/trip/types';
 import { useTicketHandler } from '@/hooks/useTicketHandler';
 import { useTicketNavigation } from '@/hooks/useTicketNavigation';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
-import { Trip } from '@/types/trips';
 import { formatToDot } from '@/utils/date';
 
 interface TripTicketProps {

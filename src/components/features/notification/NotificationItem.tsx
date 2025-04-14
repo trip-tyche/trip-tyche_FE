@@ -10,8 +10,9 @@ import Modal from '@/components/common/Modal';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import SharedTicket from '@/components/features/trip/SharedTicket';
 import { COLORS } from '@/constants/theme';
+import { Notification, SharedTripInfo } from '@/domain/notification/types';
 import { useToastStore } from '@/stores/useToastStore';
-import { Notification, SharedTripInfo } from '@/types/notification';
+// import { Notification, SharedTripInfo } from '@/types/notification';
 import { formatDateTime } from '@/utils/date';
 import { getMessageByType, getNotificationStyle } from '@/utils/notification';
 

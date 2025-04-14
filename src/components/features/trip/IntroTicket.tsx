@@ -5,7 +5,7 @@ import characterImg from '@/assets/images/character-ogami-1.png';
 import { TICKET } from '@/constants/trips';
 import { useTicket3DEffect } from '@/hooks/useTicket3DEffect';
 import theme from '@/styles/theme';
-import { Trip } from '@/types/trips';
+import { Trip } from '@/domain/trip/types';
 import { formatToDot } from '@/utils/date';
 
 interface IntroTicketProps {

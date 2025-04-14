@@ -2,7 +2,7 @@ import React from 'react';
 
 import { css } from '@emotion/react';
 
-import { ImageCarouselModel } from '@/types/image';
+import { ImageCarouselModel } from '@/domain/media/image';
 
 interface CarouselItemProps {
     image: ImageCarouselModel;

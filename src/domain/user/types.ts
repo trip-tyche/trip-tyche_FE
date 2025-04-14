@@ -1,4 +1,4 @@
-import { Trip } from '@/types/trips';
+import { Trip } from '@/domain/trip/types';
 
 export interface UserInfo {
     userId: number;

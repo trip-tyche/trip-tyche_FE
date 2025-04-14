@@ -16,7 +16,7 @@ import { BUTTON } from '@/constants/ui';
 import { useTripTicketList } from '@/hooks/queries/useTrip';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
-import { Trip } from '@/types/trips';
+import { Trip } from '@/domain/trip/types';
 
 const TripListPage = () => {
     const [tripList, setTripList] = useState<Trip[]>([]);

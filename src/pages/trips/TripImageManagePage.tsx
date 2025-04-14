@@ -19,7 +19,7 @@ import { useImagesDelete } from '@/hooks/mutations/useTrip';
 import { useTripImages } from '@/hooks/queries/useImage';
 import { useToastStore } from '@/stores/useToastStore';
 import { Location } from '@/types/location';
-import { MediaFileMetaData, MediaFileWithDate } from '@/types/media';
+import { MediaFileMetaData, MediaFileWithDate } from '@/domain/media/types';
 import { formatToISOLocal, formatToKorean } from '@/utils/date';
 
 const TripImageManagePage = () => {

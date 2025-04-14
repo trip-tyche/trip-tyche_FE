@@ -10,8 +10,8 @@ import { ROUTES } from '@/constants/paths';
 import useTimelineStore from '@/stores/useTimelineStore';
 import theme from '@/styles/theme';
 import { CarouselState } from '@/types/common';
-import { ImageCarouselModel } from '@/types/image';
-import { PinpointMediaModel } from '@/types/media';
+import { ImageCarouselModel } from '@/domain/media/image';
+import { PinpointMediaModel } from '@/domain/media/types';
 
 const TimelinePinpointPage = () => {
     const [carouselImages, setCarouselImages] = useState<ImageCarouselModel[]>([]);

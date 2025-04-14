@@ -1,4 +1,4 @@
-import { Country } from '@/types/trips';
+import { Country } from '@/domain/trip/types';
 
 export const TICKET = {
     DEFAULT_COUNTY: '대한민국',

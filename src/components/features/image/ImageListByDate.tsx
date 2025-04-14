@@ -9,7 +9,7 @@ import ImageGrid from '@/components/features/image/ImageGrid';
 import ImageSizeRadio from '@/components/features/image/ImageSizeRadio';
 import { ROUTES } from '@/constants/paths';
 import theme from '@/styles/theme';
-import { UnlocatedMediaFile, UnlocatedMediaFileModel } from '@/types/media';
+import { UnlocatedMediaFile, UnlocatedMediaFileModel } from '@/domain/media/types';
 import { formatToKorean } from '@/utils/date';
 
 interface ImageListByDateProps {

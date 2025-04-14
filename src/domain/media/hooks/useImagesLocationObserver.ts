@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import { LatLng } from '@/types/maps';
-import { MediaFileModel } from '@/types/media';
+import { MediaFileModel } from '@/domain/media/types';
 
 export const useImagesLocationObserver = (
     imagesByDate: MediaFileModel[],

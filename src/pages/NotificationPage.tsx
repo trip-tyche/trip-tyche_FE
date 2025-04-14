@@ -9,7 +9,7 @@ import Header from '@/components/common/Header';
 import NotificationItem from '@/components/features/notification/NotificationItem';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
-import { Notification } from '@/types/notification';
+import { Notification } from '@/domain/notification/types';
 
 const NotificationPage = () => {
     const [notifications, setNotifications] = useState<Notification[]>();

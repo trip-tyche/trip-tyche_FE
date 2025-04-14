@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 
 import theme from '@/styles/theme';
-import { MediaFileModel } from '@/types/media';
+import { MediaFileModel } from '@/domain/media/types';
 
 interface ImageItemProps {
     image: MediaFileModel;

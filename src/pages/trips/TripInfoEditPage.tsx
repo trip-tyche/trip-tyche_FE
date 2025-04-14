@@ -7,7 +7,7 @@ import Spinner from '@/components/common/Spinner';
 import TripInfoForm from '@/components/features/trip/TripInfoForm';
 import { ROUTES } from '@/constants/paths';
 import { BUTTON } from '@/constants/ui';
-import { useTripInfoForm } from '@/hooks/useTripInfoForm';
+import { useTripInfoForm } from '@/domain/trip/hooks/useTripInfoForm';
 
 const TripInfoEditPage = () => {
     const { tripInfo, setTripInfo, isLoading, isFormComplete, handleTripInfoSubmit, navigateBeforePage } =

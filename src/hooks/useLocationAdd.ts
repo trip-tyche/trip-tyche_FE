@@ -8,7 +8,7 @@ import { ROUTES } from '@/constants/paths';
 import { useTripDefaultLocation } from '@/hooks/queries/useTripImage';
 import { useToastStore } from '@/stores/useToastStore';
 import { Location } from '@/types/location';
-import { UnlocatedMediaFile, UnlocatedMediaFileModel } from '@/types/media';
+import { UnlocatedMediaFile, UnlocatedMediaFileModel } from '@/domain/media/types';
 
 export const useLocationAdd = () => {
     const [displayedImages, setDisplayedImages] = useState<UnlocatedMediaFileModel[]>([]);

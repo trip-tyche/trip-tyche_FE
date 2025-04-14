@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 
 import { userAPI } from '@/api';
+import { UserInfo } from '@/domain/user/types';
 import { queryClient } from '@/providers/TanStackProvider';
-import { UserInfo } from '@/types/users';
 
 interface UserState {
     isAuthenticated: boolean;

@@ -5,7 +5,7 @@ import { GoCheckCircleFill } from 'react-icons/go';
 
 import Spinner from '@/components/common/Spinner';
 import theme from '@/styles/theme';
-import { UnlocatedMediaFile } from '@/types/media';
+import { UnlocatedMediaFile } from '@/domain/media/types';
 
 interface ImageGridProps {
     imageSize?: number;

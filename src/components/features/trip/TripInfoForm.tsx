@@ -9,10 +9,10 @@ import { Plane, Calendar, Globe } from 'lucide-react';
 
 import Input from '@/components/common/Input';
 import { COUNTRIES, HASHTAG_MENU, TRIP_FORM } from '@/constants/trips';
-import { useTripDateRange } from '@/hooks/useTripDateRange';
+import { useTripDateRange } from '@/domain/trip/hooks/useTripDateRange';
+import { Trip } from '@/domain/trip/types';
 import theme from '@/styles/theme';
 import { FormMode } from '@/types/common';
-import { Trip } from '@/types/trips';
 import { formatToKorean } from '@/utils/date';
 
 type DateSelectType = 'range' | 'single';
