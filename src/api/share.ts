@@ -1,16 +1,16 @@
 import { apiClient } from '@/api/client';
+import { ApiResponse } from '@/api/types';
 
 export const shareAPI = {
     // 다른 사용자에게 여행 공유 요청
-    createShareRequest: async (tripKey: string, recipientId: number) => {
+    createShareRequest: async (
+        tripKey: string,
+        recipientId: number,
+    ): Promise<ApiResponse<{ shareId: number; tripId: number; recipientId: number; shareStatus: string }>> =>
         await apiClient.post(`/v1/trips/share`, {
             tripKey,
             recipientId,
-        });
-
-        return { success: true, data: '' };
-    },
-
+        }),
     // 공유 알림 목록 조회
     getNotifications: async (userId: string) => {
         const response = await apiClient.get(`/v1/notifications/${userId}`);

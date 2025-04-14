@@ -54,47 +54,34 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
         showToast(`'${inputValue}'님께 여행 공유를 요청했습니다`);
     };
 
-    // const handleShareError = (error: unknown) => {
-    //     if (error instanceof AxiosError && error.response?.data) {
-    //         const { status } = error.response.data;
-    //         setError(
-    //             status === 404 ? '해당 닉네임의 사용자를 찾을 수 없습니다' : `이미 '${inputValue}'와 공유된 여행입니다`,
-    //         );
-    //     }
-    // };
-    const handleShareError = (error: string) => {
-        console.log('error', error);
-        // if (error instanceof AxiosError && error.response?.data) {
-        // const { status } = error.response.data;
-        setError(error);
-        // }
-    };
-
-    const handleTripShare = async () => {
+    const shareTrip = async () => {
         if (!inputValue.trim()) {
             setError('닉네임을 입력해주세요.');
             return;
         }
 
-        try {
-            setIsLoading(true);
+        setIsLoading(true);
 
-            const searchResult = await toResult(() => userAPI.searchUsers(inputValue));
-            if (!searchResult.success) throw Error(searchResult.error);
-
-            const {
-                data: { userId: recipientId },
-            } = searchResult;
-            await shareAPI.createShareRequest(tripKey as string, recipientId);
-
-            handleShareSuccess();
-        } catch (error) {
-            if (error instanceof Error) {
-                handleShareError(error.message);
-            }
-        } finally {
+        const searchResult = await toResult(() => userAPI.searchUsers(inputValue));
+        if (!searchResult.success) {
+            setError(searchResult.error);
             setIsLoading(false);
+            return;
         }
+
+        const {
+            data: { userId: recipientId },
+        } = searchResult;
+
+        const shareResult = await toResult(() => shareAPI.createShareRequest(tripKey!, recipientId));
+        if (!shareResult.success) {
+            setError(shareResult.error);
+            setIsLoading(false);
+            return;
+        }
+
+        handleShareSuccess();
+        setIsLoading(false);
     };
 
     const isOwner = userInfo?.nickname === ownerNickname;
@@ -201,7 +188,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
                     description='함께 여행 티켓을 관리할 친구를 추가해 보세요! 친구에게 초대 알림이 전송됩니다'
                     confirmText='공유하기'
                     cancelText='취소'
-                    confirmModal={handleTripShare}
+                    confirmModal={shareTrip}
                     closeModal={() => {
                         setIsShareModalOpen(false);
                         setInputValue('');
