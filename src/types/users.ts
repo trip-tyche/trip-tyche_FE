@@ -1,4 +1,4 @@
-import { Trip } from '@/types/trip';
+import { Trip } from '@/types/trips';
 
 export interface UserInfo {
     userId: number;

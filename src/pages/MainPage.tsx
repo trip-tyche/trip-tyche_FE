@@ -13,7 +13,7 @@ import IntroTicket from '@/components/features/trip/IntroTicket';
 import NickNameForm from '@/components/features/user/NickNameForm';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
-import { WELCOME_TICKET_DATA } from '@/constants/trip/form';
+import { WELCOME_TICKET_DATA } from '@/constants/trips';
 import { MESSAGE } from '@/constants/ui';
 import webSocketService from '@/services/webSocketService';
 import { useToastStore } from '@/stores/useToastStore';
@@ -21,7 +21,6 @@ import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
 
 const MainPage = () => {
-    console.log('main');
     const [notificationCount, setNotificationCount] = useState(0);
     const { userInfo } = useUserStore();
     const showToast = useToastStore((state) => state.showToast);

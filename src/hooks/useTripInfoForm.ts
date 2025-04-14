@@ -10,7 +10,7 @@ import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import { FormMode } from '@/types/common';
-import { Trip } from '@/types/trip';
+import { Trip } from '@/types/trips';
 
 export const useTripInfoForm = (mode: FormMode) => {
     const initialState = {

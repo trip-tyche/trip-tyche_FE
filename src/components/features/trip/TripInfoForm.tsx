@@ -8,13 +8,11 @@ import dayjs from 'dayjs';
 import { Plane, Calendar, Globe } from 'lucide-react';
 
 import Input from '@/components/common/Input';
-import { COUNTRIES } from '@/constants/trip/country';
-import { TRIP_FORM } from '@/constants/trip/form';
-import { HASHTAG_MENU } from '@/constants/trip/hashtags';
+import { COUNTRIES, HASHTAG_MENU, TRIP_FORM } from '@/constants/trips';
 import { useTripDateRange } from '@/hooks/useTripDateRange';
 import theme from '@/styles/theme';
 import { FormMode } from '@/types/common';
-import { Trip } from '@/types/trip';
+import { Trip } from '@/types/trips';
 import { formatToKorean } from '@/utils/date';
 
 type DateSelectType = 'range' | 'single';

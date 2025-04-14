@@ -1,6 +1,6 @@
 import { apiClient } from '@/api/client';
 import { ApiResponse } from '@/api/types';
-import { UserInfo } from '@/types/user';
+import { UserInfo } from '@/types/users';
 
 export const userAPI = {
     // 사용자 정보 조회 (userId, nickname, tripsCount, recentTrip)
