@@ -41,6 +41,7 @@ const ProtectedRoute = () => {
     const { login, logout, isAuthenticated } = useUserStore();
 
     const location = useLocation();
+
     useEffect(() => {
         const checkAuth = async () => {
             if (isAuthenticated) return;

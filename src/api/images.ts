@@ -7,12 +7,6 @@ import { PresignedUrlRequest, PresignedUrlResponse } from '@/types/image';
 import { GpsCoordinates } from '@/types/location';
 import { MediaFileMetaData, UnlocatedMediaFileModel } from '@/types/media';
 
-interface MediaFile {
-    startDate: string;
-    endDate: string;
-    mediaFiles: MediaFileMetaData[];
-}
-
 export const tripImageAPI = {
     // 핀포인트 슬라이드
     fetchImagesByPinPoint: async (tripKey: string, pinPoint: string) => {
@@ -80,8 +74,15 @@ export const tripImageAPI = {
     //         return { success: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
     //     }
     // },
-    getTripImages: async (tripKey: string): Promise<ApiResponse<MediaFile>> =>
-        await apiClient.get(`/v1/trips/${tripKey}/media-files`),
+    getTripImages: async (
+        tripKey: string,
+    ): Promise<
+        ApiResponse<{
+            startDate: string;
+            endDate: string;
+            mediaFiles: MediaFileMetaData[];
+        }>
+    > => await apiClient.get(`/v1/trips/${tripKey}/media-files`),
     // 선택한 여행 이미지 삭제
     deleteImages: async (tripKey: string, images: string[]): Promise<Result<string>> => {
         try {

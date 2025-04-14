@@ -2,7 +2,7 @@ import { apiClient } from '@/api/client';
 
 export const shareAPI = {
     // 다른 사용자에게 여행 공유 요청
-    createShareRequest: async (tripKey: string, recipientId: string) => {
+    createShareRequest: async (tripKey: string, recipientId: number) => {
         await apiClient.post(`/v1/trips/share`, {
             tripKey,
             recipientId,

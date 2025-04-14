@@ -7,6 +7,7 @@ import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
 import { shareAPI, userAPI } from '@/api';
+import { toResult } from '@/api/utils';
 import characterImg from '@/assets/images/character-ogami-1.png';
 import Spinner from '@/components/common/Spinner';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
@@ -53,13 +54,20 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
         showToast(`'${inputValue}'님께 여행 공유를 요청했습니다`);
     };
 
-    const handleShareError = (error: unknown) => {
-        if (error instanceof AxiosError && error.response?.data) {
-            const { status } = error.response.data;
-            setError(
-                status === 404 ? '해당 닉네임의 사용자를 찾을 수 없습니다' : `이미 '${inputValue}'와 공유된 여행입니다`,
-            );
-        }
+    // const handleShareError = (error: unknown) => {
+    //     if (error instanceof AxiosError && error.response?.data) {
+    //         const { status } = error.response.data;
+    //         setError(
+    //             status === 404 ? '해당 닉네임의 사용자를 찾을 수 없습니다' : `이미 '${inputValue}'와 공유된 여행입니다`,
+    //         );
+    //     }
+    // };
+    const handleShareError = (error: string) => {
+        console.log('error', error);
+        // if (error instanceof AxiosError && error.response?.data) {
+        // const { status } = error.response.data;
+        setError(error);
+        // }
     };
 
     const handleTripShare = async () => {
@@ -71,14 +79,19 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
         try {
             setIsLoading(true);
 
-            const searchResult = await userAPI.searchUsers(inputValue);
+            const searchResult = await toResult(() => userAPI.searchUsers(inputValue));
+            if (!searchResult.success) throw Error(searchResult.error);
 
-            const recipientId = searchResult.data.userId;
+            const {
+                data: { userId: recipientId },
+            } = searchResult;
             await shareAPI.createShareRequest(tripKey as string, recipientId);
 
             handleShareSuccess();
         } catch (error) {
-            handleShareError(error);
+            if (error instanceof Error) {
+                handleShareError(error.message);
+            }
         } finally {
             setIsLoading(false);
         }
