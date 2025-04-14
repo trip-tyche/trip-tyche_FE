@@ -14,7 +14,6 @@ import NickNameForm from '@/components/features/user/NickNameForm';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { WELCOME_TICKET_DATA } from '@/constants/trips';
-import { MESSAGE } from '@/constants/ui';
 import webSocketService from '@/services/webSocketService';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserStore from '@/stores/useUserStore';

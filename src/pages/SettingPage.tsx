@@ -32,6 +32,10 @@ const SettingPage = () => {
         logout();
     };
 
+    const onNicknameChange = () => {
+        setIsEditing(false);
+    };
+
     const settingButtons = [
         {
             text: '닉네임 수정',
@@ -49,7 +53,7 @@ const SettingPage = () => {
         <div css={pageContainer}>
             <Header title={isEditing ? '닉네임 변경' : '설정'} isBackButton onBack={navigateBeforePage} />
             {isEditing ? (
-                <NickNameForm mode='edit' setIsEditing={setIsEditing} />
+                <NickNameForm mode='edit' onChange={onNicknameChange} />
             ) : (
                 <main css={mainStyle}>
                     <div css={userInfoContainer}>

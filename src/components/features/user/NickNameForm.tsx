@@ -15,10 +15,10 @@ import { FormMode } from '@/types/common';
 
 interface NickNameFormProps {
     mode: FormMode;
-    setIsEditing?: (isEditing: boolean) => void;
+    onChange?: () => void;
 }
 
-const NickNameForm = ({ mode, setIsEditing }: NickNameFormProps) => {
+const NickNameForm = ({ mode, onChange }: NickNameFormProps) => {
     const [inputValue, setInputValue] = useState('');
     const [isInvalid, setIsInvalid] = useState(false);
     const nickname = useUserStore((state) => state.userInfo?.nickname);
@@ -31,11 +31,9 @@ const NickNameForm = ({ mode, setIsEditing }: NickNameFormProps) => {
 
     function onSubmitSuccess() {
         queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
+        onChange?.();
 
-        if (isEditing) {
-            showToast('닉네임이 변경되었습니다');
-            setIsEditing?.(false);
-        }
+        if (isEditing) showToast('닉네임이 변경되었습니다');
     }
 
     if (error) showToast(error);
