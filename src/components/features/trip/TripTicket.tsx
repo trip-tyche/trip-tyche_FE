@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 import { css, keyframes } from '@emotion/react';
-import { AxiosError } from 'axios';
 import { ImagePlus, Share2 } from 'lucide-react';
 import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { IoAirplaneSharp } from 'react-icons/io5';

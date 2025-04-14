@@ -1,15 +1,12 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense } from 'react';
 
-import { createBrowserRouter, Outlet, useLocation } from 'react-router-dom';
+import { createBrowserRouter, Outlet } from 'react-router-dom';
 
-import { userAPI } from '@/api';
-import { toResult } from '@/api/utils';
 import Spinner from '@/components/common/Spinner';
 import { ROUTES } from '@/constants/paths';
 import { useCheckAuth } from '@/hooks/useCheckAuth';
 import RootLayout from '@/layouts/RootLayout';
 import NotificationPage from '@/pages/NotificationPage';
-import useUserStore from '@/stores/useUserStore';
 
 // 로딩 컴포넌트
 const LoadingSpinner = () => <Spinner loadingText='불러오는 중...' />;
