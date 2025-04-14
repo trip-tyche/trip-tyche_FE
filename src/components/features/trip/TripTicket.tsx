@@ -12,6 +12,7 @@ import Spinner from '@/components/common/Spinner';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import InputModal from '@/components/features/guide/InputModal';
 import { COLORS } from '@/constants/theme';
+import { TICKET } from '@/constants/trips';
 import { useTicketHandler } from '@/hooks/useTicketHandler';
 import { useTicketNavigation } from '@/hooks/useTicketNavigation';
 import { useToastStore } from '@/stores/useToastStore';
@@ -120,7 +121,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
 
                     <main css={contentContainer}>
                         <div css={citiesStyle}>
-                            <p>대한민국</p>
+                            <p>{TICKET.DEFAULT_COUNTY}</p>
                             <IoAirplaneSharp />
                             <p>{country.split('/')[1]}</p>
                         </div>

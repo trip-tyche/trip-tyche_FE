@@ -1,5 +1,9 @@
 import { Country } from '@/types/trips';
 
+export const TICKET = {
+    DEFAULT_COUNTY: '대한민국',
+};
+
 export const TRIP_FORM = {
     DATE: '여행 기간 *',
     COUNTRY: '여행 국가 *',

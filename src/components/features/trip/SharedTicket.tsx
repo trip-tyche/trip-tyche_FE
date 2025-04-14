@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
 import characterImg from '@/assets/images/character-ogami-1.png';
+import { TICKET } from '@/constants/trips';
 import theme from '@/styles/theme';
 import { Trip } from '@/types/trips';
 import { formatToDot } from '@/utils/date';
@@ -34,7 +35,7 @@ const SharedTicket = ({ trip, userNickname }: IntroTicketProps) => {
 
                 <main css={contentContainer}>
                     <div css={citiesStyle}>
-                        <p>대한민국</p>
+                        <p>{TICKET.DEFAULT_COUNTY}</p>
                         <IoAirplaneSharp />
                         <p>{country.split('/')[1]}</p>
                     </div>
