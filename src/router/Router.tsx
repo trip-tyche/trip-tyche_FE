@@ -4,7 +4,7 @@ import { createBrowserRouter, Outlet } from 'react-router-dom';
 
 import Spinner from '@/components/common/Spinner';
 import { ROUTES } from '@/constants/paths';
-import { useCheckAuth } from '@/hooks/useCheckAuth';
+import { useAuthCheck } from '@/hooks/useAuthCheck';
 import RootLayout from '@/layouts/RootLayout';
 import NotificationPage from '@/pages/NotificationPage';
 
@@ -35,7 +35,7 @@ const TimelinePages = {
 };
 
 const ProtectedRoute = () => {
-    const { isChecking } = useCheckAuth();
+    const { isChecking } = useAuthCheck();
 
     if (isChecking) {
         return <LoadingSpinner />;

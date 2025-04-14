@@ -6,7 +6,7 @@ import { userAPI } from '@/api';
 import { toResult } from '@/api/utils';
 import useUserStore from '@/stores/useUserStore';
 
-export const useCheckAuth = () => {
+export const useAuthCheck = () => {
     const [isChecking, setIsChecking] = useState(true);
     const { login, logout, isAuthenticated } = useUserStore();
 

@@ -15,6 +15,7 @@ import { COLORS } from '@/constants/theme';
 import { TICKET } from '@/constants/trips';
 import { useTicketHandler } from '@/hooks/useTicketHandler';
 import { useTicketNavigation } from '@/hooks/useTicketNavigation';
+import { useTripShare } from '@/hooks/useTripShare';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
@@ -30,8 +31,6 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
 
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
     const { showToast } = useToastStore.getState();
 
     const userInfo = useUserStore((state) => state.userInfo);
@@ -47,42 +46,14 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
         handleCardClick,
     } = useTicketNavigation(tripKey as string);
 
-    const handleShareSuccess = () => {
-        setInputValue('');
-        setError('');
+    const { isLoading, error, shareTrip, clearError } = useTripShare(inputValue, tripKey!, {
+        onSuccess: onShareSuccess,
+    });
+
+    function onShareSuccess() {
         setIsShareModalOpen(false);
         showToast(`'${inputValue}'님께 여행 공유를 요청했습니다`);
-    };
-
-    const shareTrip = async () => {
-        if (!inputValue.trim()) {
-            setError('닉네임을 입력해주세요.');
-            return;
-        }
-
-        setIsLoading(true);
-
-        const searchResult = await toResult(() => userAPI.searchUsers(inputValue));
-        if (!searchResult.success) {
-            setError(searchResult.error);
-            setIsLoading(false);
-            return;
-        }
-
-        const {
-            data: { userId: recipientId },
-        } = searchResult;
-
-        const shareResult = await toResult(() => shareAPI.createShareRequest(tripKey!, recipientId));
-        if (!shareResult.success) {
-            setError(shareResult.error);
-            setIsLoading(false);
-            return;
-        }
-
-        handleShareSuccess();
-        setIsLoading(false);
-    };
+    }
 
     const isOwner = userInfo?.nickname === ownerNickname;
 
@@ -192,9 +163,9 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
                     closeModal={() => {
                         setIsShareModalOpen(false);
                         setInputValue('');
-                        setError('');
+                        clearError();
                     }}
-                    disabled={isLoading}
+                    disabled={isLoading || inputValue.trim().length === 0}
                     placeholder='친구의 닉네임을 입력해주세요'
                 />
             )}
