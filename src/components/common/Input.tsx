@@ -31,18 +31,13 @@ const Input = ({ value, onChange, variant = 'default', setIsInvalid, ...props }:
         }
     }, [value, variant, setIsInvalid]);
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = event.target.value;
-        onChange(newValue);
-    };
-
     return (
         <React.Fragment>
             <TextInput
                 size='md'
                 radius='md'
                 value={value}
-                onChange={handleInputChange}
+                onChange={(event) => onChange(event.target.value)}
                 styles={{
                     input: {
                         ...inputBaseStyles,

@@ -2,24 +2,15 @@ import { useState } from 'react';
 
 import { shareAPI, userAPI } from '@/api';
 import { toResult } from '@/api/utils';
+import { MESSAGE } from '@/constants/ui';
 
-export const useTripShare = (
-    nickname: string,
-    tripKey: string,
-    callback?: {
-        onSuccess?: () => void;
-        onError?: (errorMessage: string) => void;
-    },
-) => {
+export const useTripShare = (nickname: string, tripKey: string, onSuccess?: () => void) => {
+    const [isSharing, setIsSharing] = useState(false);
     const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-
-    const { onSuccess, onError } = callback || {};
 
     const shareTrip = async () => {
-        setIsLoading(true);
-
         try {
+            setIsSharing(true);
             const searchResult = await toResult(() => userAPI.searchUsers(nickname));
             if (!searchResult.success) throw Error(searchResult.error);
 
@@ -32,11 +23,9 @@ export const useTripShare = (
 
             onSuccess?.();
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
-            setError(errorMessage);
-            onError?.(errorMessage);
+            setError(error instanceof Error ? error.message : MESSAGE.ERROR.UNKNOWN);
         } finally {
-            setIsLoading(false);
+            setIsSharing(false);
         }
     };
 
@@ -45,7 +34,7 @@ export const useTripShare = (
     };
 
     return {
-        isLoading,
+        isSharing,
         error,
         setError,
         shareTrip,

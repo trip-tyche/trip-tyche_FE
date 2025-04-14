@@ -18,15 +18,12 @@ import theme from '@/styles/theme';
 
 const SettingPage = () => {
     const [isEditing, setIsEditing] = useState(false);
-    const nickname = useUserStore((state) => state.userInfo?.nickname);
-    const logout = useUserStore((state) => state.logout);
     const { isModalOpen, openModal, closeModal } = useModalStore();
 
-    const navigate = useNavigate();
+    const nickname = useUserStore((state) => state.userInfo?.nickname);
+    const logout = useUserStore((state) => state.logout);
 
-    const handleNicknameEdit = () => setIsEditing(true);
-    const handleContact = () => console.log('문의하기');
-    const handleLogout = () => openModal();
+    const navigate = useNavigate();
 
     const navigateBeforePage = () => (isEditing ? setIsEditing(false) : navigate(ROUTES.PATH.MAIN));
 
@@ -39,12 +36,12 @@ const SettingPage = () => {
         {
             text: '닉네임 수정',
             icon: <User size={20} color={theme.COLORS.TEXT.BLACK} />,
-            handleButtonClick: handleNicknameEdit,
+            handleButtonClick: () => setIsEditing(true),
         },
         {
             text: '문의하기',
             icon: <MessageCircle size={20} color={theme.COLORS.TEXT.BLACK} />,
-            handleButtonClick: handleContact,
+            handleButtonClick: () => console.log('문의하기'),
         },
     ];
 
@@ -82,7 +79,7 @@ const SettingPage = () => {
                         <SettingButton
                             text='로그아웃'
                             icon={<LogOut size={20} color={theme.COLORS.TEXT.BLACK} />}
-                            onClick={handleLogout}
+                            onClick={() => openModal()}
                         />
                     </ul>
                 </main>

@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios';
 
 import { ApiResponse, Result } from '@/api/types';
+import { MESSAGE } from '@/constants/ui';
 
 export const toResult = async <T>(
     fn: () => Promise<ApiResponse<T>>,
@@ -22,7 +23,7 @@ export const toResult = async <T>(
             onError?.();
             return { success: false, error: errorResponse.message };
         }
-        return { success: false, error: '알 수 없는 오류가 발생하였습니다' };
+        return { success: false, error: MESSAGE.ERROR.UNKNOWN };
     } finally {
         onFinally?.();
     }

@@ -10,7 +10,6 @@ import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { MESSAGE } from '@/constants/ui';
 import { useToastStore } from '@/stores/useToastStore';
-// import useUserDataStore from '@/stores/useUserDataStore';
 import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
 import { FormMode } from '@/types/common';
@@ -20,7 +19,6 @@ interface NickNameFormProps {
     title: string;
     buttonText: string;
     placeholder?: string;
-    // getUserInfoData?: () => void;
     setIsEditing?: (isEditing: boolean) => void;
 }
 
@@ -28,12 +26,11 @@ const NickNameForm = ({ mode, title, buttonText, placeholder, setIsEditing }: Ni
     const [inputValue, setInputValue] = useState('');
     const [isInvalid, setIsInvalid] = useState(false);
     const updateNickname = useUserStore((state) => state.updateNickname);
-
-    // const setUserNickName = useUserDataStore((state) => state.setUserNickName);
     const showToast = useToastStore((state) => state.showToast);
 
-    const handleCancelButtonClick = () => setInputValue('');
     const queryClient = useQueryClient();
+
+    const isEditing = mode === 'edit';
 
     const handleError = (error: AxiosError) => {
         if (error && typeof error === 'object' && 'response' in error) {
@@ -49,24 +46,22 @@ const NickNameForm = ({ mode, title, buttonText, placeholder, setIsEditing }: Ni
                 showToast(errorData.message);
                 return;
             } else {
-                showToast(`닉네임 ${mode === 'edit' ? '수정' : '등록'}이 실패했습니다. 다시 시도해주세요.`);
+                showToast(`닉네임 ${isEditing ? '수정' : '등록'}이 실패했습니다. 다시 시도해주세요.`);
             }
         }
     };
 
     const submitUserNickName = async () => {
-        // setUserNickName(inputValue);
-
         try {
-            await userAPI.checkDuplication(inputValue);
+            await userAPI.checkNicknameDuplication(inputValue);
         } catch (error: unknown) {
             handleError(error as AxiosError);
             return;
         }
 
         try {
-            await userAPI.createUserNickName(inputValue);
-            // mode === 'edit' ? showToast('닉네임이 변경되었습니다.') : getUserInfoData && getUserInfoData();
+            await userAPI.createNickName(inputValue);
+            isEditing && showToast('닉네임이 변경되었습니다.');
         } catch (error: unknown) {
             handleError(error as AxiosError);
         }
@@ -88,7 +83,7 @@ const NickNameForm = ({ mode, title, buttonText, placeholder, setIsEditing }: Ni
                     maxLength={15}
                     placeholder={placeholder || MESSAGE.NICKNAME_FORM.TITLE}
                     rightSection={
-                        <MdCancel size={16} onClick={handleCancelButtonClick} style={{ cursor: 'pointer' }} />
+                        <MdCancel size={16} onClick={() => setInputValue('')} style={{ cursor: 'pointer' }} />
                     }
                 />
             </div>

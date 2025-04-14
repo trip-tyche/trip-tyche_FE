@@ -5,17 +5,15 @@ import { ImagePlus, Share2 } from 'lucide-react';
 import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
-import { shareAPI, userAPI } from '@/api';
-import { toResult } from '@/api/utils';
 import characterImg from '@/assets/images/character-ogami-1.png';
 import Spinner from '@/components/common/Spinner';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import InputModal from '@/components/features/guide/InputModal';
 import { COLORS } from '@/constants/theme';
 import { TICKET } from '@/constants/trips';
+import { useTripShare } from '@/domain/share/hooks/useTripShare';
 import { useTicketHandler } from '@/hooks/useTicketHandler';
 import { useTicketNavigation } from '@/hooks/useTicketNavigation';
-import { useTripShare } from '@/hooks/useTripShare';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
@@ -46,9 +44,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
         handleCardClick,
     } = useTicketNavigation(tripKey as string);
 
-    const { isLoading, error, shareTrip, clearError } = useTripShare(inputValue, tripKey!, {
-        onSuccess: onShareSuccess,
-    });
+    const { isSharing, error, shareTrip, clearError } = useTripShare(inputValue, tripKey!, onShareSuccess);
 
     function onShareSuccess() {
         setIsShareModalOpen(false);
@@ -165,7 +161,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
                         setInputValue('');
                         clearError();
                     }}
-                    disabled={isLoading || inputValue.trim().length === 0}
+                    disabled={isSharing || inputValue.trim().length === 0}
                     placeholder='친구의 닉네임을 입력해주세요'
                 />
             )}
