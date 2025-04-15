@@ -4,9 +4,7 @@ import { css } from '@emotion/react';
 import { TicketsPlane } from 'lucide-react';
 import { GoKebabHorizontal } from 'react-icons/go';
 
-import { shareAPI } from '@/api';
 import { notifiactionAPI } from '@/api/notification';
-import { toResult } from '@/api/utils';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
 import Spinner from '@/components/common/Spinner';
@@ -41,10 +39,6 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
         if (notificationInfo.referenceId) {
             if (result?.success) {
                 const sharedTripInfo = result?.data;
-                // const tripInfo = {
-                //     ...sharedTripInfo,
-                //     hashtags: sharedTripInfo.hashtags.split(','),
-                // };
 
                 setSharedTripInfo(sharedTripInfo);
                 setIsDetailOpen(true);

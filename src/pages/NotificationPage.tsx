@@ -1,45 +1,48 @@
-import { useEffect, useState } from 'react';
-
 import { css } from '@emotion/react';
 import { BellOff } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { notifiactionAPI } from '@/api/notification';
 import Header from '@/components/common/Header';
+import Spinner from '@/components/common/Spinner';
 import NotificationItem from '@/components/features/notification/NotificationItem';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
+import { MESSAGE } from '@/constants/ui';
+import { useNotificationList } from '@/domain/notification/hooks/queries';
 import { Notification } from '@/domain/notification/types';
+import { useToastStore } from '@/stores/useToastStore';
 
 const NotificationPage = () => {
-    const [notifications, setNotifications] = useState<Notification[]>();
+    // const [notifications, setNotifications] = useState<Notification[]>();
+    const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();
     const { userId } = useParams();
 
-    useEffect(() => {
-        const getSharedTrips = async () => {
-            const result = await notifiactionAPI.getNotifications(Number(userId));
-            const notifications = result.data;
-            setNotifications(notifications);
-        };
+    const { data: result, isLoading } = useNotificationList(Number(userId));
 
-        getSharedTrips();
-    }, []);
+    if (!result || !result?.success) {
+        showToast(result ? result?.error : MESSAGE.ERROR.UNKNOWN);
+        navigate(ROUTES.PATH.MAIN);
+        return;
+    }
 
-    if (!notifications) return;
+    const notifications = [...result.data].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+    const isNewNotifications = notifications.length > 0;
+
+    if (isLoading) return <Spinner />;
 
     return (
         <div css={container}>
             <Header title={'알림'} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
 
             <div css={content}>
-                {notifications.length ? (
-                    [...notifications]
-                        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-                        .map((item: Notification) => (
-                            <NotificationItem key={item.notificationId} notificationInfo={item} />
-                        ))
+                {isNewNotifications ? (
+                    notifications.map((item: Notification) => (
+                        <NotificationItem key={item.notificationId} notificationInfo={item} />
+                    ))
                 ) : (
                     <div css={emptyNotification}>
                         <div css={belloffIcon}>

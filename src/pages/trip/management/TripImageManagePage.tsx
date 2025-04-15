@@ -42,7 +42,7 @@ const TripImageManagePage = () => {
     const navigate = useNavigate();
     const { tripKey } = useParams();
 
-    const { data: tripImages = [], isFetching, isError, error } = useTripImages(tripKey!);
+    const { data: tripImages = [], isLoading, isError, error } = useTripImages(tripKey!);
 
     useEffect(() => {
         if (isError) {
@@ -170,7 +170,7 @@ const TripImageManagePage = () => {
 
     const isSelectedImage = selectedImages.length > 0;
 
-    if (isFetching) {
+    if (isLoading) {
         return <Spinner />;
     }
 

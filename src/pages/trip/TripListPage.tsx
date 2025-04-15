@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-
 import { css } from '@emotion/react';
 import { TicketsPlane, PlaneTakeoff } from 'lucide-react';
 import { LuPlus } from 'react-icons/lu';
@@ -12,27 +10,22 @@ import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
 import TripTicket from '@/components/features/trip/TripTicket';
 import { ROUTES } from '@/constants/paths';
-import { BUTTON } from '@/constants/ui';
+import { BUTTON, MESSAGE } from '@/constants/ui';
 import { useTripTicketList } from '@/domain/trip/hooks/queries';
 import { Trip } from '@/domain/trip/types';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 
 const TripListPage = () => {
-    const [tripList, setTripList] = useState<Trip[]>([]);
     const showToast = useToastStore((state) => state.showToast);
-    const { data: result, isFetching } = useTripTicketList();
+    const { data: result, isLoading } = useTripTicketList();
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (!result) return;
-        if (!result?.success) {
-            showToast(result?.error as string);
-        }
-
-        setTripList(() => (result?.success ? [...result.data].reverse() : []));
-    }, [result, showToast]);
+    if (!result || !result?.success) {
+        showToast(result ? result?.error : MESSAGE.ERROR.UNKNOWN);
+        return;
+    }
 
     const handleCreateTripButtonClick = async () => {
         const result = await toResult(() => tripAPI.createNewTrip());
@@ -44,11 +37,12 @@ const TripListPage = () => {
         }
     };
 
+    const tripList = [...result.data].reverse();
     const tripCount = tripList.length;
 
     return (
         <div css={pageContainer}>
-            {isFetching && <Spinner />}
+            {isLoading && <Spinner />}
             <Header title='나의 여행 티켓' isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
             <div css={listHeaderStyle}>
                 <div css={listSummaryStyle}>
@@ -82,7 +76,7 @@ const TripListPage = () => {
                     ))}
                 </div>
             ) : (
-                !isFetching && (
+                !isLoading && (
                     <div css={emptyTripListStyle}>
                         <PlaneTakeoff size={24} />
                         <p>등록된 여행이 아직 없습니다.</p>
