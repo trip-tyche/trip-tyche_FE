@@ -18,7 +18,7 @@ export const useTripShare = (nickname: string, tripKey: string, onSuccess?: () =
                 data: { userId: recipientId },
             } = searchResult;
 
-            const shareResult = await toResult(() => shareAPI.createShareRequest(tripKey, recipientId));
+            const shareResult = await toResult(() => shareAPI.requestTripShare(tripKey, recipientId));
             if (!shareResult.success) throw Error(shareResult.error);
 
             onSuccess?.();

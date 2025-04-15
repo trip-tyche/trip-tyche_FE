@@ -6,16 +6,17 @@ import { GoKebabHorizontal } from 'react-icons/go';
 
 import { shareAPI } from '@/api';
 import { notifiactionAPI } from '@/api/notification';
+import { toResult } from '@/api/utils';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
+import Spinner from '@/components/common/Spinner';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import SharedTicket from '@/components/features/trip/SharedTicket';
 import { COLORS } from '@/constants/theme';
 import { Notification } from '@/domain/notification/types';
-import { useShareDetail } from '@/domain/share/hooks/queries';
+import { useShareDetail, useShareStatus } from '@/domain/share/hooks/queries';
 import { SharedTripDetail } from '@/domain/share/types';
 import { useToastStore } from '@/stores/useToastStore';
-// import { Notification, SharedTripDetail } from '@/types/notification';
 import { formatDateTime } from '@/utils/date';
 import { getMessageByType, getNotificationStyle } from '@/utils/notification';
 
@@ -29,7 +30,8 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const showToast = useToastStore((state) => state.showToast);
-    const { data: result } = useShareDetail(notificationInfo.referenceId);
+    const { data: result, isPending } = useShareDetail(notificationInfo.referenceId);
+    const { mutateAsync } = useShareStatus();
 
     const handleDetailShow = async () => {
         if (notificationInfo.status === 'UNREAD') {
@@ -37,21 +39,8 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
         }
 
         if (notificationInfo.referenceId) {
-            // const response = await shareAPI.fetchShareDetail(notificationInfo.referenceId);
             if (result?.success) {
                 const sharedTripInfo = result?.data;
-
-                // const tripInfo = {
-                //     shareId: sharedTripInfo.shareId,
-                //     ownerNickname: sharedTripInfo.ownerNickname,
-                //     ownerNickname: sharedTripInfo.,
-                //     status: sharedTripInfo.status,
-                //     tripTitle: sharedTripInfo.tripTitle,
-                //     country: sharedTripInfo.country,
-                //     startDate: sharedTripInfo.startDate,
-                //     endDate: sharedTripInfo.endDate,
-                //     hashtags: sharedTripInfo.hashtags.split(','),
-                // };
                 // const tripInfo = {
                 //     ...sharedTripInfo,
                 //     hashtags: sharedTripInfo.hashtags.split(','),
@@ -64,19 +53,19 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
     };
 
     const handleShareApprove = async () => {
-        await shareAPI.updateShareStatus(String(notificationInfo.referenceId), 'APPROVED');
+        const result = await mutateAsync({ shareId: notificationInfo.referenceId, status: 'APPROVED' });
+        showToast(result.success ? '여행 메이트가 되었어요! 🎉' : result.error);
         setIsDetailOpen(false);
-        showToast('여행 메이트가 되었어요! 🎉');
     };
 
     const handleShareReject = async () => {
-        await shareAPI.updateShareStatus(String(notificationInfo.referenceId), 'REJECTED');
+        const result = await mutateAsync({ shareId: notificationInfo.referenceId, status: 'REJECTED' });
+        showToast(result.success ? '다음에 함께 여행해요 ✈️' : result.error);
         setIsDetailOpen(false);
-        showToast('다음에 함께 여행해요 ✈️');
     };
 
     const handleDeleteClick = async (event: React.MouseEvent<HTMLDivElement>) => {
-        event.stopPropagation();
+        // event.stopPropagation();
 
         setIsDeleteModalOpen(true);
     };
@@ -95,6 +84,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
 
     return (
         <>
+            {isPending && <Spinner />}
             <div
                 key={notificationInfo.notificationId}
                 css={[container, getNotificationStyle(isRead)]}
