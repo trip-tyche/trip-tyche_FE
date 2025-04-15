@@ -1,6 +1,8 @@
+type ShareStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
 export interface SharedTripDetail {
     shareId: string;
-    status: string;
+    status: ShareStatus;
     ownerNickname: string;
     recipientNickname: string;
 

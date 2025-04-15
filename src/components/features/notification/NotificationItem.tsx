@@ -65,7 +65,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
     };
 
     const handleDeleteClick = async (event: React.MouseEvent<HTMLDivElement>) => {
-        // event.stopPropagation();
+        event.stopPropagation();
 
         setIsDeleteModalOpen(true);
     };
