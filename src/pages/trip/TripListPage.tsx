@@ -22,7 +22,8 @@ const TripListPage = () => {
 
     const navigate = useNavigate();
 
-    if (!result || !result?.success) {
+    if (!result) return;
+    if (!result?.success) {
         showToast(result ? result?.error : MESSAGE.ERROR.UNKNOWN);
         return;
     }

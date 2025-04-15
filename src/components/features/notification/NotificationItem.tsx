@@ -11,9 +11,12 @@ import Spinner from '@/components/common/Spinner';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import SharedTicket from '@/components/features/trip/SharedTicket';
 import { COLORS } from '@/constants/theme';
+import { MESSAGE } from '@/constants/ui';
+import { useNotificationStatus } from '@/domain/notification/hooks/mutations';
 import { Notification } from '@/domain/notification/types';
-import { useShareDetail, useShareStatus } from '@/domain/share/hooks/queries';
-import { SharedTripDetail } from '@/domain/share/types';
+import { useShareStatus } from '@/domain/share/hooks/mutations';
+import { useShareDetail } from '@/domain/share/hooks/queries';
+import { SharedTripDetail, ShareStatus } from '@/domain/share/types';
 import { useToastStore } from '@/stores/useToastStore';
 import { formatDateTime } from '@/utils/date';
 import { getMessageByType, getNotificationStyle } from '@/utils/notification';
@@ -23,48 +26,30 @@ interface NotificationProps {
 }
 
 const NotificationItem = ({ notificationInfo }: NotificationProps) => {
-    const [sharedTripInfo, setSharedTripInfo] = useState<SharedTripDetail>();
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
     const showToast = useToastStore((state) => state.showToast);
-    const { data: result, isPending } = useShareDetail(notificationInfo.referenceId);
-    const { mutateAsync } = useShareStatus();
 
-    const handleDetailShow = async () => {
-        if (notificationInfo.status === 'UNREAD') {
-            await notifiactionAPI.updateNotificationStatus(notificationInfo.notificationId);
+    const { data: shareDetailResult, isPending } = useShareDetail(notificationInfo.referenceId);
+    const { mutateAsync: notificationMutateAsync } = useNotificationStatus();
+    const { mutateAsync: shareMutateAsync } = useShareStatus();
+
+    if (!shareDetailResult) return;
+    if (!shareDetailResult?.success) {
+        showToast(shareDetailResult ? shareDetailResult?.error : MESSAGE.ERROR.UNKNOWN);
+        return;
+    }
+
+    const showSharedTripDetail = async () => {
+        const isRead = notificationInfo.status === 'READ';
+        if (!isRead) {
+            const result = await notificationMutateAsync(notificationInfo.referenceId);
+            if (!result.success) throw Error(result.error);
         }
-
-        if (notificationInfo.referenceId) {
-            if (result?.success) {
-                const sharedTripInfo = result?.data;
-
-                setSharedTripInfo(sharedTripInfo);
-                setIsDetailOpen(true);
-            }
-        }
+        setIsDetailOpen(true);
     };
 
-    const handleShareApprove = async () => {
-        const result = await mutateAsync({ shareId: notificationInfo.referenceId, status: 'APPROVED' });
-        showToast(result.success ? '여행 메이트가 되었어요! 🎉' : result.error);
-        setIsDetailOpen(false);
-    };
-
-    const handleShareReject = async () => {
-        const result = await mutateAsync({ shareId: notificationInfo.referenceId, status: 'REJECTED' });
-        showToast(result.success ? '다음에 함께 여행해요 ✈️' : result.error);
-        setIsDetailOpen(false);
-    };
-
-    const handleDeleteClick = async (event: React.MouseEvent<HTMLDivElement>) => {
-        event.stopPropagation();
-
-        setIsDeleteModalOpen(true);
-    };
-
-    const handleNotificationRemove = async () => {
+    const deleteNotification = async () => {
         const deletedNotification = [notificationInfo.notificationId];
         const response = await notifiactionAPI.deleteNotification(deletedNotification);
 
@@ -74,7 +59,21 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
         }
     };
 
+    const handleShareStatusChange = async (status: ShareStatus) => {
+        const result = await shareMutateAsync({ shareId: notificationInfo.referenceId, status });
+
+        const approve = status === 'APPROVED';
+        showToast(result.success ? (approve ? '여행 메이트가 되었어요! 🎉' : '다음에 함께 여행해요 ✈️') : result.error);
+        setIsDetailOpen(false);
+    };
+
+    const handleDeleteButtonClick = async (event: React.MouseEvent<HTMLDivElement>) => {
+        event.stopPropagation();
+        setIsDeleteModalOpen(true);
+    };
+
     const isRead = notificationInfo.status === 'READ';
+    const sharedTripInfo = shareDetailResult?.data;
 
     return (
         <>
@@ -82,7 +81,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
             <div
                 key={notificationInfo.notificationId}
                 css={[container, getNotificationStyle(isRead)]}
-                onClick={handleDetailShow}
+                onClick={showSharedTripDetail}
             >
                 <div css={info}>
                     <div css={notification}>
@@ -92,7 +91,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
                         <p css={sender}>{notificationInfo.senderNickname}</p>
                         <p css={createdAt}>{formatDateTime(notificationInfo.createdAt, false)}</p>
                     </div>
-                    <div css={removeIcon} onClick={handleDeleteClick}>
+                    <div css={removeIcon} onClick={handleDeleteButtonClick}>
                         <GoKebabHorizontal />
                     </div>
                 </div>
@@ -105,7 +104,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
                     description='지운 알림은 다시 볼 수 없어요. 괜찮으신가요?'
                     confirmText='지우기'
                     cancelText='그대로 두기'
-                    confirmModal={handleNotificationRemove}
+                    confirmModal={deleteNotification}
                     closeModal={() => setIsDeleteModalOpen(false)}
                 />
             )}
@@ -119,8 +118,12 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
                         />
                         {sharedTripInfo?.status === 'PENDING' ? (
                             <div css={buttonGroup}>
-                                <Button text={'거절하기'} variant='white' onClick={handleShareReject} />
-                                <Button text={'함께 여행하기'} onClick={handleShareApprove} />
+                                <Button
+                                    text={'거절하기'}
+                                    variant='white'
+                                    onClick={() => handleShareStatusChange('REJECTED')}
+                                />
+                                <Button text={'함께 여행하기'} onClick={() => handleShareStatusChange('APPROVED')} />
                             </div>
                         ) : (
                             <>

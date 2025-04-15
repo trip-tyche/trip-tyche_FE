@@ -21,7 +21,8 @@ const NotificationPage = () => {
 
     const { data: result, isLoading } = useNotificationList(Number(userId));
 
-    if (!result || !result?.success) {
+    if (!result) return;
+    if (!result?.success) {
         showToast(result ? result?.error : MESSAGE.ERROR.UNKNOWN);
         navigate(ROUTES.PATH.MAIN);
         return;
