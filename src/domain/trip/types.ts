@@ -5,7 +5,6 @@ export interface Trip {
     startDate: string;
     endDate: string;
     hashtags: string[];
-    imagesDate?: string[];
     mediaFilesDates?: string[];
     userNickname?: string;
     ownerNickname?: string;

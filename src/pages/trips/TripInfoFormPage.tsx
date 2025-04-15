@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
@@ -12,31 +13,41 @@ import { ROUTES } from '@/constants/paths';
 import { FORM } from '@/constants/trip';
 import { useTripInfoForm } from '@/domain/trip/hooks/useTripInfoForm';
 import { Trip } from '@/domain/trip/types';
-import { useTripTicketInfo } from '@/hooks/queries/useTrip';
+import { useTripInfo } from '@/hooks/queries/useTrip';
+import { useToastStore } from '@/stores/useToastStore';
 
-const TripInfoPage = () => {
+const TripInfoFormPage = () => {
     const [tripInfo, setTripInfo] = useState<Trip>(FORM.INITIAL);
+    const showToast = useToastStore((state) => state.showToast);
 
     const { tripKey } = useParams();
     const { pathname, state: mediaFilesDates } = useLocation();
     const navigate = useNavigate();
 
+    const queryClient = useQueryClient();
+
     const isEditing = pathname.includes('edit');
 
-    const { data: beforeTripInfo, isLoading } = useTripTicketInfo(tripKey!, !!tripKey && isEditing);
+    const { data: beforeTripInfo, isLoading } = useTripInfo(tripKey!, isEditing);
     const { isSubmitting, isFormComplete, submitTripInfo } = useTripInfoForm(isEditing, tripInfo);
 
     useEffect(() => {
         if (isEditing) {
             if (!beforeTripInfo) return;
-            setTripInfo(beforeTripInfo);
+            if (!beforeTripInfo.success) {
+                showToast(beforeTripInfo?.error as string);
+                navigate(-1);
+                queryClient.invalidateQueries({ queryKey: ['ticket-info'] });
+                return;
+            }
+            setTripInfo(beforeTripInfo.data);
+            return;
         }
-        setTripInfo(() => {
-            return {
-                ...tripInfo,
-                mediaFilesDates,
-            };
-        });
+
+        setTripInfo(() => ({
+            ...tripInfo,
+            mediaFilesDates,
+        }));
     }, [beforeTripInfo]);
 
     if (isLoading) {
@@ -79,4 +90,4 @@ const mainStyle = css`
     padding: 16px;
 `;
 
-export default TripInfoPage;
+export default TripInfoFormPage;

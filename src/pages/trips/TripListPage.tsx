@@ -13,10 +13,10 @@ import Spinner from '@/components/common/Spinner';
 import TripTicket from '@/components/features/trip/TripTicket';
 import { ROUTES } from '@/constants/paths';
 import { BUTTON } from '@/constants/ui';
+import { Trip } from '@/domain/trip/types';
 import { useTripTicketList } from '@/hooks/queries/useTrip';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
-import { Trip } from '@/domain/trip/types';
 
 const TripListPage = () => {
     const [tripList, setTripList] = useState<Trip[]>([]);
@@ -27,7 +27,7 @@ const TripListPage = () => {
 
     useEffect(() => {
         if (!result) return;
-        if (!result.success) {
+        if (!result?.success) {
             showToast(result?.error as string);
         }
 

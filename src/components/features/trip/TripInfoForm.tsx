@@ -24,7 +24,6 @@ interface TripInfoFormProps {
 
 const TripInfoForm = ({ isEditing = false, tripInfo, setTripInfo }: TripInfoFormProps) => {
     const { tripTitle, country, startDate, endDate, hashtags, mediaFilesDates: imageDates = [] } = tripInfo;
-
     const [dateSelectType, setDateSelectType] = useState<DateSelectType>('range');
     const [isSelectRange, setIsSelectRange] = useState<boolean>(true);
 

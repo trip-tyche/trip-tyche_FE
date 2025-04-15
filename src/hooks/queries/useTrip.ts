@@ -20,10 +20,18 @@ export const useTripTicketList = () => {
 };
 
 // 특정 여행 정보 조회
-export const useTripTicketInfo = (tripKey: string, enabled: boolean) => {
+export const useTripInfo = (tripKey: string, enabled: boolean) => {
     return useQuery({
         queryKey: ['ticket-info', tripKey],
-        queryFn: () => tripAPI.fetchTripTicketInfo(tripKey),
+        queryFn: () => toResult(() => tripAPI.fetchTripTicketInfo(tripKey)),
+        select: (result) => {
+            return result.success
+                ? {
+                      ...result,
+                      data: result.data,
+                  }
+                : result;
+        },
         enabled,
     });
 };
