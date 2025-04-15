@@ -158,12 +158,12 @@ export const useImageUpload = () => {
             return;
         }
 
-        if (isTripInfoEditing) {
-            await updateTripDate(
-                tripKey,
-                images.map((image) => image.formattedDate.split('T')[0]),
-            );
-        }
+        // if (isTripInfoEditing) {
+        //     await updateTripDate(
+        //         tripKey,
+        //         images.map((image) => image.formattedDate.split('T')[0]),
+        //     );
+        // }
 
         try {
             setUploadStatus('pending');

@@ -5,12 +5,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
 import { ROUTES } from '@/constants/paths';
-import { Trip } from '@/domain/trip/types';
+import { TripInfo } from '@/domain/trip/types';
 import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
 import { validateFormComplete } from '@/utils/validate';
 
-export const useTripInfoForm = (isEditing: boolean, form: Trip) => {
+export const useTripInfoForm = (isEditing: boolean, form: TripInfo) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isFormComplete, setIsFormComplete] = useState(false);
     const { uploadStatus, waitForCompletion } = useUploadStore();

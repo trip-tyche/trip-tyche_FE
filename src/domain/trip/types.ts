@@ -1,4 +1,10 @@
-export interface Trip {
+export interface Trip extends TripInfo {
+    userNickname?: string;
+    ownerNickname?: string;
+    sharedUserNicknames?: string[];
+}
+
+export interface TripInfo {
     tripKey?: string;
     tripTitle: string;
     country: string;
@@ -6,9 +12,6 @@ export interface Trip {
     endDate: string;
     hashtags: string[];
     mediaFilesDates?: string[];
-    userNickname?: string;
-    ownerNickname?: string;
-    sharedUserNicknames?: string[];
 }
 
 export interface Country {

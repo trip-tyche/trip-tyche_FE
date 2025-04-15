@@ -12,12 +12,12 @@ import TripInfoForm from '@/components/features/trip/TripInfoForm';
 import { ROUTES } from '@/constants/paths';
 import { FORM } from '@/constants/trip';
 import { useTripInfoForm } from '@/domain/trip/hooks/useTripInfoForm';
-import { Trip } from '@/domain/trip/types';
+import { TripInfo } from '@/domain/trip/types';
 import { useTripInfo } from '@/hooks/queries/useTrip';
 import { useToastStore } from '@/stores/useToastStore';
 
 const TripInfoFormPage = () => {
-    const [tripInfo, setTripInfo] = useState<Trip>(FORM.INITIAL);
+    const [tripInfo, setTripInfo] = useState<TripInfo>(FORM.INITIAL);
     const showToast = useToastStore((state) => state.showToast);
 
     const { tripKey } = useParams();

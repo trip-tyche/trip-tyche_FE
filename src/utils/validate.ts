@@ -1,4 +1,4 @@
-import { Trip } from '@/domain/trip/types';
+import { TripInfo } from '@/domain/trip/types';
 
 export const validateUserNickName = (userNickName: string) => {
     const NICKNAME_REGEX = /^[가-힣a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ][가-힣a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ\s]*[가-힣a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ]$/;
@@ -11,7 +11,5 @@ export const validateUserNickName = (userNickName: string) => {
 };
 
 // 폼의 모든 필드에 입력했는지 체크
-export const validateFormComplete = (form: Trip | null) => {
-    if (!form) return null;
-    return Object.entries(form).every(([_, value]) => (Array.isArray(value) ? value.length > 0 : Boolean(value)));
-};
+export const validateFormComplete = (form: TripInfo) =>
+    Object.entries(form).every(([_, value]) => (Array.isArray(value) ? value.length > 0 : Boolean(value)));
