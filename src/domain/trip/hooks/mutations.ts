@@ -28,15 +28,3 @@ export const useMediaDelete = () => {
         },
     });
 };
-
-// export const useMediaDelete = () => {
-//     const queryClient = useQueryClient();
-
-//     return useMutation({
-//         mutationFn: ({ tripKey, images }: { tripKey: string; images: string[] }) =>
-//             toResult(() => mediaAPI.deleteImages(tripKey, images)),
-//         onSuccess: () => {
-//             queryClient.invalidateQueries({ queryKey: ['trip-images'] });
-//         },
-//     });
-// };

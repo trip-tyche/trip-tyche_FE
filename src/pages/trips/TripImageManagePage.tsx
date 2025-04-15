@@ -16,7 +16,7 @@ import LocationAddMap from '@/components/features/trip/LocationAddMap';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { MediaFileMetaData, MediaFileWithDate } from '@/domain/media/types';
-import { useMediaDelete } from '@/hooks/mutations/useTrip';
+import { useMediaDelete } from '@/domain/trip/hooks/mutations';
 import { useTripImages } from '@/hooks/queries/useImage';
 import { useToastStore } from '@/stores/useToastStore';
 import { Location } from '@/types/location';
