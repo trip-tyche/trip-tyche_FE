@@ -8,10 +8,9 @@ import { ROUTES } from '@/constants/paths';
 import { Trip } from '@/domain/trip/types';
 import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
-import { FormMode } from '@/types/common';
 import { validateFormComplete } from '@/utils/validate';
 
-export const useTripInfoForm = (mode: FormMode, form: Trip) => {
+export const useTripInfoForm = (isEditing: boolean, form: Trip) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isFormComplete, setIsFormComplete] = useState(false);
     const { uploadStatus, waitForCompletion } = useUploadStore();
@@ -21,7 +20,6 @@ export const useTripInfoForm = (mode: FormMode, form: Trip) => {
     const { tripKey } = useParams();
 
     const queryClient = useQueryClient();
-    const isEditing = mode === 'edit';
 
     // 여행 정보 입력할 때마다 모든 값이 입력되었는지 체크
     useEffect(() => {
@@ -32,7 +30,6 @@ export const useTripInfoForm = (mode: FormMode, form: Trip) => {
         setIsFormComplete(false);
     }, [form]);
 
-    // 여행 폼 제출 함수
     const submitTripInfo = async () => {
         if (!tripKey || !form) {
             return;

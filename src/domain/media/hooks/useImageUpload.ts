@@ -5,10 +5,10 @@ import { useParams } from 'react-router-dom';
 
 import { tripImageAPI } from '@/api';
 import { COMPRESSION_OPTIONS } from '@/constants/media';
+import { ImageModel, PresignedUrlResponse } from '@/domain/media/image';
 import { updateTripDate } from '@/services/trips';
 import { useUploadStore } from '@/stores/useUploadingStore';
 import useUserDataStore from '@/stores/useUserDataStore';
-import { ImageModel, PresignedUrlResponse } from '@/domain/media/image';
 import { Location } from '@/types/location';
 import { formatToISOLocal } from '@/utils/date';
 import { getImageLocation, extractDateFromImage } from '@/utils/piexif';

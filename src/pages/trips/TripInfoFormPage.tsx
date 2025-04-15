@@ -5,49 +5,60 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
+import Spinner from '@/components/common/Spinner';
 import UploadingSpinner from '@/components/features/guide/UploadingSpinner';
 import TripInfoForm from '@/components/features/trip/TripInfoForm';
 import { ROUTES } from '@/constants/paths';
 import { FORM } from '@/constants/trip';
 import { useTripInfoForm } from '@/domain/trip/hooks/useTripInfoForm';
 import { Trip } from '@/domain/trip/types';
+import { useTripTicketInfo } from '@/hooks/queries/useTrip';
 
 const TripInfoPage = () => {
     const [tripInfo, setTripInfo] = useState<Trip>(FORM.INITIAL);
-    const { isSubmitting, isFormComplete, submitTripInfo } = useTripInfoForm('create', tripInfo);
-
-    const { state: mediaFilesDates } = useLocation();
 
     const { tripKey } = useParams();
+    const { pathname, state: mediaFilesDates } = useLocation();
     const navigate = useNavigate();
 
+    const isEditing = pathname.includes('edit');
+
+    const { data: beforeTripInfo, isLoading } = useTripTicketInfo(tripKey!, !!tripKey && isEditing);
+    const { isSubmitting, isFormComplete, submitTripInfo } = useTripInfoForm(isEditing, tripInfo);
+
     useEffect(() => {
-        if (!tripInfo) return;
+        if (isEditing) {
+            if (!beforeTripInfo) return;
+            setTripInfo(beforeTripInfo);
+        }
         setTripInfo(() => {
             return {
                 ...tripInfo,
                 mediaFilesDates,
             };
         });
-        // }
-    }, [mediaFilesDates]);
+    }, [beforeTripInfo]);
 
-    // 이전 페이지로 이동
-    const navigateBeforePage = () => {
-        // if (mode === 'create') {
-        navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripKey!)}`);
-        // } else {
-        // setIsTripInfoEditing(false);
-        // navigate(ROUTES.PATH.TRIPS.ROOT);
-        // }
-    };
+    if (isLoading) {
+        return <Spinner />;
+    }
 
     return (
         <div css={pageContainer}>
-            <Header title={ROUTES.PATH_TITLE.TRIPS.NEW.INFO} isBackButton onBack={navigateBeforePage} />
+            <Header
+                title={ROUTES.PATH_TITLE.TRIPS.NEW.INFO}
+                isBackButton
+                onBack={() =>
+                    navigate(isEditing ? ROUTES.PATH.TRIPS.ROOT : `${ROUTES.PATH.TRIPS.NEW.IMAGES(tripKey!)}`)
+                }
+            />
             <main css={mainStyle}>
-                <TripInfoForm mode='create' tripInfo={tripInfo} setTripInfo={setTripInfo} />
-                <Button text='여행 등록하기' onClick={submitTripInfo} disabled={!isFormComplete} />
+                <TripInfoForm isEditing={isEditing} tripInfo={tripInfo} setTripInfo={setTripInfo} />
+                <Button
+                    text={`여행 ${isEditing ? '수정' : '등록'}하기`}
+                    onClick={submitTripInfo}
+                    disabled={!isFormComplete}
+                />
             </main>
             {isSubmitting && <UploadingSpinner />}
         </div>

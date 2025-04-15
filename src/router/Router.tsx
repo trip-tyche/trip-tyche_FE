@@ -23,8 +23,7 @@ const TripPages = {
     TripImageManagePage: lazy(() => import('@/pages/trips/TripImageManagePage')),
     TripImageUploadPage: lazy(() => import('@/pages/trips/TripImageUploadPage')),
     TripLocationAddPage: lazy(() => import('@/pages/trips/TripLocationAddPage')),
-    TripInfoPage: lazy(() => import('@/pages/trips/TripInfoPage')),
-    TripInfoEditPage: lazy(() => import('@/pages/trips/TripInfoEditPage')),
+    TripInfoFormPage: lazy(() => import('@/pages/trips/TripInfoFormPage')),
 };
 
 // 타임라인 관련 페이지들을 그룹화하여 지연 로딩
@@ -105,13 +104,13 @@ const router = createBrowserRouter([
                                     },
                                     {
                                         path: 'info',
-                                        element: <TripPages.TripInfoPage />,
+                                        element: <TripPages.TripInfoFormPage />,
                                     },
                                 ],
                             },
                             {
                                 path: 'edit',
-                                element: <TripPages.TripInfoEditPage />,
+                                element: <TripPages.TripInfoFormPage />,
                             },
                             {
                                 path: 'timeline',

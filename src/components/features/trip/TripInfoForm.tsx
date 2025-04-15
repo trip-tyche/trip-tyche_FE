@@ -12,24 +12,21 @@ import { COUNTRIES, FORM } from '@/constants/trip';
 import { useTripDateRange } from '@/domain/trip/hooks/useTripDateRange';
 import { Trip } from '@/domain/trip/types';
 import theme from '@/styles/theme';
-import { FormMode } from '@/types/common';
 import { formatToKorean } from '@/utils/date';
 
 type DateSelectType = 'range' | 'single';
 type DateChangeHandler = (value: DateValue | DatesRangeValue) => void;
 interface TripInfoFormProps {
-    mode: FormMode;
+    isEditing: boolean;
     tripInfo: Trip;
     setTripInfo: Dispatch<SetStateAction<Trip>>;
 }
 
-const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
+const TripInfoForm = ({ isEditing = false, tripInfo, setTripInfo }: TripInfoFormProps) => {
     const { tripTitle, country, startDate, endDate, hashtags, mediaFilesDates: imageDates = [] } = tripInfo;
 
     const [dateSelectType, setDateSelectType] = useState<DateSelectType>('range');
     const [isSelectRange, setIsSelectRange] = useState<boolean>(true);
-
-    const isEditing = mode === 'edit';
 
     const defaultStartDate = imageDates[0];
     const defaultEndDate = imageDates[imageDates.length - 1];
