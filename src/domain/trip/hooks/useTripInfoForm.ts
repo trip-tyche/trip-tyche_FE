@@ -21,7 +21,6 @@ export const useTripInfoForm = (isEditing: boolean, form: TripInfo) => {
 
     const queryClient = useQueryClient();
 
-    // 여행 정보 입력할 때마다 모든 값이 입력되었는지 체크
     useEffect(() => {
         if (validateFormComplete(form)) {
             setIsFormComplete(true);

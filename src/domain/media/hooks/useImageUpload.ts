@@ -6,9 +6,7 @@ import { useParams } from 'react-router-dom';
 import { tripImageAPI } from '@/api';
 import { COMPRESSION_OPTIONS } from '@/constants/media';
 import { ImageModel, PresignedUrlResponse } from '@/domain/media/image';
-import { updateTripDate } from '@/services/trips';
 import { useUploadStore } from '@/stores/useUploadingStore';
-import useUserDataStore from '@/stores/useUserDataStore';
 import { Location } from '@/types/location';
 import { formatToISOLocal } from '@/utils/date';
 import { getImageLocation, extractDateFromImage } from '@/utils/piexif';
@@ -22,7 +20,6 @@ export const useImageUpload = () => {
     const [isAlertModalOpen, setIsAlertModalModalOpen] = useState(false);
 
     const setUploadStatus = useUploadStore((state) => state.setUploadStatus);
-    const isTripInfoEditing = useUserDataStore((state) => state.isTripInfoEditing);
 
     const { tripKey } = useParams();
 
