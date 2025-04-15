@@ -5,7 +5,7 @@ import { Trash2 } from 'lucide-react';
 import { FaPencilAlt } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { tripImageAPI } from '@/api';
+import { mediaAPI } from '@/api';
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
@@ -130,7 +130,7 @@ const TripImageManagePage = () => {
 
         try {
             setIsUploading(true);
-            await tripImageAPI.updateImages(tripKey, imagesWithUpdatedLocation);
+            await mediaAPI.updateImages(tripKey, imagesWithUpdatedLocation);
 
             setIsMapVisible(false);
             showToast(`${selectedImages.length}의 사진이 수정되었습니다`);
@@ -155,7 +155,7 @@ const TripImageManagePage = () => {
 
         try {
             setIsUploading(true);
-            await tripImageAPI.updateImages(tripKey, imagesWithUpdatedDate);
+            await mediaAPI.updateImages(tripKey, imagesWithUpdatedDate);
 
             setIsDateVisible(false);
             showToast(`${selectedImages.length}장의 사진이 수정되었습니다`);

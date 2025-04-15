@@ -3,8 +3,8 @@ import { useState } from 'react';
 import imageCompression from 'browser-image-compression';
 import { useParams } from 'react-router-dom';
 
-import { tripImageAPI } from '@/api';
-import { COMPRESSION_OPTIONS } from '@/constants/media';
+import { mediaAPI } from '@/api';
+import { COMPRESSION_OPTIONS } from '@/domain/media/constants';
 import { ImageModel, PresignedUrlResponse } from '@/domain/media/image';
 import { useUploadStore } from '@/stores/useUploadingStore';
 import { Location } from '@/types/location';
@@ -174,14 +174,14 @@ export const useImageUpload = () => {
                 fileName: image.image.name,
             }));
 
-            const result = await tripImageAPI.requestPresignedUrls(tripKey, fileNames);
+            const result = await mediaAPI.requestPresignedUrls(tripKey, fileNames);
             if (!result.success) throw new Error(result.error);
             const { data: presignedUrls } = result;
 
             console.time(`S3 업로드 시간`);
             await Promise.all(
                 presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) =>
-                    tripImageAPI.uploadToS3(urlInfo.presignedPutUrl, resizedImages[index].image),
+                    mediaAPI.uploadToS3(urlInfo.presignedPutUrl, resizedImages[index].image),
                 ),
             );
 
@@ -200,7 +200,7 @@ export const useImageUpload = () => {
             });
 
             console.time(`서버 데이터 전송 시간`);
-            await tripImageAPI.createMediaFileMetadata(tripKey, metaDatas);
+            await mediaAPI.createMediaFileMetadata(tripKey, metaDatas);
             console.timeEnd(`서버 데이터 전송 시간`);
             setUploadStatus('completed');
         } catch (error) {

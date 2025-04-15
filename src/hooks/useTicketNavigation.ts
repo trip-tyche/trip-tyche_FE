@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-// import { tripImageAPI } from '@/api';
+// import { mediaAPI } from '@/api';
 import { ROUTES } from '@/constants/paths';
 
 export const useTicketNavigation = (tripKey: string) => {
@@ -23,7 +23,7 @@ export const useTicketNavigation = (tripKey: string) => {
     }, [isAnimating, tripKey, navigate]);
 
     const handleCardClick = async () => {
-        // const unlocatedImagesDate = await tripImageAPI.fetchUnlocatedImages(tripKey);
+        // const unlocatedImagesDate = await mediaAPI.fetchUnlocatedImages(tripKey);
         // if (!unlocatedImagesDate) {
         setIsAnimating(true);
         // return;

@@ -1,4 +1,5 @@
-export { userAPI } from '@/api/users';
-export { tripAPI } from '@/api/trips';
-export { tripImageAPI } from '@/api/images';
+export { userAPI } from '@/api/user';
+export { tripAPI } from '@/api/trip';
+export { mediaAPI } from '@/api/image';
+export { notifiactionAPI } from '@/api/notification';
 export { shareAPI } from '@/api/share';

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { tripAPI, tripImageAPI } from '@/api';
+import { tripAPI, mediaAPI } from '@/api';
 
 export const useTripDelete = () => {
     const queryClient = useQueryClient();
@@ -18,7 +18,7 @@ export const useImagesDelete = () => {
 
     return useMutation({
         mutationFn: ({ tripKey, images }: { tripKey: string; images: string[] }) =>
-            tripImageAPI.deleteImages(tripKey, images),
+            mediaAPI.deleteImages(tripKey, images),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['trip-images'] });
         },

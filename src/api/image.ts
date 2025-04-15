@@ -7,7 +7,7 @@ import { PresignedUrlRequest, PresignedUrlResponse } from '@/domain/media/image'
 import { MediaFileMetaData, UnlocatedMediaFileModel } from '@/domain/media/types';
 import { GpsCoordinates } from '@/types/location';
 
-export const tripImageAPI = {
+export const mediaAPI = {
     // 핀포인트 슬라이드
     fetchImagesByPinPoint: async (tripKey: string, pinPoint: string) => {
         const data = await apiClient.get(`/v1/trips/${tripKey}/pinpoints/${pinPoint}/images`);

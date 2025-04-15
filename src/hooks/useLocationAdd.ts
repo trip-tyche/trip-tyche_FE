@@ -3,12 +3,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { tripImageAPI } from '@/api';
+import { mediaAPI } from '@/api';
 import { ROUTES } from '@/constants/paths';
+import { UnlocatedMediaFile, UnlocatedMediaFileModel } from '@/domain/media/types';
 import { useTripDefaultLocation } from '@/hooks/queries/useTripImage';
 import { useToastStore } from '@/stores/useToastStore';
 import { Location } from '@/types/location';
-import { UnlocatedMediaFile, UnlocatedMediaFileModel } from '@/domain/media/types';
 
 export const useLocationAdd = () => {
     const [displayedImages, setDisplayedImages] = useState<UnlocatedMediaFileModel[]>([]);
@@ -34,7 +34,7 @@ export const useLocationAdd = () => {
             return;
         }
 
-        const unlocatedImages = await tripImageAPI.fetchUnlocatedImages(tripKey);
+        const unlocatedImages = await mediaAPI.fetchUnlocatedImages(tripKey);
         if (!unlocatedImages) {
             navigate(`${ROUTES.PATH.TRIPS.ROOT}`);
             return;
@@ -68,7 +68,7 @@ export const useLocationAdd = () => {
         setIsUploading(true);
         try {
             const uploadPromise = selectedImages.map((image) =>
-                tripImageAPI.updateUnlocatedImages(tripKey as string, String(image.mediaFileId), selectedLocation),
+                mediaAPI.updateUnlocatedImages(tripKey as string, String(image.mediaFileId), selectedLocation),
             );
 
             await Promise.allSettled(uploadPromise);

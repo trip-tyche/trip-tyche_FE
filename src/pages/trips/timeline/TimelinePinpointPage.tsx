@@ -4,14 +4,14 @@ import { css } from '@emotion/react';
 import { X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { tripImageAPI } from '@/api';
+import { mediaAPI } from '@/api';
 import ImageCarousel from '@/components/features/image/ImageCarousel';
 import { ROUTES } from '@/constants/paths';
+import { ImageCarouselModel } from '@/domain/media/image';
+import { PinpointMediaModel } from '@/domain/media/types';
 import useTimelineStore from '@/stores/useTimelineStore';
 import theme from '@/styles/theme';
 import { CarouselState } from '@/types/common';
-import { ImageCarouselModel } from '@/domain/media/image';
-import { PinpointMediaModel } from '@/domain/media/types';
 
 const TimelinePinpointPage = () => {
     const [carouselImages, setCarouselImages] = useState<ImageCarouselModel[]>([]);
@@ -27,7 +27,7 @@ const TimelinePinpointPage = () => {
             if (!(tripKey && pinPointId)) {
                 return;
             }
-            const result = await tripImageAPI.fetchImagesByPinPoint(tripKey, pinPointId);
+            const result = await mediaAPI.fetchImagesByPinPoint(tripKey, pinPointId);
             const { mediaFiles } = result;
 
             const sortedImages = mediaFiles.sort((dateA: PinpointMediaModel, dateB: PinpointMediaModel) =>
