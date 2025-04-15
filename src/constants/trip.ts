@@ -4,13 +4,39 @@ export const TICKET = {
     DEFAULT_COUNTY: '대한민국',
 };
 
-export const TRIP_FORM = {
-    DATE: '여행 기간 *',
-    COUNTRY: '여행 국가 *',
-    COUNTRY_DEFAULT: '여행 국가를 선택해주세요',
-    TITLE: '여행 제목 *',
-    TITLE_PLACEHOLDER: '여행 제목을 입력해주세요',
-    HASHTAG: '해시태그 *',
+export const FORM = {
+    INITIAL: {
+        tripTitle: '',
+        country: '',
+        startDate: '',
+        endDate: '',
+        hashtags: [],
+    },
+    TITLE: {
+        DATE: '여행 기간 *',
+        COUNTRY: '여행 국가 *',
+        COUNTRY_DEFAULT: '여행 국가를 선택해주세요',
+        TITLE: '여행 제목 *',
+        TITLE_PLACEHOLDER: '여행 제목을 입력해주세요',
+        HASHTAG: '해시태그 *',
+    },
+    HASHTAG_MENU: [
+        '솔로여행', // 혼자 여행하는 트렌드 반영
+        '우리끼리', // 친구들과의 여행
+        '커플여행', // 연인과의 여행
+        '패밀리', // 가족여행
+        '힐링스팟', // 휴식과 치유
+        '로컬픽', // 현지 맛집, 장소
+        '일상탈출', // 일상에서 벗어남
+        '버킷리스트', // 도전, 꿈의 여행
+        '감성충전', // 감성적인 순간
+        '인생샷', // 사진, 추억
+        '계획무시', // 즉흥적인 여행
+        '취향저격', // 자신의 취향에 맞는
+        '모험가', // 새로운 도전
+        '여행메이트', // 여행 동반자와 함께
+        '가성비템', // 실용적인 여행
+    ],
 };
 
 export const WELCOME_TICKET_DATA = {
@@ -23,24 +49,6 @@ export const WELCOME_TICKET_DATA = {
     imagesDate: [],
     ownerNickname: '',
 };
-
-export const HASHTAG_MENU = [
-    '솔로여행', // 혼자 여행하는 트렌드 반영
-    '우리끼리', // 친구들과의 여행
-    '커플여행', // 연인과의 여행
-    '패밀리', // 가족여행
-    '힐링스팟', // 휴식과 치유
-    '로컬픽', // 현지 맛집, 장소
-    '일상탈출', // 일상에서 벗어남
-    '버킷리스트', // 도전, 꿈의 여행
-    '감성충전', // 감성적인 순간
-    '인생샷', // 사진, 추억
-    '계획무시', // 즉흥적인 여행
-    '취향저격', // 자신의 취향에 맞는
-    '모험가', // 새로운 도전
-    '여행메이트', // 여행 동반자와 함께
-    '가성비템', // 실용적인 여행
-] as const;
 
 export const COUNTRIES: Country[] = [
     {

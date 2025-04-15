@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { TextInput, TextInputProps } from '@mantine/core';
 
 import theme from '@/styles/theme';
-import { validateUserNickName } from '@/utils/validation';
+import { validateUserNickName } from '@/utils/validate';
 
 type variantType = 'default' | 'error';
 

@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 import { Plane, Calendar, Globe } from 'lucide-react';
 
 import Input from '@/components/common/Input';
-import { COUNTRIES, HASHTAG_MENU, TRIP_FORM } from '@/constants/trips';
+import { COUNTRIES, FORM } from '@/constants/trip';
 import { useTripDateRange } from '@/domain/trip/hooks/useTripDateRange';
 import { Trip } from '@/domain/trip/types';
 import theme from '@/styles/theme';
@@ -110,7 +110,7 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
         <div css={tripInfoFormContainer}>
             <section>
                 <div css={titleStyle}>
-                    <h2>{TRIP_FORM.DATE}</h2>
+                    <h2>{FORM.TITLE.DATE}</h2>
                     <Select
                         value={dateSelectType}
                         onChange={(value) => {
@@ -186,9 +186,9 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
             </section>
 
             <section>
-                <h2 css={titleStyle}>{TRIP_FORM.COUNTRY}</h2>
+                <h2 css={titleStyle}>{FORM.TITLE.COUNTRY}</h2>
                 <Select
-                    placeholder={TRIP_FORM.COUNTRY_DEFAULT}
+                    placeholder={FORM.TITLE.COUNTRY_DEFAULT}
                     data={countryData}
                     value={country}
                     onChange={(value) => setTripInfo({ ...tripInfo, country: value || '' })}
@@ -202,7 +202,7 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
             </section>
 
             <section>
-                <h2 css={titleStyle}>{TRIP_FORM.TITLE}</h2>
+                <h2 css={titleStyle}>{FORM.TITLE.TITLE}</h2>
                 <Input
                     value={tripTitle}
                     onChange={(value) => setTripInfo({ ...tripInfo, tripTitle: value })}
@@ -214,11 +214,11 @@ const TripInfoForm = ({ mode, tripInfo, setTripInfo }: TripInfoFormProps) => {
 
             <section>
                 <div css={titleStyle}>
-                    <h2>{TRIP_FORM.HASHTAG}</h2>
+                    <h2>{FORM.TITLE.HASHTAG}</h2>
                     <p css={baseDescriptionStyle}>최대 3개까지 선택할 수 있습니다</p>
                 </div>
                 <div css={hashtagGroup}>
-                    {HASHTAG_MENU.map((tag) => (
+                    {FORM.HASHTAG_MENU.map((tag) => (
                         <button
                             key={tag}
                             css={[buttonBaseStyle, hashtags.includes(tag) ? selectedButtonStyle : defaultButtonStyle]}

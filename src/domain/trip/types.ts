@@ -8,7 +8,7 @@ export interface Trip {
     imagesDate?: string[];
     mediaFilesDates?: string[];
     userNickname?: string;
-    ownerNickname: string;
+    ownerNickname?: string;
     sharedUserNicknames?: string[];
 }
 

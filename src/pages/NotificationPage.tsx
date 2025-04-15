@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { BellOff } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { shareAPI } from '@/api';
+import { notifiactionAPI } from '@/api/notification';
 import Header from '@/components/common/Header';
 import NotificationItem from '@/components/features/notification/NotificationItem';
 import { ROUTES } from '@/constants/paths';
@@ -19,7 +19,7 @@ const NotificationPage = () => {
 
     useEffect(() => {
         const getSharedTrips = async () => {
-            const result = await shareAPI.getNotifications(userId || '');
+            const result = await notifiactionAPI.getNotifications(userId || '');
             const notifications = result.data;
             setNotifications(notifications);
         };

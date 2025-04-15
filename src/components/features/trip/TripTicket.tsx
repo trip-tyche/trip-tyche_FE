@@ -10,7 +10,7 @@ import Spinner from '@/components/common/Spinner';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import InputModal from '@/components/features/guide/InputModal';
 import { COLORS } from '@/constants/theme';
-import { TICKET } from '@/constants/trips';
+import { TICKET } from '@/constants/trip';
 import { useTripShare } from '@/domain/share/hooks/useTripShare';
 import { Trip } from '@/domain/trip/types';
 import { useTicketHandler } from '@/hooks/useTicketHandler';

@@ -1,92 +1,52 @@
 import { useEffect, useState } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { tripAPI } from '@/api';
 import { ROUTES } from '@/constants/paths';
-import { useTripTicketInfo } from '@/hooks/queries/useTrip';
+import { Trip } from '@/domain/trip/types';
 import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
-import useUserDataStore from '@/stores/useUserDataStore';
 import { FormMode } from '@/types/common';
-import { Trip } from '@/domain/trip/types';
+import { validateFormComplete } from '@/utils/validate';
 
-export const useTripInfoForm = (mode: FormMode) => {
-    const initialState = {
-        tripTitle: '',
-        country: '',
-        startDate: '',
-        endDate: '',
-        hashtags: [],
-        ownerNickname: '',
-        mediaFilesDates: [],
-    };
-
-    const queryClient = useQueryClient();
-
-    const [tripInfo, setTripInfo] =
-        // useState<Omit<Trip, 'tripKey' | 'ownerNickname' | 'sharedUserNicknames'>>(initialState);
-        useState<Trip>(initialState);
-    const [isUploading, setIsUploading] = useState(false);
+export const useTripInfoForm = (mode: FormMode, form: Trip) => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [isFormComplete, setIsFormComplete] = useState(false);
-
-    const uploadStatus = useUploadStore((state) => state.uploadStatus);
-    const waitForCompletion = useUploadStore((state) => state.waitForCompletion);
-    const setIsTripInfoEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
+    const { uploadStatus, waitForCompletion } = useUploadStore();
     const showToast = useToastStore((state) => state.showToast);
 
-    const { tripKey } = useParams();
     const navigate = useNavigate();
-    const { state } = useLocation();
+    const { tripKey } = useParams();
 
+    const queryClient = useQueryClient();
+    const isEditing = mode === 'edit';
+
+    // 여행 정보 입력할 때마다 모든 값이 입력되었는지 체크
     useEffect(() => {
-        if (mode !== 'edit') {
-            setTripInfo(() => {
-                return {
-                    ...tripInfo,
-                    // startDate: state[0],
-                    // endDate: state[state.length - 1],
-                    mediaFilesDates: state,
-                };
-            });
-        }
-    }, [state]);
-
-    const { data: tripInfoData, isLoading } = useTripTicketInfo(tripKey as string, !!tripKey && mode === 'edit');
-
-    useEffect(() => {
-        const { tripTitle, country, startDate, endDate, hashtags } = tripInfo;
-        if (hashtags.length > 0 && tripTitle && country && startDate && endDate) {
+        if (validateFormComplete(form)) {
             setIsFormComplete(true);
             return;
         }
         setIsFormComplete(false);
-    }, [tripInfo]);
+    }, [form]);
 
-    useEffect(() => {
-        if (mode === 'edit' && tripInfoData) {
-            const { tripKey: _, ...rest } = tripInfoData;
-            setTripInfo(rest);
-        }
-    }, [tripInfoData, mode, showToast]);
-
-    const handleTripInfoSubmit = async () => {
-        if (!tripKey) {
+    // 여행 폼 제출 함수
+    const submitTripInfo = async () => {
+        if (!tripKey || !form) {
             return;
         }
 
-        if (mode === 'create') {
-            await tripAPI.updateTripTicketInfo(tripKey, tripInfo);
+        if (!isEditing) {
+            await tripAPI.updateTripTicketInfo(tripKey, form);
             await tripAPI.finalizeTripTicekt(tripKey);
 
-            setIsUploading(true);
+            setIsSubmitting(true);
             await waitForCompletion();
-            setIsUploading(false);
+            setIsSubmitting(false);
 
-            localStorage.removeItem('image-date');
             queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
-
             navigate(ROUTES.PATH.TRIPS.ROOT);
             showToast(
                 uploadStatus === 'error'
@@ -95,7 +55,7 @@ export const useTripInfoForm = (mode: FormMode) => {
             );
         } else {
             try {
-                await tripAPI.updateTripTicketInfo(tripKey, tripInfo);
+                await tripAPI.updateTripTicketInfo(tripKey, form);
                 queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
                 queryClient.invalidateQueries({ queryKey: ['ticket-info'] });
 
@@ -104,19 +64,10 @@ export const useTripInfoForm = (mode: FormMode) => {
                 showToast('여행 정보 수정에 실패했습니다. 다시 시도해 주세요.');
             } finally {
                 navigate(ROUTES.PATH.TRIPS.ROOT);
-                setIsTripInfoEditing(false);
+                // setIsTripInfoEditing(false);
             }
         }
     };
 
-    const navigateBeforePage = () => {
-        if (mode === 'create') {
-            navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripKey!)}`);
-        } else {
-            setIsTripInfoEditing(false);
-            navigate(ROUTES.PATH.TRIPS.ROOT);
-        }
-    };
-
-    return { tripInfo, setTripInfo, isLoading, isUploading, isFormComplete, handleTripInfoSubmit, navigateBeforePage };
+    return { isSubmitting, isFormComplete, submitTripInfo };
 };

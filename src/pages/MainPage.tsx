@@ -13,7 +13,7 @@ import IntroTicket from '@/components/features/trip/IntroTicket';
 import NickNameForm from '@/components/features/user/NickNameForm';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
-import { WELCOME_TICKET_DATA } from '@/constants/trips';
+import { WELCOME_TICKET_DATA } from '@/constants/trip';
 import webSocketService from '@/services/webSocketService';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserStore from '@/stores/useUserStore';

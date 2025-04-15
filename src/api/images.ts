@@ -4,8 +4,8 @@ import { apiClient } from '@/api/client';
 import { API_ENDPOINTS } from '@/api/constants';
 import { ApiResponse, Result } from '@/api/types';
 import { PresignedUrlRequest, PresignedUrlResponse } from '@/domain/media/image';
-import { GpsCoordinates } from '@/types/location';
 import { MediaFileMetaData, UnlocatedMediaFileModel } from '@/domain/media/types';
+import { GpsCoordinates } from '@/types/location';
 
 export const tripImageAPI = {
     // 핀포인트 슬라이드

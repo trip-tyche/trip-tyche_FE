@@ -5,6 +5,7 @@ import { TicketsPlane } from 'lucide-react';
 import { GoKebabHorizontal } from 'react-icons/go';
 
 import { shareAPI } from '@/api';
+import { notifiactionAPI } from '@/api/notification';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
@@ -29,7 +30,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
 
     const handleDetailShow = async () => {
         if (notificationInfo.status === 'UNREAD') {
-            await shareAPI.updateNotificationStatus(String(notificationInfo.notificationId));
+            await notifiactionAPI.updateNotificationStatus(String(notificationInfo.notificationId));
         }
 
         if (notificationInfo.referenceId) {
@@ -71,7 +72,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
 
     const handleNotificationRemove = async () => {
         const deletedNotification = [notificationInfo.notificationId];
-        const response = await shareAPI.deleteNotification(deletedNotification);
+        const response = await notifiactionAPI.deleteNotification(deletedNotification);
 
         if (response.success) {
             showToast('알림이 삭제되었습니다');
