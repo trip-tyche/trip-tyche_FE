@@ -30,7 +30,9 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const showToast = useToastStore((state) => state.showToast);
 
-    const { data: shareDetailResult, isPending } = useShareDetail(notificationInfo.referenceId);
+    const { notificationId, referenceId, message, status, senderNickname, createdAt } = notificationInfo;
+
+    const { data: shareDetailResult, isPending } = useShareDetail(referenceId);
     const { mutateAsync: notificationMutateAsync } = useNotificationStatus();
     const { mutateAsync: shareMutateAsync } = useShareStatus();
 
@@ -41,16 +43,16 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
     }
 
     const showSharedTripDetail = async () => {
-        const isRead = notificationInfo.status === 'READ';
+        const isRead = status === 'READ';
         if (!isRead) {
-            const result = await notificationMutateAsync(notificationInfo.referenceId);
+            const result = await notificationMutateAsync(referenceId);
             if (!result.success) throw Error(result.error);
         }
         setIsDetailOpen(true);
     };
 
     const deleteNotification = async () => {
-        const deletedNotification = [notificationInfo.notificationId];
+        const deletedNotification = [notificationId];
         const response = await notifiactionAPI.deleteNotification(deletedNotification);
 
         if (response.success) {
@@ -60,7 +62,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
     };
 
     const handleShareStatusChange = async (status: ShareStatus) => {
-        const result = await shareMutateAsync({ shareId: notificationInfo.referenceId, status });
+        const result = await shareMutateAsync({ shareId: referenceId, status });
 
         const approve = status === 'APPROVED';
         showToast(result.success ? (approve ? '여행 메이트가 되었어요! 🎉' : '다음에 함께 여행해요 ✈️') : result.error);
@@ -72,30 +74,26 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
         setIsDeleteModalOpen(true);
     };
 
-    const isRead = notificationInfo.status === 'READ';
+    const isRead = status === 'READ';
     const sharedTripInfo = shareDetailResult?.data;
 
     return (
         <>
             {isPending && <Spinner />}
-            <div
-                key={notificationInfo.notificationId}
-                css={[container, getNotificationStyle(isRead)]}
-                onClick={showSharedTripDetail}
-            >
+            <div key={notificationId} css={[container, getNotificationStyle(isRead)]} onClick={showSharedTripDetail}>
                 <div css={info}>
                     <div css={notification}>
                         <div css={ticketIcon}>
                             <TicketsPlane size={18} color={COLORS.PRIMARY} />
                         </div>
-                        <p css={sender}>{notificationInfo.senderNickname}</p>
-                        <p css={createdAt}>{formatDateTime(notificationInfo.createdAt, false)}</p>
+                        <p css={sender}>{senderNickname}</p>
+                        <p css={createdAt}>{formatDateTime(createdAt, false)}</p>
                     </div>
                     <div css={removeIcon} onClick={handleDeleteButtonClick}>
                         <GoKebabHorizontal />
                     </div>
                 </div>
-                {getMessageByType(notificationInfo.message)}
+                {getMessageByType(message)}
             </div>
 
             {isDeleteModalOpen && (
