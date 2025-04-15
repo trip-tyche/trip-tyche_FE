@@ -59,7 +59,7 @@ const MainPage = () => {
         const result = await toResult(() => tripAPI.createNewTrip());
         if (result.success) {
             const { tripKey } = result.data;
-            navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripKey!)}`, { state: 'first-ticket' });
+            navigate(`${ROUTES.PATH.TRIP.MANAGEMENT.UPLOAD(tripKey!)}`, { state: 'first-ticket' });
         } else {
             showToast(result.error);
         }
@@ -106,7 +106,7 @@ const MainPage = () => {
                             text={userInfo?.tripsCount ? '여행 티켓 보러가기' : '새로운 여행 등록하기'}
                             onClick={
                                 userInfo.recentTrip
-                                    ? () => navigate(ROUTES.PATH.TRIPS.ROOT)
+                                    ? () => navigate(ROUTES.PATH.TRIP.ROOT)
                                     : handleCreateTripButtonClick
                             }
                         />

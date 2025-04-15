@@ -60,7 +60,7 @@ const TripInfoFormPage = () => {
                 title={ROUTES.PATH_TITLE.TRIPS.NEW.INFO}
                 isBackButton
                 onBack={() =>
-                    navigate(isEditing ? ROUTES.PATH.TRIPS.ROOT : `${ROUTES.PATH.TRIPS.NEW.IMAGES(tripKey!)}`)
+                    navigate(isEditing ? ROUTES.PATH.TRIP.ROOT : `${ROUTES.PATH.TRIP.MANAGEMENT.UPLOAD(tripKey!)}`)
                 }
             />
             <main css={mainStyle}>

@@ -24,8 +24,8 @@ export const useTicketHandler = (
     const { mutateAsync, isPending } = useTripDelete();
 
     const handler = {
-        edit: () => navigate(`${ROUTES.PATH.TRIPS.EDIT(tripKey!)}`),
-        images: () => navigate(`${ROUTES.PATH.TRIPS.IMAGES(tripKey!)}`),
+        edit: () => navigate(`${ROUTES.PATH.TRIP.MANAGEMENT.EDIT(tripKey!)}`),
+        images: () => navigate(`${ROUTES.PATH.TRIP.MANAGEMENT.IMAGES(tripKey!)}`),
         delete: () => {
             setIsModalOpen(true);
         },

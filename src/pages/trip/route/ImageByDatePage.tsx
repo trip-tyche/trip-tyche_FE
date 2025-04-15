@@ -17,7 +17,7 @@ import useTimelineStore from '@/stores/useTimelineStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 
-const TimelineDatePage = () => {
+const ImageByDatePage = () => {
     const [currentDate, setCurrentDate] = useState('');
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [datesWithImages, setDatesWithImages] = useState<string[]>([]);
@@ -54,7 +54,7 @@ const TimelineDatePage = () => {
 
     const handleArrowButtonClick = useCallback(() => {
         setIsTransitioning(true);
-        navigate(`${ROUTES.PATH.TRIPS.TIMELINE.MAP(tripKey as string)}`);
+        navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`);
 
         setLastPinPointId(pinPointId);
         localStorage.setItem('lastPinPointId', pinPointId);
@@ -230,4 +230,4 @@ const scrollHintText = css`
     margin: 0;
 `;
 
-export default TimelineDatePage;
+export default ImageByDatePage;

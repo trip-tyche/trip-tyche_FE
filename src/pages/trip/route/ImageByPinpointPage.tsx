@@ -13,7 +13,7 @@ import useTimelineStore from '@/stores/useTimelineStore';
 import theme from '@/styles/theme';
 import { CarouselState } from '@/types/common';
 
-const TimelinePinpointPage = () => {
+const ImageByPinpointPage = () => {
     const [carouselImages, setCarouselImages] = useState<ImageCarouselModel[]>([]);
     const [carouselState, setCarouselState] = useState<CarouselState>('auto');
 
@@ -45,7 +45,7 @@ const TimelinePinpointPage = () => {
 
     const navigateBeforePage = () => {
         if (typeof tripKey === 'string') {
-            navigate(`${ROUTES.PATH.TRIPS.TIMELINE.MAP(tripKey)}`);
+            navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey)}`);
         }
     };
 
@@ -71,4 +71,4 @@ const iconStyle = css`
     z-index: 1000;
 `;
 
-export default TimelinePinpointPage;
+export default ImageByPinpointPage;

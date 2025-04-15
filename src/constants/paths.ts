@@ -4,28 +4,27 @@ type PinPointId = number;
 
 export const ROUTES = {
     PATH: {
-        MAIN: '/',
         ONBOARDING: '/onboarding',
-        AUTH: {
-            LOGIN: '/login',
-            LOGIN_REDIRECT: '/login/redirect',
-        },
+        LOGIN: '/login',
+        MAIN: '/',
         SETTING: '/setting',
         NOTIFICATION: (userId: UserId) => `notification/${userId}`,
-        TRIPS: {
-            ROOT: '/trips',
-            IMAGES: (tripKey: TripKey) => `/trips/${tripKey}/images`,
-            NEW: {
-                IMAGES: (tripKey: TripKey) => `/trips/${tripKey}/new/images`,
-                LOCATIONS: (tripKey: TripKey) => `/trips/${tripKey}/new/locations`,
-                INFO: (tripKey: TripKey) => `/trips/${tripKey}/new/info`,
+        TRIP: {
+            ROOT: '/trip',
+            MANAGEMENT: {
+                IMAGES: (tripKey: TripKey) => `/trip/${tripKey}/images`,
+                UPLOAD: (tripKey: TripKey) => `/trip/${tripKey}/images/upload`,
+                INFO: (tripKey: TripKey) => `/trip/${tripKey}/info`,
+                EDIT: (tripKey: TripKey) => `/trip/${tripKey}/edit`,
             },
-            EDIT: (tripKey: TripKey) => `/trips/${tripKey}/edit`,
-            TIMELINE: {
-                MAP: (tripKey: TripKey) => `/trips/${tripKey}/timeline/map`,
-                PINPOINT: (tripKey: TripKey, pinPointId: PinPointId) =>
-                    `/trips/${tripKey}/timeline/pinpoint/${pinPointId}`,
-                DATE: (tripKey: TripKey) => `/trips/${tripKey}/timeline/date`,
+            ROUTE: {
+                ROOT: (tripKey: TripKey) => `/trip/${tripKey}/route`,
+
+                IMAGE: {
+                    BY_PINPOINT: (tripKey: TripKey, pinPointId: PinPointId) =>
+                        `/trip/${tripKey}/by-pinpoint/${pinPointId}`,
+                    BY_DATE: (tripKey: TripKey, date: string) => `/trip/${tripKey}/by-date/${date}`,
+                },
             },
         },
     },

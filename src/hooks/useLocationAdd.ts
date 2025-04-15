@@ -36,7 +36,7 @@ export const useLocationAdd = () => {
 
         const unlocatedImages = await mediaAPI.fetchUnlocatedImages(tripKey);
         if (!unlocatedImages) {
-            navigate(`${ROUTES.PATH.TRIPS.ROOT}`);
+            navigate(`${ROUTES.PATH.TRIP.ROOT}`);
             return;
         }
         setDisplayedImages(unlocatedImages);

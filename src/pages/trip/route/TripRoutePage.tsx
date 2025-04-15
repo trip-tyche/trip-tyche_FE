@@ -21,7 +21,7 @@ import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { LatLng, Map } from '@/types/maps';
 
-const TimelineMapPage = () => {
+const TripRoutePage = () => {
     const [tripTitle, setTripTitle] = useState();
     const [pinPointsInfo, setPinPointsInfo] = useState<PinPointModel[]>([]);
     const [tripImages, setTripImages] = useState<MediaFileModel[]>([]);
@@ -78,7 +78,7 @@ const TimelineMapPage = () => {
             setStartDate(startDate);
             if (pinPoints.length === 0) {
                 showToast('여행에 등록된 사진이 없습니다.');
-                navigate(ROUTES.PATH.TRIPS.ROOT);
+                navigate(ROUTES.PATH.TRIP.ROOT);
                 return;
             }
 
@@ -221,7 +221,7 @@ const TimelineMapPage = () => {
 
     const handleImageByDateButtonClick = useCallback(() => {
         const pinPointId = String(pinPointsInfo[currentPinPointIndex].pinPointId);
-        navigate(`${ROUTES.PATH.TRIPS.TIMELINE.DATE(tripKey as string)}`, {
+        navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(tripKey as string, startDate)}`, {
             state: { startDate, imagesByDates, pinPointId },
         });
     }, [tripKey, startDate, imagesByDates, navigate, pinPointsInfo, currentPinPointIndex]);
@@ -307,7 +307,7 @@ const TimelineMapPage = () => {
 
     if (loadError) {
         showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
-        navigate(ROUTES.PATH.TRIPS.ROOT);
+        navigate(ROUTES.PATH.TRIP.ROOT);
         return;
     }
 
@@ -359,7 +359,7 @@ const TimelineMapPage = () => {
                                         alt='포토카드 이미지'
                                         onClick={() =>
                                             navigate(
-                                                `${ROUTES.PATH.TRIPS.TIMELINE.PINPOINT(tripKey as string, point.pinPointId)}`,
+                                                `${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_PINPOINT(tripKey as string, point.pinPointId)}`,
                                             )
                                         }
                                     />
@@ -448,7 +448,7 @@ const TimelineMapPage = () => {
 
     return (
         <div css={pageContainer}>
-            <Header title={tripTitle || ''} isBackButton onBack={() => navigate(ROUTES.PATH.TRIPS.ROOT)} />
+            <Header title={tripTitle || ''} isBackButton onBack={() => navigate(ROUTES.PATH.TRIP.ROOT)} />
             <div css={mapWrapper}>
                 <GoogleMap
                     zoom={DEFAULT_ZOOM_SCALE.TIMELINE}
@@ -544,4 +544,4 @@ const photoCardStyle = (isCurrentPin: boolean) => css`
     pointer-events: ${isCurrentPin ? 'auto' : 'none'};
 `;
 
-export default TimelineMapPage;
+export default TripRoutePage;

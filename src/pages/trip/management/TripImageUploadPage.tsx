@@ -52,8 +52,8 @@ const TripImageUploadPage = () => {
             isFirstTicket
                 ? ROUTES.PATH.MAIN
                 : isTripInfoEditing
-                  ? ROUTES.PATH.TRIPS.IMAGES(tripKey!)
-                  : ROUTES.PATH.TRIPS.ROOT,
+                  ? ROUTES.PATH.TRIP.MANAGEMENT.IMAGES(tripKey!)
+                  : ROUTES.PATH.TRIP.ROOT,
         );
     };
 
@@ -68,7 +68,7 @@ const TripImageUploadPage = () => {
                 await waitForCompletion();
                 setIsUploading(true);
 
-                navigate(`${ROUTES.PATH.TRIPS.ROOT}`);
+                navigate(`${ROUTES.PATH.TRIP.ROOT}`);
                 showToast(`${imageFile.length}장의 사진이 등록되었습니다.`);
                 setIsTripInfoEditing(false);
                 return;
@@ -79,7 +79,7 @@ const TripImageUploadPage = () => {
                 (dateA, dateB) => new Date(dateA).getTime() - new Date(dateB).getTime(),
             );
 
-            navigate(`${ROUTES.PATH.TRIPS.NEW.INFO(tripKey!)}`, { state: uniqueDates });
+            navigate(`${ROUTES.PATH.TRIP.MANAGEMENT.INFO(tripKey!)}`, { state: uniqueDates });
             return;
         } else {
             setIsAlertModalModalOpen(false);

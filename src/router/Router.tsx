@@ -8,29 +8,25 @@ import { useAuthCheck } from '@/domain/user/hooks/useAuthCheck';
 import RootLayout from '@/layouts/RootLayout';
 import NotificationPage from '@/pages/NotificationPage';
 
-// 로딩 컴포넌트
 const LoadingSpinner = () => <Spinner loadingText='불러오는 중...' />;
 
-// 지연 로딩할 컴포넌트들
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
 const MainPage = lazy(() => import('@/pages/MainPage'));
 const PageNotFound = lazy(() => import('@/pages/PageNotFound'));
 const SettingPage = lazy(() => import('@/pages/SettingPage'));
 
-// 여행 관련 페이지들을 그룹화하여 지연 로딩
 const TripPages = {
-    TripListPage: lazy(() => import('@/pages/trips/TripListPage')),
-    TripImageManagePage: lazy(() => import('@/pages/trips/TripImageManagePage')),
-    TripImageUploadPage: lazy(() => import('@/pages/trips/TripImageUploadPage')),
-    TripLocationAddPage: lazy(() => import('@/pages/trips/TripLocationAddPage')),
-    TripInfoFormPage: lazy(() => import('@/pages/trips/TripInfoFormPage')),
-};
-
-// 타임라인 관련 페이지들을 그룹화하여 지연 로딩
-const TimelinePages = {
-    TimelineMapPage: lazy(() => import('@/pages/trips/timeline/TimelineMapPage')),
-    TimelinePinpointPage: lazy(() => import('@/pages/trips/timeline/TimelinePinpointPage')),
-    TimelineDatePage: lazy(() => import('@/pages/trips/timeline/TimelineDatePage')),
+    TripListPage: lazy(() => import('@/pages/trip/TripListPage')),
+    Management: {
+        TripImageManagePage: lazy(() => import('@/pages/trip/management/TripImageManagePage')),
+        TripImageUploadPage: lazy(() => import('@/pages/trip/management/TripImageUploadPage')),
+        TripInfoFormPage: lazy(() => import('@/pages/trip/management/TripInfoFormPage')),
+    },
+    Route: {
+        TripRoutePage: lazy(() => import('@/pages/trip/route/TripRoutePage')),
+        ImageByPinpointPage: lazy(() => import('@/pages/trip/route/ImageByPinpointPage')),
+        ImageByDatePage: lazy(() => import('@/pages/trip/route/ImageByDatePage')),
+    },
 };
 
 const ProtectedRoute = () => {
@@ -58,7 +54,7 @@ const router = createBrowserRouter([
         ),
         children: [
             {
-                path: ROUTES.PATH.AUTH.LOGIN,
+                path: ROUTES.PATH.LOGIN,
                 element: (
                     <Suspense fallback={<LoadingSpinner />}>
                         <LoginPage />
@@ -80,54 +76,42 @@ const router = createBrowserRouter([
                         path: `notification/:userId`,
                         element: <NotificationPage />,
                     },
+
                     {
-                        path: ROUTES.PATH.TRIPS.ROOT,
+                        path: ROUTES.PATH.TRIP.ROOT,
                         element: <TripPages.TripListPage />,
                     },
                     {
-                        path: 'trips/:tripKey',
+                        path: 'trip/:tripKey',
                         children: [
                             {
                                 path: 'images',
-                                element: <TripPages.TripImageManagePage />,
+                                element: <TripPages.Management.TripImageManagePage />,
                             },
                             {
-                                path: 'new',
-                                children: [
-                                    {
-                                        path: 'images',
-                                        element: <TripPages.TripImageUploadPage />,
-                                    },
-                                    {
-                                        path: 'locations',
-                                        element: <TripPages.TripLocationAddPage />,
-                                    },
-                                    {
-                                        path: 'info',
-                                        element: <TripPages.TripInfoFormPage />,
-                                    },
-                                ],
+                                path: 'images/upload',
+                                element: <TripPages.Management.TripImageUploadPage />,
+                            },
+                            {
+                                path: 'info',
+                                element: <TripPages.Management.TripInfoFormPage />,
                             },
                             {
                                 path: 'edit',
-                                element: <TripPages.TripInfoFormPage />,
+                                element: <TripPages.Management.TripInfoFormPage />,
+                            },
+
+                            {
+                                path: 'route',
+                                element: <TripPages.Route.TripRoutePage />,
                             },
                             {
-                                path: 'timeline',
-                                children: [
-                                    {
-                                        path: 'map',
-                                        element: <TimelinePages.TimelineMapPage />,
-                                    },
-                                    {
-                                        path: 'pinpoint/:pinPointId',
-                                        element: <TimelinePages.TimelinePinpointPage />,
-                                    },
-                                    {
-                                        path: 'date',
-                                        element: <TimelinePages.TimelineDatePage />,
-                                    },
-                                ],
+                                path: 'by-pinpoint/:pinPointId',
+                                element: <TripPages.Route.ImageByPinpointPage />,
+                            },
+                            {
+                                path: 'by-date/:date',
+                                element: <TripPages.Route.ImageByDatePage />,
                             },
                         ],
                     },

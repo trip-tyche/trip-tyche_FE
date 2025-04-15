@@ -8,8 +8,8 @@ import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import ImageGrid from '@/components/features/image/ImageGrid';
 import ImageSizeRadio from '@/components/features/image/ImageSizeRadio';
 import { ROUTES } from '@/constants/paths';
-import theme from '@/styles/theme';
 import { UnlocatedMediaFile, UnlocatedMediaFileModel } from '@/domain/media/types';
+import theme from '@/styles/theme';
 import { formatToKorean } from '@/utils/date';
 
 interface ImageListByDateProps {
@@ -47,7 +47,7 @@ const ImageListByDate = ({
     };
 
     const navigateToTripList = () => {
-        navigate(`${ROUTES.PATH.TRIPS.ROOT}`);
+        navigate(`${ROUTES.PATH.TRIP.ROOT}`);
     };
 
     return (

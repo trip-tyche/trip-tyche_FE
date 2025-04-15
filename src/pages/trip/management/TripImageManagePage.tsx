@@ -193,7 +193,7 @@ const TripImageManagePage = () => {
         />
     ) : (
         <div css={container}>
-            <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.TRIPS.ROOT)} />
+            <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.TRIP.ROOT)} />
             <main css={mainStyle}>
                 {imageGroupByDate?.map((image) => (
                     <Fragment key={image.recordDate}>
@@ -262,7 +262,7 @@ const TripImageManagePage = () => {
                         <Button text='사진 선택' variant='white' onClick={() => setIsSelectionMode(true)} />
                         <Button
                             text='새로운 사진 등록하기'
-                            onClick={() => navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripKey!)}`)}
+                            onClick={() => navigate(`${ROUTES.PATH.TRIP.MANAGEMENT.UPLOAD(tripKey!)}`)}
                         />
                     </>
                 )}

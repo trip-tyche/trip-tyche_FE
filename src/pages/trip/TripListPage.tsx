@@ -38,7 +38,7 @@ const TripListPage = () => {
         const result = await toResult(() => tripAPI.createNewTrip());
         if (result.success) {
             const { tripKey } = result.data;
-            navigate(`${ROUTES.PATH.TRIPS.NEW.IMAGES(tripKey)}`);
+            navigate(`${ROUTES.PATH.TRIP.MANAGEMENT.UPLOAD(tripKey!)}`);
         } else {
             showToast(result.error);
         }
