@@ -11,22 +11,14 @@ export const tripAPI = {
     // 새 여행 등록을 위한 tripKey 생성
     createNewTrip: async (): Promise<ApiResponse<{ tripKey: string }>> => await apiClient.post(`/v1/trips`),
     // 기존 여행 티켓 정보 수정
-    updateTripTicketInfo: async (tripKey: string, tripInfo: Trip) => {
-        const response = await apiClient.put(`/v1/trips/${tripKey}`, tripInfo);
-
-        return response;
-    },
+    updateTripTicketInfo: async (tripKey: string, tripInfo: Trip): Promise<ApiResponse<string>> =>
+        await apiClient.put(`/v1/trips/${tripKey}`, tripInfo),
     // 여행 티켓 최종 등록
-    finalizeTripTicekt: async (tripKey: string) => {
-        await apiClient.patch(`/v1/trips/${tripKey}/finalize`);
-    },
+    finalizeTripTicekt: async (tripKey: string): Promise<ApiResponse<string>> =>
+        await apiClient.patch(`/v1/trips/${tripKey}/finalize`),
     // 여행 티켓 삭제
-    deleteTripTicket: async (tripKey: string) => {
-        const response = await apiClient.delete(`/v1/trips/${tripKey}`);
-
-        return response;
-    },
-
+    deleteTripTicket: async (tripKey: string): Promise<ApiResponse<string>> =>
+        await apiClient.delete(`/v1/trips/${tripKey}`),
     // 여행 타임라인 및 지도 표시용 정보 조회
     fetchTripTimeline: async (tripKey: string) => {
         const response = await apiClient.get(`/v1/trips/${tripKey}/info`);

@@ -16,7 +16,7 @@ import LocationAddMap from '@/components/features/trip/LocationAddMap';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { MediaFileMetaData, MediaFileWithDate } from '@/domain/media/types';
-import { useImagesDelete } from '@/hooks/mutations/useTrip';
+import { useMediaDelete } from '@/hooks/mutations/useTrip';
 import { useTripImages } from '@/hooks/queries/useImage';
 import { useToastStore } from '@/stores/useToastStore';
 import { Location } from '@/types/location';
@@ -37,7 +37,7 @@ const TripImageManagePage = () => {
 
     const { showToast } = useToastStore.getState();
 
-    const { mutate } = useImagesDelete();
+    const { mutate } = useMediaDelete();
 
     const navigate = useNavigate();
     const { tripKey } = useParams();

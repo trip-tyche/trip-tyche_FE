@@ -1,49 +1,49 @@
 import { useState } from 'react';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
 import { ROUTES } from '@/constants/paths';
 import { useTripDelete } from '@/hooks/mutations/useTrip';
-import { useToastStore } from '@/stores/useToastStore';
-import useUserDataStore from '@/stores/useUserDataStore';
 
-export const useTicketHandler = (tripKey: string) => {
+export const useTicketHandler = (
+    tripKey: string,
+    callback?: {
+        onSuccess?: (message: string) => void;
+        onError?: (message: string) => void;
+    },
+) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const setIsTripInfoEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
-    const deleteTripTicket = useUserDataStore((state) => state.deleteTripTicket);
-    const showToast = useToastStore((state) => state.showToast);
+    const { onSuccess, onError } = callback || {};
 
     const navigate = useNavigate();
-    const { mutate, isPending } = useTripDelete();
 
-    const handleImageUpload = () => {
-        setIsTripInfoEditing(true);
-        navigate(`${ROUTES.PATH.TRIPS.IMAGES(tripKey)}`);
-    };
+    const queryClient = useQueryClient();
 
-    const handleTripEdit = () => {
-        setIsTripInfoEditing(true);
-        navigate(`${ROUTES.PATH.TRIPS.EDIT(tripKey)}`);
-    };
+    const { mutateAsync, isPending } = useTripDelete();
 
-    const handleTripDelete = () => {
-        setIsModalOpen(true);
+    const handler = {
+        edit: () => navigate(`${ROUTES.PATH.TRIPS.EDIT(tripKey!)}`),
+        images: () => navigate(`${ROUTES.PATH.TRIPS.IMAGES(tripKey!)}`),
+        delete: () => {
+            setIsModalOpen(true);
+        },
+        // share: () => {
+        //     setIsShareModalOpen(true);
+        // },
     };
 
     const deleteTrip = async () => {
-        try {
-            mutate(tripKey, {
-                onSuccess: () => {
-                    deleteTripTicket();
-                    showToast('여행이 삭제되었습니다.');
-                },
-            });
-        } catch (error) {
-            showToast('여행 삭제에 실패했습니다. 다시 시도해주세요.');
-        } finally {
+        const result = await mutateAsync(tripKey);
+        if (!result.success) {
+            onError?.(result.error);
             setIsModalOpen(false);
+            return;
         }
+        onSuccess?.(result.data);
+        setIsModalOpen(false);
+        queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
     };
 
     const closeModal = () => {
@@ -53,9 +53,7 @@ export const useTicketHandler = (tripKey: string) => {
     return {
         isModalOpen,
         isPending,
-        handleImageUpload,
-        handleTripEdit,
-        handleTripDelete,
+        handler,
         deleteTrip,
         closeModal,
     };

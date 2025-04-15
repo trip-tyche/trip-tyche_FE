@@ -29,7 +29,7 @@ const TripInfoFormPage = () => {
     const isEditing = pathname.includes('edit');
 
     const { data: beforeTripInfo, isLoading } = useTripInfo(tripKey!, isEditing);
-    const { isSubmitting, isFormComplete, submitTripInfo } = useTripInfoForm(isEditing, tripInfo);
+    const { isImageSubmitting, isSubmitting, isFormComplete, submitTripInfo } = useTripInfoForm(isEditing, tripInfo);
 
     useEffect(() => {
         if (isEditing) {
@@ -50,7 +50,7 @@ const TripInfoFormPage = () => {
         }));
     }, [beforeTripInfo]);
 
-    if (isLoading) {
+    if (isLoading || isSubmitting) {
         return <Spinner />;
     }
 
@@ -71,7 +71,7 @@ const TripInfoFormPage = () => {
                     disabled={!isFormComplete}
                 />
             </main>
-            {isSubmitting && <UploadingSpinner />}
+            {isImageSubmitting && <UploadingSpinner />}
         </div>
     );
 };

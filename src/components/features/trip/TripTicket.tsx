@@ -33,18 +33,12 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
 
     const userInfo = useUserStore((state) => state.userInfo);
 
-    const { isModalOpen, isPending, handleImageUpload, handleTripEdit, handleTripDelete, deleteTrip, closeModal } =
-        useTicketHandler(tripKey as string);
-    const {
-        isAnimating,
-        // isUnlocatedImageModalOpen,
-        // unlocatedImagesCount,
-        // confirmUnlocatedImageModal,
-        // closeUnlocatedImageModal,
-        handleCardClick,
-    } = useTicketNavigation(tripKey as string);
-
     const { isSharing, error, shareTrip, clearError } = useTripShare(inputValue, tripKey!, onShareSuccess);
+    const { isModalOpen, isPending, handler, deleteTrip, closeModal } = useTicketHandler(tripKey!, {
+        onSuccess: (message) => showToast(message),
+        onError: (message) => showToast(message),
+    });
+    const { isAnimating, handleCardClick } = useTicketNavigation(tripKey!);
 
     function onShareSuccess() {
         setIsShareModalOpen(false);
@@ -109,16 +103,17 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
 
             {isOwner ? (
                 <footer css={buttonGroup}>
-                    <button css={buttonStyle} onClick={handleTripEdit}>
+                    <button css={buttonStyle} onClick={() => handler.edit()}>
                         <FaPencilAlt size={14} /> 티켓 수정
                     </button>
-                    <button css={buttonStyle} onClick={handleImageUpload}>
+                    <button css={buttonStyle} onClick={() => handler.images()}>
                         <ImagePlus size={16} /> 사진 관리
                     </button>
                     <button css={buttonStyle} onClick={() => setIsShareModalOpen(true)}>
                         <Share2 size={16} /> 티켓 공유
                     </button>
-                    <button css={buttonStyle} onClick={handleTripDelete}>
+                    {/* <button css={buttonStyle} onClick={() => handler.delete()}> */}
+                    <button css={buttonStyle} onClick={() => handler.delete()}>
                         <FaTrashAlt size={14} /> 티켓 삭제
                     </button>
                 </footer>
