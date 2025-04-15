@@ -1,5 +1,6 @@
 import { MediaFile } from '@/domain/media/types';
 import { PinPoint } from '@/domain/route/types';
+// import { Trip } from '@/domain/trip/types';
 
 type Success<T> = { success: true; data: T };
 type Error = { success: false; error: string };
@@ -21,3 +22,5 @@ export interface RouteResponse {
     mediaFiles: MediaFile[];
     pinPoints: PinPoint[];
 }
+
+// export interface ShareDetailResponse extends Trip {}

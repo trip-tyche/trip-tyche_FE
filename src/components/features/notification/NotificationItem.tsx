@@ -11,9 +11,11 @@ import Modal from '@/components/common/Modal';
 import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import SharedTicket from '@/components/features/trip/SharedTicket';
 import { COLORS } from '@/constants/theme';
-import { Notification, SharedTripInfo } from '@/domain/notification/types';
+import { Notification } from '@/domain/notification/types';
+import { useShareDetail } from '@/domain/share/hooks/queries';
+import { SharedTripDetail } from '@/domain/share/types';
 import { useToastStore } from '@/stores/useToastStore';
-// import { Notification, SharedTripInfo } from '@/types/notification';
+// import { Notification, SharedTripDetail } from '@/types/notification';
 import { formatDateTime } from '@/utils/date';
 import { getMessageByType, getNotificationStyle } from '@/utils/notification';
 
@@ -22,33 +24,42 @@ interface NotificationProps {
 }
 
 const NotificationItem = ({ notificationInfo }: NotificationProps) => {
-    const [sharedTripInfo, setSharedTripInfo] = useState<SharedTripInfo>();
+    const [sharedTripInfo, setSharedTripInfo] = useState<SharedTripDetail>();
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const showToast = useToastStore((state) => state.showToast);
+    const { data: result } = useShareDetail(notificationInfo.referenceId);
 
     const handleDetailShow = async () => {
         if (notificationInfo.status === 'UNREAD') {
-            await notifiactionAPI.updateNotificationStatus(String(notificationInfo.notificationId));
+            await notifiactionAPI.updateNotificationStatus(notificationInfo.notificationId);
         }
 
         if (notificationInfo.referenceId) {
-            const response = await shareAPI.getShareDetail(String(notificationInfo.referenceId));
-            const sharedTripInfo = response.data;
+            // const response = await shareAPI.fetchShareDetail(notificationInfo.referenceId);
+            if (result?.success) {
+                const sharedTripInfo = result?.data;
 
-            const tripInfo = {
-                ownerNickname: sharedTripInfo.ownerNickname,
-                status: sharedTripInfo.status,
-                tripTitle: sharedTripInfo.tripTitle,
-                country: sharedTripInfo.country,
-                startDate: sharedTripInfo.startDate,
-                endDate: sharedTripInfo.endDate,
-                hashtags: sharedTripInfo.hashtags.split(','),
-            };
+                // const tripInfo = {
+                //     shareId: sharedTripInfo.shareId,
+                //     ownerNickname: sharedTripInfo.ownerNickname,
+                //     ownerNickname: sharedTripInfo.,
+                //     status: sharedTripInfo.status,
+                //     tripTitle: sharedTripInfo.tripTitle,
+                //     country: sharedTripInfo.country,
+                //     startDate: sharedTripInfo.startDate,
+                //     endDate: sharedTripInfo.endDate,
+                //     hashtags: sharedTripInfo.hashtags.split(','),
+                // };
+                // const tripInfo = {
+                //     ...sharedTripInfo,
+                //     hashtags: sharedTripInfo.hashtags.split(','),
+                // };
 
-            setSharedTripInfo(tripInfo);
-            setIsDetailOpen(true);
+                setSharedTripInfo(sharedTripInfo);
+                setIsDetailOpen(true);
+            }
         }
     };
 
@@ -120,7 +131,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
                     <div css={sharedTripInfoStyle}>
                         <SharedTicket
                             userNickname={sharedTripInfo?.ownerNickname || ''}
-                            trip={sharedTripInfo as SharedTripInfo}
+                            trip={sharedTripInfo as SharedTripDetail}
                         />
                         {sharedTripInfo?.status === 'PENDING' ? (
                             <div css={buttonGroup}>

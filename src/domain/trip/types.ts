@@ -1,5 +1,5 @@
 export interface Trip extends TripInfo {
-    userNickname?: string;
+    // userNickname?: string;
     ownerNickname?: string;
     sharedUserNicknames?: string[];
 }

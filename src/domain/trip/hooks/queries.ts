@@ -24,14 +24,6 @@ export const useTripInfo = (tripKey: string, enabled: boolean) => {
     return useQuery({
         queryKey: ['ticket-info', tripKey],
         queryFn: () => toResult(() => tripAPI.fetchTripTicketInfo(tripKey)),
-        select: (result) => {
-            return result.success
-                ? {
-                      ...result,
-                      data: result.data,
-                  }
-                : result;
-        },
         enabled,
     });
 };

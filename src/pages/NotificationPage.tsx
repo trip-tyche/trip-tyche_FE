@@ -19,7 +19,7 @@ const NotificationPage = () => {
 
     useEffect(() => {
         const getSharedTrips = async () => {
-            const result = await notifiactionAPI.getNotifications(userId || '');
+            const result = await notifiactionAPI.getNotifications(Number(userId));
             const notifications = result.data;
             setNotifications(notifications);
         };

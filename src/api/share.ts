@@ -1,5 +1,6 @@
 import { apiClient } from '@/api/client';
 import { ApiResponse } from '@/api/types';
+import { SharedTripDetail } from '@/domain/share/types';
 
 export const shareAPI = {
     // 다른 사용자에게 여행 공유 요청
@@ -12,11 +13,8 @@ export const shareAPI = {
             recipientId,
         }),
     // 공유 상세 조회
-    getShareDetail: async (shareId: string) => {
-        const response = await apiClient.get(`/v1/shares/${shareId}`);
-
-        return { success: true, data: response.data };
-    },
+    fetchShareDetail: async (shareId: number): Promise<ApiResponse<SharedTripDetail>> =>
+        await apiClient.get(`/v1/shares/${shareId}`),
     // 공유 상태 변경 (수락 / 거절)
     updateShareStatus: async (shareId: string, status: string) => {
         const params = {
