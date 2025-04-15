@@ -87,7 +87,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
                             <TicketsPlane size={18} color={COLORS.PRIMARY} />
                         </div>
                         <p css={sender}>{senderNickname}</p>
-                        <p css={createdAt}>{formatDateTime(createdAt, false)}</p>
+                        <p css={time}>{formatDateTime(createdAt, false)}</p>
                     </div>
                     <div css={removeIcon} onClick={handleDeleteButtonClick}>
                         <GoKebabHorizontal />
@@ -182,7 +182,7 @@ const sender = css`
     font-size: 15px;
 `;
 
-const createdAt = css`
+const time = css`
     display: flex;
     align-items: center;
     font-size: 14px;
