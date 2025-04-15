@@ -11,9 +11,9 @@ import UploadingSpinner from '@/components/features/guide/UploadingSpinner';
 import TripInfoForm from '@/components/features/trip/TripInfoForm';
 import { ROUTES } from '@/constants/paths';
 import { FORM } from '@/constants/trip';
+import { useTripInfo } from '@/domain/trip/hooks/queries';
 import { useTripInfoForm } from '@/domain/trip/hooks/useTripInfoForm';
 import { TripInfo } from '@/domain/trip/types';
-import { useTripInfo } from '@/hooks/queries/useTrip';
 import { useToastStore } from '@/stores/useToastStore';
 
 const TripInfoFormPage = () => {

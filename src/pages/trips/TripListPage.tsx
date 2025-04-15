@@ -13,8 +13,8 @@ import Spinner from '@/components/common/Spinner';
 import TripTicket from '@/components/features/trip/TripTicket';
 import { ROUTES } from '@/constants/paths';
 import { BUTTON } from '@/constants/ui';
+import { useTripTicketList } from '@/domain/trip/hooks/queries';
 import { Trip } from '@/domain/trip/types';
-import { useTripTicketList } from '@/hooks/queries/useTrip';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 

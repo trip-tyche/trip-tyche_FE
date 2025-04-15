@@ -1,3 +1,13 @@
+export interface MediaFile {
+    mediaFileId: number;
+    latitude: number;
+    longitude: number;
+    mediaLink: string;
+    recordDate: string;
+}
+
+//----------------------------------
+
 export interface BaseLocationMedia {
     latitude: number;
     longitude: number;

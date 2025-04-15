@@ -35,10 +35,3 @@ export const useTripInfo = (tripKey: string, enabled: boolean) => {
         enabled,
     });
 };
-
-// export const useTripTimeline = (tripKey: string) => {
-//     return useQuery({
-//         queryKey: ['trip-timeline', tripKey],
-//         queryFn: () => tripAPI.fetchTripTimeline(tripKey),
-//     });
-// };

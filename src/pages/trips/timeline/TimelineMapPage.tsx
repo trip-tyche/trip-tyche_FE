@@ -6,19 +6,20 @@ import { Play, Pause } from 'lucide-react';
 import { BsPersonWalking } from 'react-icons/bs';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { tripAPI } from '@/api';
+import { routeAPI } from '@/api';
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
 import { DEFAULT_ZOOM_SCALE, GOOGLE_MAPS_OPTIONS, MARKER_CLUSTER_OPTIONS, TIMELINE_MAP } from '@/constants/maps/config';
 import { CHARACTER_ICON_CONFIG, POLYLINE_OPTIONS } from '@/constants/maps/styles';
 import { ROUTES } from '@/constants/paths';
+import { BaseLocationMedia, MediaFileModel, PinPointModel } from '@/domain/media/types';
+// import { useTripTimeline } from '@/domain/route/hooks/queries';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import useTimelineStore from '@/stores/useTimelineStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { LatLng, Map } from '@/types/maps';
-import { BaseLocationMedia, MediaFileModel, PinPointModel } from '@/domain/media/types';
 
 const TimelineMapPage = () => {
     const [tripTitle, setTripTitle] = useState();
@@ -61,6 +62,10 @@ const TimelineMapPage = () => {
         setIsMapLoaded(true);
     };
 
+    // const {
+    //     data: { tripTitle, startDate, pinPoints, mediaFiles: images },
+    // } = useTripTimeline(tripKey!);
+
     // 데이터 패칭
     useEffect(() => {
         const getTimelineMapData = async () => {
@@ -68,7 +73,7 @@ const TimelineMapPage = () => {
                 return;
             }
 
-            const { tripTitle, startDate, pinPoints, mediaFiles: images } = await tripAPI.fetchTripTimeline(tripKey);
+            const { tripTitle, startDate, pinPoints, mediaFiles: images } = await routeAPI.fetchTripRoute(tripKey);
 
             setStartDate(startDate);
             if (pinPoints.length === 0) {
