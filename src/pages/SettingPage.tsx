@@ -7,13 +7,13 @@ import { useNavigate } from 'react-router-dom';
 import character from '@/assets/images/character-ogami-1.png';
 import Header from '@/components/common/Header';
 import ConfirmModal from '@/components/guide/ConfirmModal';
-import NickNameForm from '@/domain/user/components/NickNameForm';
-import SettingButton from '@/domain/user/components/SettingButton';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { MESSAGE } from '@/constants/ui';
+import NickNameForm from '@/domain/user/components/NickNameForm';
+import SettingButton from '@/domain/user/components/SettingButton';
+import useUserStore from '@/domain/user/stores/useUserStore';
 import { useModalStore } from '@/stores/useModalStore';
-import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
 
 const SettingPage = () => {

@@ -8,8 +8,8 @@ import { ROUTES } from '@/constants/paths';
 import ImageCarousel from '@/domain/media/components/ImageCarousel';
 import { ImageCarouselModel } from '@/domain/media/image';
 import { PinpointMediaModel } from '@/domain/media/types';
+import useTimelineStore from '@/domain/route/stores/useTimelineStore';
 import { mediaAPI } from '@/libs/apis';
-import useTimelineStore from '@/stores/useTimelineStore';
 import theme from '@/styles/theme';
 import { CarouselState } from '@/types/common';
 

@@ -14,9 +14,9 @@ import { CHARACTER_ICON_CONFIG, POLYLINE_OPTIONS } from '@/constants/maps/styles
 import { ROUTES } from '@/constants/paths';
 import { BaseLocationMedia, MediaFileModel, PinPointModel } from '@/domain/media/types';
 // import { useTripTimeline } from '@/domain/route/hooks/queries';
+import useTimelineStore from '@/domain/route/stores/useTimelineStore';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { routeAPI } from '@/libs/apis';
-import useTimelineStore from '@/stores/useTimelineStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 import { LatLng, Map } from '@/types/maps';

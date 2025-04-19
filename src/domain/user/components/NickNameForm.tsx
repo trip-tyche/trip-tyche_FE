@@ -8,8 +8,8 @@ import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { MESSAGE } from '@/constants/ui';
 import { useNickname } from '@/domain/user/hooks/useNickname';
+import useUserStore from '@/domain/user/stores/useUserStore';
 import { useToastStore } from '@/stores/useToastStore';
-import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
 import { FormMode } from '@/types/common';
 

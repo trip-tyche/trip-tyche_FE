@@ -12,11 +12,11 @@ import { COLORS } from '@/constants/theme';
 import IntroTicket from '@/domain/trip/components/IntroTicket';
 import { WELCOME_TICKET_DATA } from '@/domain/trip/constants';
 import NickNameForm from '@/domain/user/components/NickNameForm';
+import useUserStore from '@/domain/user/stores/useUserStore';
 import { tripAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/utils';
 import webSocketService from '@/libs/socket';
 import { useToastStore } from '@/stores/useToastStore';
-import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
 
 const MainPage = () => {

@@ -13,12 +13,12 @@ import { COLORS } from '@/constants/theme';
 import { useTripShare } from '@/domain/share/hooks/useTripShare';
 import { TICKET } from '@/domain/trip/constants';
 import { Trip } from '@/domain/trip/types';
+import useUserStore from '@/domain/user/stores/useUserStore';
 import { useTicketHandler } from '@/hooks/useTicketHandler';
 import { useTicketNavigation } from '@/hooks/useTicketNavigation';
-import { useToastStore } from '@/stores/useToastStore';
-import useUserStore from '@/stores/useUserStore';
-import theme from '@/styles/theme';
 import { formatToDot } from '@/libs/utils/date';
+import { useToastStore } from '@/stores/useToastStore';
+import theme from '@/styles/theme';
 
 interface TripTicketProps {
     tripInfo: Trip;

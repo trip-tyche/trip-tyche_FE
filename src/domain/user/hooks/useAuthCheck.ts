@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 
 import { useLocation } from 'react-router-dom';
 
+import useUserStore from '@/domain/user/stores/useUserStore';
 import { userAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/utils';
-import useUserStore from '@/stores/useUserStore';
 
 export const useAuthCheck = () => {
     const [isChecking, setIsChecking] = useState(true);
