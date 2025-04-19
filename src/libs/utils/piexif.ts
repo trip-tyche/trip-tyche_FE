@@ -1,6 +1,6 @@
 import piexif from 'piexifjs';
 
-import { ImageModel } from '@/domain/media/image';
+import { ImageModel } from '@/domains/media/image';
 import { GpsCoordinates } from '@/types/location';
 // EXIF 데이터의 타입 정의
 interface ExifData {

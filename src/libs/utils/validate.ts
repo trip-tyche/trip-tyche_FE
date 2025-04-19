@@ -1,4 +1,4 @@
-import { TripInfo } from '@/domain/trip/types';
+import { TripInfo } from '@/domains/trip/types';
 
 export const validateUserNickName = (userNickName: string) => {
     const NICKNAME_REGEX = /^[가-힣a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ][가-힣a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ\s]*[가-힣a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ]$/;

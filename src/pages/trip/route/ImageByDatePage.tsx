@@ -6,12 +6,12 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import Spinner from '@/components/common/Spinner';
 import { ROUTES } from '@/constants/paths';
-import { useImagesByDate } from '@/domain/media/hooks/useImagesByDate';
-import { useImagesLocationObserver } from '@/domain/media/hooks/useImagesLocationObserver';
-import useTimelineStore from '@/domain/route/stores/useTimelineStore';
-import DateMap from '@/domain/trip/components/DateMap';
-import DateSelector from '@/domain/trip/components/DateSelector';
-import ImageItem from '@/domain/trip/components/ImageItem';
+import { useImagesByDate } from '@/domains/media/hooks/useImagesByDate';
+import { useImagesLocationObserver } from '@/domains/media/hooks/useImagesLocationObserver';
+import useTimelineStore from '@/domains/route/stores/useTimelineStore';
+import DateMap from '@/domains/trip/components/DateMap';
+import DateSelector from '@/domains/trip/components/DateSelector';
+import ImageItem from '@/domains/trip/components/ImageItem';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useScrollHint } from '@/hooks/useScrollHint';
 import { useToastStore } from '@/stores/useToastStore';

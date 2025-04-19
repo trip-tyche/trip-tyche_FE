@@ -6,7 +6,7 @@ import { Tooltip } from '@mantine/core';
 import backgroundImage from '@/assets/images/background-mobile-3.webp';
 import ConfirmModal from '@/components/guide/ConfirmModal';
 import { COLORS } from '@/constants/theme';
-import LoginButton from '@/domain/user/components/LoginButton';
+import LoginButton from '@/domains/user/components/LoginButton';
 import useBrowserCheck from '@/hooks/useBrowserCheck';
 import { OAUTH_CONFIG } from '@/libs/apis/constants';
 

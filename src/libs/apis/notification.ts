@@ -1,4 +1,4 @@
-import { Notification } from '@/domain/notification/types';
+import { Notification } from '@/domains/notification/types';
 import { apiClient } from '@/libs/apis/client';
 import { ApiResponse } from '@/libs/apis/types';
 

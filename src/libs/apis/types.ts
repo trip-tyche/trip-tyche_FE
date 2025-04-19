@@ -1,6 +1,6 @@
-import { MediaFile } from '@/domain/media/types';
-import { PinPoint } from '@/domain/route/types';
-// import { Trip } from '@/domain/trip/types';
+import { MediaFile } from '@/domains/media/types';
+import { PinPoint } from '@/domains/route/types';
+// import { Trip } from '@/domains/trip/types';
 
 type Success<T> = { success: true; data: T };
 type Error = { success: false; error: string };

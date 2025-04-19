@@ -1,4 +1,4 @@
-import { Trip } from '@/domain/trip/types';
+import { Trip } from '@/domains/trip/types';
 import { apiClient } from '@/libs/apis/client';
 import { ApiResponse } from '@/libs/apis/types';
 

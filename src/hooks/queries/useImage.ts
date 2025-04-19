@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { MediaFileMetaData } from '@/domain/media/types';
+import { MediaFileMetaData } from '@/domains/media/types';
 import { mediaAPI } from '@/libs/apis';
 import { Result } from '@/libs/apis/types';
 import { toResult } from '@/libs/apis/utils';

@@ -1,4 +1,4 @@
-import { SharedTripDetail } from '@/domain/share/types';
+import { SharedTripDetail } from '@/domains/share/types';
 import { apiClient } from '@/libs/apis/client';
 import { ApiResponse } from '@/libs/apis/types';
 

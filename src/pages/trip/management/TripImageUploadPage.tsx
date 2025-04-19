@@ -10,7 +10,7 @@ import AlertModal from '@/components/guide/AlertModal';
 import UploadingSpinner from '@/components/guide/UploadingSpinner';
 import { ROUTES } from '@/constants/paths';
 import { MESSAGE } from '@/constants/ui';
-import { useImageUpload } from '@/domain/media/hooks/useImageUpload';
+import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
 import { useToastStore } from '@/stores/useToastStore';
 import { useUploadStore } from '@/stores/useUploadingStore';
 import useUserDataStore from '@/stores/useUserDataStore';

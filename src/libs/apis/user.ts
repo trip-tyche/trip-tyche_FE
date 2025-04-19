@@ -1,4 +1,4 @@
-import { UserInfo } from '@/domain/user/types';
+import { UserInfo } from '@/domains/user/types';
 import { apiClient } from '@/libs/apis/client';
 import { ApiResponse } from '@/libs/apis/types';
 

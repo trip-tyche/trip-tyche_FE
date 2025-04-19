@@ -10,9 +10,9 @@ import ConfirmModal from '@/components/guide/ConfirmModal';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { MESSAGE } from '@/constants/ui';
-import NickNameForm from '@/domain/user/components/NickNameForm';
-import SettingButton from '@/domain/user/components/SettingButton';
-import useUserStore from '@/domain/user/stores/useUserStore';
+import NickNameForm from '@/domains/user/components/NickNameForm';
+import SettingButton from '@/domains/user/components/SettingButton';
+import useUserStore from '@/domains/user/stores/useUserStore';
 import { useModalStore } from '@/stores/useModalStore';
 import theme from '@/styles/theme';
 

@@ -4,7 +4,7 @@ import { createBrowserRouter, Outlet } from 'react-router-dom';
 
 import Spinner from '@/components/common/Spinner';
 import { ROUTES } from '@/constants/paths';
-import { useAuthCheck } from '@/domain/user/hooks/useAuthCheck';
+import { useAuthCheck } from '@/domains/user/hooks/useAuthCheck';
 import RootLayout from '@/layouts/RootLayout';
 import NotificationPage from '@/pages/NotificationPage';
 

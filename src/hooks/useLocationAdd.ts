@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { ROUTES } from '@/constants/paths';
-import { UnlocatedMediaFile, UnlocatedMediaFileModel } from '@/domain/media/types';
+import { UnlocatedMediaFile, UnlocatedMediaFileModel } from '@/domains/media/types';
 import { useTripDefaultLocation } from '@/hooks/queries/useTripImage';
 import { mediaAPI } from '@/libs/apis';
 import { useToastStore } from '@/stores/useToastStore';

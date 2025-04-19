@@ -7,9 +7,9 @@ import Spinner from '@/components/common/Spinner';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { MESSAGE } from '@/constants/ui';
-import NotificationItem from '@/domain/notification/components/NotificationItem';
-import { useNotificationList } from '@/domain/notification/hooks/queries';
-import { Notification } from '@/domain/notification/types';
+import NotificationItem from '@/domains/notification/components/NotificationItem';
+import { useNotificationList } from '@/domains/notification/hooks/queries';
+import { Notification } from '@/domains/notification/types';
 import { useToastStore } from '@/stores/useToastStore';
 
 const NotificationPage = () => {

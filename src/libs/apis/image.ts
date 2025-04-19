@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-import { PresignedUrlRequest, PresignedUrlResponse } from '@/domain/media/image';
-import { MediaFileMetaData, UnlocatedMediaFileModel } from '@/domain/media/types';
+import { PresignedUrlRequest, PresignedUrlResponse } from '@/domains/media/image';
+import { MediaFileMetaData, UnlocatedMediaFileModel } from '@/domains/media/types';
 import { apiClient } from '@/libs/apis/client';
 import { API_ENDPOINTS } from '@/libs/apis/constants';
 import { ApiResponse, Result } from '@/libs/apis/types';

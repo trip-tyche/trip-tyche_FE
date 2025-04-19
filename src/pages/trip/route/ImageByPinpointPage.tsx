@@ -5,10 +5,10 @@ import { X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { ROUTES } from '@/constants/paths';
-import ImageCarousel from '@/domain/media/components/ImageCarousel';
-import { ImageCarouselModel } from '@/domain/media/image';
-import { PinpointMediaModel } from '@/domain/media/types';
-import useTimelineStore from '@/domain/route/stores/useTimelineStore';
+import ImageCarousel from '@/domains/media/components/ImageCarousel';
+import { ImageCarouselModel } from '@/domains/media/image';
+import { PinpointMediaModel } from '@/domains/media/types';
+import useTimelineStore from '@/domains/route/stores/useTimelineStore';
 import { mediaAPI } from '@/libs/apis';
 import theme from '@/styles/theme';
 import { CarouselState } from '@/types/common';

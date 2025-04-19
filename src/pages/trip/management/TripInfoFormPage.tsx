@@ -9,11 +9,11 @@ import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
 import UploadingSpinner from '@/components/guide/UploadingSpinner';
 import { ROUTES } from '@/constants/paths';
-import TripInfoForm from '@/domain/trip/components/TripInfoForm';
-import { FORM } from '@/domain/trip/constants';
-import { useTripInfo } from '@/domain/trip/hooks/queries';
-import { useTripInfoForm } from '@/domain/trip/hooks/useTripInfoForm';
-import { TripInfo } from '@/domain/trip/types';
+import TripInfoForm from '@/domains/trip/components/TripInfoForm';
+import { FORM } from '@/domains/trip/constants';
+import { useTripInfo } from '@/domains/trip/hooks/queries';
+import { useTripInfoForm } from '@/domains/trip/hooks/useTripInfoForm';
+import { TripInfo } from '@/domains/trip/types';
 import { useToastStore } from '@/stores/useToastStore';
 
 const TripInfoFormPage = () => {

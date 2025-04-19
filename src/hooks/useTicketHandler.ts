@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
 import { ROUTES } from '@/constants/paths';
-import { useTripDelete } from '@/domain/trip/hooks/mutations';
+import { useTripDelete } from '@/domains/trip/hooks/mutations';
 
 export const useTicketHandler = (
     tripKey: string,
