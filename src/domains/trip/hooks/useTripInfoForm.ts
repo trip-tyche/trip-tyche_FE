@@ -11,12 +11,12 @@ import { tripAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/utils';
 import { validateFormComplete } from '@/libs/utils/validate';
 import { useToastStore } from '@/stores/useToastStore';
-import { useUploadStore } from '@/stores/useUploadingStore';
+import { useUploadStatusStore } from '@/stores/useUploadStatusStore';
 
 export const useTripInfoForm = (isEditing: boolean, form: TripInfo) => {
     const [isImageSubmitting, setIsImageSubmitting] = useState(false);
     const [isFormComplete, setIsFormComplete] = useState(false);
-    const { uploadStatus, waitForCompletion } = useUploadStore();
+    const { uploadStatus, waitForCompletion } = useUploadStatusStore();
     const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();

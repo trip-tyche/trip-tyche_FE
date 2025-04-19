@@ -12,7 +12,7 @@ import { ROUTES } from '@/constants/paths';
 import { MESSAGE } from '@/constants/ui';
 import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
 import { useToastStore } from '@/stores/useToastStore';
-import { useUploadStore } from '@/stores/useUploadingStore';
+import { useUploadStatusStore } from '@/stores/useUploadStatusStore';
 import useUserDataStore from '@/stores/useUserDataStore';
 import theme from '@/styles/theme';
 
@@ -21,8 +21,8 @@ const TripImageUploadPage = () => {
 
     const isTripInfoEditing = useUserDataStore((state) => state.isTripInfoEditing);
     const setIsTripInfoEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
-    const waitForCompletion = useUploadStore((state) => state.waitForCompletion);
-    const resetUpload = useUploadStore((state) => state.resetUpload);
+    const waitForCompletion = useUploadStatusStore((state) => state.waitForCompletion);
+    const resetUpload = useUploadStatusStore((state) => state.resetUpload);
     const showToast = useToastStore((state) => state.showToast);
 
     const {

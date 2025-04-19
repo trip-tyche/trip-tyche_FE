@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from '@/components/common/Button';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
-import IntroTicket from '@/domains/trip/components/IntroTicket';
+import MovableTripTicket from '@/domains/trip/components/MovableTripTicket';
 import { WELCOME_TICKET_DATA } from '@/domains/trip/constants';
 import NickNameForm from '@/domains/user/components/NickNameForm';
 import useUserStore from '@/domains/user/stores/useUserStore';
@@ -86,10 +86,7 @@ const MainPage = () => {
                             <GiRapidshareArrow />
                             아래 티켓을 움직여보세요!
                         </p>
-                        <IntroTicket
-                            trip={userInfo?.recentTrip || WELCOME_TICKET_DATA}
-                            userNickname={userInfo.nickname}
-                        />
+                        <MovableTripTicket trip={userInfo?.recentTrip || WELCOME_TICKET_DATA} />
                     </div>
                     {userInfo?.tripsCount ? (
                         <p css={ticketGuideStyle}>

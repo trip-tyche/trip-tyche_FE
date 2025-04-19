@@ -4,17 +4,20 @@ import { IoAirplaneSharp } from 'react-icons/io5';
 import characterImg from '@/assets/images/character-ogami-1.png';
 import { TICKET } from '@/domains/trip/constants';
 import { Trip } from '@/domains/trip/types';
+import useUserStore from '@/domains/user/stores/useUserStore';
 import { useTicket3DEffect } from '@/hooks/useTicket3DEffect';
 import { formatToDot } from '@/libs/utils/date';
 import theme from '@/styles/theme';
 
 interface IntroTicketProps {
     trip: Trip;
-    userNickname: string;
 }
 
-const IntroTicket = ({ trip, userNickname }: IntroTicketProps) => {
+const MovableTripTicket = ({ trip }: IntroTicketProps) => {
     const { tripTitle, country, startDate, endDate, hashtags } = trip;
+    const userInfo = useUserStore((state) => state.userInfo);
+
+    const userNickname = userInfo?.nickname || '';
 
     const { ticketStyle, handlers } = useTicket3DEffect();
 
@@ -203,4 +206,4 @@ const imageStyle = css`
     width: 52px;
 `;
 
-export default IntroTicket;
+export default MovableTripTicket;

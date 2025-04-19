@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { GoogleMap, Marker, OverlayView, MarkerClusterer, Polyline } from '@react-google-maps/api';
 import { Play, Pause } from 'lucide-react';
 import { BsPersonWalking } from 'react-icons/bs';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
@@ -13,8 +13,6 @@ import { DEFAULT_ZOOM_SCALE, GOOGLE_MAPS_OPTIONS, MARKER_CLUSTER_OPTIONS, TIMELI
 import { CHARACTER_ICON_CONFIG, POLYLINE_OPTIONS } from '@/constants/maps/styles';
 import { ROUTES } from '@/constants/paths';
 import { BaseLocationMedia, MediaFileModel, PinPointModel } from '@/domains/media/types';
-// import { useTripTimeline } from '@/domains/route/hooks/queries';
-import useTimelineStore from '@/domains/route/stores/useTimelineStore';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { routeAPI } from '@/libs/apis';
 import { useToastStore } from '@/stores/useToastStore';
@@ -42,7 +40,6 @@ const TripRoutePage = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     const { showToast } = useToastStore();
-    const { lastPinPointId, setLastPinPointId } = useTimelineStore();
 
     const { isLoaded, loadError, markerIcon } = useGoogleMaps();
 
@@ -51,8 +48,11 @@ const TripRoutePage = () => {
     const startTimeRef = useRef<number | null>(null);
     const autoPlayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    const navigate = useNavigate();
     const { tripKey } = useParams();
+    const {
+        state: { lastLoactedPinPointId },
+    } = useLocation();
+    const navigate = useNavigate();
 
     const isLastPinPoint = currentPinPointIndex === pinPointsInfo.length - 1;
 
@@ -119,15 +119,14 @@ const TripRoutePage = () => {
             if (animationRef.current) {
                 cancelAnimationFrame(animationRef.current);
             }
-            setLastPinPointId(undefined);
-            localStorage.removeItem('lastPinPointId');
+            localStorage.removeItem('lastLoactedPinPointId');
         };
     }, []);
 
     // 슬라이드 페이지 갔다올 때 최근 핀포인트 확인
     useEffect(() => {
         if (pinPointsInfo.length > 0) {
-            const currentPinPointId = lastPinPointId || localStorage.getItem('lastPinPointId');
+            const currentPinPointId = lastLoactedPinPointId;
 
             if (currentPinPointId) {
                 const startPinPointIndex = pinPointsInfo.findIndex(
@@ -140,11 +139,9 @@ const TripRoutePage = () => {
                         lng: pinPointsInfo[startPinPointIndex].longitude,
                     });
                 }
-                setLastPinPointId(undefined);
-                localStorage.removeItem('lastPinPointId');
             }
         }
-    }, [pinPointsInfo, lastPinPointId]);
+    }, [pinPointsInfo, lastLoactedPinPointId]);
 
     const moveCharacter = useCallback(() => {
         if (isLastPinPoint) {
@@ -359,7 +356,7 @@ const TripRoutePage = () => {
                                         alt='포토카드 이미지'
                                         onClick={() =>
                                             navigate(
-                                                `${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_PINPOINT(tripKey as string, point.pinPointId)}`,
+                                                `${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_PINPOINT(tripKey!, point.pinPointId)}`,
                                             )
                                         }
                                     />

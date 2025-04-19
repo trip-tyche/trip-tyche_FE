@@ -9,7 +9,7 @@ interface UploadingStore {
     waitForCompletion: () => Promise<void>;
 }
 
-export const useUploadStore = create<UploadingStore>((set, get) => ({
+export const useUploadStatusStore = create<UploadingStore>((set, get) => ({
     uploadStatus: 'idle',
     setUploadStatus: (status) => set({ uploadStatus: status }),
     resetUpload: () => set({ uploadStatus: 'idle' }),

@@ -8,7 +8,6 @@ import { ROUTES } from '@/constants/paths';
 import ImageCarousel from '@/domains/media/components/ImageCarousel';
 import { ImageCarouselModel } from '@/domains/media/image';
 import { PinpointMediaModel } from '@/domains/media/types';
-import useTimelineStore from '@/domains/route/stores/useTimelineStore';
 import { mediaAPI } from '@/libs/apis';
 import theme from '@/styles/theme';
 import { CarouselState } from '@/types/common';
@@ -16,8 +15,6 @@ import { CarouselState } from '@/types/common';
 const ImageByPinpointPage = () => {
     const [carouselImages, setCarouselImages] = useState<ImageCarouselModel[]>([]);
     const [carouselState, setCarouselState] = useState<CarouselState>('auto');
-
-    const setLastPinPointId = useTimelineStore((state) => state.setLastPinPointId);
 
     const { tripKey, pinPointId } = useParams();
     const navigate = useNavigate();
@@ -37,15 +34,14 @@ const ImageByPinpointPage = () => {
             setCarouselImages(sortedImages);
         };
 
-        setLastPinPointId(pinPointId);
         localStorage.setItem('lastPinPointId', pinPointId || '');
 
         getPinPointImagesData();
-    }, [tripKey, pinPointId, setLastPinPointId]);
+    }, [tripKey, pinPointId]);
 
     const navigateBeforePage = () => {
         if (typeof tripKey === 'string') {
-            navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey)}`);
+            navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey)}`, { state: { lastLoactedPinPointId: pinPointId } });
         }
     };
 

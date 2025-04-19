@@ -101,25 +101,22 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
                 </aside>
             </article>
 
-            {isOwner ? (
-                <footer css={buttonGroup}>
-                    <button css={buttonStyle} onClick={() => handler.edit()}>
-                        <FaPencilAlt size={14} /> 티켓 수정
-                    </button>
-                    <button css={buttonStyle} onClick={() => handler.images()}>
-                        <ImagePlus size={16} /> 사진 관리
-                    </button>
+            <footer css={buttonGroup}>
+                <button css={buttonStyle} onClick={() => handler.edit()}>
+                    <FaPencilAlt size={14} /> 티켓 수정
+                </button>
+                <button css={buttonStyle} onClick={() => handler.images()}>
+                    <ImagePlus size={16} /> 사진 관리
+                </button>
+                {isOwner && (
                     <button css={buttonStyle} onClick={() => setIsShareModalOpen(true)}>
                         <Share2 size={16} /> 티켓 공유
                     </button>
-                    {/* <button css={buttonStyle} onClick={() => handler.delete()}> */}
-                    <button css={buttonStyle} onClick={() => handler.delete()}>
-                        <FaTrashAlt size={14} /> 티켓 삭제
-                    </button>
-                </footer>
-            ) : (
-                <div css={buttonGroup}></div>
-            )}
+                )}
+                <button css={buttonStyle} onClick={() => handler.delete()}>
+                    <FaTrashAlt size={14} /> 티켓 삭제
+                </button>
+            </footer>
 
             {isModalOpen && (
                 <ConfirmModal
@@ -131,16 +128,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
                     closeModal={closeModal}
                 />
             )}
-            {/* {isUnlocatedImageModalOpen && (
-                <ConfirmModal
-                    title={`위치정보 없는 사진이 ${unlocatedImagesCount} 장 있어요!`}
-                    description='사진에 직접 위치를 등록할 수 있어요. 지금 등록하시겠습니까? 등록은 언제든지 할 수 있어요'
-                    confirmText='위치 등록하기'
-                    cancelText='다음에'
-                    confirmModal={confirmUnlocatedImageModal}
-                    closeModal={closeUnlocatedImageModal}
-                />
-            )} */}
+
             {isShareModalOpen && (
                 <InputModal
                     error={error}

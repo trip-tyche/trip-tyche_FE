@@ -4,7 +4,6 @@ import { RouterProvider } from 'react-router-dom';
 
 import TanStackProvider from '@/providers/TanStackProvider';
 import router from '@/router/Router';
-// import webSocketService from '@/services/webocketService';
 import GlobalStyle from '@/styles/GlobalStyle';
 import GoogleAutoCompleteStyle from '@/styles/GoogleAutoCompleteStyle';
 import theme from '@/styles/theme';

@@ -8,7 +8,7 @@ import { ImageModel, PresignedUrlResponse } from '@/domains/media/image';
 import { mediaAPI } from '@/libs/apis';
 import { formatToISOLocal } from '@/libs/utils/date';
 import { getImageLocation, extractDateFromImage } from '@/libs/utils/piexif';
-import { useUploadStore } from '@/stores/useUploadingStore';
+import { useUploadStatusStore } from '@/stores/useUploadStatusStore';
 import { Location } from '@/types/location';
 
 export const useImageUpload = () => {
@@ -19,7 +19,7 @@ export const useImageUpload = () => {
     const [isExtracting, setIsExtracting] = useState(false);
     const [isAlertModalOpen, setIsAlertModalModalOpen] = useState(false);
 
-    const setUploadStatus = useUploadStore((state) => state.setUploadStatus);
+    const setUploadStatus = useUploadStatusStore((state) => state.setUploadStatus);
 
     const { tripKey } = useParams();
 
