@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
 import characterImg from '@/assets/images/character-ogami-1.png';
-import { TICKET } from '@/constants/trip';
+import { TICKET } from '@/domain/trip/constants';
 import { Trip } from '@/domain/trip/types';
 import { useTicket3DEffect } from '@/hooks/useTicket3DEffect';
 import theme from '@/styles/theme';

@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 import { Plane, Calendar, Globe } from 'lucide-react';
 
 import Input from '@/components/common/Input';
-import { COUNTRIES, FORM } from '@/constants/trip';
+import { COUNTRIES, FORM } from '@/domain/trip/constants';
 import { useTripDateRange } from '@/domain/trip/hooks/useTripDateRange';
 import { Trip } from '@/domain/trip/types';
 import theme from '@/styles/theme';

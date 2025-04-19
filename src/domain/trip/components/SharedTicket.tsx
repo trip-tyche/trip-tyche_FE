@@ -2,8 +2,8 @@ import { css } from '@emotion/react';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
 import characterImg from '@/assets/images/character-ogami-1.png';
-import { TICKET } from '@/constants/trip';
 import { SharedTripDetail } from '@/domain/share/types';
+import { TICKET } from '@/domain/trip/constants';
 import theme from '@/styles/theme';
 import { formatToDot } from '@/utils/date';
 
