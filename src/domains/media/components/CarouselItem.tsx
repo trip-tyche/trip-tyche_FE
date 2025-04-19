@@ -2,10 +2,10 @@ import React from 'react';
 
 import { css } from '@emotion/react';
 
-import { ImageCarouselModel } from '@/domains/media/image';
+import { MediaFile } from '@/domains/media/types';
 
 interface CarouselItemProps {
-    image: ImageCarouselModel;
+    image: MediaFile;
     isCurrent: boolean;
     isZoomed: boolean;
 }

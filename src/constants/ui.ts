@@ -33,3 +33,9 @@ export const BUTTON = {
         GOOGLE: 'Google 계정으로 시작하기',
     },
 } as const;
+
+export const IMAGE_CAROUSEL_STATE = {
+    AUTO: 'auto',
+    PAUSED: 'paused',
+    ZOOMED: 'zoomed',
+} as const;

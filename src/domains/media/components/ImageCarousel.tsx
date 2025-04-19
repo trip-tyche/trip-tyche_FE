@@ -6,14 +6,14 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import CarouselItem from '@/domains/media/components/CarouselItem';
-import { ImageCarouselModel } from '@/domains/media/image';
+import { MediaFile } from '@/domains/media/types';
 import theme from '@/styles/theme';
-import { CarouselState } from '@/types/common';
+import { ImageCarouselState } from '@/types';
 
 interface ImageCarouselProps {
-    images: ImageCarouselModel[];
-    carouselState: CarouselState;
-    setCarouselState: Dispatch<SetStateAction<CarouselState>>;
+    images: MediaFile[];
+    carouselState: ImageCarouselState;
+    setCarouselState: Dispatch<SetStateAction<ImageCarouselState>>;
 }
 
 const ImageCarousel = ({ images, carouselState, setCarouselState }: ImageCarouselProps) => {
@@ -55,7 +55,7 @@ const ImageCarousel = ({ images, carouselState, setCarouselState }: ImageCarouse
             }
 
             setCarouselState((prevState) => {
-                let newState: CarouselState;
+                let newState: ImageCarouselState;
                 if (prevState === 'auto') {
                     newState = 'paused';
                     zoomTimerRef.current = setTimeout(() => {

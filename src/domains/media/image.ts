@@ -7,11 +7,6 @@ export interface ImageModel {
     location: Location;
 }
 
-export interface ImageCarouselModel {
-    mediaFileId: string;
-    mediaLink: string;
-}
-
 export type ImageGroupByDate = Record<string, UnlocatedMediaFileModel[]>;
 
 export interface PresignedUrlRequest {

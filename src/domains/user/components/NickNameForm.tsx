@@ -11,7 +11,7 @@ import { useNickname } from '@/domains/user/hooks/useNickname';
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
-import { FormMode } from '@/types/common';
+import { FormMode } from '@/types';
 
 interface NickNameFormProps {
     mode: FormMode;

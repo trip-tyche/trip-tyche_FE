@@ -49,9 +49,7 @@ const TripRoutePage = () => {
     const autoPlayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const { tripKey } = useParams();
-    const {
-        state: { lastLoactedPinPointId },
-    } = useLocation();
+    const { state } = useLocation();
     const navigate = useNavigate();
 
     const isLastPinPoint = currentPinPointIndex === pinPointsInfo.length - 1;
@@ -125,8 +123,8 @@ const TripRoutePage = () => {
 
     // 슬라이드 페이지 갔다올 때 최근 핀포인트 확인
     useEffect(() => {
-        if (pinPointsInfo.length > 0) {
-            const currentPinPointId = lastLoactedPinPointId;
+        if (pinPointsInfo.length > 0 && state) {
+            const currentPinPointId = state?.lastLoactedPinPointId;
 
             if (currentPinPointId) {
                 const startPinPointIndex = pinPointsInfo.findIndex(
@@ -141,7 +139,7 @@ const TripRoutePage = () => {
                 }
             }
         }
-    }, [pinPointsInfo, lastLoactedPinPointId]);
+    }, [pinPointsInfo, state]);
 
     const moveCharacter = useCallback(() => {
         if (isLastPinPoint) {
