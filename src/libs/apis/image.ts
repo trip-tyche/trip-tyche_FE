@@ -4,22 +4,19 @@ import { PresignedUrlRequest, PresignedUrlResponse } from '@/domains/media/image
 import { MediaFileMetaData, UnlocatedMediaFileModel } from '@/domains/media/types';
 import { apiClient } from '@/libs/apis/client';
 import { API_ENDPOINTS } from '@/libs/apis/constants';
-import { ApiResponse, Result } from '@/libs/apis/types';
+import { ApiResponse, MediaByPinPoint, Result } from '@/libs/apis/types';
 import { GpsCoordinates } from '@/types/location';
 
 export const mediaAPI = {
     // 핀포인트 슬라이드
-    fetchImagesByPinPoint: async (tripKey: string, pinPoint: string) => {
-        const data = await apiClient.get(`/v1/trips/${tripKey}/pinpoints/${pinPoint}/images`);
-        return data.data;
-    },
+    fetchMediaByPinPoint: async (tripKey: string, pinPointId: string): Promise<ApiResponse<MediaByPinPoint>> =>
+        await apiClient.get(`/v1/trips/${tripKey}/pinpoints/${pinPointId}/images`),
     // 날짜별 이미지 조회
     fetchImagesByDate: async (tripKey: string, date: string) => {
         const formattedDate = date.slice(0, 10);
         const data = await apiClient.get(`/v1/trips/${tripKey}/map?date=${formattedDate}`);
         return data.data;
     },
-
     // 첫번째 이미지 좌표[위치정보⭕️]
     fetchDefaultLocation: async (tripKey: string) => {
         const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripKey}/images/firstimage`);
@@ -62,18 +59,6 @@ export const mediaAPI = {
         await apiClient.post(`/v1/trips/${tripKey}/media-files`, metaDatas);
     },
     // 여행에 등록된 모든 이미지 조회
-    // getTripImages: async (tripKey: string) => {
-    //     try {
-    //         const response = await apiClient.get(`/v1/trips/${tripKey}/media-files`);
-    //         if (response.status !== 200 || !response.data) {
-    //             return { success: false, error: '사진을 불러오는 중 오류가 발생했습니다.' };
-    //         }
-    //         return { success: true, data: response.data.mediaFiles };
-    //     } catch (error) {
-    //         console.error(error);
-    //         return { success: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
-    //     }
-    // },
     getTripImages: async (
         tripKey: string,
     ): Promise<
