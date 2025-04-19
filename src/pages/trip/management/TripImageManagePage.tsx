@@ -5,7 +5,6 @@ import { Trash2 } from 'lucide-react';
 import { FaPencilAlt } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { mediaAPI } from '@/api';
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
@@ -18,9 +17,10 @@ import EditDate from '@/domain/trip/components/EditDate';
 import LocationAddMap from '@/domain/trip/components/LocationAddMap';
 import { useMediaDelete } from '@/domain/trip/hooks/mutations';
 import { useTripImages } from '@/hooks/queries/useImage';
+import { mediaAPI } from '@/libs/apis';
+import { formatToISOLocal, formatToKorean } from '@/libs/utils/date';
 import { useToastStore } from '@/stores/useToastStore';
 import { Location } from '@/types/location';
-import { formatToISOLocal, formatToKorean } from '@/utils/date';
 
 const TripImageManagePage = () => {
     // const [tripImages, setTripImages] = useState<MediaFileMetaData[]>([]);

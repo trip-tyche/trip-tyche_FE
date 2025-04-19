@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-import { API_BASE_URL } from '@/api/constants';
-import { setupRequestInterceptor, setupResponseInterceptor } from '@/api/interceptors';
+import { API_BASE_URL } from '@/libs/apis/constants';
+import { setupRequestInterceptor, setupResponseInterceptor } from '@/libs/apis/interceptors';
 
 export const apiClient = axios.create({
     baseURL: API_BASE_URL,

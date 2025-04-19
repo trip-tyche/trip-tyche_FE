@@ -3,13 +3,13 @@ import { useState } from 'react';
 import imageCompression from 'browser-image-compression';
 import { useParams } from 'react-router-dom';
 
-import { mediaAPI } from '@/api';
 import { COMPRESSION_OPTIONS } from '@/domain/media/constants';
 import { ImageModel, PresignedUrlResponse } from '@/domain/media/image';
+import { mediaAPI } from '@/libs/apis';
+import { formatToISOLocal } from '@/libs/utils/date';
+import { getImageLocation, extractDateFromImage } from '@/libs/utils/piexif';
 import { useUploadStore } from '@/stores/useUploadingStore';
 import { Location } from '@/types/location';
-import { formatToISOLocal } from '@/utils/date';
-import { getImageLocation, extractDateFromImage } from '@/utils/piexif';
 
 export const useImageUpload = () => {
     const [imageCount, setImagesCount] = useState(0);

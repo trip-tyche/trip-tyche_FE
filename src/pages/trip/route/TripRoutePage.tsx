@@ -6,7 +6,6 @@ import { Play, Pause } from 'lucide-react';
 import { BsPersonWalking } from 'react-icons/bs';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { routeAPI } from '@/api';
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
@@ -16,6 +15,7 @@ import { ROUTES } from '@/constants/paths';
 import { BaseLocationMedia, MediaFileModel, PinPointModel } from '@/domain/media/types';
 // import { useTripTimeline } from '@/domain/route/hooks/queries';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
+import { routeAPI } from '@/libs/apis';
 import useTimelineStore from '@/stores/useTimelineStore';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';

@@ -10,7 +10,7 @@ import ImageGrid from '@/domain/media/components/ImageGrid';
 import ImageSizeRadio from '@/domain/media/components/ImageSizeRadio';
 import { UnlocatedMediaFile, UnlocatedMediaFileModel } from '@/domain/media/types';
 import theme from '@/styles/theme';
-import { formatToKorean } from '@/utils/date';
+import { formatToKorean } from '@/libs/utils/date';
 
 interface ImageListByDateProps {
     // imageGroupByDate: [string, ImageModel[]][];

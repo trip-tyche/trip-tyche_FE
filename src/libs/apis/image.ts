@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-import { apiClient } from '@/api/client';
-import { API_ENDPOINTS } from '@/api/constants';
-import { ApiResponse, Result } from '@/api/types';
 import { PresignedUrlRequest, PresignedUrlResponse } from '@/domain/media/image';
 import { MediaFileMetaData, UnlocatedMediaFileModel } from '@/domain/media/types';
+import { apiClient } from '@/libs/apis/client';
+import { API_ENDPOINTS } from '@/libs/apis/constants';
+import { ApiResponse, Result } from '@/libs/apis/types';
 import { GpsCoordinates } from '@/types/location';
 
 export const mediaAPI = {

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
-import { userAPI } from '@/api';
 import { UserInfo } from '@/domain/user/types';
+import { userAPI } from '@/libs/apis';
 import { queryClient } from '@/providers/TanStackProvider';
 
 interface UserState {

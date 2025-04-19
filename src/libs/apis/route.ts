@@ -1,4 +1,4 @@
-import { apiClient } from '@/api/client';
+import { apiClient } from '@/libs/apis/client';
 // import { RouteResponse } from '@/api/types';
 
 export const routeAPI = {

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { notifiactionAPI } from '@/api';
-import { toResult } from '@/api/utils';
+import { notifiactionAPI } from '@/libs/apis';
+import { toResult } from '@/libs/apis/utils';
 
 export const useNotificationStatus = () => {
     const queryClient = useQueryClient();

@@ -4,11 +4,11 @@ import { css } from '@emotion/react';
 import { X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { mediaAPI } from '@/api';
 import { ROUTES } from '@/constants/paths';
 import ImageCarousel from '@/domain/media/components/ImageCarousel';
 import { ImageCarouselModel } from '@/domain/media/image';
 import { PinpointMediaModel } from '@/domain/media/types';
+import { mediaAPI } from '@/libs/apis';
 import useTimelineStore from '@/stores/useTimelineStore';
 import theme from '@/styles/theme';
 import { CarouselState } from '@/types/common';

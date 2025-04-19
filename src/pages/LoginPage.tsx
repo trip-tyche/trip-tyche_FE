@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import { Tooltip } from '@mantine/core';
 
-import { OAUTH_CONFIG } from '@/api/constants';
 import backgroundImage from '@/assets/images/background-mobile-3.webp';
 import ConfirmModal from '@/components/guide/ConfirmModal';
 import { COLORS } from '@/constants/theme';
 import LoginButton from '@/domain/user/components/LoginButton';
 import useBrowserCheck from '@/hooks/useBrowserCheck';
+import { OAUTH_CONFIG } from '@/libs/apis/constants';
 
 const LoginPage = () => {
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);

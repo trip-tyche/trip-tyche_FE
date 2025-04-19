@@ -1,6 +1,6 @@
-import { apiClient } from '@/api/client';
-import { ApiResponse } from '@/api/types';
 import { SharedTripDetail } from '@/domain/share/types';
+import { apiClient } from '@/libs/apis/client';
+import { ApiResponse } from '@/libs/apis/types';
 
 export const shareAPI = {
     // 다른 사용자에게 여행 공유 요청

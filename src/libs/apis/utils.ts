@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
 
-import { ApiResponse, Result } from '@/api/types';
 import { MESSAGE } from '@/constants/ui';
+import { ApiResponse, Result } from '@/libs/apis/types';
 
 export const toResult = async <T>(
     fn: () => Promise<ApiResponse<T>>,

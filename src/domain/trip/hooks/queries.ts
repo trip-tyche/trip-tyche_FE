@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { tripAPI } from '@/api';
-import { toResult } from '@/api/utils';
+import { tripAPI } from '@/libs/apis';
+import { toResult } from '@/libs/apis/utils';
 
 // 여행 티켓 목록 조회
 export const useTripTicketList = () => {

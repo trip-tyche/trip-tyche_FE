@@ -18,7 +18,7 @@ import { useTicketNavigation } from '@/hooks/useTicketNavigation';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';
-import { formatToDot } from '@/utils/date';
+import { formatToDot } from '@/libs/utils/date';
 
 interface TripTicketProps {
     tripInfo: Trip;

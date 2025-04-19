@@ -3,10 +3,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { mediaAPI } from '@/api';
 import { ROUTES } from '@/constants/paths';
 import { UnlocatedMediaFile, UnlocatedMediaFileModel } from '@/domain/media/types';
 import { useTripDefaultLocation } from '@/hooks/queries/useTripImage';
+import { mediaAPI } from '@/libs/apis';
 import { useToastStore } from '@/stores/useToastStore';
 import { Location } from '@/types/location';
 

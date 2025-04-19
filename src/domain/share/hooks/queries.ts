@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { shareAPI } from '@/api';
-import { toResult } from '@/api/utils';
+import { shareAPI } from '@/libs/apis';
+import { toResult } from '@/libs/apis/utils';
 
 export const useShareDetail = (shareId: number) => {
     return useQuery({

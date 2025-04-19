@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-import { userAPI } from '@/api';
-import { toResult } from '@/api/utils';
 import { MESSAGE } from '@/constants/ui';
+import { userAPI } from '@/libs/apis';
+import { toResult } from '@/libs/apis/utils';
 import useUserStore from '@/stores/useUserStore';
 
 export const useNickname = (nickname: string, onSuccess?: () => void) => {

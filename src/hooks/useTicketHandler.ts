@@ -29,9 +29,6 @@ export const useTicketHandler = (
         delete: () => {
             setIsModalOpen(true);
         },
-        // share: () => {
-        //     setIsShareModalOpen(true);
-        // },
     };
 
     const deleteTrip = async () => {

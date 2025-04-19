@@ -6,7 +6,7 @@ import { TICKET } from '@/domain/trip/constants';
 import { Trip } from '@/domain/trip/types';
 import { useTicket3DEffect } from '@/hooks/useTicket3DEffect';
 import theme from '@/styles/theme';
-import { formatToDot } from '@/utils/date';
+import { formatToDot } from '@/libs/utils/date';
 
 interface IntroTicketProps {
     trip: Trip;

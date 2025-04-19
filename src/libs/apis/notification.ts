@@ -1,6 +1,6 @@
-import { apiClient } from '@/api/client';
-import { ApiResponse } from '@/api/types';
 import { Notification } from '@/domain/notification/types';
+import { apiClient } from '@/libs/apis/client';
+import { ApiResponse } from '@/libs/apis/types';
 
 export const notifiactionAPI = {
     // 공유 알림 목록 조회

@@ -3,16 +3,16 @@ import { TicketsPlane, PlaneTakeoff } from 'lucide-react';
 import { LuPlus } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 
-import { tripAPI } from '@/api';
-import { toResult } from '@/api/utils';
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
-import TripTicket from '@/domain/trip/components/TripTicket';
 import { ROUTES } from '@/constants/paths';
 import { BUTTON, MESSAGE } from '@/constants/ui';
+import TripTicket from '@/domain/trip/components/TripTicket';
 import { useTripTicketList } from '@/domain/trip/hooks/queries';
 import { Trip } from '@/domain/trip/types';
+import { tripAPI } from '@/libs/apis';
+import { toResult } from '@/libs/apis/utils';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
 

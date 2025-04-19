@@ -3,8 +3,8 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { css } from '@emotion/react';
 
 import theme from '@/styles/theme';
-import { formatToKorean } from '@/utils/date';
-import { calculateTripDay } from '@/utils/trip';
+import { formatToKorean } from '@/libs/utils/date';
+import { calculateTripDay } from '@/libs/utils/trip';
 
 interface DateSelectorProps {
     currentDate: string;

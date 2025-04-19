@@ -8,7 +8,6 @@ import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
 import Spinner from '@/components/common/Spinner';
 import ConfirmModal from '@/components/guide/ConfirmModal';
-import SharedTicket from '@/domain/trip/components/SharedTicket';
 import { COLORS } from '@/constants/theme';
 import { MESSAGE } from '@/constants/ui';
 import { useNotificationDelete, useNotificationStatus } from '@/domain/notification/hooks/mutations';
@@ -16,9 +15,10 @@ import { Notification } from '@/domain/notification/types';
 import { useShareStatus } from '@/domain/share/hooks/mutations';
 import { useShareDetail } from '@/domain/share/hooks/queries';
 import { SharedTripDetail, ShareStatus } from '@/domain/share/types';
+import SharedTicket from '@/domain/trip/components/SharedTicket';
+import { formatDateTime } from '@/libs/utils/date';
+import { getMessageByType, getNotificationStyle } from '@/libs/utils/notification';
 import { useToastStore } from '@/stores/useToastStore';
-import { formatDateTime } from '@/utils/date';
-import { getMessageByType, getNotificationStyle } from '@/utils/notification';
 
 interface NotificationProps {
     notificationInfo: Notification;

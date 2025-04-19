@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-import { shareAPI, userAPI } from '@/api';
-import { toResult } from '@/api/utils';
 import { MESSAGE } from '@/constants/ui';
+import { shareAPI, userAPI } from '@/libs/apis';
+import { toResult } from '@/libs/apis/utils';
 
 export const useTripShare = (nickname: string, tripKey: string, onSuccess?: () => void) => {
     const [isSharing, setIsSharing] = useState(false);

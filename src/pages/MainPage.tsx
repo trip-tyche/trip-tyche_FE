@@ -6,15 +6,15 @@ import { FaArrowCircleDown } from 'react-icons/fa';
 import { GiRapidshareArrow } from 'react-icons/gi';
 import { useNavigate } from 'react-router-dom';
 
-import { tripAPI } from '@/api';
-import { toResult } from '@/api/utils';
 import Button from '@/components/common/Button';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import IntroTicket from '@/domain/trip/components/IntroTicket';
 import { WELCOME_TICKET_DATA } from '@/domain/trip/constants';
 import NickNameForm from '@/domain/user/components/NickNameForm';
-import webSocketService from '@/services/webSocketService';
+import { tripAPI } from '@/libs/apis';
+import { toResult } from '@/libs/apis/utils';
+import webSocketService from '@/libs/socket';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserStore from '@/stores/useUserStore';
 import theme from '@/styles/theme';

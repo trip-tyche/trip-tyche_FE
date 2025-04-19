@@ -4,8 +4,8 @@ import { DateValue, DatesRangeValue } from '@mantine/dates';
 import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
 
-import theme from '@/styles/theme';
 import { Trip } from '@/domain/trip/types';
+import theme from '@/styles/theme';
 
 interface UseTripDateRangeProps {
     imageDates: string[];

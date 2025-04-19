@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { mediaAPI } from '@/api';
 import { MediaFileModel } from '@/domain/media/types';
+import { mediaAPI } from '@/libs/apis';
 import { LatLng } from '@/types/maps';
 
 export const useImagesByDate = (tripKey: string, currentDate: string) => {

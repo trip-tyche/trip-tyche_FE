@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
-import { apiClient } from '@/api/client';
-import { API_BASE_URL } from '@/api/constants';
+import { apiClient } from '@/libs/apis/client';
+import { API_BASE_URL } from '@/libs/apis/constants';
 import { useToastStore } from '@/stores/useToastStore';
 import useUserStore from '@/stores/useUserStore';
 

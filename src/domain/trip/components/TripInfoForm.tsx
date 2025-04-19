@@ -12,7 +12,7 @@ import { COUNTRIES, FORM } from '@/domain/trip/constants';
 import { useTripDateRange } from '@/domain/trip/hooks/useTripDateRange';
 import { Trip } from '@/domain/trip/types';
 import theme from '@/styles/theme';
-import { formatToKorean } from '@/utils/date';
+import { formatToKorean } from '@/libs/utils/date';
 
 type DateSelectType = 'range' | 'single';
 type DateChangeHandler = (value: DateValue | DatesRangeValue) => void;
