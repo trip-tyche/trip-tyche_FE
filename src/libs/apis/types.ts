@@ -27,4 +27,9 @@ export interface MediaByPinPoint {
     mediaFiles: MediaFile[];
 }
 
+export interface MediaByDate {
+    recordDate: string;
+    mediaFiles: MediaFile[];
+}
+
 // export interface ShareDetailResponse extends Trip {}

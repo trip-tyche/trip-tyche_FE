@@ -1,6 +1,7 @@
 import { RefObject, useEffect, useState } from 'react';
 
-export const useScrollHint = (imageListRef: RefObject<HTMLDivElement>, isLoaded: boolean, isImageLoaded: boolean) => {
+export const useScrollHint = (imageListRef: RefObject<HTMLDivElement>, isLoaded: boolean) => {
+    // export const useScrollHint = (imageListRef: RefObject<HTMLDivElement>, isLoaded: boolean, isImageLoaded: boolean) => {
     const [isHintOverlayVisible, setIsHintOverlayVisible] = useState(false);
     const [isFirstLoad, setIsFirstLoad] = useState(true);
 
@@ -26,7 +27,8 @@ export const useScrollHint = (imageListRef: RefObject<HTMLDivElement>, isLoaded:
     };
 
     useEffect(() => {
-        if (isLoaded && isImageLoaded && imageListRef.current && isFirstLoad) {
+        // if (isLoaded && isImageLoaded && imageListRef.current && isFirstLoad) {
+        if (isLoaded && imageListRef.current && isFirstLoad) {
             setIsHintOverlayVisible(true);
 
             const element = imageListRef.current;
@@ -44,7 +46,7 @@ export const useScrollHint = (imageListRef: RefObject<HTMLDivElement>, isLoaded:
                 timeoutIds.forEach(clearTimeout);
             };
         }
-    }, [isLoaded, isImageLoaded, isFirstLoad, imageListRef]);
+    }, [isLoaded, isFirstLoad, imageListRef]);
 
     return {
         isHintOverlayVisible,

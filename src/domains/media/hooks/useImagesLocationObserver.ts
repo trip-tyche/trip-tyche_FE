@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-import { MediaFileModel } from '@/domains/media/types';
+import { MediaFile } from '@/domains/media/types';
 import { LatLng } from '@/types/maps';
 
-export const useImagesLocationObserver = (
-    imagesByDate: MediaFileModel[],
-    setImageLocation: (location: LatLng) => void,
-) => {
+export const useImagesLocationObserver = (images: MediaFile[], setImageLocation: (location: LatLng) => void) => {
     const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
     const observerCallback = useCallback(
@@ -14,14 +11,14 @@ export const useImagesLocationObserver = (
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
                     const index = parseInt(entry.target.getAttribute('data-index') || '0', 10);
-                    const image = imagesByDate[index];
+                    const image = images[index];
                     if (image) {
                         setImageLocation({ lat: image.latitude, lng: image.longitude });
                     }
                 }
             });
         },
-        [imagesByDate, setImageLocation],
+        [images, setImageLocation],
     );
 
     useEffect(() => {
@@ -41,7 +38,7 @@ export const useImagesLocationObserver = (
                 if (ref) observer.unobserve(ref);
             });
         };
-    }, [observerCallback, imagesByDate]);
+    }, [observerCallback, images]);
 
     return imageRefs;
 };

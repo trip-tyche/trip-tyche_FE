@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import { css } from '@emotion/react';
 import { ArrowDown, ChevronLeft } from 'lucide-react';
@@ -6,21 +6,21 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import Spinner from '@/components/common/Spinner';
 import { ROUTES } from '@/constants/paths';
-import { useImagesByDate } from '@/domains/media/hooks/useImagesByDate';
-import { useImagesLocationObserver } from '@/domains/media/hooks/useImagesLocationObserver';
-import useTimelineStore from '@/domains/route/stores/useTimelineStore';
-import DateMap from '@/domains/trip/components/DateMap';
+import { useMediaByDate } from '@/domains/media/hooks/queries';
+// import DateMap from '@/domains/trip/components/DateMap';
 import DateSelector from '@/domains/trip/components/DateSelector';
 import ImageItem from '@/domains/trip/components/ImageItem';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useScrollHint } from '@/hooks/useScrollHint';
 import { useToastStore } from '@/stores/useToastStore';
 import theme from '@/styles/theme';
+// import { LatLng } from '@/types/maps';
 
 const ImageByDatePage = () => {
     const [currentDate, setCurrentDate] = useState('');
-    const [isTransitioning, setIsTransitioning] = useState(false);
     const [datesWithImages, setDatesWithImages] = useState<string[]>([]);
+
+    // const [imageLocation, setImageLocation] = useState<LatLng>();
 
     const { isLoaded, loadError } = useGoogleMaps();
     const showToast = useToastStore((state) => state.showToast);
@@ -33,14 +33,14 @@ const ImageByDatePage = () => {
     const navigate = useNavigate();
 
     const imageListRef = useRef<HTMLDivElement>(null);
+    const { data: result, isLoading } = useMediaByDate(tripKey!, currentDate);
 
-    const { imagesByDate, imageLocation, isImageLoaded, setImageLocation, handleImageLoad } = useImagesByDate(
-        tripKey || '',
-        currentDate,
-    );
-    const { isHintOverlayVisible, isFirstLoad } = useScrollHint(imageListRef, isLoaded, isImageLoaded);
-    const imageRefs = useImagesLocationObserver(imagesByDate, setImageLocation);
-    const setLastPinPointId = useTimelineStore((state) => state.setLastPinPointId);
+    const { isHintOverlayVisible, isFirstLoad } = useScrollHint(imageListRef, isLoaded);
+    // const { isHintOverlayVisible, isFirstLoad } = useScrollHint(imageListRef, isLoaded, isImageLoaded);
+    // const imageRefs = useImagesLocationObserver(
+    //     'data' in result! && Array.isArray(result.data) ? result.data : [],
+    //     setImageLocation,
+    // );
 
     useEffect(() => {
         if (!imageDates?.length) {
@@ -48,55 +48,52 @@ const ImageByDatePage = () => {
         }
 
         setDatesWithImages(imageDates);
-        // setStartDate(imageDates[0]);
         setCurrentDate(imageDates[0]);
     }, [imageDates]);
-
-    const handleArrowButtonClick = useCallback(() => {
-        setIsTransitioning(true);
-        navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`);
-
-        setLastPinPointId(pinPointId);
-        localStorage.setItem('lastPinPointId', pinPointId);
-    }, [navigate, tripKey, pinPointId, setLastPinPointId]);
-
-    const handleDateButtonClick = useCallback((date: string) => {
-        setCurrentDate(date);
-    }, []);
 
     if (loadError) {
         showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
         navigate(-1);
     }
 
-    if (!isLoaded) {
+    if (!isLoaded || isLoading) {
         return <Spinner />;
     }
 
+    if (!result) return;
+    if (!result.success) {
+        return;
+    }
+
+    const images = result.data;
+
     return (
-        <div css={pageContainer(isTransitioning)}>
-            <button css={backButtonStyle} onClick={handleArrowButtonClick}>
+        <div css={pageContainer}>
+            <button
+                css={backButtonStyle}
+                onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`, { state: pinPointId })}
+            >
                 <ChevronLeft color={theme.COLORS.TEXT.DESCRIPTION} size={24} strokeWidth={1.5} />
             </button>
 
-            {imageLocation && <DateMap imageLocation={imageLocation} />}
+            {/* {imageLocation && <DateMap imageLocation={imageLocation} />} */}
 
             <DateSelector
                 currentDate={currentDate}
                 datesWithImages={datesWithImages}
                 startDate={startDate}
-                onDateSelect={handleDateButtonClick}
+                onDateSelect={(date: string) => setCurrentDate(date)}
             />
 
             <section ref={imageListRef} css={imageListStyle}>
-                {imagesByDate.map((image, index) => (
+                {images.map((image, index) => (
                     <ImageItem
                         key={image.mediaFileId}
                         image={image}
                         index={index}
-                        onImageLoad={handleImageLoad}
-                        isImageLoaded={isImageLoaded}
-                        reference={(element) => (imageRefs.current[index] = element)}
+                        // onImageLoad={handleImageLoad}
+                        // isImageLoaded={isImageLoaded}
+                        // reference={(element) => (imageRefs.current[index] = element)}
                     />
                 ))}
             </section>
@@ -113,12 +110,11 @@ const ImageByDatePage = () => {
     );
 };
 
-const pageContainer = (isTransitioning: boolean) => css`
+const pageContainer = css`
     height: 100dvh;
     display: flex;
     flex-direction: column;
     transition: transform 0.3s ease-in-out;
-    transform: ${isTransitioning ? 'translateY(100%)' : 'translateY(0)'};
     overflow-y: auto;
     background-color: ${theme.COLORS.BACKGROUND.BLACK};
     position: relative;

@@ -1,59 +1,65 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { MediaFileModel } from '@/domains/media/types';
-import { mediaAPI } from '@/libs/apis';
+import { useMediaByDate } from '@/domains/media/hooks/queries';
 import { LatLng } from '@/types/maps';
 
 export const useImagesByDate = (tripKey: string, currentDate: string) => {
-    const [imagesByDate, setImagesByDate] = useState<MediaFileModel[]>([]);
+    // const [imagesByDate, setImagesByDate] = useState<MediaFileModel[]>([]);
     const [imageLocation, setImageLocation] = useState<LatLng>();
 
-    const [isImageLoaded, setIsImageLoaded] = useState(false);
-    const [loadedImageCount, setLoadedImageCount] = useState(0);
+    // const [isImageLoaded, setIsImageLoaded] = useState(false);
+    // const [loadedImageCount, setLoadedImageCount] = useState(0);
 
-    useEffect(() => {
-        const getImagesByDate = async () => {
-            if (!(tripKey && currentDate)) {
-                return;
-            }
-            setLoadedImageCount(0);
-            setIsImageLoaded(false);
+    const { data: result } = useMediaByDate(tripKey, currentDate);
 
-            const result = await mediaAPI.fetchImagesByDate(tripKey, currentDate);
-            const { mediaFiles: images } = result;
+    if (!result) return;
+    if (!result.success) {
+        return;
+    }
 
-            const validLocationImages = images.filter(
-                (image: MediaFileModel) => image.latitude !== 0 && image.longitude !== 0,
-            );
+    // useEffect(() => {
+    //     const getImagesByDate = async () => {
+    //         if (!(tripKey && currentDate)) {
+    //             return;
+    //         }
+    //         setLoadedImageCount(0);
+    //         setIsImageLoaded(false);
 
-            setImagesByDate(validLocationImages || []);
+    //         const result = await mediaAPI.fetchImagesByDate(tripKey, currentDate);
+    //         const { mediaFiles: images } = result;
 
-            if (images && images.length > 0) {
-                setImageLocation({ lat: images[0].latitude, lng: images[0].longitude });
-            }
-        };
+    //         const validLocationImages = images.filter(
+    //             (image: MediaFileModel) => image.latitude !== 0 && image.longitude !== 0,
+    //         );
 
-        getImagesByDate();
-    }, [tripKey, currentDate]);
+    //         setImagesByDate(validLocationImages || []);
 
-    useEffect(() => {
-        if (loadedImageCount === imagesByDate.length) {
-            setIsImageLoaded(true);
-        }
-    }, [loadedImageCount, imagesByDate]);
+    //         if (images && images.length > 0) {
+    //             setImageLocation({ lat: images[0].latitude, lng: images[0].longitude });
+    //         }
+    //     };
 
-    const handleImageLoad = () => {
-        setLoadedImageCount((prev) => {
-            const loadedImageCount = prev + 1;
-            return loadedImageCount;
-        });
-    };
+    //     getImagesByDate();
+    // }, [tripKey, currentDate]);
+
+    // useEffect(() => {
+    //     if (loadedImageCount === imagesByDate.length) {
+    //         setIsImageLoaded(true);
+    //     }
+    // }, [loadedImageCount, imagesByDate]);
+
+    // const handleImageLoad = () => {
+    //     setLoadedImageCount((prev) => {
+    //         const loadedImageCount = prev + 1;
+    //         return loadedImageCount;
+    //     });
+    // };
 
     return {
-        imagesByDate,
+        images: result.data,
         imageLocation,
-        isImageLoaded,
+        // isImageLoaded,
         setImageLocation,
-        handleImageLoad,
+        // handleImageLoad,
     };
 };

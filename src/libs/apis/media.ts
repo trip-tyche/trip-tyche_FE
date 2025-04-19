@@ -4,18 +4,18 @@ import { PresignedUrlRequest, PresignedUrlResponse } from '@/domains/media/image
 import { MediaFileMetaData, UnlocatedMediaFileModel } from '@/domains/media/types';
 import { apiClient } from '@/libs/apis/client';
 import { API_ENDPOINTS } from '@/libs/apis/constants';
-import { ApiResponse, MediaByPinPoint, Result } from '@/libs/apis/types';
+import { ApiResponse, MediaByDate, MediaByPinPoint, Result } from '@/libs/apis/types';
+import { exceptTimeFromDateString } from '@/libs/utils/date';
 import { GpsCoordinates } from '@/types/location';
 
 export const mediaAPI = {
-    // 핀포인트 슬라이드
+    // 핀포인트별 미디어 파일 조회
     fetchMediaByPinPoint: async (tripKey: string, pinPointId: string): Promise<ApiResponse<MediaByPinPoint>> =>
         await apiClient.get(`/v1/trips/${tripKey}/pinpoints/${pinPointId}/images`),
-    // 날짜별 이미지 조회
-    fetchImagesByDate: async (tripKey: string, date: string) => {
-        const formattedDate = date.slice(0, 10);
-        const data = await apiClient.get(`/v1/trips/${tripKey}/map?date=${formattedDate}`);
-        return data.data;
+    // 날짜별 미디어 파일 조회
+    fetchMediaByDate: async (tripKey: string, dateString: string): Promise<ApiResponse<MediaByDate>> => {
+        const onlyDate = exceptTimeFromDateString(dateString);
+        return await apiClient.get(`/v1/trips/${tripKey}/map?date=${onlyDate}`);
     },
     // 첫번째 이미지 좌표[위치정보⭕️]
     fetchDefaultLocation: async (tripKey: string) => {

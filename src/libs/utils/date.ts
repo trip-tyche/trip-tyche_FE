@@ -57,3 +57,6 @@ export const formatDateTime = (isoString: string, includeTime = true): string =>
 
     return includeTime ? `${year}년 ${month}월 ${day}일 ${hours}시 ${minutes}분` : `${month}월 ${day}일`;
 };
+
+// --------------------------------
+export const exceptTimeFromDateString = (dateString: string) => dateString.slice(0, 10);

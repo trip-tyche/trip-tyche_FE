@@ -17,8 +17,17 @@ export const useMediaByPinPoint = (tripKey: string, pinPointId: string) =>
         },
     });
 
-export const useMediaByDate = () =>
+export const useMediaByDate = (tripKey: string, date: string) =>
     useQuery({
-        queryKey: ['media', 'by-date'],
-        queryFn: () => {},
+        queryKey: ['media', 'by-date', tripKey, date],
+        queryFn: () => toResult(() => mediaAPI.fetchMediaByDate(tripKey, date)),
+        select: (result) => {
+            return result.success
+                ? {
+                      ...result,
+                      data: result.data.mediaFiles,
+                  }
+                : result;
+        },
+        enabled: !!date,
     });
