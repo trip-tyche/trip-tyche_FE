@@ -7,8 +7,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ROUTES } from '@/constants/paths';
 import { IMAGE_CAROUSEL_STATE } from '@/constants/ui';
 import ImageCarousel from '@/domains/media/components/ImageCarousel';
-import { MediaFile, PinpointMediaModel } from '@/domains/media/types';
+import { MediaFile } from '@/domains/media/types';
 import { mediaAPI } from '@/libs/apis';
+import { sortByDate } from '@/libs/utils/sort';
 import theme from '@/styles/theme';
 import { ImageCarouselState } from '@/types';
 
@@ -26,30 +27,27 @@ const ImageByPinpointPage = () => {
             }
 
             const result = await mediaAPI.fetchImagesByPinPoint(tripKey, pinPointId);
-            console.log(result);
             const { mediaFiles } = result;
 
-            const sortedImages = mediaFiles.sort((dateA: PinpointMediaModel, dateB: PinpointMediaModel) =>
-                dateA.recordDate.localeCompare(dateB.recordDate),
-            );
-            console.log(sortedImages);
-
-            setImages(sortedImages);
+            setImages(sortByDate(mediaFiles));
         };
 
         getPinPointImagesData();
     }, [tripKey, pinPointId]);
 
-    const navigateBeforePage = () => {
-        if (typeof tripKey === 'string') {
-            navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey)}`, { state: { lastLoactedPinPointId: pinPointId } });
-        }
-    };
-
     return (
         <div css={pageContainer}>
             {carouselState !== 'zoomed' && (
-                <X size={24} color={theme.COLORS.TEXT.WHITE} onClick={navigateBeforePage} css={iconStyle} />
+                <X
+                    size={24}
+                    color={theme.COLORS.TEXT.WHITE}
+                    onClick={() =>
+                        navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey!)}`, {
+                            state: { lastLoactedPinPointId: pinPointId },
+                        })
+                    }
+                    css={iconStyle}
+                />
             )}
             <ImageCarousel images={images} carouselState={carouselState} setCarouselState={setCarouselState} />
         </div>
