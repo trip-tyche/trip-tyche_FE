@@ -6,9 +6,9 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import CarouselItem from '@/components/features/image/CarouselItem';
+import { ImageCarouselModel } from '@/domain/media/image';
 import theme from '@/styles/theme';
 import { CarouselState } from '@/types/common';
-import { ImageCarouselModel } from '@/domain/media/image';
 
 interface ImageCarouselProps {
     images: ImageCarouselModel[];

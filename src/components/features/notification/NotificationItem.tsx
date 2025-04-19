@@ -4,7 +4,6 @@ import { css } from '@emotion/react';
 import { TicketsPlane } from 'lucide-react';
 import { GoKebabHorizontal } from 'react-icons/go';
 
-import { notifiactionAPI } from '@/api/notification';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
 import Spinner from '@/components/common/Spinner';
@@ -12,7 +11,7 @@ import ConfirmModal from '@/components/features/guide/ConfirmModal';
 import SharedTicket from '@/components/features/trip/SharedTicket';
 import { COLORS } from '@/constants/theme';
 import { MESSAGE } from '@/constants/ui';
-import { useNotificationStatus } from '@/domain/notification/hooks/mutations';
+import { useNotificationDelete, useNotificationStatus } from '@/domain/notification/hooks/mutations';
 import { Notification } from '@/domain/notification/types';
 import { useShareStatus } from '@/domain/share/hooks/mutations';
 import { useShareDetail } from '@/domain/share/hooks/queries';
@@ -35,6 +34,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
     const { data: shareDetailResult, isPending } = useShareDetail(referenceId);
     const { mutateAsync: notificationMutateAsync } = useNotificationStatus();
     const { mutateAsync: shareMutateAsync } = useShareStatus();
+    const { mutateAsync: deleteMutateAsync } = useNotificationDelete();
 
     if (!shareDetailResult) return;
     if (!shareDetailResult?.success) {
@@ -44,6 +44,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
 
     const showSharedTripDetail = async () => {
         const isRead = status === 'READ';
+
         if (!isRead) {
             const result = await notificationMutateAsync(referenceId);
             if (!result.success) throw Error(result.error);
@@ -52,10 +53,9 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
     };
 
     const deleteNotification = async () => {
-        const deletedNotification = [notificationId];
-        const response = await notifiactionAPI.deleteNotification(deletedNotification);
+        const result = await deleteMutateAsync([notificationId]);
 
-        if (response.success) {
+        if (result.success) {
             showToast('알림이 삭제되었습니다');
             setIsDeleteModalOpen(false);
         }

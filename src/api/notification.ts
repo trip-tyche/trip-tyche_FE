@@ -10,8 +10,6 @@ export const notifiactionAPI = {
     updateNotificationStatus: async (notificationId: number): Promise<ApiResponse<string>> =>
         await apiClient.patch(`/v1/notifications/${notificationId}`),
     // 알림 삭제
-    deleteNotification: async (notificationId: number[]) => {
-        const response = await apiClient.patch(`/v1/notifications/delete`, notificationId);
-        return { success: true, data: response.data };
-    },
+    deleteNotification: async (notificationId: number[]): Promise<ApiResponse<string>> =>
+        await apiClient.patch(`/v1/notifications/delete`, notificationId),
 };
