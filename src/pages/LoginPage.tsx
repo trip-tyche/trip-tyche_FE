@@ -5,9 +5,9 @@ import { Tooltip } from '@mantine/core';
 
 import { OAUTH_CONFIG } from '@/api/constants';
 import backgroundImage from '@/assets/images/background-mobile-3.webp';
-import LoginButton from '@/components/features/auth/LoginButton';
-import ConfirmModal from '@/components/features/guide/ConfirmModal';
+import ConfirmModal from '@/components/guide/ConfirmModal';
 import { COLORS } from '@/constants/theme';
+import LoginButton from '@/domain/user/components/LoginButton';
 import useBrowserCheck from '@/hooks/useBrowserCheck';
 
 const LoginPage = () => {

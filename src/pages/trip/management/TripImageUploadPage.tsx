@@ -6,8 +6,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 
 import Header from '@/components/common/Header';
-import AlertModal from '@/components/features/guide/AlertModal';
-import UploadingSpinner from '@/components/features/guide/UploadingSpinner';
+import AlertModal from '@/components/guide/AlertModal';
+import UploadingSpinner from '@/components/guide/UploadingSpinner';
 import { ROUTES } from '@/constants/paths';
 import { MESSAGE } from '@/constants/ui';
 import { useImageUpload } from '@/domain/media/hooks/useImageUpload';

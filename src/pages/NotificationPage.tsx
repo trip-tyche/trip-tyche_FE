@@ -4,10 +4,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
-import NotificationItem from '@/components/features/notification/NotificationItem';
 import { ROUTES } from '@/constants/paths';
 import { COLORS } from '@/constants/theme';
 import { MESSAGE } from '@/constants/ui';
+import NotificationItem from '@/domain/notification/components/NotificationItem';
 import { useNotificationList } from '@/domain/notification/hooks/queries';
 import { Notification } from '@/domain/notification/types';
 import { useToastStore } from '@/stores/useToastStore';

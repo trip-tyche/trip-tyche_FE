@@ -5,8 +5,8 @@ import { X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { mediaAPI } from '@/api';
-import ImageCarousel from '@/components/features/image/ImageCarousel';
 import { ROUTES } from '@/constants/paths';
+import ImageCarousel from '@/domain/media/components/ImageCarousel';
 import { ImageCarouselModel } from '@/domain/media/image';
 import { PinpointMediaModel } from '@/domain/media/types';
 import useTimelineStore from '@/stores/useTimelineStore';

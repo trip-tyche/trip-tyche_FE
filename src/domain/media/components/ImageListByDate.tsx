@@ -4,10 +4,10 @@ import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
-import ConfirmModal from '@/components/features/guide/ConfirmModal';
-import ImageGrid from '@/components/features/image/ImageGrid';
-import ImageSizeRadio from '@/components/features/image/ImageSizeRadio';
+import ConfirmModal from '@/components/guide/ConfirmModal';
 import { ROUTES } from '@/constants/paths';
+import ImageGrid from '@/domain/media/components/ImageGrid';
+import ImageSizeRadio from '@/domain/media/components/ImageSizeRadio';
 import { UnlocatedMediaFile, UnlocatedMediaFileModel } from '@/domain/media/types';
 import theme from '@/styles/theme';
 import { formatToKorean } from '@/utils/date';

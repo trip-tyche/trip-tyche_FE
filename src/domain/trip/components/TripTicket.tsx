@@ -7,8 +7,8 @@ import { IoAirplaneSharp } from 'react-icons/io5';
 
 import characterImg from '@/assets/images/character-ogami-1.png';
 import Spinner from '@/components/common/Spinner';
-import ConfirmModal from '@/components/features/guide/ConfirmModal';
-import InputModal from '@/components/features/guide/InputModal';
+import ConfirmModal from '@/components/guide/ConfirmModal';
+import InputModal from '@/components/guide/InputModal';
 import { COLORS } from '@/constants/theme';
 import { TICKET } from '@/constants/trip';
 import { useTripShare } from '@/domain/share/hooks/useTripShare';

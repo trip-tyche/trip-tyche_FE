@@ -8,7 +8,7 @@ import { toResult } from '@/api/utils';
 import Button from '@/components/common/Button';
 import Header from '@/components/common/Header';
 import Spinner from '@/components/common/Spinner';
-import TripTicket from '@/components/features/trip/TripTicket';
+import TripTicket from '@/domain/trip/components/TripTicket';
 import { ROUTES } from '@/constants/paths';
 import { BUTTON, MESSAGE } from '@/constants/ui';
 import { useTripTicketList } from '@/domain/trip/hooks/queries';

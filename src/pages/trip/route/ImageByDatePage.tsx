@@ -5,12 +5,12 @@ import { ArrowDown, ChevronLeft } from 'lucide-react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import Spinner from '@/components/common/Spinner';
-import DateMap from '@/components/features/timeline/DateMap';
-import DateSelector from '@/components/features/timeline/DateSelector';
-import ImageItem from '@/components/features/timeline/ImageItem';
 import { ROUTES } from '@/constants/paths';
 import { useImagesByDate } from '@/domain/media/hooks/useImagesByDate';
 import { useImagesLocationObserver } from '@/domain/media/hooks/useImagesLocationObserver';
+import DateMap from '@/domain/trip/components/DateMap';
+import DateSelector from '@/domain/trip/components/DateSelector';
+import ImageItem from '@/domain/trip/components/ImageItem';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useScrollHint } from '@/hooks/useScrollHint';
 import useTimelineStore from '@/stores/useTimelineStore';
