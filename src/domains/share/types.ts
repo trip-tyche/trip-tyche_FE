@@ -10,6 +10,5 @@ export interface SharedTripDetail {
     country: string;
     startDate: string;
     endDate: string;
-    // TODO: hashtags: string[]로 수정 요청
-    hashtags: string;
+    hashtags: string[];
 }

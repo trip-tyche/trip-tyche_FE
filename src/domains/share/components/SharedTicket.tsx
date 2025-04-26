@@ -44,9 +44,9 @@ const SharedTicket = ({ trip, userNickname }: IntroTicketProps) => {
                         <p css={flagStyle}>{country.split('/')[0]}</p>
                     </div>
                     <div css={hashtagGroup}>
-                        {hashtags.split(',').map((tag, index) => (
+                        {hashtags.map((hashtag, index) => (
                             <span key={index} css={hashtagStyle}>
-                                # {tag}
+                                # {hashtag}
                             </span>
                         ))}
                     </div>

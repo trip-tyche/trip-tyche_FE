@@ -5,7 +5,7 @@ type PinPointId = number;
 export const ROUTES = {
     PATH: {
         ONBOARDING: '/onboarding',
-        LOGIN: '/login',
+        SIGNIN: '/singin',
         MAIN: '/',
         SETTING: '/setting',
         NOTIFICATION: (userId: UserId) => `notification/${userId}`,

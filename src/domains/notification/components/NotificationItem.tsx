@@ -30,26 +30,23 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
     const showToast = useToastStore((state) => state.showToast);
 
     const { notificationId, referenceId, message, status, senderNickname, createdAt } = notificationInfo;
-
-    const { data: shareDetailResult, isPending } = useShareDetail(referenceId);
+    console.log(isDetailOpen);
+    const { data: shareDetailResult, isLoading, error } = useShareDetail(referenceId, isDetailOpen);
     const { mutateAsync: notificationMutateAsync } = useNotificationStatus();
     const { mutateAsync: shareMutateAsync } = useShareStatus();
     const { mutateAsync: deleteMutateAsync } = useNotificationDelete();
 
-    if (!shareDetailResult) return;
-    if (!shareDetailResult?.success) {
-        showToast(shareDetailResult ? shareDetailResult?.error : MESSAGE.ERROR.UNKNOWN);
-        return;
-    }
-
     const showSharedTripDetail = async () => {
+        console.log('z');
         const isRead = status === 'READ';
 
         if (!isRead) {
             const result = await notificationMutateAsync(referenceId);
             if (!result.success) throw Error(result.error);
         }
+        console.log('3');
         setIsDetailOpen(true);
+        console.log('4');
     };
 
     const deleteNotification = async () => {
@@ -75,11 +72,15 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
     };
 
     const isRead = status === 'READ';
-    const sharedTripInfo = shareDetailResult?.data;
+    const sharedTripInfo = shareDetailResult?.success && shareDetailResult?.data ? shareDetailResult?.data : null;
+
+    if (error) {
+        showToast(error ? error.message : MESSAGE.ERROR.UNKNOWN);
+    }
 
     return (
         <>
-            {isPending && <Spinner />}
+            {isLoading && <Spinner />}
             <div key={notificationId} css={[container, getNotificationStyle(isRead)]} onClick={showSharedTripDetail}>
                 <div css={info}>
                     <div css={notification}>
@@ -107,14 +108,14 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
                 />
             )}
 
-            {isDetailOpen && (
+            {sharedTripInfo && isDetailOpen && (
                 <Modal closeModal={() => setIsDetailOpen(false)}>
                     <div css={sharedTripInfoStyle}>
                         <SharedTicket
                             userNickname={sharedTripInfo?.ownerNickname || ''}
                             trip={sharedTripInfo as SharedTripDetail}
                         />
-                        {sharedTripInfo?.status === 'PENDING' ? (
+                        {sharedTripInfo.status === 'PENDING' ? (
                             <div css={buttonGroup}>
                                 <Button
                                     text={'거절하기'}

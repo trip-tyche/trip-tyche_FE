@@ -13,7 +13,6 @@ import { Notification } from '@/domains/notification/types';
 import { useToastStore } from '@/stores/useToastStore';
 
 const NotificationPage = () => {
-    // const [notifications, setNotifications] = useState<Notification[]>();
     const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();
