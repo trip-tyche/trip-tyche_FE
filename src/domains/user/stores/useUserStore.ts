@@ -35,7 +35,7 @@ const useUserStore = create<UserState>()((set, get) => ({
     logout: async () => {
         await userAPI.requestLogout();
         queryClient.clear();
-        window.location.href = '/login';
+        window.location.href = '/signin';
         set(() => ({
             isAuthenticated: false,
             userInfo: null,

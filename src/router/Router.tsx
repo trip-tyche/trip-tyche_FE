@@ -54,7 +54,7 @@ const router = createBrowserRouter([
         ),
         children: [
             {
-                path: ROUTES.PATH.SIGNIN,
+                path: ROUTES.PATH.LOGIN,
                 element: (
                     <Suspense fallback={<LoadingSpinner />}>
                         <LoginPage />
