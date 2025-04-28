@@ -10,7 +10,7 @@ import LoginButton from '@/domains/user/components/LoginButton';
 import useBrowserCheck from '@/hooks/useBrowserCheck';
 import { OAUTH_CONFIG } from '@/libs/apis/constants';
 
-const LoginPage = () => {
+const SigninPage = () => {
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
     const { isModalOpen, closeModal } = useBrowserCheck({ showOnce: true });
 
@@ -149,4 +149,4 @@ const pStyle = css`
 //     z-index: 20;
 // `;
 
-export default LoginPage;
+export default SigninPage;

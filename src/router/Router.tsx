@@ -6,17 +6,16 @@ import Spinner from '@/components/common/Spinner';
 import { ROUTES } from '@/constants/paths';
 import { useAuthCheck } from '@/domains/user/hooks/useAuthCheck';
 import RootLayout from '@/layouts/RootLayout';
+import MainPage from '@/pages/MainPage';
 import NotificationPage from '@/pages/NotificationPage';
+import PageNotFound from '@/pages/PageNotFound';
+import SettingPage from '@/pages/SettingPage';
+import SigninPage from '@/pages/SignInPage';
+import TripListPage from '@/pages/trip/TripListPage';
 
 const LoadingSpinner = () => <Spinner loadingText='불러오는 중...' />;
 
-const LoginPage = lazy(() => import('@/pages/LoginPage'));
-const MainPage = lazy(() => import('@/pages/MainPage'));
-const PageNotFound = lazy(() => import('@/pages/PageNotFound'));
-const SettingPage = lazy(() => import('@/pages/SettingPage'));
-
 const TripPages = {
-    TripListPage: lazy(() => import('@/pages/trip/TripListPage')),
     Management: {
         TripImageManagePage: lazy(() => import('@/pages/trip/management/TripImageManagePage')),
         TripImageUploadPage: lazy(() => import('@/pages/trip/management/TripImageUploadPage')),
@@ -57,7 +56,7 @@ const router = createBrowserRouter([
                 path: ROUTES.PATH.SIGNIN,
                 element: (
                     <Suspense fallback={<LoadingSpinner />}>
-                        <LoginPage />
+                        <SigninPage />
                     </Suspense>
                 ),
             },
@@ -79,7 +78,7 @@ const router = createBrowserRouter([
 
                     {
                         path: ROUTES.PATH.TRIP.ROOT,
-                        element: <TripPages.TripListPage />,
+                        element: <TripListPage />,
                     },
                     {
                         path: 'trip/:tripKey',
