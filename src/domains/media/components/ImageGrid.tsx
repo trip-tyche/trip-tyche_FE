@@ -3,9 +3,9 @@ import { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 import { GoCheckCircleFill } from 'react-icons/go';
 
-import Spinner from '@/components/common/Spinner';
 import { UnlocatedMediaFile } from '@/domains/media/types';
-import theme from '@/styles/theme';
+import Spinner from '@/shared/components/common/Spinner';
+import theme from '@/shared/styles/theme';
 
 interface ImageGridProps {
     imageSize?: number;

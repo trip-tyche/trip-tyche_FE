@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import { MediaFile } from '@/domains/media/types';
-import { LatLng } from '@/types/maps';
+import { LatLng } from '@/shared/types/maps';
 
 export const useImagesLocationObserver = (images: MediaFile[], setImageLocation: (location: LatLng) => void) => {
     const imageRefs = useRef<(HTMLDivElement | null)[]>([]);

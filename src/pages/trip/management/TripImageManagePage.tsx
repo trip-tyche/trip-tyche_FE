@@ -5,22 +5,22 @@ import { Trash2 } from 'lucide-react';
 import { FaPencilAlt } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import Button from '@/components/common/Button';
-import Header from '@/components/common/Header';
-import Spinner from '@/components/common/Spinner';
-import ConfirmModal from '@/components/guide/ConfirmModal';
-import { ROUTES } from '@/constants/paths';
-import { COLORS } from '@/constants/theme';
 import MediaImageGrid from '@/domains/media/components/MediaImageGrid';
 import { MediaFileMetaData, MediaFileWithDate } from '@/domains/media/types';
 import EditDate from '@/domains/trip/components/EditDate';
 import LocationAddMap from '@/domains/trip/components/LocationAddMap';
 import { useMediaDelete } from '@/domains/trip/hooks/mutations';
-import { useTripImages } from '@/hooks/queries/useImage';
 import { mediaAPI } from '@/libs/apis';
 import { formatToISOLocal, formatToKorean } from '@/libs/utils/date';
-import { useToastStore } from '@/stores/useToastStore';
-import { Location } from '@/types/location';
+import Button from '@/shared/components/common/Button';
+import Header from '@/shared/components/common/Header';
+import Spinner from '@/shared/components/common/Spinner';
+import ConfirmModal from '@/shared/components/guide/ConfirmModal';
+import { ROUTES } from '@/shared/constants/paths';
+import { COLORS } from '@/shared/constants/theme';
+import { useTripImages } from '@/shared/hooks/queries/useImage';
+import { useToastStore } from '@/shared/stores/useToastStore';
+import { Location } from '@/shared/types/location';
 
 const TripImageManagePage = () => {
     // const [tripImages, setTripImages] = useState<MediaFileMetaData[]>([]);

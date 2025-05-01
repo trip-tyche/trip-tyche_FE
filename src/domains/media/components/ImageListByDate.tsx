@@ -3,14 +3,14 @@ import { Fragment, useState } from 'react';
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
-import Button from '@/components/common/Button';
-import ConfirmModal from '@/components/guide/ConfirmModal';
-import { ROUTES } from '@/constants/paths';
 import ImageGrid from '@/domains/media/components/ImageGrid';
 import ImageSizeRadio from '@/domains/media/components/ImageSizeRadio';
 import { UnlocatedMediaFile, UnlocatedMediaFileModel } from '@/domains/media/types';
 import { formatToKorean } from '@/libs/utils/date';
-import theme from '@/styles/theme';
+import Button from '@/shared/components/common/Button';
+import ConfirmModal from '@/shared/components/guide/ConfirmModal';
+import { ROUTES } from '@/shared/constants/paths';
+import theme from '@/shared/styles/theme';
 
 interface ImageListByDateProps {
     // imageGroupByDate: [string, ImageModel[]][];

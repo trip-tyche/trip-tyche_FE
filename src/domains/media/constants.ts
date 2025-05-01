@@ -1,13 +1,13 @@
 export const COMPRESSION_OPTIONS = {
     maxWidthOrHeight: 1280,
 
-    initialQuality: 0.7,
+    initialQuality: 0.8,
     useWebWorker: true,
     preserveExif: true,
 
     fileType: 'image/webp',
     webpOptions: {
-        quality: 0.7,
+        quality: 0.8,
         lossless: false,
         nearLossless: false,
         alpha_quality: 1,

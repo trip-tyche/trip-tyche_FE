@@ -2,16 +2,16 @@ import { lazy, Suspense } from 'react';
 
 import { createBrowserRouter, Outlet } from 'react-router-dom';
 
-import Spinner from '@/components/common/Spinner';
-import { ROUTES } from '@/constants/paths';
 import { useAuthCheck } from '@/domains/user/hooks/useAuthCheck';
 import RootLayout from '@/layouts/RootLayout';
 import MainPage from '@/pages/MainPage';
 import NotificationPage from '@/pages/NotificationPage';
 import PageNotFound from '@/pages/PageNotFound';
 import SettingPage from '@/pages/SettingPage';
-import SigninPage from '@/pages/SignInPage';
+import SigninPage from '@/pages/SigninPage';
 import TripListPage from '@/pages/trip/TripListPage';
+import Spinner from '@/shared/components/common/Spinner';
+import { ROUTES } from '@/shared/constants/paths';
 
 const LoadingSpinner = () => <Spinner loadingText='불러오는 중...' />;
 

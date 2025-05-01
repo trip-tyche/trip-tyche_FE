@@ -6,19 +6,19 @@ import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
 import characterImg from '@/assets/images/character-ogami-1.png';
-import Spinner from '@/components/common/Spinner';
-import ConfirmModal from '@/components/guide/ConfirmModal';
-import InputModal from '@/components/guide/InputModal';
-import { COLORS } from '@/constants/theme';
 import { useTripShare } from '@/domains/share/hooks/useTripShare';
 import { TICKET } from '@/domains/trip/constants';
 import { Trip } from '@/domains/trip/types';
 import useUserStore from '@/domains/user/stores/useUserStore';
-import { useTicketHandler } from '@/hooks/useTicketHandler';
-import { useTicketNavigation } from '@/hooks/useTicketNavigation';
 import { formatToDot } from '@/libs/utils/date';
-import { useToastStore } from '@/stores/useToastStore';
-import theme from '@/styles/theme';
+import InputModal from '@/shared//components/guide/InputModal';
+import Spinner from '@/shared/components/common/Spinner';
+import ConfirmModal from '@/shared/components/guide/ConfirmModal';
+import { COLORS } from '@/shared/constants/theme';
+import { useTicketHandler } from '@/shared/hooks/useTicketHandler';
+import { useTicketNavigation } from '@/shared/hooks/useTicketNavigation';
+import { useToastStore } from '@/shared/stores/useToastStore';
+import theme from '@/shared/styles/theme';
 
 interface TripTicketProps {
     tripInfo: Trip;

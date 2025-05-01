@@ -1,5 +1,5 @@
 import { UnlocatedMediaFileModel } from '@/domains/media/types';
-import { Location } from '@/types/location';
+import { Location } from '@/shared/types/location';
 
 export interface ImageModel {
     image: File;

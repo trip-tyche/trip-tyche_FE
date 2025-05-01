@@ -4,12 +4,6 @@ import { css } from '@emotion/react';
 import { TicketsPlane } from 'lucide-react';
 import { GoKebabHorizontal } from 'react-icons/go';
 
-import Button from '@/components/common/Button';
-import Modal from '@/components/common/Modal';
-import Spinner from '@/components/common/Spinner';
-import ConfirmModal from '@/components/guide/ConfirmModal';
-import { COLORS } from '@/constants/theme';
-import { MESSAGE } from '@/constants/ui';
 import { useNotificationDelete, useNotificationStatus } from '@/domains/notification/hooks/mutations';
 import { Notification } from '@/domains/notification/types';
 import SharedTicket from '@/domains/share/components/SharedTicket';
@@ -18,7 +12,13 @@ import { useShareDetail } from '@/domains/share/hooks/queries';
 import { SharedTripDetail, ShareStatus } from '@/domains/share/types';
 import { formatDateTime } from '@/libs/utils/date';
 import { getMessageByType, getNotificationStyle } from '@/libs/utils/notification';
-import { useToastStore } from '@/stores/useToastStore';
+import Button from '@/shared/components/common/Button';
+import Modal from '@/shared/components/common/Modal';
+import Spinner from '@/shared/components/common/Spinner';
+import ConfirmModal from '@/shared/components/guide/ConfirmModal';
+import { COLORS } from '@/shared/constants/theme';
+import { MESSAGE } from '@/shared/constants/ui';
+import { useToastStore } from '@/shared/stores/useToastStore';
 
 interface NotificationProps {
     notificationInfo: Notification;

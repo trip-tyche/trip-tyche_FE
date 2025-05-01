@@ -4,9 +4,9 @@ import { css } from '@emotion/react';
 import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { Calendar, Clock } from 'lucide-react';
 
-import Button from '@/components/common/Button';
-import Header from '@/components/common/Header';
-import { COLORS } from '@/constants/theme';
+import Button from '@/shared/components/common/Button';
+import Header from '@/shared/components/common/Header';
+import { COLORS } from '@/shared/constants/theme';
 
 interface EditDateProps {
     defaultDate: string;

@@ -3,9 +3,9 @@ import { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 import { GoCheckCircleFill } from 'react-icons/go';
 
-import Spinner from '@/components/common/Spinner';
-import { COLORS } from '@/constants/theme';
 import { MediaFileMetaData } from '@/domains/media/types';
+import Spinner from '@/shared/components/common/Spinner';
+import { COLORS } from '@/shared/constants/theme';
 
 interface MediaImageGridProps {
     images: MediaFileMetaData[];

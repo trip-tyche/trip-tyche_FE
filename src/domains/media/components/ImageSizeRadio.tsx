@@ -2,7 +2,7 @@ import React from 'react';
 
 import { css } from '@emotion/react';
 
-import theme from '@/styles/theme';
+import theme from '@/shared/styles/theme';
 
 interface ImageSizeRadioProps {
     imageSize: number;

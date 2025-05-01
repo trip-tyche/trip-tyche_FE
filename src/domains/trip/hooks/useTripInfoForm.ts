@@ -3,15 +3,15 @@ import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { ROUTES } from '@/constants/paths';
-import { MESSAGE } from '@/constants/ui';
+import { ROUTES } from '@/shared/constants/paths';
+import { MESSAGE } from '@/shared/constants/ui';
 import { useTripUpdate } from '@/domains/trip/hooks/mutations';
 import { TripInfo } from '@/domains/trip/types';
 import { tripAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/utils';
 import { validateFormComplete } from '@/libs/utils/validate';
-import { useToastStore } from '@/stores/useToastStore';
-import { useUploadStatusStore } from '@/stores/useUploadStatusStore';
+import { useToastStore } from '@/shared/stores/useToastStore';
+import { useUploadStatusStore } from '@/shared/stores/useUploadStatusStore';
 
 export const useTripInfoForm = (isEditing: boolean, form: TripInfo) => {
     const [isImageSubmitting, setIsImageSubmitting] = useState(false);

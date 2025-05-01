@@ -3,18 +3,18 @@ import { TicketsPlane, PlaneTakeoff } from 'lucide-react';
 import { LuPlus } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 
-import Button from '@/components/common/Button';
-import Header from '@/components/common/Header';
-import Spinner from '@/components/common/Spinner';
-import { ROUTES } from '@/constants/paths';
-import { BUTTON, MESSAGE } from '@/constants/ui';
 import TripTicket from '@/domains/trip/components/TripTicket';
 import { useTripTicketList } from '@/domains/trip/hooks/queries';
 import { Trip } from '@/domains/trip/types';
 import { tripAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/utils';
-import { useToastStore } from '@/stores/useToastStore';
-import theme from '@/styles/theme';
+import Button from '@/shared/components/common/Button';
+import Header from '@/shared/components/common/Header';
+import Spinner from '@/shared/components/common/Spinner';
+import { ROUTES } from '@/shared/constants/paths';
+import { BUTTON, MESSAGE } from '@/shared/constants/ui';
+import { useToastStore } from '@/shared/stores/useToastStore';
+import theme from '@/shared/styles/theme';
 
 const TripListPage = () => {
     const showToast = useToastStore((state) => state.showToast);

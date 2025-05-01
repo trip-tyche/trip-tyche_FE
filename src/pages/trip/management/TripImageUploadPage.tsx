@@ -5,16 +5,16 @@ import { ImageUp } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 
-import Header from '@/components/common/Header';
-import AlertModal from '@/components/guide/AlertModal';
-import UploadingSpinner from '@/components/guide/UploadingSpinner';
-import { ROUTES } from '@/constants/paths';
-import { MESSAGE } from '@/constants/ui';
 import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
-import { useToastStore } from '@/stores/useToastStore';
-import { useUploadStatusStore } from '@/stores/useUploadStatusStore';
-import useUserDataStore from '@/stores/useUserDataStore';
-import theme from '@/styles/theme';
+import Header from '@/shared/components/common/Header';
+import AlertModal from '@/shared/components/guide/AlertModal';
+import UploadingSpinner from '@/shared/components/guide/UploadingSpinner';
+import { ROUTES } from '@/shared/constants/paths';
+import { MESSAGE } from '@/shared/constants/ui';
+import { useToastStore } from '@/shared/stores/useToastStore';
+import { useUploadStatusStore } from '@/shared/stores/useUploadStatusStore';
+import useUserDataStore from '@/shared/stores/useUserDataStore';
+import theme from '@/shared/styles/theme';
 
 const TripImageUploadPage = () => {
     const [isUploading, setIsUploading] = useState(false);

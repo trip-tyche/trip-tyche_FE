@@ -4,14 +4,14 @@ import { css } from '@emotion/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { MdCancel } from 'react-icons/md';
 
-import Button from '@/components/common/Button';
-import Input from '@/components/common/Input';
-import { MESSAGE } from '@/constants/ui';
 import { useNickname } from '@/domains/user/hooks/useNickname';
 import useUserStore from '@/domains/user/stores/useUserStore';
-import { useToastStore } from '@/stores/useToastStore';
-import theme from '@/styles/theme';
-import { FormMode } from '@/types';
+import Button from '@/shared/components/common/Button';
+import Input from '@/shared/components/common/Input';
+import { MESSAGE } from '@/shared/constants/ui';
+import { useToastStore } from '@/shared/stores/useToastStore';
+import theme from '@/shared/styles/theme';
+import { FormMode } from '@/shared/types';
 
 interface NickNameFormProps {
     mode: FormMode;

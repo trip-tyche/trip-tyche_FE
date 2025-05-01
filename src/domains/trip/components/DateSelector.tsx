@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 
 import { formatToKorean } from '@/libs/utils/date';
 import { calculateTripDay } from '@/libs/utils/trip';
-import theme from '@/styles/theme';
+import theme from '@/shared/styles/theme';
 
 interface DateSelectorProps {
     currentDate: string;

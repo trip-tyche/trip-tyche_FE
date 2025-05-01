@@ -4,17 +4,17 @@ import { css } from '@emotion/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import Button from '@/components/common/Button';
-import Header from '@/components/common/Header';
-import Spinner from '@/components/common/Spinner';
-import UploadingSpinner from '@/components/guide/UploadingSpinner';
-import { ROUTES } from '@/constants/paths';
 import TripInfoForm from '@/domains/trip/components/TripInfoForm';
 import { FORM } from '@/domains/trip/constants';
 import { useTripInfo } from '@/domains/trip/hooks/queries';
 import { useTripInfoForm } from '@/domains/trip/hooks/useTripInfoForm';
 import { TripInfo } from '@/domains/trip/types';
-import { useToastStore } from '@/stores/useToastStore';
+import Button from '@/shared/components/common/Button';
+import Header from '@/shared/components/common/Header';
+import Spinner from '@/shared/components/common/Spinner';
+import UploadingSpinner from '@/shared/components/guide/UploadingSpinner';
+import { ROUTES } from '@/shared/constants/paths';
+import { useToastStore } from '@/shared/stores/useToastStore';
 
 const TripInfoFormPage = () => {
     const [tripInfo, setTripInfo] = useState<TripInfo>(FORM.INITIAL);

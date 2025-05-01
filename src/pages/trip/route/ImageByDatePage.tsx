@@ -4,16 +4,16 @@ import { css } from '@emotion/react';
 import { ArrowDown, ChevronLeft } from 'lucide-react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import Spinner from '@/components/common/Spinner';
-import { ROUTES } from '@/constants/paths';
 import { useMediaByDate } from '@/domains/media/hooks/queries';
 // import DateMap from '@/domains/trip/components/DateMap';
 import DateSelector from '@/domains/trip/components/DateSelector';
 import ImageItem from '@/domains/trip/components/ImageItem';
-import { useGoogleMaps } from '@/hooks/useGoogleMaps';
-import { useScrollHint } from '@/hooks/useScrollHint';
-import { useToastStore } from '@/stores/useToastStore';
-import theme from '@/styles/theme';
+import Spinner from '@/shared/components/common/Spinner';
+import { ROUTES } from '@/shared/constants/paths';
+import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
+import { useScrollHint } from '@/shared/hooks/useScrollHint';
+import { useToastStore } from '@/shared/stores/useToastStore';
+import theme from '@/shared/styles/theme';
 // import { LatLng } from '@/types/maps';
 
 const ImageByDatePage = () => {

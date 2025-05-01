@@ -2,9 +2,9 @@ import { css } from '@emotion/react';
 import { FcGoogle } from 'react-icons/fc';
 import { RiKakaoTalkFill } from 'react-icons/ri';
 
-import Button from '@/components/common/Button';
-import { BUTTON } from '@/constants/ui';
-import theme from '@/styles/theme';
+import Button from '@/shared/components/common/Button';
+import { BUTTON } from '@/shared/constants/ui';
+import theme from '@/shared/styles/theme';
 
 type ProviderType = 'kakao' | 'google';
 

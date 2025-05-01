@@ -6,9 +6,6 @@ import { FaArrowCircleDown } from 'react-icons/fa';
 import { GiRapidshareArrow } from 'react-icons/gi';
 import { useNavigate } from 'react-router-dom';
 
-import Button from '@/components/common/Button';
-import { ROUTES } from '@/constants/paths';
-import { COLORS } from '@/constants/theme';
 import MovableTripTicket from '@/domains/trip/components/MovableTripTicket';
 import { WELCOME_TICKET_DATA } from '@/domains/trip/constants';
 import NickNameForm from '@/domains/user/components/NickNameForm';
@@ -16,8 +13,11 @@ import useUserStore from '@/domains/user/stores/useUserStore';
 import { tripAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/utils';
 import webSocketService from '@/libs/socket';
-import { useToastStore } from '@/stores/useToastStore';
-import theme from '@/styles/theme';
+import Button from '@/shared/components/common/Button';
+import { ROUTES } from '@/shared/constants/paths';
+import { COLORS } from '@/shared/constants/theme';
+import { useToastStore } from '@/shared/stores/useToastStore';
+import theme from '@/shared/styles/theme';
 
 const MainPage = () => {
     const [notificationCount, setNotificationCount] = useState(0);

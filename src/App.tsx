@@ -2,11 +2,11 @@ import { ThemeProvider } from '@emotion/react';
 import { MantineProvider } from '@mantine/core';
 import { RouterProvider } from 'react-router-dom';
 
-import TanStackProvider from '@/providers/TanStackProvider';
+import TanStackProvider from '@/shared/providers/TanStackProvider';
 import router from '@/router/Router';
-import GlobalStyle from '@/styles/GlobalStyle';
-import GoogleAutoCompleteStyle from '@/styles/GoogleAutoCompleteStyle';
-import theme from '@/styles/theme';
+import GlobalStyle from '@/shared/styles/GlobalStyle';
+import GoogleAutoCompleteStyle from '@/shared/styles/GoogleAutoCompleteStyle';
+import theme from '@/shared/styles/theme';
 
 import '@mantine/dates/styles.css';
 import '@mantine/core/styles.css';

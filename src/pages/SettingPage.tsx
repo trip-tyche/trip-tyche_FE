@@ -5,16 +5,16 @@ import { User, MessageCircle, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import character from '@/assets/images/character-ogami-1.png';
-import Header from '@/components/common/Header';
-import ConfirmModal from '@/components/guide/ConfirmModal';
-import { ROUTES } from '@/constants/paths';
-import { COLORS } from '@/constants/theme';
-import { MESSAGE } from '@/constants/ui';
 import NickNameForm from '@/domains/user/components/NickNameForm';
 import SettingButton from '@/domains/user/components/SettingButton';
 import useUserStore from '@/domains/user/stores/useUserStore';
-import { useModalStore } from '@/stores/useModalStore';
-import theme from '@/styles/theme';
+import Header from '@/shared/components/common/Header';
+import ConfirmModal from '@/shared/components/guide/ConfirmModal';
+import { ROUTES } from '@/shared/constants/paths';
+import { COLORS } from '@/shared/constants/theme';
+import { MESSAGE } from '@/shared/constants/ui';
+import { useModalStore } from '@/shared/stores/useModalStore';
+import theme from '@/shared/styles/theme';
 
 const SettingPage = () => {
     const [isEditing, setIsEditing] = useState(false);

@@ -5,7 +5,7 @@ import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
 
 import { Trip } from '@/domains/trip/types';
-import theme from '@/styles/theme';
+import theme from '@/shared/styles/theme';
 
 interface UseTripDateRangeProps {
     imageDates: string[];

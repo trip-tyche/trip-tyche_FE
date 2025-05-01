@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 
-import { COLORS } from '@/constants/theme';
-import theme from '@/styles/theme';
+import { COLORS } from '@/shared/constants/theme';
+import theme from '@/shared/styles/theme';
 
 interface SettingButtonProps {
     text: string;

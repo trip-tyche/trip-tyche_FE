@@ -4,12 +4,12 @@ import { css } from '@emotion/react';
 import { X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { ROUTES } from '@/constants/paths';
-import { IMAGE_CAROUSEL_STATE } from '@/constants/ui';
+import { ROUTES } from '@/shared/constants/paths';
+import { IMAGE_CAROUSEL_STATE } from '@/shared/constants/ui';
 import ImageCarousel from '@/domains/media/components/ImageCarousel';
 import { useMediaByPinPoint } from '@/domains/media/hooks/queries';
-import theme from '@/styles/theme';
-import { ImageCarouselState } from '@/types';
+import theme from '@/shared/styles/theme';
+import { ImageCarouselState } from '@/shared/types';
 
 const ImageByPinpointPage = () => {
     const [carouselState, setCarouselState] = useState<ImageCarouselState>(IMAGE_CAROUSEL_STATE.AUTO);

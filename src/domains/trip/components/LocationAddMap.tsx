@@ -4,14 +4,14 @@ import { css } from '@emotion/react';
 import { GoogleMap, Marker, Autocomplete } from '@react-google-maps/api';
 import { ChevronLeft } from 'lucide-react';
 
-import Button from '@/components/common/Button';
-import Spinner from '@/components/common/Spinner';
-import { DEFAULT_ZOOM_SCALE, GOOGLE_MAPS_OPTIONS } from '@/constants/maps/config';
-import { useGoogleMaps } from '@/hooks/useGoogleMaps';
-import { useToastStore } from '@/stores/useToastStore';
-import theme from '@/styles/theme';
-import { GpsCoordinates } from '@/types/location';
-import { LatLng, MapMouseEvent, PlacesAutocomplete } from '@/types/maps';
+import Button from '@/shared/components/common/Button';
+import Spinner from '@/shared/components/common/Spinner';
+import { DEFAULT_ZOOM_SCALE, GOOGLE_MAPS_OPTIONS } from '@/shared/constants/maps/config';
+import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
+import { useToastStore } from '@/shared/stores/useToastStore';
+import theme from '@/shared/styles/theme';
+import { GpsCoordinates } from '@/shared/types/location';
+import { LatLng, MapMouseEvent, PlacesAutocomplete } from '@/shared/types/maps';
 
 interface LocationAddMapProps {
     defaultLocation: GpsCoordinates;

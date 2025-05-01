@@ -7,8 +7,8 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import CarouselItem from '@/domains/media/components/CarouselItem';
 import { MediaFile } from '@/domains/media/types';
-import theme from '@/styles/theme';
-import { ImageCarouselState } from '@/types';
+import theme from '@/shared/styles/theme';
+import { ImageCarouselState } from '@/shared/types';
 
 interface ImageCarouselProps {
     images: MediaFile[];

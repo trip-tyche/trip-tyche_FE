@@ -1,9 +1,9 @@
 import { css } from '@emotion/react';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 
-import { GOOGLE_MAPS_OPTIONS, DEFAULT_ZOOM_SCALE } from '@/constants/maps/config';
-import { useGoogleMaps } from '@/hooks/useGoogleMaps';
-import { LatLng } from '@/types/maps';
+import { GOOGLE_MAPS_OPTIONS, DEFAULT_ZOOM_SCALE } from '@/shared/constants/maps/config';
+import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
+import { LatLng } from '@/shared/types/maps';
 
 interface DateMapProps {
     imageLocation: LatLng;

@@ -6,7 +6,7 @@ import { apiClient } from '@/libs/apis/client';
 import { API_ENDPOINTS } from '@/libs/apis/constants';
 import { ApiResponse, MediaByDate, MediaByPinPoint, Result } from '@/libs/apis/types';
 import { exceptTimeFromDateString } from '@/libs/utils/date';
-import { GpsCoordinates } from '@/types/location';
+import { GpsCoordinates } from '@/shared/types/location';
 
 export const mediaAPI = {
     // 핀포인트별 미디어 파일 조회

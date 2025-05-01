@@ -4,11 +4,11 @@ import { css } from '@emotion/react';
 import { Tooltip } from '@mantine/core';
 
 import backgroundImage from '@/assets/images/background-mobile-3.webp';
-import ConfirmModal from '@/components/guide/ConfirmModal';
-import { COLORS } from '@/constants/theme';
 import LoginButton from '@/domains/user/components/LoginButton';
-import useBrowserCheck from '@/hooks/useBrowserCheck';
 import { OAUTH_CONFIG } from '@/libs/apis/constants';
+import ConfirmModal from '@/shared/components/guide/ConfirmModal';
+import { COLORS } from '@/shared/constants/theme';
+import useBrowserCheck from '@/shared/hooks/useBrowserCheck';
 
 const SigninPage = () => {
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);

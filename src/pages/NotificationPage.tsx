@@ -2,15 +2,15 @@ import { css } from '@emotion/react';
 import { BellOff } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import Header from '@/components/common/Header';
-import Spinner from '@/components/common/Spinner';
-import { ROUTES } from '@/constants/paths';
-import { COLORS } from '@/constants/theme';
-import { MESSAGE } from '@/constants/ui';
 import NotificationItem from '@/domains/notification/components/NotificationItem';
 import { useNotificationList } from '@/domains/notification/hooks/queries';
 import { Notification } from '@/domains/notification/types';
-import { useToastStore } from '@/stores/useToastStore';
+import Header from '@/shared/components/common/Header';
+import Spinner from '@/shared/components/common/Spinner';
+import { ROUTES } from '@/shared/constants/paths';
+import { COLORS } from '@/shared/constants/theme';
+import { MESSAGE } from '@/shared/constants/ui';
+import { useToastStore } from '@/shared/stores/useToastStore';
 
 const NotificationPage = () => {
     const showToast = useToastStore((state) => state.showToast);

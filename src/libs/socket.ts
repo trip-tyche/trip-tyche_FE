@@ -1,6 +1,6 @@
 import { Client, IFrame, IMessage, StompSubscription } from '@stomp/stompjs';
 
-import { useToastStore } from '@/stores/useToastStore';
+import { useToastStore } from '@/shared/stores/useToastStore';
 
 interface NotificationMessage {
     recipientId: number | string;

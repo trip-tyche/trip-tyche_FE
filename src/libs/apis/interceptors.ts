@@ -3,7 +3,7 @@ import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'ax
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { apiClient } from '@/libs/apis/client';
 import { API_BASE_URL } from '@/libs/apis/constants';
-import { useToastStore } from '@/stores/useToastStore';
+import { useToastStore } from '@/shared/stores/useToastStore';
 
 interface ErrorResponse<T> {
     status: number;

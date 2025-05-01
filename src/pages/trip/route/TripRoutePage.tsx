@@ -6,18 +6,23 @@ import { Play, Pause } from 'lucide-react';
 import { BsPersonWalking } from 'react-icons/bs';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import Button from '@/components/common/Button';
-import Header from '@/components/common/Header';
-import Spinner from '@/components/common/Spinner';
-import { DEFAULT_ZOOM_SCALE, GOOGLE_MAPS_OPTIONS, MARKER_CLUSTER_OPTIONS, TIMELINE_MAP } from '@/constants/maps/config';
-import { CHARACTER_ICON_CONFIG, POLYLINE_OPTIONS } from '@/constants/maps/styles';
-import { ROUTES } from '@/constants/paths';
 import { BaseLocationMedia, MediaFileModel, PinPointModel } from '@/domains/media/types';
-import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { routeAPI } from '@/libs/apis';
-import { useToastStore } from '@/stores/useToastStore';
-import theme from '@/styles/theme';
-import { LatLng, Map } from '@/types/maps';
+import Button from '@/shared/components/common/Button';
+import Header from '@/shared/components/common/Header';
+import Spinner from '@/shared/components/common/Spinner';
+import {
+    DEFAULT_ZOOM_SCALE,
+    GOOGLE_MAPS_OPTIONS,
+    MARKER_CLUSTER_OPTIONS,
+    TIMELINE_MAP,
+} from '@/shared/constants/maps/config';
+import { CHARACTER_ICON_CONFIG, POLYLINE_OPTIONS } from '@/shared/constants/maps/styles';
+import { ROUTES } from '@/shared/constants/paths';
+import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
+import { useToastStore } from '@/shared/stores/useToastStore';
+import theme from '@/shared/styles/theme';
+import { LatLng, Map } from '@/shared/types/maps';
 
 const TripRoutePage = () => {
     const [tripTitle, setTripTitle] = useState();

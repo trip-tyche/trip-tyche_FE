@@ -7,12 +7,12 @@ import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
 import { Plane, Calendar, Globe } from 'lucide-react';
 
-import Input from '@/components/common/Input';
 import { COUNTRIES, FORM } from '@/domains/trip/constants';
 import { useTripDateRange } from '@/domains/trip/hooks/useTripDateRange';
 import { Trip } from '@/domains/trip/types';
 import { formatToKorean } from '@/libs/utils/date';
-import theme from '@/styles/theme';
+import Input from '@/shared/components/common/Input';
+import theme from '@/shared/styles/theme';
 
 type DateSelectType = 'range' | 'single';
 type DateChangeHandler = (value: DateValue | DatesRangeValue) => void;

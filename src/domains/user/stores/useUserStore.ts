@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 import { UserInfo } from '@/domains/user/types';
 import { userAPI } from '@/libs/apis';
-import { queryClient } from '@/providers/TanStackProvider';
+import { queryClient } from '@/shared/providers/TanStackProvider';
 
 interface UserState {
     isAuthenticated: boolean;

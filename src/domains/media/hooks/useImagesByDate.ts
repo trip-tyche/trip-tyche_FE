@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { useMediaByDate } from '@/domains/media/hooks/queries';
-import { LatLng } from '@/types/maps';
+import { LatLng } from '@/shared/types/maps';
 
 export const useImagesByDate = (tripKey: string, currentDate: string) => {
     // const [imagesByDate, setImagesByDate] = useState<MediaFileModel[]>([]);

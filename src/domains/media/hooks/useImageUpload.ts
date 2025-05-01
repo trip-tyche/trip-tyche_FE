@@ -8,8 +8,8 @@ import { ImageModel, PresignedUrlResponse } from '@/domains/media/image';
 import { mediaAPI } from '@/libs/apis';
 import { formatToISOLocal } from '@/libs/utils/date';
 import { getImageLocation, extractDateFromImage } from '@/libs/utils/piexif';
-import { useUploadStatusStore } from '@/stores/useUploadStatusStore';
-import { Location } from '@/types/location';
+import { useUploadStatusStore } from '@/shared/stores/useUploadStatusStore';
+import { Location } from '@/shared/types/location';
 
 export const useImageUpload = () => {
     const [imageCount, setImagesCount] = useState(0);
