@@ -6,13 +6,10 @@ import { Tooltip } from '@mantine/core';
 import backgroundImage from '@/assets/images/background-mobile-3.webp';
 import LoginButton from '@/domains/user/components/LoginButton';
 import { OAUTH_CONFIG } from '@/libs/apis/constants';
-import ConfirmModal from '@/shared/components/guide/ConfirmModal';
 import { COLORS } from '@/shared/constants/theme';
-import useBrowserCheck from '@/shared/hooks/useBrowserCheck';
 
 const SigninPage = () => {
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-    const { isModalOpen, closeModal } = useBrowserCheck({ showOnce: true });
 
     useEffect(() => {
         if (isTooltipOpen) {
@@ -53,16 +50,6 @@ const SigninPage = () => {
                     </p>
                 </Tooltip>
             </div>
-            {/* <p css={companyNameStyle}>© 2024 Vagabond. All rights reserved.</p> */}
-
-            {isModalOpen && (
-                <ConfirmModal
-                    title='브라우저 변경 안내'
-                    description='현재 카카오톡 브라우저를 사용 중이에요. 원활한 서비스 사용을 위해 Safari, Chrome, 웨일 사용을 추천드려요'
-                    confirmText='확인'
-                    confirmModal={closeModal}
-                />
-            )}
 
             <div css={overlay} />
         </div>

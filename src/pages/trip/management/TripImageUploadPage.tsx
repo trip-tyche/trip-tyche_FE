@@ -8,9 +8,11 @@ import { ClipLoader } from 'react-spinners';
 import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
 import Header from '@/shared/components/common/Header';
 import AlertModal from '@/shared/components/guide/AlertModal';
+import ConfirmModal from '@/shared/components/guide/ConfirmModal';
 import UploadingSpinner from '@/shared/components/guide/UploadingSpinner';
 import { ROUTES } from '@/shared/constants/paths';
 import { MESSAGE } from '@/shared/constants/ui';
+import useBrowserCheck from '@/shared/hooks/useBrowserCheck';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import { useUploadStatusStore } from '@/shared/stores/useUploadStatusStore';
 import useUserDataStore from '@/shared/stores/useUserDataStore';
@@ -24,6 +26,8 @@ const TripImageUploadPage = () => {
     const waitForCompletion = useUploadStatusStore((state) => state.waitForCompletion);
     const resetUpload = useUploadStatusStore((state) => state.resetUpload);
     const showToast = useToastStore((state) => state.showToast);
+
+    const { isModalOpen, closeModal } = useBrowserCheck();
 
     const {
         tripKey,
@@ -120,6 +124,19 @@ const TripImageUploadPage = () => {
                     </div>
                 </section>
             </main>
+            {isModalOpen && (
+                <ConfirmModal
+                    title='더 나은 경험을 위한 안내'
+                    description='안드로이드 환경에서는 사진 업로드가 제한될 수 있어요. 데스크탑으로 접속해주세요!'
+                    confirmText='알겠어요'
+                    cancelText='계속 진행할래요'
+                    confirmModal={() => {
+                        closeModal();
+                        navigate(-1);
+                    }}
+                    closeModal={closeModal}
+                />
+            )}
             {isAlertModalOpen && (
                 <AlertModal confirmText='사진 등록하기' confirmModal={closeAlertModal}>
                     <div css={alertStyle}>
