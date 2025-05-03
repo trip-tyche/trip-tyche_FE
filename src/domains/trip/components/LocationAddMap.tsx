@@ -10,11 +10,11 @@ import { DEFAULT_ZOOM_SCALE, GOOGLE_MAPS_OPTIONS } from '@/shared/constants/maps
 import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
-import { GpsCoordinates } from '@/shared/types/location';
+import { Location } from '@/shared/types/location';
 import { LatLng, MapMouseEvent, PlacesAutocomplete } from '@/shared/types/maps';
 
 interface LocationAddMapProps {
-    defaultLocation: GpsCoordinates;
+    defaultLocation: Location;
     onLocationSelect: (lat: number, lng: number) => void;
     setIsMapVisible: (isMapVisible: boolean) => void;
     isUploading?: boolean;

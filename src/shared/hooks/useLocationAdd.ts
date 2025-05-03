@@ -3,17 +3,17 @@ import { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { ROUTES } from '@/shared/constants/paths';
 import { UnlocatedMediaFile, UnlocatedMediaFileModel } from '@/domains/media/types';
-import { useTripDefaultLocation } from '@/shared/hooks/queries/useTripImage';
 import { mediaAPI } from '@/libs/apis';
+import { ROUTES } from '@/shared/constants/paths';
+import { useTripDefaultLocation } from '@/shared/hooks/queries/useTripImage';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import { Location } from '@/shared/types/location';
 
 export const useLocationAdd = () => {
     const [displayedImages, setDisplayedImages] = useState<UnlocatedMediaFileModel[]>([]);
     const [selectedImages, setSelectedImages] = useState<UnlocatedMediaFile[]>([]);
-    const [selectedLocation, setSelectedLocation] = useState<Location>(null);
+    const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
     const [isMapVisible, setIsMapVisible] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
 

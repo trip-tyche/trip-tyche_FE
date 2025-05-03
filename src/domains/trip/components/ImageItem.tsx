@@ -6,20 +6,20 @@ import theme from '@/shared/styles/theme';
 interface ImageItemProps {
     image: MediaFile;
     index: number;
-    // onImageLoad: () => void;
-    // isImageLoaded: boolean;
-    // reference: (element: HTMLDivElement | null) => void;
+    onImageLoad: () => void;
+    isImageLoaded: boolean;
+    reference: (element: HTMLDivElement | null) => void;
 }
 
-// const ImageItem = ({ image, index, reference }: ImageItemProps) => {
-const ImageItem = ({ image, index }: ImageItemProps) => {
+const ImageItem = ({ image, index, reference, onImageLoad, isImageLoaded }: ImageItemProps) => {
+    // const ImageItem = ({ image, index }: ImageItemProps) => {
     return (
-        <div css={imageItemStyle} data-index={index}>
-            {/* <div ref={reference} css={imageItemStyle} data-index={index}> */}
-            <img src={image.mediaLink} alt={`이미지 ${image.mediaFileId}`} css={imageStyle} />
-            {/* <img src={image.mediaLink} alt={`이미지 ${image.mediaFileId}`} onLoad={onImageLoad} css={imageStyle} /> */}
-            <p css={timeStampStyle}>{image.recordDate.split('T')[1]}</p>
-            {/* {isImageLoaded && <p css={timeStampStyle}>{image.recordDate.split('T')[1]}</p>} */}
+        // <div css={imageItemStyle} data-index={index}>
+        <div ref={reference} css={imageItemStyle} data-index={index}>
+            {/* <img src={image.mediaLink} alt={`이미지 ${image.mediaFileId}`} css={imageStyle} /> */}
+            <img src={image.mediaLink} alt={`이미지 ${image.mediaFileId}`} onLoad={onImageLoad} css={imageStyle} />
+            {/* <p css={timeStampStyle}>{image.recordDate.split('T')[1]}</p> */}
+            {isImageLoaded && <p css={timeStampStyle}>{image.recordDate.split('T')[1]}</p>}
         </div>
     );
 };

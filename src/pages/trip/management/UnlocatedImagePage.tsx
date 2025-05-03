@@ -376,13 +376,12 @@
 
 // export default UnlocatedImagePage;
 
-import { useState, useEffect, Fragment, useMemo } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 
 import { css } from '@emotion/react';
-import { useQueryClient } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
 import { FaPencilAlt } from 'react-icons/fa';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import MediaImageGrid from '@/domains/media/components/MediaImageGrid';
 import { MediaFileMetaData } from '@/domains/media/types';
@@ -435,8 +434,6 @@ const UnlocatedImagePage = () => {
 
     const navigate = useNavigate();
     const { tripKey } = useParams();
-    const [searchParams] = useSearchParams();
-    const queryClient = useQueryClient();
 
     useEffect(() => {
         const getImages = async () => {
@@ -565,7 +562,7 @@ const UnlocatedImagePage = () => {
         return <Spinner />;
     }
 
-    const defaultLocation = { latitude: 37.5665, longitude: 126.978 }; // 서울 좌표를 기본값으로 설정
+    const defaultLocation = { latitude: 37.5665, longitude: 126.978 };
 
     return isMapVisible ? (
         <LocationAddMap
@@ -603,7 +600,6 @@ const UnlocatedImagePage = () => {
                         `}
                     >
                         <p>위치 정보가 없는 사진이 없습니다.</p>
-                        <p>새로운 사진을 등록해보세요.</p>
                     </div>
                 )}
             </main>
@@ -649,13 +645,7 @@ const UnlocatedImagePage = () => {
                         </div>
                     </div>
                 ) : (
-                    <>
-                        <Button text='사진 선택' variant='white' onClick={() => setIsSelectionMode(true)} />
-                        <Button
-                            text='새로운 사진 등록하기'
-                            onClick={() => navigate(`${ROUTES.PATH.TRIP.MANAGEMENT.UPLOAD(tripKey!)}?edit=true`)}
-                        />
-                    </>
+                    <Button text='사진 선택' variant='white' onClick={() => setIsSelectionMode(true)} />
                 )}
             </div>
 
