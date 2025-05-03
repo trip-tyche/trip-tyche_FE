@@ -1,10 +1,10 @@
 import piexif from 'piexifjs';
 
-import { GpsCoordinates } from '@/shared/types/location';
-import { ExifData } from '@/shared/types/piexifjs';
+import { Exif } from '@/shared/types/exif';
+import { Location } from '@/shared/types/location';
 
 // 이미지 파일에서 EXIF 데이터 추출
-const readExifData = (file: File): Promise<ExifData | null> => {
+const readExifData = (file: File): Promise<Exif | null> => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = (e: ProgressEvent<FileReader>) => {
@@ -38,7 +38,7 @@ const convertDMSToDD = (degrees: number, minutes: number, seconds: number, direc
 };
 
 // EXIF 데이터에서 GPS 좌표 추출
-const extractGpsFromExifData = (exifObj: any): GpsCoordinates | null => {
+const extractGpsFromExifData = (exifObj: any): Location | null => {
     if (!exifObj || !exifObj['GPS']) return null;
     const gps = exifObj['GPS'];
 
@@ -77,7 +77,7 @@ const extractGpsFromExifData = (exifObj: any): GpsCoordinates | null => {
 };
 
 // 이미지에서 위치 추출
-export const extractLocationFromImage = async (file: File): Promise<GpsCoordinates | null> => {
+export const extractLocationFromImage = async (file: File): Promise<Location | null> => {
     try {
         const exifData = await readExifData(file);
         if (!exifData) return null;

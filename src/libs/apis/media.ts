@@ -1,12 +1,12 @@
 import axios from 'axios';
 
 import { PresignedUrlRequest, PresignedUrlResponse } from '@/domains/media/image';
-import { MediaFileMetaData, UnlocatedMediaFileModel } from '@/domains/media/types';
+import { MediaFile, UnlocatedMediaFileModel } from '@/domains/media/types';
 import { apiClient } from '@/libs/apis/client';
 import { API_ENDPOINTS } from '@/libs/apis/constants';
 import { ApiResponse, MediaByDate, MediaByPinPoint, Result } from '@/libs/apis/types';
 import { exceptTimeFromDateString } from '@/libs/utils/date';
-import { GpsCoordinates } from '@/shared/types/location';
+import { Location } from '@/shared/types/location';
 
 export const mediaAPI = {
     // 핀포인트별 미디어 파일 조회
@@ -28,7 +28,7 @@ export const mediaAPI = {
         );
         return data.data;
     },
-    updateUnlocatedImages: async (tripKey: string, mediaFileId: string, location: GpsCoordinates) => {
+    updateUnlocatedImages: async (tripKey: string, mediaFileId: string, location: Location) => {
         const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripKey}/images/unlocated/${mediaFileId}`, location);
         return data.data;
     },
@@ -36,10 +36,10 @@ export const mediaAPI = {
     // 미디어 파일 업로드를 위한 Presigned URL 생성
     requestPresignedUrls: async (
         tripKey: string,
-        fileNames: PresignedUrlRequest[],
+        imageNames: PresignedUrlRequest[],
     ): Promise<Result<PresignedUrlResponse[]>> => {
         try {
-            const response = await apiClient.post(`/v1/trips/${tripKey}/presigned-url`, { files: fileNames });
+            const response = await apiClient.post(`/v1/trips/${tripKey}/presigned-url`, { files: imageNames });
             return { success: true, data: response.data.presignedUrls };
         } catch (error) {
             console.error(error);
@@ -55,7 +55,7 @@ export const mediaAPI = {
         });
     },
     // 미디어 파일 메타데이터 등록 (mediaLink, latitude, longitude, recordDate)
-    createMediaFileMetadata: async (tripKey: string, metaDatas: Omit<MediaFileMetaData, 'mediaFileId'>[]) => {
+    createMediaFileMetadata: async (tripKey: string, metaDatas: Omit<MediaFile, 'mediaFileId'>[]) => {
         await apiClient.post(`/v1/trips/${tripKey}/media-files`, metaDatas);
     },
     // 여행에 등록된 모든 이미지 조회
@@ -65,7 +65,7 @@ export const mediaAPI = {
         ApiResponse<{
             startDate: string;
             endDate: string;
-            mediaFiles: MediaFileMetaData[];
+            mediaFiles: MediaFile[];
         }>
     > => await apiClient.get(`/v1/trips/${tripKey}/media-files`),
     // 선택한 여행 이미지 삭제
@@ -85,7 +85,7 @@ export const mediaAPI = {
         }
     },
     // 선택한 여행 이미지 수정
-    updateImages: async (tripKey: string, images: MediaFileMetaData[]) => {
+    updateImages: async (tripKey: string, images: MediaFile[]) => {
         try {
             const response = await apiClient.patch(`/v1/trips/${tripKey}/media-files`, {
                 mediaFiles: images,

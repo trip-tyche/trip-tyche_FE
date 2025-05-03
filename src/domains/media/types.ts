@@ -1,9 +1,24 @@
+import { Location } from '@/shared/types/location';
+
 export interface MediaFile {
     mediaFileId: number;
     latitude: number;
     longitude: number;
     mediaLink: string;
     recordDate: string;
+}
+
+export interface ImageFile {
+    image: File;
+    recordDate: string;
+    location: Location | null;
+}
+
+export interface ImagesFiles {
+    totalImages: ImageFile[];
+    completeImages: ImageFile[];
+    imagesWithoutDate: ImageFile[];
+    imagesWithoutLocation: ImageFile[];
 }
 
 //----------------------------------
@@ -42,8 +57,8 @@ export interface MediaFileWithDate {
 // TODO: API 수정 후, 위 MediaFileModel, MediaFile 삭제하기
 export interface MediaFileMetaData {
     mediaFileId: string;
-    mediaLink: string;
     recordDate: string;
     latitude: number;
     longitude: number;
+    mediaLink: string;
 }

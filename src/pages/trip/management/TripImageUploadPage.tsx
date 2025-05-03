@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { ImageUp } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 
 import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
@@ -20,9 +20,7 @@ import theme from '@/shared/styles/theme';
 
 const TripImageUploadPage = () => {
     const [isUploading, setIsUploading] = useState(false);
-
     const isTripInfoEditing = useUserDataStore((state) => state.isTripInfoEditing);
-    const setIsTripInfoEditing = useUserDataStore((state) => state.setIsTripInfoEditing);
     const waitForCompletion = useUploadStatusStore((state) => state.waitForCompletion);
     const resetUpload = useUploadStatusStore((state) => state.resetUpload);
     const showToast = useToastStore((state) => state.showToast);
@@ -30,42 +28,28 @@ const TripImageUploadPage = () => {
     const { isModalOpen, closeModal } = useBrowserCheck();
 
     const {
-        tripKey,
-        imageCount,
-        imagesWithLocationAndDate,
-        imagesNoLocationWithDate,
-        imagesNoDate,
-        isExtracting,
-        isAlertModalOpen,
-        setIsAlertModalModalOpen,
-        handleImageProcess,
+        images,
+        isProcessing,
+        isUploadModalOpen,
+        setIsUploadModalModalOpen,
+        extractMetaDataAndResizeImages,
         uploadImages,
     } = useImageUpload();
 
+    const { tripKey } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
+
     const isFirstTicket = Boolean(location.state);
 
     useEffect(() => {
         resetUpload();
     }, []);
 
-    const navigateBeforePage = () => {
-        isTripInfoEditing && setIsTripInfoEditing(false);
-        navigate(
-            isFirstTicket
-                ? ROUTES.PATH.MAIN
-                : isTripInfoEditing
-                  ? ROUTES.PATH.TRIP.MANAGEMENT.IMAGES(tripKey!)
-                  : ROUTES.PATH.TRIP.ROOT,
-        );
-    };
-
     const closeAlertModal = async () => {
-        if (imagesNoLocationWithDate.length || imagesWithLocationAndDate.length) {
-            const imageFile = [...imagesNoLocationWithDate, ...imagesWithLocationAndDate];
-            uploadImages(imageFile);
-            setIsAlertModalModalOpen(false);
+        if (images) {
+            uploadImages(images.totalImages);
+            setIsUploadModalModalOpen(false);
 
             if (isTripInfoEditing) {
                 setIsUploading(true);
@@ -73,12 +57,13 @@ const TripImageUploadPage = () => {
                 setIsUploading(true);
 
                 navigate(`${ROUTES.PATH.TRIP.ROOT}`);
-                showToast(`${imageFile.length}장의 사진이 등록되었습니다.`);
-                setIsTripInfoEditing(false);
+                showToast(`${images.totalImages.length}장의 사진이 등록되었습니다.`);
                 return;
             }
 
-            const imageDates = imageFile.map((image) => image.formattedDate.split('T')[0]);
+            const imageDates = [...images.completeImages, ...images.imagesWithoutDate].map(
+                (image) => image.recordDate.split('T')[0],
+            );
             const uniqueDates = Array.from(new Set(imageDates)).sort(
                 (dateA, dateB) => new Date(dateA).getTime() - new Date(dateB).getTime(),
             );
@@ -86,14 +71,18 @@ const TripImageUploadPage = () => {
             navigate(`${ROUTES.PATH.TRIP.MANAGEMENT.INFO(tripKey!)}`, { state: uniqueDates });
             return;
         } else {
-            setIsAlertModalModalOpen(false);
+            setIsUploadModalModalOpen(false);
             showToast('등록 가능한 사진이 없습니다.');
         }
     };
 
     return (
         <div css={containerStyle}>
-            <Header title={'사진 등록'} isBackButton onBack={navigateBeforePage} />
+            <Header
+                title={'사진 등록'}
+                isBackButton
+                onBack={() => (isFirstTicket ? navigate(ROUTES.PATH.MAIN) : navigate(-1))}
+            />
             <main css={mainStyle}>
                 <section css={sectionStyle}>
                     <h4>[사진 등록 가이드]</h4>
@@ -106,11 +95,11 @@ const TripImageUploadPage = () => {
                             type='file'
                             accept='image/*,.heic'
                             multiple
-                            onChange={(e) => handleImageProcess(e.target.files)}
+                            onChange={(e) => extractMetaDataAndResizeImages(e.target.files)}
                             css={fileInputStyle}
                             id='imageUpload'
                         />
-                        {!isExtracting ? (
+                        {!isProcessing ? (
                             <label htmlFor='imageUpload' css={uploadLabelStyle}>
                                 <ImageUp size={32} />
                                 <span css={uploadedStyle}>{MESSAGE.TRIP_IMAGES_UPLOAD.message}</span>
@@ -137,16 +126,16 @@ const TripImageUploadPage = () => {
                     closeModal={closeModal}
                 />
             )}
-            {isAlertModalOpen && (
+            {isUploadModalOpen && (
                 <AlertModal confirmText='사진 등록하기' confirmModal={closeAlertModal}>
                     <div css={alertStyle}>
                         <h1>
-                            총 <span css={countStyle}>{imageCount}</span> 개의 이미지를 선택했습니다.
+                            총 <span css={countStyle}>{images?.totalImages.length}</span> 개의 이미지를 선택했습니다.
                         </h1>
                         <div>
-                            <p>등록 가능한 사진 ✅ : {imagesWithLocationAndDate.length} 개</p>
+                            {/* <p>등록 가능한 사진 ✅ : {images.length} 개</p>
                             <p>위치정보가 없어요 ✳️ : {imagesNoLocationWithDate.length} 개</p>
-                            <p>날짜정보가 없어요 ❌ : {imagesNoDate.length} 개</p>
+                            <p>날짜정보가 없어요 ❌ : {imagesNoDate.length} 개</p> */}
                         </div>
                     </div>
                 </AlertModal>

@@ -1,187 +1,87 @@
 import { useState } from 'react';
 
-import imageCompression from 'browser-image-compression';
 import { useParams } from 'react-router-dom';
 
-import { COMPRESSION_OPTIONS } from '@/domains/media/constants';
-import { ImageModel, PresignedUrlResponse } from '@/domains/media/image';
+import { PresignedUrlResponse } from '@/domains/media/image';
+import { ImageFile, ImagesFiles } from '@/domains/media/types';
 import { mediaAPI } from '@/libs/apis';
-import { formatToISOLocal } from '@/libs/utils/date';
-import { extractLocationFromImage, extractDateFromImage } from '@/libs/utils/exif';
-import { removeDuplicateImages } from '@/libs/utils/image';
+import {
+    completeImages,
+    extractMetadataFromImage,
+    imagesWithoutDate,
+    imagesWithoutLocation,
+    removeDuplicateImages,
+    resizeImages,
+} from '@/libs/utils/image';
 import { useUploadStatusStore } from '@/shared/stores/useUploadStatusStore';
-import { Location } from '@/shared/types/location';
 
 export const useImageUpload = () => {
-    const [imageCount, setImagesCount] = useState(0);
-    const [imagesWithLocationAndDate, setImagesWithLocationAndDate] = useState<ImageModel[]>([]);
-    const [imagesNoLocationWithDate, setImagesNoLocationWithDate] = useState<ImageModel[]>([]);
-    const [imagesNoDate, setImagesNoDate] = useState<ImageModel[]>([]);
-    const [isExtracting, setIsExtracting] = useState(false);
-    const [isAlertModalOpen, setIsAlertModalModalOpen] = useState(false);
+    const [images, setImages] = useState<ImagesFiles>();
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [isUploadModalOpen, setIsUploadModalModalOpen] = useState(false);
 
     const setUploadStatus = useUploadStatusStore((state) => state.setUploadStatus);
 
     const { tripKey } = useParams();
 
-    const hasValidLocation = (location: Location): boolean => location !== null;
-
-    const extractImageMetadata = async (images: FileList | null): Promise<ImageModel[]> => {
-        if (!images || images.length === 0) {
-            return [];
-        }
-
-        const extractedImages = await Promise.all(
-            Array.from(images).map(async (image) => {
-                const location = await extractLocationFromImage(image);
-                const date = await extractDateFromImage(image);
-                let formattedDate = '';
-
-                if (date) {
-                    formattedDate = formatToISOLocal(date);
-                }
-
-                return {
-                    image,
-                    formattedDate,
-                    location,
-                };
-            }),
-        );
-
-        return extractedImages;
-    };
-
-    const handleImageProcess = async (images: FileList | null) => {
-        if (!images) {
-            return;
-        }
-
+    const extractMetaDataAndResizeImages = async (images: FileList | null) => {
+        if (!images) return;
         const uniqueImages = removeDuplicateImages(images);
-        setIsExtracting(true);
-        console.time(`메타데이터 추출 시간`);
-        const extractedImages = await extractImageMetadata(uniqueImages);
-        console.timeEnd(`메타데이터 추출 시간`);
-        setIsExtracting(false);
 
-        const sortedImagesDates = extractedImages
-            .filter((image) => image.formattedDate)
-            .map((image) => image.formattedDate.split('T')[0])
-            .sort();
+        setIsProcessing(true);
+        console.time(`extract metadata and resize`);
+        const metadatas = await extractMetadataFromImage(uniqueImages);
+        const resizedImages = await resizeImages(metadatas);
+        console.timeEnd(`extract metadata and resize`);
+        setIsProcessing(false);
 
-        const uniqueSortedImagesDates = [...new Set(sortedImagesDates)];
-        localStorage.setItem('image-date', JSON.stringify(uniqueSortedImagesDates));
-
-        const imagesWithLocationAndDate = extractedImages.filter(
-            (image) => image.formattedDate && hasValidLocation(image.location),
-        );
-        const imagesNoLocationWithDate = extractedImages.filter(
-            (image) => image.formattedDate && !hasValidLocation(image.location),
-        );
-        const imagesNoDate = extractedImages.filter((image) => !image.formattedDate);
-
-        setImagesCount(images.length);
-        setImagesWithLocationAndDate(imagesWithLocationAndDate);
-        setImagesNoLocationWithDate(imagesNoLocationWithDate);
-        setImagesNoDate(imagesNoDate);
-        setIsAlertModalModalOpen(true);
+        setImages({
+            totalImages: resizedImages,
+            completeImages: completeImages(resizedImages),
+            imagesWithoutDate: imagesWithoutDate(resizedImages),
+            imagesWithoutLocation: imagesWithoutLocation(resizedImages),
+        });
+        setIsUploadModalModalOpen(true);
     };
 
-    const resizeImage = async (extractedImages: ImageModel[] | null): Promise<ImageModel[]> => {
-        if (!extractedImages || extractedImages.length === 0) {
-            return [];
-        }
-
-        const resizedImages: ImageModel[] = [];
-        const batchSize = 10;
-
-        for (let i = 0; i < extractedImages.length; i += batchSize) {
-            const batch = extractedImages.slice(i, i + batchSize);
-
-            const batchResults = await Promise.all(
-                batch.map(async (extractedImage: ImageModel) => {
-                    try {
-                        const resizedBlob = await imageCompression(extractedImage.image, COMPRESSION_OPTIONS);
-                        const resizedFile = new File(
-                            [resizedBlob],
-                            extractedImage.image.name.replace(/\.[^/.]+$/, '.webp'),
-                            {
-                                type: COMPRESSION_OPTIONS.fileType,
-                                lastModified: extractedImage.image.lastModified,
-                            },
-                        );
-
-                        URL.revokeObjectURL(URL.createObjectURL(resizedBlob));
-
-                        return {
-                            image: resizedFile,
-                            formattedDate: extractedImage.formattedDate,
-                            location: extractedImage.location,
-                        };
-                    } catch (error) {
-                        return extractedImage;
-                    }
-                }),
-            );
-
-            resizedImages.push(...batchResults);
-        }
-
-        return resizedImages;
-    };
-
-    const uploadImages = async (images: ImageModel[]) => {
-        if (!tripKey || !images.length) {
+    const uploadImages = async (imagesToUpload: ImageFile[]) => {
+        if (!tripKey || !imagesToUpload.length) {
             return;
         }
-
-        // if (isTripInfoEditing) {
-        //     await updateTripDate(
-        //         tripKey,
-        //         images.map((image) => image.formattedDate.split('T')[0]),
-        //     );
-        // }
 
         try {
             setUploadStatus('pending');
 
-            console.time(`리사이징 시간`);
-            // const resizedImages = images;
-            const resizedImages = await resizeImage(images);
-            console.timeEnd(`리사이징 시간`);
+            if (!images?.totalImages) return;
 
-            const fileNames = resizedImages.map((image) => ({
-                fileName: image.image.name,
-            }));
-
-            const result = await mediaAPI.requestPresignedUrls(tripKey, fileNames);
+            const imageNames = images?.totalImages.map((image) => ({ fileName: image.image.name }));
+            console.log('imageNames: ', imageNames);
+            const result = await mediaAPI.requestPresignedUrls(tripKey, imageNames);
             if (!result.success) throw new Error(result.error);
             const { data: presignedUrls } = result;
 
-            console.time(`S3 업로드 시간`);
+            console.time(`image upload to S3`);
             await Promise.all(
                 presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) =>
-                    mediaAPI.uploadToS3(urlInfo.presignedPutUrl, resizedImages[index].image),
+                    mediaAPI.uploadToS3(urlInfo.presignedPutUrl, images?.totalImages[index].image),
                 ),
             );
-
-            console.timeEnd(`S3 업로드 시간`);
+            console.timeEnd(`image upload to S3`);
 
             const metaDatas = presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) => {
-                const { formattedDate: recordDate, location } = resizedImages[index];
-                const { latitude = 0, longitude = 0 } = location || {};
-
+                const { recordDate, location } = images.totalImages[index];
                 return {
-                    mediaLink: urlInfo.presignedPutUrl.split('?')[0], // URL 뒤 불필요한 정보 제거
-                    latitude,
-                    longitude,
+                    mediaLink: urlInfo.presignedPutUrl.split('?')[0],
+                    latitude: location?.latitude || 0,
+                    longitude: location?.longitude || 0,
                     recordDate,
                 };
             });
 
-            console.time(`서버 데이터 전송 시간`);
+            console.time(`send metadata to server`);
             await mediaAPI.createMediaFileMetadata(tripKey, metaDatas);
-            console.timeEnd(`서버 데이터 전송 시간`);
+            console.timeEnd(`send metadata to server`);
+
             setUploadStatus('completed');
         } catch (error) {
             console.error(error);
@@ -190,15 +90,11 @@ export const useImageUpload = () => {
     };
 
     return {
-        tripKey,
-        imageCount,
-        imagesWithLocationAndDate,
-        imagesNoLocationWithDate,
-        imagesNoDate,
-        isExtracting,
-        isAlertModalOpen,
-        setIsAlertModalModalOpen,
-        handleImageProcess,
+        images,
+        isProcessing,
+        isUploadModalOpen,
+        setIsUploadModalModalOpen,
+        extractMetaDataAndResizeImages,
         uploadImages,
     };
 };

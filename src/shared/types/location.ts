@@ -1,6 +1,4 @@
-export interface GpsCoordinates {
+export interface Location {
     latitude: number;
     longitude: number;
 }
-
-export type Location = GpsCoordinates | null;

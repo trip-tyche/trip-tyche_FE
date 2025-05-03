@@ -1,11 +1,4 @@
 import { UnlocatedMediaFileModel } from '@/domains/media/types';
-import { Location } from '@/shared/types/location';
-
-export interface ImageModel {
-    image: File;
-    formattedDate: string;
-    location: Location;
-}
 
 export type ImageGroupByDate = Record<string, UnlocatedMediaFileModel[]>;
 
