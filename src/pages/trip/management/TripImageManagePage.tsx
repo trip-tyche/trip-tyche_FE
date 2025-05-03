@@ -1,6 +1,7 @@
 import { useState, useEffect, Fragment, useMemo } from 'react';
 
 import { css } from '@emotion/react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
 import { FaPencilAlt } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -40,6 +41,7 @@ const TripImageManagePage = () => {
 
     const navigate = useNavigate();
     const { tripKey } = useParams();
+    const queryClient = useQueryClient();
 
     const { data: tripImages = [], isLoading, isError, error } = useTripImages(tripKey!);
 
@@ -162,6 +164,7 @@ const TripImageManagePage = () => {
             showToast(`${selectedImages.length}장의 사진이 수정되었습니다`);
             setSelectedImages([]);
             setIsSelectionMode(false);
+            queryClient.invalidateQueries({ queryKey: ['trip-images'] });
         } catch (error) {
             console.error('여행 이미지 삭제 실패', error);
         } finally {
