@@ -1,7 +1,7 @@
 import { Location } from '@/shared/types/location';
 
 export interface MediaFile {
-    mediaFileId: number;
+    mediaFileId: string;
     latitude: number;
     longitude: number;
     mediaLink: string;

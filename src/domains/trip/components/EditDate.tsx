@@ -42,7 +42,14 @@ const EditDate = ({
 
     return (
         <div css={container}>
-            <Header title='날짜 및 시간 수정' isBackButton onBack={() => setIsDateVisible(false)} />
+            <Header
+                title='날짜 및 시간 수정'
+                isBackButton
+                onBack={() => {
+                    setIsDateVisible(false);
+                    setSelectedDate(null);
+                }}
+            />
             <main css={mainStyle}>
                 <div css={sectionStyle}>
                     <h2 css={sectionTitle}>사진 날짜 수정</h2>

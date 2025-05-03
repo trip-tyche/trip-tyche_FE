@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
-import { DEFAULT_CENTER } from '@/shared/constants/maps/config';
 import { mediaAPI } from '@/libs/apis';
+import { DEFAULT_CENTER } from '@/shared/constants/maps/config';
 
 export const useTripDefaultLocation = (tripKey: string) => {
     return useQuery({

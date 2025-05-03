@@ -1,29 +1,27 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { MediaFileMetaData } from '@/domains/media/types';
+import { MediaFile } from '@/domains/media/types';
 import { mediaAPI } from '@/libs/apis';
 import { Result } from '@/libs/apis/types';
 import { toResult } from '@/libs/apis/utils';
 
-interface MediaFile {
+interface MediaFiles {
     startDate: string;
     endDate: string;
-    mediaFiles: MediaFileMetaData[];
+    mediaFiles: MediaFile[];
 }
 
 export const useTripImages = (tripKey: string) => {
-    return useQuery<Result<MediaFile>, Error, MediaFileMetaData[] | undefined>({
+    return useQuery<Result<MediaFiles>, Error, MediaFile[] | undefined>({
         queryKey: ['trip-images', tripKey],
-        // queryFn: () => mediaAPI.getTripImages(tripKey),
         queryFn: () => toResult(() => mediaAPI.getTripImages(tripKey)),
-        enabled: !!tripKey,
         select: (result) => {
             if (!result.success) {
-                // throw new Error(result.error);
                 console.error(result.error);
             } else {
                 return result.data.mediaFiles;
             }
         },
+        enabled: !!tripKey,
     });
 };

@@ -23,10 +23,9 @@ import { useToastStore } from '@/shared/stores/useToastStore';
 import { Location } from '@/shared/types/location';
 
 const TripImageManagePage = () => {
-    // const [tripImages, setTripImages] = useState<MediaFileMetaData[]>([]);
     const [isSelectionMode, setIsSelectionMode] = useState(false);
     const [selectedImages, setSelectedImages] = useState<MediaFileMetaData[]>([]);
-    const [selectedLocation, setSelectedLocation] = useState<Location>(null);
+    const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
     const [isVisibleEditList, setIsVisibleEditList] = useState(false);
@@ -51,6 +50,8 @@ const TripImageManagePage = () => {
             showToast(error.message || '사진을 불러오는데 실패하였습니다.');
         }
     }, [isError]);
+
+    console.log(selectedDate);
 
     useEffect(() => {
         setIsVisibleEditList(false);
@@ -105,7 +106,6 @@ const TripImageManagePage = () => {
             {
                 onSuccess: () => {
                     setIsDeleteModalOpen(false);
-                    // showToast(result.data as string);
                     setSelectedImages([]);
                     setIsSelectionMode(false);
                 },
@@ -117,7 +117,7 @@ const TripImageManagePage = () => {
         );
     };
 
-    const updateImagesLocation = async (selectedImages: MediaFileMetaData[], location: Location) => {
+    const updateImagesLocation = async (selectedImages: MediaFileMetaData[], location: Location | null) => {
         if (!location || !tripKey) return;
 
         const imagesWithUpdatedLocation = selectedImages.map((image) => {
@@ -136,6 +136,7 @@ const TripImageManagePage = () => {
             showToast(`${selectedImages.length}의 사진이 수정되었습니다`);
             setSelectedImages([]);
             setIsSelectionMode(false);
+            setSelectedDate(null);
         } catch (error) {
             console.error('여행 이미지 삭제 실패', error);
         } finally {
