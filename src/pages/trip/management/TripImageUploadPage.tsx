@@ -20,21 +20,14 @@ import theme from '@/shared/styles/theme';
 
 const TripImageUploadPage = () => {
     const [isUploading, setIsUploading] = useState(false);
+    const [isUploadModalOpen, setIsUploadModalModalOpen] = useState(false);
     const waitForCompletion = useUploadStatusStore((state) => state.waitForCompletion);
     const resetUpload = useUploadStatusStore((state) => state.resetUpload);
     const showToast = useToastStore((state) => state.showToast);
 
     const { isModalOpen, closeModal } = useBrowserCheck();
 
-    const {
-        images,
-        progress,
-        isProcessing,
-        isUploadModalOpen,
-        setIsUploadModalModalOpen,
-        extractMetaDataAndResizeImages,
-        uploadImages,
-    } = useImageUpload();
+    const { images, progress, isProcessing, extractMetaDataAndResizeImages, uploadImages } = useImageUpload();
 
     const { tripKey } = useParams();
     const [searchParams] = useSearchParams();
@@ -102,7 +95,10 @@ const TripImageUploadPage = () => {
                             type='file'
                             accept='image/*,.heic'
                             multiple
-                            onChange={(e) => extractMetaDataAndResizeImages(e.target.files)}
+                            onChange={async (event) => {
+                                await extractMetaDataAndResizeImages(event.target.files);
+                                setIsUploadModalModalOpen(true);
+                            }}
                             css={fileInputStyle}
                             id='imageUpload'
                         />

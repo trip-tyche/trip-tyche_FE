@@ -18,7 +18,6 @@ import { useUploadStatusStore } from '@/shared/stores/useUploadStatusStore';
 export const useImageUpload = () => {
     const [images, setImages] = useState<ImagesFiles>();
     const [isProcessing, setIsProcessing] = useState(false);
-    const [isUploadModalOpen, setIsUploadModalModalOpen] = useState(false);
     const [progress, setProgress] = useState(0);
 
     const setUploadStatus = useUploadStatusStore((state) => state.setUploadStatus);
@@ -43,7 +42,6 @@ export const useImageUpload = () => {
         });
 
         setIsProcessing(false);
-        setIsUploadModalModalOpen(true);
     };
 
     const uploadImages = async (imagesToUpload: ImageFile[]) => {
@@ -94,8 +92,6 @@ export const useImageUpload = () => {
         images,
         progress,
         isProcessing,
-        isUploadModalOpen,
-        setIsUploadModalModalOpen,
         extractMetaDataAndResizeImages,
         uploadImages,
     };
