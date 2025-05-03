@@ -7,8 +7,8 @@ import { COMPRESSION_OPTIONS } from '@/domains/media/constants';
 import { ImageModel, PresignedUrlResponse } from '@/domains/media/image';
 import { mediaAPI } from '@/libs/apis';
 import { formatToISOLocal } from '@/libs/utils/date';
+import { extractLocationFromImage, extractDateFromImage } from '@/libs/utils/exif';
 import { removeDuplicateImages } from '@/libs/utils/image';
-import { getImageLocation, extractDateFromImage } from '@/libs/utils/piexif';
 import { useUploadStatusStore } from '@/shared/stores/useUploadStatusStore';
 import { Location } from '@/shared/types/location';
 
@@ -33,12 +33,7 @@ export const useImageUpload = () => {
 
         const extractedImages = await Promise.all(
             Array.from(images).map(async (image) => {
-                // console.log(image);
-                // if (image.name.startsWith('temp')) {
-                // console.log('image/heic');
-                // }
-
-                const location = await getImageLocation(image);
+                const location = await extractLocationFromImage(image);
                 const date = await extractDateFromImage(image);
                 let formattedDate = '';
 
