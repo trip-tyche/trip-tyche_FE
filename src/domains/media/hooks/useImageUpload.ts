@@ -19,6 +19,7 @@ export const useImageUpload = () => {
     const [images, setImages] = useState<ImagesFiles>();
     const [isProcessing, setIsProcessing] = useState(false);
     const [isUploadModalOpen, setIsUploadModalModalOpen] = useState(false);
+    const [progress, setProgress] = useState(0);
 
     const setUploadStatus = useUploadStatusStore((state) => state.setUploadStatus);
 
@@ -31,9 +32,8 @@ export const useImageUpload = () => {
         setIsProcessing(true);
         console.time(`extract metadata and resize`);
         const metadatas = await extractMetadataFromImage(uniqueImages);
-        const resizedImages = await resizeImages(metadatas);
+        const resizedImages = await resizeImages(metadatas, setProgress);
         console.timeEnd(`extract metadata and resize`);
-        setIsProcessing(false);
 
         setImages({
             totalImages: resizedImages,
@@ -41,6 +41,8 @@ export const useImageUpload = () => {
             imagesWithoutDate: imagesWithoutDate(resizedImages),
             imagesWithoutLocation: imagesWithoutLocation(resizedImages),
         });
+
+        setIsProcessing(false);
         setIsUploadModalModalOpen(true);
     };
 
@@ -55,7 +57,6 @@ export const useImageUpload = () => {
             if (!images?.totalImages) return;
 
             const imageNames = images?.totalImages.map((image) => ({ fileName: image.image.name }));
-            console.log('imageNames: ', imageNames);
             const result = await mediaAPI.requestPresignedUrls(tripKey, imageNames);
             if (!result.success) throw new Error(result.error);
             const { data: presignedUrls } = result;
@@ -91,6 +92,7 @@ export const useImageUpload = () => {
 
     return {
         images,
+        progress,
         isProcessing,
         isUploadModalOpen,
         setIsUploadModalModalOpen,

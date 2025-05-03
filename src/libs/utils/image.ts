@@ -40,42 +40,85 @@ export const extractMetadataFromImage = async (images: FileList | null): Promise
     );
 };
 
-export const resizeImages = async (images: ImageFile[] | null): Promise<ImageFile[]> => {
+// export const resizeImages = async (images: ImageFile[] | null): Promise<ImageFile[]> => {
+//     if (!images || images.length === 0) return [];
+
+//     const BATCH_SIZE = 10;
+//     const resizedImages: ImageFile[] = [];
+
+//     for (let i = 0; i < images.length; i += BATCH_SIZE) {
+//         const batch = images.slice(i, i + BATCH_SIZE);
+
+//         const batchResult = await Promise.all(
+//             batch.map(async (images: ImageFile) => {
+//                 try {
+//                     const resizedBlob = await imageCompression(images.image, COMPRESSION_OPTIONS);
+//                     const resizedFile = new File([resizedBlob], images.image.name.replace(/\.[^/.]+$/, '.webp'), {
+//                         type: COMPRESSION_OPTIONS.fileType,
+//                         lastModified: images.image.lastModified,
+//                     });
+//                     URL.revokeObjectURL(URL.createObjectURL(resizedBlob));
+//                     return {
+//                         image: resizedFile,
+//                         recordDate: images.recordDate,
+//                         location: images.location,
+//                     };
+//                 } catch (error) {
+//                     return images;
+//                 }
+//             }),
+//         );
+//         resizedImages.push(...batchResult);
+//     }
+
+//     return resizedImages;
+// };
+export const resizeImages = async (
+    images: ImageFile[] | null,
+    onProgress?: (progress: number) => void,
+): Promise<ImageFile[]> => {
     if (!images || images.length === 0) return [];
 
+    const BATCH_SIZE = 10;
     const resizedImages: ImageFile[] = [];
-    const batchSize = 10;
+    const totalImages = images.length;
+    let processedImages = 0;
 
-    for (let i = 0; i < images.length; i += batchSize) {
-        const batch = images.slice(i, i + batchSize);
+    for (let i = 0; i < images.length; i += BATCH_SIZE) {
+        const batch = images.slice(i, i + BATCH_SIZE);
 
-        const batchResults = await Promise.all(
-            batch.map(async (extractedImage: ImageFile) => {
+        const batchResult = await Promise.all(
+            batch.map(async (image: ImageFile) => {
                 try {
-                    const resizedBlob = await imageCompression(extractedImage.image, COMPRESSION_OPTIONS);
-                    const resizedFile = new File(
-                        [resizedBlob],
-                        extractedImage.image.name.replace(/\.[^/.]+$/, '.webp'),
-                        {
-                            type: COMPRESSION_OPTIONS.fileType,
-                            lastModified: extractedImage.image.lastModified,
-                        },
-                    );
-
+                    const resizedBlob = await imageCompression(image.image, COMPRESSION_OPTIONS);
+                    const resizedFile = new File([resizedBlob], image.image.name.replace(/\.[^/.]+$/, '.webp'), {
+                        type: COMPRESSION_OPTIONS.fileType,
+                        lastModified: image.image.lastModified,
+                    });
                     URL.revokeObjectURL(URL.createObjectURL(resizedBlob));
+
+                    processedImages++;
+                    if (onProgress) {
+                        const progressPercent = Math.round((processedImages / totalImages) * 100);
+                        onProgress(progressPercent);
+                    }
 
                     return {
                         image: resizedFile,
-                        recordDate: extractedImage.recordDate,
-                        location: extractedImage.location,
+                        recordDate: image.recordDate,
+                        location: image.location,
                     };
                 } catch (error) {
-                    return extractedImage;
+                    processedImages++;
+                    if (onProgress) {
+                        const progressPercent = Math.round((processedImages / totalImages) * 100);
+                        onProgress(progressPercent);
+                    }
+                    return image;
                 }
             }),
         );
-
-        resizedImages.push(...batchResults);
+        resizedImages.push(...batchResult);
     }
 
     return resizedImages;

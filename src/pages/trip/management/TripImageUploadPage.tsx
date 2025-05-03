@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
+import { Progress } from '@mantine/core';
 import { ImageUp } from 'lucide-react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { ClipLoader } from 'react-spinners';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
 import Header from '@/shared/components/common/Header';
@@ -11,16 +11,15 @@ import AlertModal from '@/shared/components/guide/AlertModal';
 import ConfirmModal from '@/shared/components/guide/ConfirmModal';
 import UploadingSpinner from '@/shared/components/guide/UploadingSpinner';
 import { ROUTES } from '@/shared/constants/paths';
+import { COLORS } from '@/shared/constants/theme';
 import { MESSAGE } from '@/shared/constants/ui';
 import useBrowserCheck from '@/shared/hooks/useBrowserCheck';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import { useUploadStatusStore } from '@/shared/stores/useUploadStatusStore';
-import useUserDataStore from '@/shared/stores/useUserDataStore';
 import theme from '@/shared/styles/theme';
 
 const TripImageUploadPage = () => {
     const [isUploading, setIsUploading] = useState(false);
-    const isTripInfoEditing = useUserDataStore((state) => state.isTripInfoEditing);
     const waitForCompletion = useUploadStatusStore((state) => state.waitForCompletion);
     const resetUpload = useUploadStatusStore((state) => state.resetUpload);
     const showToast = useToastStore((state) => state.showToast);
@@ -29,6 +28,7 @@ const TripImageUploadPage = () => {
 
     const {
         images,
+        progress,
         isProcessing,
         isUploadModalOpen,
         setIsUploadModalModalOpen,
@@ -37,10 +37,12 @@ const TripImageUploadPage = () => {
     } = useImageUpload();
 
     const { tripKey } = useParams();
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const location = useLocation();
 
     const isFirstTicket = Boolean(location.state);
+    const isEdit = searchParams.get('edit') !== null;
 
     useEffect(() => {
         resetUpload();
@@ -51,7 +53,7 @@ const TripImageUploadPage = () => {
             uploadImages(images.totalImages);
             setIsUploadModalModalOpen(false);
 
-            if (isTripInfoEditing) {
+            if (isEdit) {
                 setIsUploading(true);
                 await waitForCompletion();
                 setIsUploading(true);
@@ -81,14 +83,19 @@ const TripImageUploadPage = () => {
             <Header
                 title={'사진 등록'}
                 isBackButton
-                onBack={() => (isFirstTicket ? navigate(ROUTES.PATH.MAIN) : navigate(-1))}
+                onBack={() =>
+                    isFirstTicket
+                        ? navigate(ROUTES.PATH.MAIN)
+                        : isEdit
+                          ? navigate(ROUTES.PATH.TRIP.MANAGEMENT.IMAGES(tripKey!))
+                          : navigate(ROUTES.PATH.TRIP.ROOT)
+                }
             />
             <main css={mainStyle}>
                 <section css={sectionStyle}>
                     <h4>[사진 등록 가이드]</h4>
                     <p>1. 중복된 사진들의 경우, 1장으로 등록됩니다.</p>
-                    <p>2. 위치 정보가 없는 사진은 직접 위치를 등록하실 수 있습니다.</p>
-                    <p>3. 날짜 정보가 없는 사진은 등록하실 수 없습니다.</p>
+                    <p>2. 날짜 및 위치 정보가 없는 사진은 나중에 직접 등록하실 수 있습니다.</p>
 
                     <div css={uploadAreaStyle}>
                         <input
@@ -106,8 +113,18 @@ const TripImageUploadPage = () => {
                             </label>
                         ) : (
                             <label htmlFor='imageUpload' css={uploadLabelStyle}>
-                                <ClipLoader color='#5e5e5e' size={25} speedMultiplier={0.7} />
-                                <h3 css={uploadedStyle}>사진에서 위치, 날짜 정보를 찾고 있습니다.</h3>
+                                <Progress
+                                    color={COLORS.PRIMARY}
+                                    radius='xl'
+                                    size='xl'
+                                    value={progress}
+                                    striped
+                                    animated
+                                    style={{ width: '300px' }}
+                                />
+                                <h3
+                                    css={uploadedStyle}
+                                >{`사진에서 위치, 날짜 정보를 찾고 있습니다... (${progress}%)`}</h3>
                             </label>
                         )}
                     </div>
@@ -127,15 +144,22 @@ const TripImageUploadPage = () => {
                 />
             )}
             {isUploadModalOpen && (
-                <AlertModal confirmText='사진 등록하기' confirmModal={closeAlertModal}>
+                <AlertModal confirmText='등록하기' confirmModal={closeAlertModal}>
                     <div css={alertStyle}>
                         <h1>
-                            총 <span css={countStyle}>{images?.totalImages.length}</span> 개의 이미지를 선택했습니다.
+                            총 <span css={countStyle}>{images?.totalImages.length}</span>장의 사진을 등록할까요?
                         </h1>
                         <div>
-                            {/* <p>등록 가능한 사진 ✅ : {images.length} 개</p>
-                            <p>위치정보가 없어요 ✳️ : {imagesNoLocationWithDate.length} 개</p>
-                            <p>날짜정보가 없어요 ❌ : {imagesNoDate.length} 개</p> */}
+                            {!!(
+                                Number(images?.imagesWithoutDate.length) && Number(images?.imagesWithoutLocation.length)
+                            ) && (
+                                <p>
+                                    {Number(images?.imagesWithoutDate.length) ||
+                                        0 + Number(images?.imagesWithoutLocation.length) ||
+                                        0}{' '}
+                                    장의 사진은 위치 또는 날짜 정보가 없어요!
+                                </p>
+                            )}
                         </div>
                     </div>
                 </AlertModal>
@@ -233,7 +257,7 @@ const uploadLabelStyle = css`
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 18px;
+    gap: 24px;
     color: ${theme.COLORS.TEXT.DESCRIPTION};
 `;
 
