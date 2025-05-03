@@ -18,6 +18,7 @@ const LoadingSpinner = () => <Spinner loadingText='불러오는 중...' />;
 const TripPages = {
     Management: {
         TripImageManagePage: lazy(() => import('@/pages/trip/management/TripImageManagePage')),
+        UnlocatedImagePage: lazy(() => import('@/pages/trip/management/UnlocatedImagePage')),
         TripImageUploadPage: lazy(() => import('@/pages/trip/management/TripImageUploadPage')),
         TripInfoFormPage: lazy(() => import('@/pages/trip/management/TripInfoFormPage')),
     },
@@ -86,6 +87,10 @@ const router = createBrowserRouter([
                             {
                                 path: 'images',
                                 element: <TripPages.Management.TripImageManagePage />,
+                            },
+                            {
+                                path: 'images/unlocated',
+                                element: <TripPages.Management.UnlocatedImagePage />,
                             },
                             {
                                 path: 'images/upload',

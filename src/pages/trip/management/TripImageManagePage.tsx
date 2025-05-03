@@ -4,6 +4,7 @@ import { css } from '@emotion/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
 import { FaPencilAlt } from 'react-icons/fa';
+import { LuPlus } from 'react-icons/lu';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import MediaImageGrid from '@/domains/media/components/MediaImageGrid';
@@ -12,6 +13,7 @@ import EditDate from '@/domains/trip/components/EditDate';
 import LocationAddMap from '@/domains/trip/components/LocationAddMap';
 import { useMediaDelete } from '@/domains/trip/hooks/mutations';
 import { mediaAPI } from '@/libs/apis';
+import { ApiResponse } from '@/libs/apis/types';
 import { formatToISOLocal, formatToKorean } from '@/libs/utils/date';
 import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
@@ -21,13 +23,33 @@ import { ROUTES } from '@/shared/constants/paths';
 import { COLORS } from '@/shared/constants/theme';
 import { useTripImages } from '@/shared/hooks/queries/useImage';
 import { useToastStore } from '@/shared/stores/useToastStore';
+import theme from '@/shared/styles/theme';
 import { Location } from '@/shared/types/location';
+
+interface Media {
+    mediaFileId: number;
+    mediaLink: string;
+}
+
+interface UnlocatedMediaGroup {
+    recordDate: string;
+    media: Media[];
+}
+
+interface ApiResponse2 {
+    status: number;
+    code: number;
+    message: string;
+    data: UnlocatedMediaGroup[];
+    httpStatus: string;
+}
 
 const TripImageManagePage = () => {
     const [isSelectionMode, setIsSelectionMode] = useState(false);
     const [selectedImages, setSelectedImages] = useState<MediaFileMetaData[]>([]);
     const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [unlocatedImageGroups, setUnlocatedImageGroups] = useState<UnlocatedMediaGroup[]>([]);
 
     const [isVisibleEditList, setIsVisibleEditList] = useState(false);
     const [isMapVisible, setIsMapVisible] = useState(false);
@@ -46,14 +68,30 @@ const TripImageManagePage = () => {
     const { data: tripImages = [], isLoading, isError, error } = useTripImages(tripKey!);
 
     useEffect(() => {
+        const getImages = async () => {
+            try {
+                const response: ApiResponse2 = await mediaAPI.getUnlcoatedImages(tripKey!);
+                if (response && response.data) {
+                    setUnlocatedImageGroups(response.data);
+                }
+            } catch (error) {
+                console.error('위치 정보 없는 이미지 불러오기 실패', error);
+                showToast('이미지를 불러오는데 실패했습니다.');
+            }
+        };
+
+        if (tripKey) {
+            getImages();
+        }
+    }, [tripKey, showToast]);
+
+    useEffect(() => {
         if (isError) {
             console.error(error);
             navigate(-1);
             showToast(error.message || '사진을 불러오는데 실패하였습니다.');
         }
     }, [isError]);
-
-    console.log(selectedDate);
 
     useEffect(() => {
         setIsVisibleEditList(false);
@@ -198,6 +236,22 @@ const TripImageManagePage = () => {
     ) : (
         <div css={container}>
             <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.TRIP.ROOT)} />
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                {unlocatedImageGroups?.length !== 0 && (
+                    <Button
+                        text={`위치 없는 사진 관리`}
+                        onClick={() => navigate(`/trip/${tripKey}/images/unlocated`)}
+                        css={css`
+                            width: auto;
+                            height: 34px;
+                            padding: 0 24px;
+                            margin: 12px 12px 0 0;
+                            border-radius: 12px;
+                            font-size: ${theme.FONT_SIZES.SM};
+                        `}
+                    />
+                )}
+            </div>
             <main css={mainStyle}>
                 {imageGroupByDate?.map((image) => (
                     <Fragment key={image.recordDate}>

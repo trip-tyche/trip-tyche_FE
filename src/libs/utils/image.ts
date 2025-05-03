@@ -40,39 +40,7 @@ export const extractMetadataFromImage = async (images: FileList | null): Promise
     );
 };
 
-// export const resizeImages = async (images: ImageFile[] | null): Promise<ImageFile[]> => {
-//     if (!images || images.length === 0) return [];
-
-//     const BATCH_SIZE = 10;
-//     const resizedImages: ImageFile[] = [];
-
-//     for (let i = 0; i < images.length; i += BATCH_SIZE) {
-//         const batch = images.slice(i, i + BATCH_SIZE);
-
-//         const batchResult = await Promise.all(
-//             batch.map(async (images: ImageFile) => {
-//                 try {
-//                     const resizedBlob = await imageCompression(images.image, COMPRESSION_OPTIONS);
-//                     const resizedFile = new File([resizedBlob], images.image.name.replace(/\.[^/.]+$/, '.webp'), {
-//                         type: COMPRESSION_OPTIONS.fileType,
-//                         lastModified: images.image.lastModified,
-//                     });
-//                     URL.revokeObjectURL(URL.createObjectURL(resizedBlob));
-//                     return {
-//                         image: resizedFile,
-//                         recordDate: images.recordDate,
-//                         location: images.location,
-//                     };
-//                 } catch (error) {
-//                     return images;
-//                 }
-//             }),
-//         );
-//         resizedImages.push(...batchResult);
-//     }
-
-//     return resizedImages;
-// };
+// 이미지 리사이징
 export const resizeImages = async (
     images: ImageFile[] | null,
     onProgress?: (progress: number) => void,

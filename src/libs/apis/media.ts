@@ -68,6 +68,16 @@ export const mediaAPI = {
             mediaFiles: MediaFile[];
         }>
     > => await apiClient.get(`/v1/trips/${tripKey}/media-files`),
+    // 여행에 등록된 모든 이미지 조회
+    getUnlcoatedImages: async (tripKey: string) => {
+        try {
+            const response = await apiClient.get(`/v1/trips/${tripKey}/media-files/unlocated`);
+            return response.data.media;
+        } catch (error) {
+            console.error(error);
+            return { success: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
+        }
+    },
     // 선택한 여행 이미지 삭제
     deleteImages: async (tripKey: string, images: string[]): Promise<Result<string>> => {
         try {

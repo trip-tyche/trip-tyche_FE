@@ -4,10 +4,10 @@ import { css } from '@emotion/react';
 import { X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { ROUTES } from '@/shared/constants/paths';
-import { IMAGE_CAROUSEL_STATE } from '@/shared/constants/ui';
 import ImageCarousel from '@/domains/media/components/ImageCarousel';
 import { useMediaByPinPoint } from '@/domains/media/hooks/queries';
+import { ROUTES } from '@/shared/constants/paths';
+import { IMAGE_CAROUSEL_STATE } from '@/shared/constants/ui';
 import theme from '@/shared/styles/theme';
 import { ImageCarouselState } from '@/shared/types';
 
