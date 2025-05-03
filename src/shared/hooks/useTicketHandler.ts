@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
-import { ROUTES } from '@/shared/constants/paths';
 import { useTripDelete } from '@/domains/trip/hooks/mutations';
+import { ROUTES } from '@/shared/constants/paths';
 
 export const useTicketHandler = (
     tripKey: string,
@@ -32,6 +32,7 @@ export const useTicketHandler = (
     };
 
     const deleteTrip = async () => {
+        setIsModalOpen(false);
         const result = await mutateAsync(tripKey);
         if (!result.success) {
             onError?.(result.error);
@@ -39,7 +40,6 @@ export const useTicketHandler = (
             return;
         }
         onSuccess?.(result.data);
-        setIsModalOpen(false);
         queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
     };
 

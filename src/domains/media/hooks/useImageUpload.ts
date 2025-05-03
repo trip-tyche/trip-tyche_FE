@@ -7,6 +7,7 @@ import { COMPRESSION_OPTIONS } from '@/domains/media/constants';
 import { ImageModel, PresignedUrlResponse } from '@/domains/media/image';
 import { mediaAPI } from '@/libs/apis';
 import { formatToISOLocal } from '@/libs/utils/date';
+import { removeDuplicateImages } from '@/libs/utils/image';
 import { getImageLocation, extractDateFromImage } from '@/libs/utils/piexif';
 import { useUploadStatusStore } from '@/shared/stores/useUploadStatusStore';
 import { Location } from '@/shared/types/location';
@@ -22,22 +23,6 @@ export const useImageUpload = () => {
     const setUploadStatus = useUploadStatusStore((state) => state.setUploadStatus);
 
     const { tripKey } = useParams();
-
-    const removeDuplicateImages = (images: FileList): FileList => {
-        const imageMap = new Map();
-
-        Array.from(images).forEach((image) => {
-            imageMap.set(image.name, image);
-        });
-
-        const dataTransfer = new DataTransfer();
-
-        Array.from(imageMap.values()).forEach((image: File) => {
-            dataTransfer.items.add(image);
-        });
-
-        return dataTransfer.files;
-    };
 
     const hasValidLocation = (location: Location): boolean => location !== null;
 

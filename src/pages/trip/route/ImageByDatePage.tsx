@@ -6,6 +6,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { useMediaByDate } from '@/domains/media/hooks/queries';
 // import DateMap from '@/domains/trip/components/DateMap';
+import DateMap from '@/domains/trip/components/DateMap';
 import DateSelector from '@/domains/trip/components/DateSelector';
 import ImageItem from '@/domains/trip/components/ImageItem';
 import Spinner from '@/shared/components/common/Spinner';
@@ -76,7 +77,7 @@ const ImageByDatePage = () => {
                 <ChevronLeft color={theme.COLORS.TEXT.DESCRIPTION} size={24} strokeWidth={1.5} />
             </button>
 
-            {/* {imageLocation && <DateMap imageLocation={imageLocation} />} */}
+            {imageLocation && <DateMap imageLocation={imageLocation} />}
 
             <DateSelector
                 currentDate={currentDate}
