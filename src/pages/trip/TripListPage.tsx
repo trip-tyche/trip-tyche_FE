@@ -41,7 +41,7 @@ const TripListPage = () => {
 
     return (
         <div css={pageContainer}>
-            {isLoading && <Spinner />}
+            {!isLoading && <Spinner text='티켓 정보를 불러오는 중..' />}
             <Header title='나의 여행 티켓' isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
             <div css={listHeaderStyle}>
                 <div css={listSummaryStyle}>

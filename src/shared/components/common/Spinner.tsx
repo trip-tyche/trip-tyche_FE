@@ -11,7 +11,6 @@ const Spinner = ({ text = '불러오는 중..' }: { text?: string }) => (
                 <Lottie animationData={animationData} loop={true} autoplay={true} style={{ width: 118, height: 118 }} />
                 <p css={spinnerText}>{text}</p>
             </div>
-            <div css={overlay} />
         </div>
         <div css={outerOverlay} />
     </div>
@@ -28,37 +27,40 @@ const spinner = css`
 `;
 
 const content = css`
-    width: 122px;
-    height: 122px;
+    width: 240px;
+    height: 140px;
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    position: absolute;
+    background-color: ${COLORS.BACKGROUND.WHITE};
+    border: 2px solid ${COLORS.TEXT.DESCRIPTION}70;
+    border-radius: 16px;
+    overflow: hidden;
+    z-index: 215;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 `;
 
 const main = css`
     margin-top: -36px;
     z-index: 220;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 `;
 
 const spinnerText = css`
-    margin-top: -18px;
-    color: #6a6a6a;
+    margin-top: -12px;
+    color: ${COLORS.TEXT.DESCRIPTION};
     font-size: 14px;
     font-weight: bold;
     text-align: center;
-`;
-
-const overlay = css`
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    background-color: ${COLORS.BACKGROUND.WHITE};
-    border: 2px solid #6a6a6a70;
-    border-radius: 16px;
-    overflow: hidden;
-    z-index: 215;
 `;
 
 const outerOverlay = css`
