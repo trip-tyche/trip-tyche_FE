@@ -1,21 +1,15 @@
 import { css } from '@emotion/react';
 import Lottie from 'lottie-react';
-// import { ClipLoader } from 'react-spinners';
 
 import { COLORS } from '@/shared/constants/theme';
 import animationData from '@/shared/styles/loading-spinner-2.json';
-// import theme from '@/styles/theme';
 
-interface SpinnerProps {
-    loadingText?: string;
-}
-
-const Spinner = ({ loadingText = '불러오는 중...' }: SpinnerProps) => (
-    <div css={loadingSpinnerStyle}>
+const Spinner = ({ text = '불러오는 중..' }: { text?: string }) => (
+    <div css={spinner}>
         <div css={content}>
             <div css={main}>
                 <Lottie animationData={animationData} loop={true} autoplay={true} style={{ width: 118, height: 118 }} />
-                <p css={text}>{loadingText}</p>
+                <p css={spinnerText}>{text}</p>
             </div>
             <div css={overlay} />
         </div>
@@ -23,7 +17,7 @@ const Spinner = ({ loadingText = '불러오는 중...' }: SpinnerProps) => (
     </div>
 );
 
-const loadingSpinnerStyle = css`
+const spinner = css`
     position: absolute;
     inset: 0;
     z-index: 100;
@@ -48,7 +42,7 @@ const main = css`
     z-index: 220;
 `;
 
-const text = css`
+const spinnerText = css`
     margin-top: -18px;
     color: #6a6a6a;
     font-size: 14px;
@@ -61,7 +55,7 @@ const overlay = css`
     height: 100%;
     position: absolute;
     background-color: ${COLORS.BACKGROUND.WHITE};
-    border: 2px solid #6a6a6a80;
+    border: 2px solid #6a6a6a70;
     border-radius: 16px;
     overflow: hidden;
     z-index: 215;
@@ -74,7 +68,7 @@ const outerOverlay = css`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgb(0, 0, 0, 0.4);
+    background-color: rgb(0, 0, 0, 0.3);
     z-index: 210;
 `;
 

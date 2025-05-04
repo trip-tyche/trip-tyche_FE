@@ -30,23 +30,19 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
     const showToast = useToastStore((state) => state.showToast);
 
     const { notificationId, referenceId, message, status, senderNickname, createdAt } = notificationInfo;
-    console.log(isDetailOpen);
     const { data: shareDetailResult, isLoading, error } = useShareDetail(referenceId, isDetailOpen);
     const { mutateAsync: notificationMutateAsync } = useNotificationStatus();
     const { mutateAsync: shareMutateAsync } = useShareStatus();
     const { mutateAsync: deleteMutateAsync } = useNotificationDelete();
 
     const showSharedTripDetail = async () => {
-        console.log('z');
         const isRead = status === 'READ';
 
         if (!isRead) {
-            const result = await notificationMutateAsync(referenceId);
+            const result = await notificationMutateAsync(notificationId);
             if (!result.success) throw Error(result.error);
         }
-        console.log('3');
         setIsDetailOpen(true);
-        console.log('4');
     };
 
     const deleteNotification = async () => {

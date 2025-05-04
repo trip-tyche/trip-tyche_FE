@@ -22,12 +22,6 @@ const TripListPage = () => {
 
     const navigate = useNavigate();
 
-    if (!result) return;
-    if (!result?.success) {
-        showToast(result ? result?.error : MESSAGE.ERROR.UNKNOWN);
-        return;
-    }
-
     const handleCreateTripButtonClick = async () => {
         const result = await toResult(() => tripAPI.createNewTrip());
         if (result.success) {
@@ -38,8 +32,12 @@ const TripListPage = () => {
         }
     };
 
-    const tripList = [...result.data].reverse();
+    const tripList = result && result?.success ? [...result.data].reverse() : [];
     const tripCount = tripList.length;
+
+    if (result && !result?.success) {
+        showToast(result ? result?.error : MESSAGE.ERROR.UNKNOWN);
+    }
 
     return (
         <div css={pageContainer}>

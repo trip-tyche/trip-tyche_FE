@@ -32,31 +32,33 @@ const NotificationPage = () => {
     );
     const isNewNotifications = notifications.length > 0;
 
-    if (isLoading) return <Spinner />;
-
     return (
         <div css={container}>
             <Header title={'알림'} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
 
-            <div css={content}>
-                {isNewNotifications ? (
-                    notifications.map((item: Notification) => (
-                        <NotificationItem key={item.notificationId} notificationInfo={item} />
-                    ))
-                ) : (
-                    <div css={emptyNotification}>
-                        <div css={belloffIcon}>
-                            <BellOff color='white' />
+            {isLoading ? (
+                <Spinner />
+            ) : (
+                <div css={content}>
+                    {isNewNotifications ? (
+                        notifications.map((item: Notification) => (
+                            <NotificationItem key={item.notificationId} notificationInfo={item} />
+                        ))
+                    ) : (
+                        <div css={emptyNotification}>
+                            <div css={belloffIcon}>
+                                <BellOff color='white' />
+                            </div>
+                            <strong css={emptyNotificationHeading}>새로운 알림이 없습니다</strong>
+                            <p css={emptyNotificationDescription}>
+                                트립티케의 다양한 알림을
+                                <br />
+                                이곳에서 모아볼 수 있어요
+                            </p>
                         </div>
-                        <strong css={emptyNotificationHeading}>새로운 알림이 없습니다</strong>
-                        <p css={emptyNotificationDescription}>
-                            트립티케의 다양한 알림을
-                            <br />
-                            이곳에서 모아볼 수 있어요
-                        </p>
-                    </div>
-                )}
-            </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 };
