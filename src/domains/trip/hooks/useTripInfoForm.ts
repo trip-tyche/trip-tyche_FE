@@ -69,5 +69,7 @@ export const useTripInfoForm = (isEditing: boolean, form: TripInfo) => {
         }
     };
 
+    console.log(form);
+
     return { isImageSubmitting, isSubmitting, isFormComplete, submitTripInfo };
 };

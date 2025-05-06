@@ -34,7 +34,7 @@ const Button = ({
             <p css={loadingStyle}>{loadingText} </p>
         ) : (
             <React.Fragment>
-                {icon && <span css={buttonStyles.icon}>{icon}</span>}
+                {icon && <span css={buttonStyles.icon(!!text)}>{icon}</span>}
                 {text}
             </React.Fragment>
         )}
@@ -74,9 +74,9 @@ const buttonStyles = {
             }
         `;
     },
-    icon: css`
+    icon: (isText: boolean) => css`
         display: flex;
-        margin-right: 4px;
+        margin-right: ${isText ? '4px' : '0px'};
         align-items: center;
     `,
 };

@@ -30,7 +30,7 @@ const NotificationPage = () => {
     const notifications = [...result.data].sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
-    const isNewNotifications = notifications.length > 0;
+    const hasNotifications = notifications.length > 0;
 
     return (
         <div css={container}>
@@ -40,7 +40,7 @@ const NotificationPage = () => {
                 <Spinner />
             ) : (
                 <div css={content}>
-                    {isNewNotifications ? (
+                    {hasNotifications ? (
                         notifications.map((item: Notification) => (
                             <NotificationItem key={item.notificationId} notificationInfo={item} />
                         ))
@@ -49,11 +49,9 @@ const NotificationPage = () => {
                             <div css={belloffIcon}>
                                 <BellOff color='white' />
                             </div>
-                            <strong css={emptyNotificationHeading}>새로운 알림이 없습니다</strong>
+                            <h3 css={emptyNotificationHeading}>새로운 알림이 없습니다</h3>
                             <p css={emptyNotificationDescription}>
-                                트립티케의 다양한 알림을
-                                <br />
-                                이곳에서 모아볼 수 있어요
+                                {`트립티케의 다양한 알림을\n이곳에서 모아볼 수 있어요`}
                             </p>
                         </div>
                     )}
@@ -94,6 +92,7 @@ const emptyNotificationDescription = css`
     font-size: 15px;
     line-height: 21px;
     text-align: center;
+    white-space: pre-line;
 `;
 
 const belloffIcon = css`

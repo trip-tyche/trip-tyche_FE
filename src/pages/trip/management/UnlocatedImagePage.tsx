@@ -379,7 +379,7 @@
 import { useState, useEffect, Fragment } from 'react';
 
 import { css } from '@emotion/react';
-import { Trash2 } from 'lucide-react';
+import { BellOff, Trash2 } from 'lucide-react';
 import { FaPencilAlt } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -439,9 +439,9 @@ const UnlocatedImagePage = () => {
         const getImages = async () => {
             try {
                 setIsLoading(true);
-                const response: ApiResponse = await mediaAPI.getUnlcoatedImages(tripKey!);
-                if (response && response.data) {
-                    setUnlocatedImageGroups(response.data);
+                const response = await mediaAPI.getUnlcoatedImages(tripKey!);
+                if (response) {
+                    setUnlocatedImageGroups(response);
                 }
             } catch (error) {
                 console.error('위치 정보 없는 이미지 불러오기 실패', error);
@@ -588,18 +588,25 @@ const UnlocatedImagePage = () => {
                 ))}
 
                 {unlocatedImageGroups.length === 0 && (
-                    <div
-                        css={css`
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            justify-content: center;
-                            height: 50vh;
-                            text-align: center;
-                            color: ${COLORS.TEXT.DESCRIPTION};
-                        `}
-                    >
-                        <p>위치 정보가 없는 사진이 없습니다.</p>
+                    // <div
+                    //     css={css`
+                    //         display: flex;
+                    //         flex-direction: column;
+                    //         align-items: center;
+                    //         justify-content: center;
+                    //         height: 50vh;
+                    //         text-align: center;
+                    //         color: ${COLORS.TEXT.DESCRIPTION};
+                    //     `}
+                    // >
+                    //     <p>위치 정보가 없는 사진이 없습니다.</p>
+                    // </div>
+                    <div css={emptyNotification}>
+                        <div css={belloffIcon}>
+                            <BellOff color='white' />
+                        </div>
+                        <h3 css={emptyNotificationHeading}>새로운 알림이 없습니다</h3>
+                        <p css={emptyNotificationDescription}>위치 정보가 없는 사진이 없습니다</p>
                     </div>
                 )}
             </main>
@@ -728,6 +735,40 @@ const editList = css`
 const dateStyle = css`
     font-weight: bold;
     padding: 12px;
+`;
+
+const emptyNotification = css`
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+`;
+
+const emptyNotificationHeading = css`
+    margin-top: 18px;
+    color: #303038;
+    font-size: 18px;
+    font-weight: bold;
+`;
+
+const emptyNotificationDescription = css`
+    margin-top: 8px;
+    color: #767678;
+    font-size: 15px;
+    line-height: 21px;
+    text-align: center;
+    white-space: pre-line;
+`;
+
+const belloffIcon = css`
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: ${COLORS.TEXT.DESCRIPTION_LIGHT};
 `;
 
 export default UnlocatedImagePage;

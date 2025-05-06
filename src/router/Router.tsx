@@ -13,7 +13,7 @@ import TripListPage from '@/pages/trip/TripListPage';
 import Spinner from '@/shared/components/common/Spinner';
 import { ROUTES } from '@/shared/constants/paths';
 
-const LoadingSpinner = () => <Spinner loadingText='불러오는 중...' />;
+const LoadingSpinner = () => <Spinner text='불러오는 중...' />;
 
 const TripPages = {
     Management: {
@@ -66,7 +66,8 @@ const router = createBrowserRouter([
                 children: [
                     {
                         index: true,
-                        element: <MainPage />,
+                        element: <TripListPage />,
+                        // element: <MainPage />,
                     },
                     {
                         path: ROUTES.PATH.SETTING,
@@ -76,11 +77,10 @@ const router = createBrowserRouter([
                         path: `notification/:userId`,
                         element: <NotificationPage />,
                     },
-
-                    {
-                        path: ROUTES.PATH.TRIP.ROOT,
-                        element: <TripListPage />,
-                    },
+                    // {
+                    //     path: ROUTES.PATH.TRIP.ROOT,
+                    //     element: <TripListPage />,
+                    // },
                     {
                         path: 'trip/:tripKey',
                         children: [

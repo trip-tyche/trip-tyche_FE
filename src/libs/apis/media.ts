@@ -72,7 +72,7 @@ export const mediaAPI = {
     getUnlcoatedImages: async (tripKey: string) => {
         try {
             const response = await apiClient.get(`/v1/trips/${tripKey}/media-files/unlocated`);
-            return response.data.media;
+            return response.data;
         } catch (error) {
             console.error(error);
             return { success: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
