@@ -52,7 +52,7 @@ const TripInfoFormPage = () => {
 
     return (
         <div css={pageContainer}>
-            {(isLoading || isSubmitting) && <Spinner text='여행 정보를 불러오는 중...' />}
+            {(isLoading || isSubmitting) && <Spinner text='여행 정보 불러오는 중...' />}
 
             <Header
                 title={ROUTES.PATH_TITLE.TRIPS.NEW.INFO}

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { css } from '@emotion/react';
+import { css, SerializedStyles } from '@emotion/react';
 import { createPortal } from 'react-dom';
 
 import theme from '@/shared/styles/theme';
@@ -9,19 +9,20 @@ interface ModalProps {
     closeModal?: () => void;
     isConfirm?: boolean;
     children: React.ReactNode;
+    customStyle?: SerializedStyles;
 }
 
-const Modal = ({ closeModal, isConfirm = false, children }: ModalProps) => {
+const Modal = ({ closeModal, isConfirm = false, children, customStyle }: ModalProps) => {
     return createPortal(
         <React.Fragment>
             <div css={overlayStyle} onClick={!isConfirm ? closeModal : undefined}></div>
-            <div css={modalStyle}>{children}</div>
+            <div css={modalStyle(customStyle)}>{children}</div>
         </React.Fragment>,
         document.getElementById('portal-root') || document.body,
     );
 };
 
-const modalStyle = css`
+const modalStyle = (customStyle?: SerializedStyles) => css`
     padding: 16px;
     display: flex;
     flex-direction: column;
@@ -35,6 +36,7 @@ const modalStyle = css`
     border-radius: 16px;
     background-color: ${theme.COLORS.BACKGROUND.WHITE};
     z-index: 1000;
+    ${customStyle}
 `;
 
 const overlayStyle = css`

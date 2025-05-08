@@ -46,7 +46,7 @@ const ShareModal = ({ tripKey, tripTitle, onClose, startDate, endDate }: ShareMo
     const disabled = !isValid || isSharing || inputValue.trim().length === 0;
 
     return (
-        <Modal closeModal={closeModal}>
+        <Modal closeModal={closeModal} customStyle={customModalStyle}>
             <h2 css={titleStyle}>티켓 공유하기</h2>
 
             <div css={ticketPreviewStyle}>
@@ -109,6 +109,10 @@ const ShareModal = ({ tripKey, tripTitle, onClose, startDate, endDate }: ShareMo
         </Modal>
     );
 };
+
+const customModalStyle = css`
+    width: 400px;
+`;
 
 const titleStyle = css`
     font-size: 18px;

@@ -61,7 +61,7 @@ const MainPage = () => {
 
     return (
         <div css={page}>
-            {isLoading && <Spinner text='티켓 정보를 불러오는 중...' />}
+            {isLoading && <Spinner text='티켓 정보 불러오는 중...' />}
 
             <header css={header}>
                 <div css={logo}>TRIPTYCHE</div>
