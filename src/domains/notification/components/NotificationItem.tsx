@@ -1,7 +1,235 @@
+// import { useState } from 'react';
+
+// import { css } from '@emotion/react';
+// import { TicketsPlane } from 'lucide-react';
+// import { GoKebabHorizontal } from 'react-icons/go';
+
+// import { useNotificationDelete, useNotificationStatus } from '@/domains/notification/hooks/mutations';
+// import { Notification } from '@/domains/notification/types';
+// import SharedTicket from '@/domains/share/components/SharedTicket';
+// import { useShareStatus } from '@/domains/share/hooks/mutations';
+// import { useShareDetail } from '@/domains/share/hooks/queries';
+// import { SharedTripDetail, ShareStatus } from '@/domains/share/types';
+// import { formatDateTime } from '@/libs/utils/date';
+// import { getMessageByType, getNotificationStyle } from '@/libs/utils/notification';
+// import Button from '@/shared/components/common/Button';
+// import Modal from '@/shared/components/common/Modal';
+// import Spinner from '@/shared/components/common/Spinner';
+// import ConfirmModal from '@/shared/components/guide/ConfirmModal';
+// import { COLORS } from '@/shared/constants/theme';
+// import { MESSAGE } from '@/shared/constants/ui';
+// import { useToastStore } from '@/shared/stores/useToastStore';
+
+// interface NotificationProps {
+//     notificationInfo: Notification;
+// }
+
+// const NotificationItem = ({ notificationInfo }: NotificationProps) => {
+//     const [isShowNotificationContent, setIsShowNotificationContent] = useState(false);
+//     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+//     const showToast = useToastStore((state) => state.showToast);
+
+//     const { notificationId, referenceId, message, status, senderNickname, createdAt } = notificationInfo;
+//     const { data: shareDetailResult, isLoading, error } = useShareDetail(referenceId, isShowNotificationContent);
+//     const { mutateAsync: updateNotificationReadStatus } = useNotificationStatus();
+//     const { mutateAsync: updateShareStatus } = useShareStatus();
+//     const { mutateAsync: deleteNotificationAsync } = useNotificationDelete();
+
+//     const showNotificationContent = async () => {
+//         const isRead = status === 'READ';
+
+//         if (!isRead) {
+//             const result = await updateNotificationReadStatus(notificationId);
+//             if (!result.success) throw Error(result.error);
+//         }
+//         setIsShowNotificationContent(true);
+//     };
+
+//     const deleteNotification = async () => {
+//         const result = await deleteNotificationAsync([notificationId]);
+
+//         if (result.success) {
+//             showToast('알림이 삭제되었습니다');
+//             setIsDeleteModalOpen(false);
+//         }
+//     };
+
+//     const handleShareStatusChange = async (status: ShareStatus) => {
+//         const result = await updateShareStatus({ shareId: referenceId, status });
+
+//         const approve = status === 'APPROVED';
+//         showToast(result.success ? (approve ? '여행 메이트가 되었어요! 🎉' : '다음에 함께 여행해요 ✈️') : result.error);
+//         setIsShowNotificationContent(false);
+//     };
+
+//     const handleNotificationDelete = async (event: React.MouseEvent<HTMLDivElement>) => {
+//         event.stopPropagation();
+//         setIsDeleteModalOpen(true);
+//     };
+
+//     const isRead = status === 'READ';
+//     const sharedTripInfo = shareDetailResult?.success && shareDetailResult?.data ? shareDetailResult?.data : null;
+
+//     if (error) {
+//         showToast(error ? error.message : MESSAGE.ERROR.UNKNOWN);
+//     }
+
+//     return (
+//         <>
+//             {isLoading && <Spinner />}
+//             <div key={notificationId} css={[container, getNotificationStyle(isRead)]} onClick={showNotificationContent}>
+//                 <div css={info}>
+//                     <div css={notification}>
+//                         <div css={ticketIcon}>
+//                             <TicketsPlane size={18} color={COLORS.PRIMARY} />
+//                         </div>
+//                         <p css={sender}>{senderNickname}</p>
+//                         <p css={time}>{formatDateTime(createdAt, false)}</p>
+//                     </div>
+//                     <div css={removeIcon} onClick={handleNotificationDelete}>
+//                         <GoKebabHorizontal />
+//                     </div>
+//                 </div>
+//                 {getMessageByType(message)}
+//             </div>
+
+//             {isDeleteModalOpen && (
+//                 <ConfirmModal
+//                     title='이 알림을 지울까요?'
+//                     description='지운 알림은 다시 볼 수 없어요. 괜찮으신가요?'
+//                     confirmText='지우기'
+//                     cancelText='그대로 두기'
+//                     confirmModal={deleteNotification}
+//                     closeModal={() => setIsDeleteModalOpen(false)}
+//                 />
+//             )}
+
+//             {sharedTripInfo && isShowNotificationContent && (
+//                 <Modal closeModal={() => setIsShowNotificationContent(false)}>
+//                     <div css={sharedTripInfoStyle}>
+//                         <SharedTicket
+//                             userNickname={sharedTripInfo?.ownerNickname || ''}
+//                             trip={sharedTripInfo as SharedTripDetail}
+//                         />
+//                         {sharedTripInfo.status === 'PENDING' ? (
+//                             <div css={buttonGroup}>
+//                                 <Button
+//                                     text={'거절하기'}
+//                                     variant='white'
+//                                     onClick={() => handleShareStatusChange('REJECTED')}
+//                                 />
+//                                 <Button text={'함께 여행하기'} onClick={() => handleShareStatusChange('APPROVED')} />
+//                             </div>
+//                         ) : (
+//                             <>
+//                                 <img
+//                                     css={shareStatusStyle}
+//                                     src={`/passport-${sharedTripInfo?.status === 'REJECTED' ? 'rejected' : 'approved'}.png`}
+//                                 />
+//                                 <Button
+//                                     text={'알림으로 돌아가기'}
+//                                     variant='white'
+//                                     onClick={() => setIsShowNotificationContent(false)}
+//                                 />
+//                             </>
+//                         )}
+//                     </div>
+//                 </Modal>
+//             )}
+//         </>
+//     );
+// };
+
+// const container = css`
+//     margin-bottom: 16px;
+//     padding: 15px 16px;
+//     border-radius: 12px;
+//     display: flex;
+//     flex-direction: column;
+//     background-color: ${COLORS.BACKGROUND.WHITE};
+//     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+//     cursor: pointer;
+// `;
+
+// const info = css`
+//     display: flex;
+//     justify-content: space-between;
+//     align-items: center;
+// `;
+
+// const notification = css`
+//     display: flex;
+//     align-items: center;
+// `;
+
+// const ticketIcon = css`
+//     padding-bottom: 1px;
+//     width: 26px;
+//     height: 26px;
+//     border: 1.5px solid ${COLORS.TEXT.DESCRIPTION}60;
+//     border-radius: 50%;
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+// `;
+
+// const sender = css`
+//     margin-left: 9px;
+//     font-weight: bold;
+//     font-size: 15px;
+// `;
+
+// const time = css`
+//     display: flex;
+//     align-items: center;
+//     font-size: 14px;
+//     font-weight: 500;
+//     color: ${COLORS.TEXT.DESCRIPTION};
+
+//     ::before {
+//         content: '';
+//         width: 3px;
+//         height: 3px;
+//         border-radius: 50%;
+//         background-color: ${COLORS.TEXT.DESCRIPTION};
+//         margin: 0 5px;
+//     }
+// `;
+
+// const removeIcon = css`
+//     margin-top: -12px;
+//     margin-right: -12px;
+//     padding: 12px;
+//     border: 0;
+//     background: transparent;
+//     transform: rotate(90deg);
+//     cursor: pointer;
+// `;
+
+// const sharedTripInfoStyle = css`
+//     width: 100%;
+//     padding: 8px;
+// `;
+
+// const buttonGroup = css`
+//     display: flex;
+//     margin-bottom: 4px;
+//     gap: 8px;
+// `;
+
+// const shareStatusStyle = css`
+//     position: absolute;
+//     width: 200px;
+//     bottom: 100px;
+//     left: 90px;
+// `;
+
+// export default NotificationItem;
+
 import { useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Clock, Share2, X, Check, User, Calendar, MapPin, Heart, MessageCircle } from 'lucide-react';
+import { Clock, Share2, X, Check, User, Calendar, MapPin, Heart, MessageCircle, Touchpad } from 'lucide-react';
 import { GoKebabHorizontal } from 'react-icons/go';
 
 import { useNotificationDelete, useNotificationStatus } from '@/domains/notification/hooks/mutations';
@@ -10,8 +238,10 @@ import SharedTicket from '@/domains/share/components/SharedTicket';
 import { useShareStatus } from '@/domains/share/hooks/mutations';
 import { useShareDetail } from '@/domains/share/hooks/queries';
 import { SharedTripDetail, ShareStatus } from '@/domains/share/types';
-import { formatDateTime } from '@/libs/utils/date';
+import { formatDateTime, formatKoreanDate, formatKoreanTime } from '@/libs/utils/date';
 import { getMessageByType, getNotificationStyle } from '@/libs/utils/notification';
+import Avatar from '@/shared/components/Avatar';
+import Badge from '@/shared/components/Badge';
 import Button from '@/shared/components/common/Button';
 import Modal from '@/shared/components/common/Modal';
 import Spinner from '@/shared/components/common/Spinner';
@@ -25,91 +255,71 @@ interface NotificationProps {
 }
 
 const NotificationItem = ({ notificationInfo }: NotificationProps) => {
-    const [isDetailOpen, setIsDetailOpen] = useState(false);
+    const { notificationId, referenceId, message, status, senderNickname, createdAt } = notificationInfo;
+
+    const [isShowNotificationContent, setIsShowNotificationContent] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const showToast = useToastStore((state) => state.showToast);
 
-    const { notificationId, referenceId, message, status, senderNickname, createdAt } = notificationInfo;
-    const { data: shareDetailResult, isLoading, error } = useShareDetail(referenceId, isDetailOpen);
-    const { mutateAsync: notificationMutateAsync } = useNotificationStatus();
-    const { mutateAsync: shareMutateAsync } = useShareStatus();
-    const { mutateAsync: deleteMutateAsync } = useNotificationDelete();
+    const { data: shareDetailResult, isLoading, error } = useShareDetail(referenceId, isShowNotificationContent);
+    const { mutateAsync: updateNotificationReadStatus } = useNotificationStatus();
+    const { mutateAsync: updateShareStatus } = useShareStatus();
+    const { mutateAsync: deleteNotificationAsync } = useNotificationDelete();
 
-    const showSharedTripDetail = async () => {
-        const isRead = status === 'READ';
-
+    const showNotificationContent = async () => {
         if (!isRead) {
-            const result = await notificationMutateAsync(notificationId);
-            if (!result.success) throw Error(result.error);
+            const result = await updateNotificationReadStatus(notificationId);
+            if (!result.success) showToast(result.error);
         }
-        setIsDetailOpen(true);
+        setIsShowNotificationContent(true);
     };
 
     const deleteNotification = async () => {
-        const result = await deleteMutateAsync([notificationId]);
+        if (!isRead) {
+            const result = await updateNotificationReadStatus(notificationId);
+            if (!result.success) {
+                showToast(result.error);
+                return;
+            }
+        }
 
+        const result = await deleteNotificationAsync([notificationId]);
         if (result.success) {
             showToast('알림이 삭제되었습니다');
-            setIsDeleteModalOpen(false);
+        } else {
+            showToast(result.error);
         }
+        setIsDeleteModalOpen(false);
     };
 
     const handleShareStatusChange = async (status: ShareStatus) => {
-        const result = await shareMutateAsync({ shareId: referenceId, status });
+        const result = await updateShareStatus({ shareId: referenceId, status });
 
         const approve = status === 'APPROVED';
         showToast(result.success ? (approve ? '여행 메이트가 되었어요! 🎉' : '다음에 함께 여행해요 ✈️') : result.error);
-        setIsDetailOpen(false);
+        setIsShowNotificationContent(false);
     };
 
-    const handleDeleteButtonClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const handleNotificationDelete = (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
         setIsDeleteModalOpen(true);
     };
 
     const isRead = status === 'READ';
     const sharedTripInfo = shareDetailResult?.success && shareDetailResult?.data ? shareDetailResult?.data : null;
-    const readStatus = isRead ? 'read' : 'unread';
 
     if (error) {
         showToast(error ? error.message : MESSAGE.ERROR.UNKNOWN);
     }
-
-    // 알림 유형에 따른 메시지와 상태 배지
-    const getNotificationContent = () => {
-        let destination = '';
-        let type = '';
-
-        // 메시지 분석 (간단한 예시)
-        if (message.includes('공유')) {
-            type = 'share_request';
-            destination = message.split(' ')[0]; // 단순화된 예시
-        } else if (message.includes('수락')) {
-            type = 'share_accepted';
-            destination = message.split(' ')[0]; // 단순화된 예시
-        } else if (message.includes('거절')) {
-            type = 'share_rejected';
-            destination = message.split(' ')[0]; // 단순화된 예시
-        }
-
-        return { type, destination };
-    };
-
-    const { type, destination } = getNotificationContent();
-    const formattedDate = formatDateTime(createdAt, false);
-    const dateParts = formattedDate.split(' ');
-    const date = dateParts[0]; // 날짜 부분 추출
-    const time = dateParts[1]; // 시간 부분 추출
+    const date = formatKoreanDate(createdAt);
+    const time = formatKoreanTime(createdAt);
 
     return (
         <>
             {isLoading && <Spinner />}
 
-            <div css={[notificationItemContainer, isRead ? readStyle : unreadStyle]} onClick={showSharedTripDetail}>
-                <div css={avatarContainer}>
-                    <img src='/api/placeholder/40/40' alt={senderNickname} css={avatarImage} />
-                    {!isRead && <div css={unreadIndicator}></div>}
-                </div>
+            <div css={[notificationItemContainer, isRead ? readStyle : unreadStyle]} onClick={showNotificationContent}>
+                <Avatar size='sm' isDot={!isRead} />
 
                 <div css={notificationContent}>
                     <div css={notificationHeader}>
@@ -117,29 +327,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
                         <span css={dateText}>{date}</span>
                     </div>
 
-                    <p css={messageText}>
-                        {type === 'share_request' && (
-                            <>
-                                <span css={destinationHighlight}>{destination}</span>
-                                <span> 여행 티켓을 공유했습니다</span>
-                            </>
-                        )}
-                        {type === 'share_accepted' && (
-                            <>
-                                <span>{senderNickname}님이 </span>
-                                <span css={destinationHighlight}>{destination}</span>
-                                <span> 여행 초대를 수락했습니다</span>
-                            </>
-                        )}
-                        {type === 'share_rejected' && (
-                            <>
-                                <span>{senderNickname}님이 </span>
-                                <span css={destinationHighlight}>{destination}</span>
-                                <span> 여행 초대를 거절했습니다</span>
-                            </>
-                        )}
-                        {(!type || !type.includes('share')) && getMessageByType(message)}
-                    </p>
+                    <p css={messageText}>{getMessageByType(message, senderNickname)}</p>
 
                     <div css={notificationFooter}>
                         <div css={timeContainer}>
@@ -147,16 +335,16 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
                             <span css={timeText}>{time}</span>
                         </div>
 
-                        {type === 'share_accepted' && <span css={acceptedBadge}>수락됨</span>}
-                        {type === 'share_rejected' && <span css={rejectedBadge}>거절됨</span>}
+                        {message === 'SHARED_APPROVE' && <Badge type={'SUCCESS'} />}
+                        {message === 'SHARED_REJECTED' && <Badge type={'ERROR'} />}
                     </div>
                 </div>
 
                 <div css={actionContainer}>
                     <div css={shareIcon}>
-                        <Share2 size={20} color='#9CA3AF' />
+                        <Share2 size={20} color={COLORS.ICON.LIGHT} />
                     </div>
-                    <div css={kebabIcon} onClick={handleDeleteButtonClick}>
+                    <div css={kebabIcon} onClick={handleNotificationDelete}>
                         <GoKebabHorizontal />
                     </div>
                 </div>
@@ -173,14 +361,11 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
                 />
             )}
 
-            {sharedTripInfo && isDetailOpen && (
-                <Modal closeModal={() => setIsDetailOpen(false)}>
+            {sharedTripInfo && isShowNotificationContent && (
+                <Modal closeModal={() => setIsShowNotificationContent(false)}>
                     <div css={modalContent}>
                         <div css={modalHeader}>
                             <h2 css={modalTitle}>티켓 공유 요청</h2>
-                            <button css={closeButton} onClick={() => setIsDetailOpen(false)}>
-                                <X size={24} color='#6B7280' />
-                            </button>
                         </div>
 
                         <div css={userInfoSection}>
@@ -189,11 +374,11 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
                             </div>
                             <div>
                                 <h3 css={userInfoName}>{sharedTripInfo.ownerNickname}님이</h3>
-                                <p css={userInfoDescription}>{destination} 여행에 초대합니다</p>
+                                <p css={userInfoDescription}>그리스 여행에 초대합니다</p>
                             </div>
                         </div>
 
-                        <p css={invitationMessage}>"함께 {destination} 여행 가요! 함께하면 더 즐거울 거예요 👋"</p>
+                        <p css={invitationMessage}>"함께 그리스 여행 가요! 함께하면 더 즐거울 거예요 👋"</p>
 
                         <SharedTicket
                             userNickname={sharedTripInfo?.ownerNickname || ''}
@@ -234,7 +419,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
                                     src={`/passport-${sharedTripInfo?.status === 'REJECTED' ? 'rejected' : 'approved'}.png`}
                                     alt={sharedTripInfo?.status === 'REJECTED' ? '거절됨' : '수락됨'}
                                 />
-                                <button css={backButton} onClick={() => setIsDetailOpen(false)}>
+                                <button css={backButton} onClick={() => setIsShowNotificationContent(false)}>
                                     알림으로 돌아가기
                                 </button>
                             </>
@@ -262,35 +447,11 @@ const unreadStyle = css`
     background-color: #eff6ff;
 `;
 
-// 아바타 관련 스타일
-const avatarContainer = css`
-    position: relative;
-    margin-right: 12px;
-`;
-
-const avatarImage = css`
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid #e5e7eb;
-`;
-
-const unreadIndicator = css`
-    position: absolute;
-    top: -4px;
-    right: -4px;
-    width: 12px;
-    height: 12px;
-    background-color: #3b82f6;
-    border-radius: 50%;
-    border: 2px solid white;
-`;
-
 // 알림 컨텐츠 스타일
 const notificationContent = css`
     flex: 1;
     min-width: 0;
+    margin-left: 12px;
 `;
 
 const notificationHeader = css`
@@ -321,10 +482,6 @@ const messageText = css`
     margin-bottom: 4px;
 `;
 
-const destinationHighlight = css`
-    font-weight: 500;
-`;
-
 const notificationFooter = css`
     display: flex;
     align-items: center;
@@ -336,31 +493,13 @@ const timeContainer = css`
 `;
 
 const clockIcon = css`
-    color: #9ca3af;
+    color: ${COLORS.ICON.LIGHT};
     margin-right: 4px;
 `;
 
 const timeText = css`
     font-size: 12px;
     color: #6b7280;
-`;
-
-const acceptedBadge = css`
-    margin-left: 8px;
-    padding: 2px 8px;
-    background-color: #d1fae5;
-    color: #065f46;
-    font-size: 12px;
-    border-radius: 9999px;
-`;
-
-const rejectedBadge = css`
-    margin-left: 8px;
-    padding: 2px 8px;
-    background-color: #f3f4f6;
-    color: #4b5563;
-    font-size: 12px;
-    border-radius: 9999px;
 `;
 
 // 액션 버튼 컨테이너

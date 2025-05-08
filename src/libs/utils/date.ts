@@ -59,17 +59,38 @@ export const formatDateTime = (isoString: string, includeTime = true): string =>
 // --------------------------------
 export const exceptTimeFromDateString = (dateString: string) => dateString.slice(0, 10);
 
-// YYYY-MM-DD에서 YYYY.MM.DD로 변환
-export const formatHyphenToDot = (date: string): string => {
-    const splitDate = date.split('-');
-    const [year, month, day] = splitDate;
+// YYYY-MM-DD => YYYY.MM.DD
+export const formatHyphenToDot = (dateString: string): string => {
+    const [year, month, date] = dateString.split('-');
 
-    // const year = date.getFullYear();
-    // const month = String(date.getMonth() + 1).padStart(2, '0');
-    // const day = String(date.getDate()).padStart(2, '0');
-    // const hours = String(date.getHours()).padStart(2, '0');
-    // const minutes = String(date.getMinutes()).padStart(2, '0');
-    // const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}.${month}.${date}`;
+};
 
-    return `${year}.${month}.${day}`;
+// YYYY-MM-DDTHH:mm:ss => MM월 DD일
+export const formatKoreanDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    return `${month}월 ${day}일`;
+};
+
+// YYYY-MM-DDTHH:mm:ss => 오전(후) HH:MM
+export const formatKoreanTime = (dateString: string) => {
+    const date = new Date(dateString);
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+
+    let period = '오전';
+
+    if (hours === 0) {
+        hours = 12;
+    } else if (hours === 12) {
+        period = '오후';
+    } else if (hours > 12) {
+        hours -= 12;
+        period = '오후';
+    }
+
+    return `${period} ${hours}:${minutes}`;
 };

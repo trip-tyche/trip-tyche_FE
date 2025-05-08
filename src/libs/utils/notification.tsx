@@ -2,26 +2,18 @@ import { css } from '@emotion/react';
 
 import { COLORS } from '@/shared/constants/theme';
 
-export const getMessageByType = (message: string) => {
+export const getMessageByType = (message: string, sender: string) => {
     if (!message) return;
 
     switch (message) {
         case 'SHARED_REQUEST':
-            return <p css={notificationMessage}>새로운 티켓 공유 요청이 도착했습니다</p>;
+            return <p css={notificationMessage}>{`${sender}님이 여행 티켓을 공유했습니다`}</p>;
         case 'SHARED_APPROVE':
-            return (
-                <p css={notificationMessage}>
-                    상대방이 티켓 공유 요청을 <span css={statusStyle(true)}>승인</span>했어요
-                </p>
-            );
+            return <p css={notificationMessage}>{`${sender}님이 여행 초대를 수락했습니다`}</p>;
         case 'SHARED_REJECTED':
-            return (
-                <p css={notificationMessage}>
-                    상대방이 티켓 공유 요청을 <span css={statusStyle(false)}>거절</span>했어요
-                </p>
-            );
+            return <p css={notificationMessage}>{`${sender}님이 여행 초대를 거절했습니다`}</p>;
         default:
-            return null;
+            return <p css={notificationMessage}>{`${sender}님이 알림을 보냈습니다`}</p>;
     }
 };
 
@@ -35,10 +27,4 @@ const notificationMessage = css`
     margin-left: 2px;
     font-size: 14px;
     line-height: 1.3;
-`;
-
-const statusStyle = (isApproved: boolean) => css`
-    margin: 0 2px;
-    font-weight: bold;
-    color: ${isApproved ? COLORS.PRIMARY : COLORS.TEXT.ERROR};
 `;

@@ -13,7 +13,7 @@ const RootLayout = () => (
 
 const container = css`
     max-width: 428px;
-    min-height: 100dvh;
+    height: 100dvh;
     margin: 0 auto;
     background-color: ${theme.COLORS.BACKGROUND.WHITE};
 `;

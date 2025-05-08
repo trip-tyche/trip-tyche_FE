@@ -60,7 +60,7 @@ const NickNameForm = ({ mode, onSubmit }: NickNameFormProps) => {
                 <div css={inputSectionStyle}>
                     <div css={inputContainerStyle(isValid)}>
                         <div css={inputIconStyle}>
-                            <User size={20} color={COLORS.ICON} />
+                            <User size={20} color={COLORS.ICON.LIGHT} />
                         </div>
                         <input
                             css={inputStyle}
@@ -72,7 +72,7 @@ const NickNameForm = ({ mode, onSubmit }: NickNameFormProps) => {
                         />
                         {inputValue && (
                             <button css={clearButtonStyle} onClick={clearInput}>
-                                <X size={20} color={COLORS.ICON} />
+                                <X size={20} color={COLORS.ICON.DEFAULT} />
                             </button>
                         )}
                     </div>
@@ -119,7 +119,7 @@ const NickNameForm = ({ mode, onSubmit }: NickNameFormProps) => {
                 >
                     {isSubmitting ? (
                         <div css={submitButtonContentStyle}>
-                            <MoonLoader size={18} color={COLORS.ICON} speedMultiplier={0.8} />
+                            <MoonLoader size={18} color={COLORS.ICON.DEFAULT} speedMultiplier={0.8} />
                             <span>처리 중...</span>
                         </div>
                     ) : (

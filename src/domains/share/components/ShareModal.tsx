@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Search, X, Send, Touchpad, AlertCircle } from 'lucide-react';
+import { Search, Send, AlertCircle } from 'lucide-react';
 
 import { useTripShare } from '@/domains/share/hooks/useTripShare';
 import { NICKNAME_FORM } from '@/domains/user/constants';
 import { validateUserNickName } from '@/libs/utils/validate';
+import Avatar from '@/shared/components/Avatar';
 import Modal from '@/shared/components/common/Modal';
 import { COLORS } from '@/shared/constants/theme';
 import { useToastStore } from '@/shared/stores/useToastStore';
@@ -50,10 +51,8 @@ const ShareModal = ({ tripKey, tripTitle, onClose, startDate, endDate }: ShareMo
             <h2 css={titleStyle}>티켓 공유하기</h2>
 
             <div css={ticketPreviewStyle}>
-                <div css={iconContainerStyle}>
-                    <Touchpad color={COLORS.PRIMARY} />
-                </div>
-                <div>
+                <Avatar />
+                <div css={ticketContentStyle}>
                     <p css={ticketTitleStyle}>{tripTitle}</p>
                     <p css={ticketDatesStyle}>{`${startDate} ~ ${endDate}`}</p>
                 </div>
@@ -68,7 +67,7 @@ const ShareModal = ({ tripKey, tripTitle, onClose, startDate, endDate }: ShareMo
             <div css={searchContainerStyle}>
                 <div css={inputContainerStyle(isValid)}>
                     <div css={searchIconStyle}>
-                        <Search size={20} color='#9CA3AF' />
+                        <Search size={20} color={COLORS.ICON.LIGHT} />
                     </div>
                     <input
                         type='text'
@@ -131,15 +130,8 @@ const ticketPreviewStyle = css`
     align-items: center;
 `;
 
-const iconContainerStyle = css`
-    width: 48px;
-    height: 48px;
-    background-color: #dbeafe;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 12px;
+const ticketContentStyle = css`
+    margin-left: 12px;
 `;
 
 const ticketTitleStyle = css`
@@ -159,7 +151,7 @@ const ticketDatesStyle = css`
 const descriptionStyle = css`
     width: 100%;
     text-align: center;
-    margin: 16px 0;
+    margin: 16px 0 28px;
     font-size: 14px;
     color: #374151;
     line-height: 1.4;
@@ -184,7 +176,7 @@ const searchIconStyle = css`
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    color: #9ca3af;
+    color: ${COLORS.ICON.LIGHT};
     pointer-events: none;
 `;
 
@@ -198,11 +190,11 @@ const searchInputStyle = css`
     transition: all 0.2s;
 
     &:focus {
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        ${COLORS.BOX_SHADOW.INPUT_FOCUS};
     }
 
     &::placeholder {
-        color: #9ca3af;
+        color: ${COLORS.TEXT.PLACEHOLDER};
     }
 `;
 
@@ -276,7 +268,7 @@ const confirmButtonStyle = (isActive: boolean) => css`
     border-radius: 8px;
     border: none;
     background-color: ${isActive ? COLORS.PRIMARY : '#E5E7EB'};
-    color: ${isActive ? 'white' : '#9CA3AF'};
+    color: ${isActive ? 'white' : COLORS.ICON.LIGHT};
     font-size: 14px;
     font-weight: 500;
     cursor: ${isActive ? 'pointer' : 'not-allowed'};

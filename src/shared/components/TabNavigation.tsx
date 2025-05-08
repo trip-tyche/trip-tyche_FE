@@ -1,11 +1,7 @@
 import { css } from '@emotion/react';
 
 import Tab from '@/shared/components/Tab';
-
-interface TabItem {
-    id: string;
-    title: string;
-}
+import { TabItem } from '@/shared/types';
 
 interface TabNavigationProps {
     tabs: TabItem[];
