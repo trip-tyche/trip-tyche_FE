@@ -116,7 +116,7 @@ const ticketTitleStyle = css`
     font-weight: 500;
     color: ${COLORS.TEXT.BLACK};
     margin: 0;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 `;
 
 const ticketDatesStyle = css`
