@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Search, X, Send, Touchpad } from 'lucide-react';
+import { Search, X, Send, Touchpad, AlertCircle } from 'lucide-react';
 
 import { useTripShare } from '@/domains/share/hooks/useTripShare';
+import { NICKNAME_FORM } from '@/domains/user/constants';
+import { validateUserNickName } from '@/libs/utils/validate';
 import Modal from '@/shared/components/common/Modal';
 import { COLORS } from '@/shared/constants/theme';
 import { useToastStore } from '@/shared/stores/useToastStore';
@@ -18,9 +20,17 @@ export interface ShareModalProps {
 
 const ShareModal = ({ tripKey, tripTitle, onClose, startDate, endDate }: ShareModalProps) => {
     const [inputValue, setInputValue] = useState('');
+    const [isValid, setIsValid] = useState(true);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const { showToast } = useToastStore.getState();
-    const { isSharing, error, shareTrip, clearError } = useTripShare(inputValue, tripKey!, onShareSuccess);
+    const { isSharing, error: errorResult, shareTrip, clearError } = useTripShare(inputValue, tripKey!, onShareSuccess);
+
+    useEffect(() => {
+        const error = validateUserNickName(inputValue, NICKNAME_FORM.MIN_LENGTH, NICKNAME_FORM.MAX_LENGTH);
+        setIsValid(error.valid);
+        setErrorMessage(error.message);
+    }, [inputValue]);
 
     function onShareSuccess() {
         onClose();
@@ -33,7 +43,7 @@ const ShareModal = ({ tripKey, tripTitle, onClose, startDate, endDate }: ShareMo
         clearError();
     };
 
-    const disabled = isSharing || inputValue.trim().length === 0;
+    const disabled = !isValid || isSharing || inputValue.trim().length === 0;
 
     return (
         <Modal closeModal={closeModal}>
@@ -56,19 +66,36 @@ const ShareModal = ({ tripKey, tripTitle, onClose, startDate, endDate }: ShareMo
             </p>
 
             <div css={searchContainerStyle}>
-                <div css={searchIconStyle}>
-                    <Search size={20} color='#9CA3AF' />
+                <div css={inputContainerStyle(isValid)}>
+                    <div css={searchIconStyle}>
+                        <Search size={20} color='#9CA3AF' />
+                    </div>
+                    <input
+                        type='text'
+                        placeholder={'친구 닉네임 검색'}
+                        css={searchInputStyle}
+                        value={inputValue}
+                        onChange={(event) => setInputValue(event.target.value)}
+                        maxLength={NICKNAME_FORM.MAX_LENGTH + 1}
+                    />
                 </div>
-                <input
-                    type='text'
-                    placeholder={'친구 닉네임 검색'}
-                    css={searchInputStyle}
-                    value={inputValue}
-                    onChange={(event) => setInputValue(event.target.value)}
-                />
+
+                <div css={inputInfoStyle}>
+                    {errorMessage ? (
+                        <p css={errorMessageStyle}>
+                            <AlertCircle size={12} />
+                            <span css={errorTextStyle}>{errorMessage}</span>
+                        </p>
+                    ) : (
+                        <p css={inputHintStyle}>한글, 영문, 숫자 조합 가능 (특수문자 제외)</p>
+                    )}
+                    <p css={charCountStyle(inputValue.length > NICKNAME_FORM.MAX_LENGTH)}>
+                        {inputValue.length}/{NICKNAME_FORM.MAX_LENGTH}자
+                    </p>
+                </div>
             </div>
 
-            {error && <p css={errorMessageStyle}>{error}</p>}
+            {errorResult && <p css={errorReulstMessageStyle}>{errorResult}</p>}
 
             <div css={buttonsContainerStyle}>
                 <button css={cancelButtonStyle} onClick={closeModal}>
@@ -136,14 +163,21 @@ const descriptionStyle = css`
 
 const searchContainerStyle = css`
     width: 100%;
-    padding: 0 16px;
-    margin-bottom: 16px;
+    padding: 0 8px;
+    margin-bottom: 24px;
+`;
+
+const inputContainerStyle = (isValid: boolean) => css`
     position: relative;
+    border: 1px solid ${isValid ? COLORS.BORDER : COLORS.TEXT.ERROR};
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s ease;
 `;
 
 const searchIconStyle = css`
     position: absolute;
-    left: 28px;
+    left: 12px;
     top: 50%;
     transform: translateY(-50%);
     color: #9ca3af;
@@ -153,7 +187,7 @@ const searchIconStyle = css`
 const searchInputStyle = css`
     width: 100%;
     padding: 10px 16px 10px 40px;
-    border: 1px solid #d1d5db;
+    border: none;
     border-radius: 8px;
     font-size: 14px;
     outline: none;
@@ -168,7 +202,35 @@ const searchInputStyle = css`
     }
 `;
 
+const inputInfoStyle = css`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+`;
+
 const errorMessageStyle = css`
+    display: flex;
+    align-items: center;
+    color: ${COLORS.TEXT.ERROR};
+    font-size: 12px;
+`;
+
+const errorTextStyle = css`
+    margin-left: 4px;
+`;
+
+const inputHintStyle = css`
+    color: #6b7280;
+    font-size: 12px;
+`;
+
+const charCountStyle = (isOverLimit: boolean) => css`
+    font-size: 12px;
+    color: ${isOverLimit ? COLORS.TEXT.ERROR : '#6b7280'};
+`;
+
+const errorReulstMessageStyle = css`
     margin: 0 16px 16px;
     padding: 8px 12px;
     background-color: #fef2f2;
