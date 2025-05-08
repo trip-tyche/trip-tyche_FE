@@ -20,11 +20,7 @@ import { useTicketNavigation } from '@/shared/hooks/useTicketNavigation';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
 
-interface TripTicketProps {
-    tripInfo: Trip;
-}
-
-const TripTicket = ({ tripInfo }: TripTicketProps) => {
+const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     const { tripKey, tripTitle, country, startDate, endDate, hashtags, ownerNickname } = tripInfo;
 
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -34,7 +30,7 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
     const userInfo = useUserStore((state) => state.userInfo);
 
     const { isSharing, error, shareTrip, clearError } = useTripShare(inputValue, tripKey!, onShareSuccess);
-    const { isModalOpen, isPending, handler, deleteTrip, closeModal } = useTicketHandler(tripKey!, {
+    const { isModalOpen, isDeleting, handler, deleteTrip, closeModal } = useTicketHandler(tripKey!, {
         onSuccess: (message) => showToast(message),
         onError: (message) => showToast(message),
     });
@@ -48,10 +44,11 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
     const isOwner = userInfo?.nickname === ownerNickname;
 
     return (
-        <div css={ticketContainer}>
-            {isPending && <Spinner />}
-            <article css={ticketStyle} onClick={handleCardClick}>
-                <section css={leftSection}>
+        <div css={ticket}>
+            {isDeleting && <Spinner text='여행 티켓 삭제 중...' />}
+
+            <main css={ticketStyle} onClick={handleCardClick}>
+                <div css={leftSection}>
                     <header css={leftTopSection(isOwner)}>
                         <div>
                             <h3 css={labelStyle}>PASSENGER</h3>
@@ -88,18 +85,19 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
                             ))}
                         </div>
                     </main>
-                </section>
+                </div>
 
-                <aside css={[rightSection, isAnimating && animateRight]}>
+                <div css={[rightSection, isAnimating && animateRight]}>
                     <header css={rightTopSection(isOwner)}>
                         <h3 css={labelStyle}>FLIGHT</h3>
                         <p css={valueStyle}>TYCHE AIR</p>
                     </header>
+
                     <div css={rightContent}>
                         <img css={imageStyle} src={characterImg} alt='캐릭터' />
                     </div>
-                </aside>
-            </article>
+                </div>
+            </main>
 
             <footer css={buttonGroup}>
                 <button css={buttonStyle} onClick={() => handler.edit()}>
@@ -152,14 +150,12 @@ const TripTicket = ({ tripInfo }: TripTicketProps) => {
     );
 };
 
-const ticketContainer = css`
+const ticket = css`
     margin-bottom: 12px;
 `;
 
 const ticketStyle = css`
-    width: 100%;
     height: 192px;
-    max-width: 428px;
     position: relative;
     display: flex;
     border-radius: 10px;
@@ -172,7 +168,7 @@ const leftSection = css`
     height: 100%;
     background: ${theme.COLORS.BACKGROUND.WHITE};
     border-right: 1px solid ${theme.COLORS.BORDER};
-    border-radius: 10px 0 0 10px;
+    border-radius: 0 0 0 8px;
     box-shadow:
         -6px 6px 8px rgba(0, 0, 0, 0.1),
         -1px 1px 3px rgba(0, 0, 0, 0.08);
@@ -182,7 +178,7 @@ const leftTopSection = (isOwner: boolean) => css`
     height: 48px;
     display: flex;
     justify-content: space-between;
-    border-radius: 10px 0 0 0;
+    border-radius: 8px 0 0 0;
     background-color: ${isOwner ? theme.COLORS.PRIMARY : theme.COLORS.SECONDARY};
     color: ${theme.COLORS.TEXT.WHITE};
     padding: 10px 12px;
@@ -256,7 +252,7 @@ const rightSection = css`
     width: 25%;
     height: 100%;
     background: ${theme.COLORS.BACKGROUND.WHITE};
-    border-radius: 0 10px 10px 0;
+    border-radius: 0 0 8px 0;
     box-shadow:
         6px 6px 8px rgba(0, 0, 0, 0.1),
         1px 1px 3px rgba(0, 0, 0, 0.08);
@@ -267,7 +263,7 @@ const rightTopSection = (isOwner: boolean) => css`
     padding: 10px 12px;
     background-color: ${isOwner ? theme.COLORS.PRIMARY : theme.COLORS.SECONDARY};
     color: ${theme.COLORS.TEXT.WHITE};
-    border-radius: 0 10px 0 0;
+    border-radius: 0 8px 0 0;
 `;
 
 const rightContent = css`

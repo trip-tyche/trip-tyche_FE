@@ -9,7 +9,6 @@ import NotificationPage from '@/pages/NotificationPage';
 import PageNotFound from '@/pages/PageNotFound';
 import SettingPage from '@/pages/SettingPage';
 import SigninPage from '@/pages/SigninPage';
-import TripListPage from '@/pages/trip/TripListPage';
 import Spinner from '@/shared/components/common/Spinner';
 import { ROUTES } from '@/shared/constants/paths';
 
@@ -66,8 +65,7 @@ const router = createBrowserRouter([
                 children: [
                     {
                         index: true,
-                        element: <TripListPage />,
-                        // element: <MainPage />,
+                        element: <MainPage />,
                     },
                     {
                         path: ROUTES.PATH.SETTING,
@@ -77,12 +75,8 @@ const router = createBrowserRouter([
                         path: `notification/:userId`,
                         element: <NotificationPage />,
                     },
-                    // {
-                    //     path: ROUTES.PATH.TRIP.ROOT,
-                    //     element: <TripListPage />,
-                    // },
                     {
-                        path: 'trip/:tripKey',
+                        path: ':tripKey',
                         children: [
                             {
                                 path: 'images',

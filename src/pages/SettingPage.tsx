@@ -32,7 +32,7 @@ const SettingPage = () => {
         logout();
     };
 
-    const onNicknameChange = () => {
+    const onNicknameSubmit = () => {
         setIsEditing(false);
     };
 
@@ -53,7 +53,7 @@ const SettingPage = () => {
         <div css={pageContainer}>
             <Header title={isEditing ? '닉네임 변경' : '설정'} isBackButton onBack={navigateBeforePage} />
             {isEditing ? (
-                <NickNameForm mode='edit' onChange={onNicknameChange} />
+                <NickNameForm mode='edit' onSubmit={onNicknameSubmit} />
             ) : (
                 <main css={mainStyle}>
                     <div css={userInfoContainer}>

@@ -36,7 +36,8 @@ const headerStyle = css`
 `;
 
 const titleStyle = css`
-    font-size: ${theme.FONT_SIZES.LG};
+    font-size: 18px;
+    /* font-size: ${theme.FONT_SIZES.LG}; */
     font-weight: 600;
 `;
 

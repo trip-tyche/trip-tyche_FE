@@ -81,7 +81,7 @@ const TripRoutePage = () => {
             setStartDate(startDate);
             if (pinPoints.length === 0) {
                 showToast('여행에 등록된 사진이 없습니다.');
-                navigate(ROUTES.PATH.TRIP.ROOT);
+                navigate(ROUTES.PATH.MAIN);
                 return;
             }
 
@@ -307,7 +307,7 @@ const TripRoutePage = () => {
 
     if (loadError) {
         showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
-        navigate(ROUTES.PATH.TRIP.ROOT);
+        navigate(ROUTES.PATH.MAIN);
         return;
     }
 
@@ -448,7 +448,7 @@ const TripRoutePage = () => {
 
     return (
         <div css={pageContainer}>
-            <Header title={tripTitle || ''} isBackButton onBack={() => navigate(ROUTES.PATH.TRIP.ROOT)} />
+            <Header title={tripTitle || ''} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
             <div css={mapWrapper}>
                 <GoogleMap
                     zoom={DEFAULT_ZOOM_SCALE.TIMELINE}

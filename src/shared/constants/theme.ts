@@ -1,5 +1,6 @@
 export const COLORS = {
     PRIMARY: '#0073bb',
+    PRIMARY_LIGHT: '#eff6ff',
     SECONDARY: '#404040',
     PRIMARY_HOVER: '#005d96',
     ICON: '#374151',

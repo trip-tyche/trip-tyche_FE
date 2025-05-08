@@ -47,7 +47,7 @@ const ImageListByDate = ({
     };
 
     const navigateToTripList = () => {
-        navigate(`${ROUTES.PATH.TRIP.ROOT}`);
+        navigate(`${ROUTES.PATH.MAIN}`);
     };
 
     return (

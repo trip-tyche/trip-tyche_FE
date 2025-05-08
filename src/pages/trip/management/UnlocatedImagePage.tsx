@@ -217,7 +217,7 @@
 //         />
 //     ) : (
 //         <div css={container}>
-//             <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.TRIP.ROOT)} />
+//             <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
 //             <main css={mainStyle}>
 //                 {imageGroupByDate?.map((image) => (
 //                     <Fragment key={image.recordDate}>
@@ -574,7 +574,7 @@ const UnlocatedImagePage = () => {
         />
     ) : (
         <div css={container}>
-            <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.TRIP.ROOT)} />
+            <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
             <main css={mainStyle}>
                 {unlocatedImageGroups.map((group) => (
                     <Fragment key={group.recordDate}>

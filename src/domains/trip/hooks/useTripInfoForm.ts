@@ -57,7 +57,7 @@ export const useTripInfoForm = (isEditing: boolean, form: TripInfo) => {
             }
 
             queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
-            navigate(ROUTES.PATH.TRIP.ROOT);
+            navigate(ROUTES.PATH.MAIN);
         } catch (error) {
             const errorMessage =
                 error instanceof Error

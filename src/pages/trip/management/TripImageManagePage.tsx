@@ -196,7 +196,7 @@ const TripImageManagePage = () => {
         />
     ) : (
         <div css={container}>
-            <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.TRIP.ROOT)} />
+            <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 {
                     <Button

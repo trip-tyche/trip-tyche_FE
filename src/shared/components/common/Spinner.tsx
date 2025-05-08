@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import Lottie from 'lottie-react';
 
 import { COLORS } from '@/shared/constants/theme';
-import animationData from '@/shared/styles/loading-spinner-2.json';
+import animationData from '@/shared/styles/spinner.json';
 
 const Spinner = ({ text = '불러오는 중...' }: { text?: string }) => (
     <div css={spinner}>

@@ -2,13 +2,17 @@ import { TripInfo } from '@/domains/trip/types';
 import { Location } from '@/shared/types/location';
 
 // 사용자 닉네임 유효성 검사
-export const validateUserNickName = (userNickName: string) => {
+export const validateUserNickName = (inputValue: string, minLength = 2, maxLength = 10) => {
     const NICKNAME_REGEX = /^[가-힣a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ][가-힣a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ\s]*[가-힣a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ]$/;
 
-    if (userNickName.length < 2 || userNickName.length > 10) {
-        return '닉네임을 2~10자로 입력해주세요.';
-    } else if (!NICKNAME_REGEX.test(userNickName)) {
-        return '특수문자나 시작과 끝에 공백을 사용할 수 없습니다.';
+    if (inputValue.length > 0 && inputValue.length < minLength) {
+        return { valid: false, message: `닉네임은 최소 ${minLength}자 이상이어야 합니다` };
+    } else if (inputValue.length > maxLength) {
+        return { valid: false, message: `닉네임은 최대 ${maxLength}자까지 가능합니다` };
+    } else if (inputValue.length !== 0 && !NICKNAME_REGEX.test(inputValue)) {
+        return { valid: false, message: '특수문자나 시작과 끝에 공백을 사용할 수 없습니다' };
+    } else {
+        return { valid: true, message: '' };
     }
 };
 

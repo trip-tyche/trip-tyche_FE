@@ -59,7 +59,7 @@ const TripInfoFormPage = () => {
             <Header
                 title={ROUTES.PATH_TITLE.TRIPS.NEW.INFO}
                 isBackButton={isEditing}
-                onBack={() => navigate(ROUTES.PATH.TRIP.ROOT)}
+                onBack={() => navigate(ROUTES.PATH.MAIN)}
             />
             <main css={mainStyle}>
                 <TripInfoForm isEditing={isEditing} tripInfo={tripInfo} setTripInfo={setTripInfo} />

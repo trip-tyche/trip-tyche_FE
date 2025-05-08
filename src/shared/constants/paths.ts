@@ -10,20 +10,18 @@ export const ROUTES = {
         SETTING: '/setting',
         NOTIFICATION: (userId: UserId) => `notification/${userId}`,
         TRIP: {
-            ROOT: '/trip',
             MANAGEMENT: {
-                IMAGES: (tripKey: TripKey) => `/trip/${tripKey}/images`,
-                UPLOAD: (tripKey: TripKey) => `/trip/${tripKey}/images/upload`,
-                INFO: (tripKey: TripKey) => `/trip/${tripKey}/info`,
-                EDIT: (tripKey: TripKey) => `/trip/${tripKey}/edit`,
+                IMAGES: (tripKey: TripKey) => `/${tripKey}/images`,
+                UPLOAD: (tripKey: TripKey) => `/${tripKey}/images/upload`,
+                INFO: (tripKey: TripKey) => `/${tripKey}/info`,
+                EDIT: (tripKey: TripKey) => `/${tripKey}/edit`,
             },
             ROUTE: {
-                ROOT: (tripKey: TripKey) => `/trip/${tripKey}/route`,
+                ROOT: (tripKey: TripKey) => `/${tripKey}/route`,
 
                 IMAGE: {
-                    BY_PINPOINT: (tripKey: TripKey, pinPointId: PinPointId) =>
-                        `/trip/${tripKey}/by-pinpoint/${pinPointId}`,
-                    BY_DATE: (tripKey: TripKey, date: string) => `/trip/${tripKey}/by-date/${date}`,
+                    BY_PINPOINT: (tripKey: TripKey, pinPointId: PinPointId) => `/${tripKey}/by-pinpoint/${pinPointId}`,
+                    BY_DATE: (tripKey: TripKey, date: string) => `/${tripKey}/by-date/${date}`,
                 },
             },
         },
@@ -37,7 +35,6 @@ export const ROUTES = {
         },
         SETTING: '설정',
         TRIPS: {
-            ROOT: '여행 리스트',
             NEW: {
                 IMAGES: '여행 사진 관리',
                 LOCATIONS: '위치 등록',

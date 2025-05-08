@@ -21,7 +21,7 @@ export const useTicketHandler = (
 
     const queryClient = useQueryClient();
 
-    const { mutateAsync, isPending } = useTripDelete();
+    const { mutateAsync, isPending: isDeleting } = useTripDelete();
 
     const handler = {
         edit: () => navigate(`${ROUTES.PATH.TRIP.MANAGEMENT.EDIT(tripKey!)}`),
@@ -49,7 +49,7 @@ export const useTicketHandler = (
 
     return {
         isModalOpen,
-        isPending,
+        isDeleting,
         handler,
         deleteTrip,
         closeModal,

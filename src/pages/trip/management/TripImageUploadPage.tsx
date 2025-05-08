@@ -51,7 +51,7 @@ const TripImageUploadPage = () => {
                 await waitForCompletion();
                 setIsUploading(true);
 
-                navigate(`${ROUTES.PATH.TRIP.ROOT}`);
+                navigate(`${ROUTES.PATH.MAIN}`);
                 showToast(`${images.totalImages.length}장의 사진이 등록되었습니다.`);
                 return;
             }
@@ -81,7 +81,7 @@ const TripImageUploadPage = () => {
                         ? navigate(ROUTES.PATH.MAIN)
                         : isEdit
                           ? navigate(ROUTES.PATH.TRIP.MANAGEMENT.IMAGES(tripKey!))
-                          : navigate(ROUTES.PATH.TRIP.ROOT)
+                          : navigate(ROUTES.PATH.MAIN)
                 }
             />
             <main css={mainStyle}>

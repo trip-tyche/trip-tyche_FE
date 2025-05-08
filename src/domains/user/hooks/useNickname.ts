@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-import { MESSAGE } from '@/shared/constants/ui';
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { userAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/utils';
+import { MESSAGE } from '@/shared/constants/ui';
 
 export const useNickname = (nickname: string, onSuccess?: () => void) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
