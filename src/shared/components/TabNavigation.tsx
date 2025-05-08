@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 
 import Tab from '@/shared/components/Tab';
+import { COLORS } from '@/shared/constants/theme';
 import { TabItem } from '@/shared/types';
 
 interface TabNavigationProps {
@@ -26,7 +27,7 @@ const TabNavigation = ({ tabs, activeTab, onActiveChange }: TabNavigationProps) 
 
 const tabNavigationStyle = css`
     display: flex;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid ${COLORS.BORDER};
     background-color: white;
 `;
 

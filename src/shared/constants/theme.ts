@@ -1,6 +1,5 @@
 export const COLORS = {
     PRIMARY: '#0073bb',
-    PRIMARY_LIGHT: '#eff6ff',
     SECONDARY: '#404040',
     PRIMARY_HOVER: '#005d96',
     TEXT: {
@@ -15,8 +14,9 @@ export const COLORS = {
         DEFAULT: '#374151',
         LIGHT: '#9ca3af',
     },
-    DISABLED: '#8B95A1',
+    DISABLED: '#e5e7eb',
     BACKGROUND: {
+        PRIMARY: '#eff6ff',
         BLACK: '#090909',
         WHITE: '#FFFFFF',
         WHITE_SECONDARY: '#f9fafb',

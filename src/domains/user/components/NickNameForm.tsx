@@ -261,12 +261,12 @@ const suggestionButtonStyle = css`
     transition: all 0.2s ease;
 
     &:hover {
-        background-color: #e5e7eb;
+        background-color: ${COLORS.DISABLED};
     }
 `;
 
 const infoBoxStyle = css`
-    background-color: #eff6ff;
+    background-color: ${COLORS.BACKGROUND.PRIMARY};
     border-radius: 8px;
     padding: 16px;
     margin-bottom: 32px;
@@ -291,7 +291,7 @@ const infoTextStyle = css`
 
 const footerStyle = css`
     padding: 16px;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid ${COLORS.BORDER};
 `;
 
 const submitButtonStyle = (isActive: boolean) => css`
@@ -302,7 +302,7 @@ const submitButtonStyle = (isActive: boolean) => css`
     font-weight: 500;
     border: none;
     cursor: ${isActive ? 'pointer' : 'not-allowed'};
-    background-color: ${isActive ? COLORS.PRIMARY : '#E5E7EB'};
+    background-color: ${isActive ? COLORS.PRIMARY : COLORS.DISABLED};
     color: ${isActive ? COLORS.TEXT.WHITE : COLORS.ICON};
     transition: all 0.2s ease;
 `;

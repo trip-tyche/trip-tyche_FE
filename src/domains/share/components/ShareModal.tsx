@@ -123,7 +123,7 @@ const titleStyle = css`
 
 const ticketPreviewStyle = css`
     width: 100%;
-    background-color: #eff6ff;
+    background-color: ${COLORS.BACKGROUND.PRIMARY};
     border-radius: 8px;
     padding: 12px;
     display: flex;
@@ -238,7 +238,7 @@ const errorReulstMessageStyle = css`
 const buttonsContainerStyle = css`
     width: 100%;
     padding-top: 16px;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid ${COLORS.BORDER};
     display: flex;
     gap: 12px;
 `;
@@ -267,7 +267,7 @@ const confirmButtonStyle = (isActive: boolean) => css`
     padding: 10px;
     border-radius: 8px;
     border: none;
-    background-color: ${isActive ? COLORS.PRIMARY : '#E5E7EB'};
+    background-color: ${isActive ? COLORS.PRIMARY : COLORS.DISABLED};
     color: ${isActive ? 'white' : COLORS.ICON.LIGHT};
     font-size: 14px;
     font-weight: 500;
@@ -278,7 +278,7 @@ const confirmButtonStyle = (isActive: boolean) => css`
     justify-content: center;
 
     &:hover {
-        background-color: ${isActive ? COLORS.PRIMARY_HOVER : '#E5E7EB'};
+        background-color: ${isActive ? COLORS.PRIMARY_HOVER : COLORS.DISABLED};
     }
 `;
 

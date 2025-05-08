@@ -7,12 +7,10 @@ import { IoAirplaneSharp } from 'react-icons/io5';
 
 import characterImg from '@/assets/images/character-ogami-1.png';
 import ShareModal from '@/domains/share/components/ShareModal';
-import { useTripShare } from '@/domains/share/hooks/useTripShare';
 import { TICKET } from '@/domains/trip/constants';
 import { Trip } from '@/domains/trip/types';
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { formatHyphenToDot, formatToDot } from '@/libs/utils/date';
-import InputModal from '@/shared//components/guide/InputModal';
 import Spinner from '@/shared/components/common/Spinner';
 import ConfirmModal from '@/shared/components/guide/ConfirmModal';
 import { COLORS } from '@/shared/constants/theme';
