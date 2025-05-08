@@ -249,9 +249,8 @@ const cancelButtonStyle = css`
     padding: 10px;
     border-radius: 8px;
     border: 1px solid #d1d5db;
-    background-color: white;
+    background-color: ${COLORS.BACKGROUND.WHITE};
     color: #4b5563;
-    font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
@@ -269,7 +268,6 @@ const confirmButtonStyle = (isActive: boolean) => css`
     border: none;
     background-color: ${isActive ? COLORS.PRIMARY : COLORS.DISABLED};
     color: ${isActive ? 'white' : COLORS.ICON.LIGHT};
-    font-size: 14px;
     font-weight: 500;
     cursor: ${isActive ? 'pointer' : 'not-allowed'};
     transition: all 0.2s;

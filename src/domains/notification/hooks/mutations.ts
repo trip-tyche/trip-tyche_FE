@@ -8,11 +8,6 @@ export const useNotificationStatus = () => {
     return useMutation({
         mutationFn: (notificationId: number) =>
             toResult(() => notifiactionAPI.updateNotificationStatus(notificationId)),
-        // onMutate: () => {
-        //     queryClient.setQueryData(['notification'], (older) => {
-        //         console.log(older);
-        //     });
-        // },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['notification'] });
         },

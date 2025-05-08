@@ -10,13 +10,13 @@ interface TabProps {
 
 const Tab = ({ isActive, title, onChange }: TabProps) => {
     return (
-        <button css={[tabButtonStyle, isActive && activeTabStyle]} onClick={() => onChange()}>
+        <button css={[tab, isActive && activeTab]} onClick={() => onChange()}>
             {title}
         </button>
     );
 };
 
-const tabButtonStyle = css`
+const tab = css`
     flex: 1;
     padding: 12px 0;
     font-size: 14px;
@@ -26,9 +26,10 @@ const tabButtonStyle = css`
     border: none;
     cursor: pointer;
     color: #6b7280;
+    user-select: none;
 `;
 
-const activeTabStyle = css`
+const activeTab = css`
     color: ${COLORS.PRIMARY};
     border-bottom: 2px solid ${COLORS.PRIMARY};
 `;

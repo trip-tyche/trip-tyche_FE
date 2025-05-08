@@ -1,8 +1,6 @@
 import { css } from '@emotion/react';
 
-import { COLORS } from '@/shared/constants/theme';
-
-export const getMessageByType = (message: string, sender: string) => {
+const NotificationMessage = ({ message, sender }: { message: string; sender: string }) => {
     if (!message) return;
 
     switch (message) {
@@ -17,14 +15,9 @@ export const getMessageByType = (message: string, sender: string) => {
     }
 };
 
-export const getNotificationStyle = (isRead: boolean) => css`
-    color: ${isRead && COLORS.TEXT.DESCRIPTION};
-    opacity: ${isRead ? 0.5 : 1};
+const notificationMessage = css`
+    margin: 10px 0;
+    font-size: 14px;
 `;
 
-const notificationMessage = css`
-    margin-top: 10px;
-    margin-left: 2px;
-    font-size: 14px;
-    line-height: 1.3;
-`;
+export default NotificationMessage;

@@ -111,6 +111,8 @@ const MainPage = () => {
 
 const page = css`
     height: 100dvh;
+    display: flex;
+    flex-direction: column;
     background-color: ${COLORS.BACKGROUND.WHITE_SECONDARY};
 `;
 

@@ -16,7 +16,7 @@ const SharedTicket = ({ trip, userNickname }: IntroTicketProps) => {
     const { tripTitle, country, startDate, endDate, hashtags } = trip;
 
     return (
-        <article css={[ticketContainer, interactionTicketStyle]}>
+        <article css={container}>
             <section css={leftContent}>
                 <header css={leftTopSection}>
                     <div>
@@ -66,14 +66,7 @@ const SharedTicket = ({ trip, userNickname }: IntroTicketProps) => {
     );
 };
 
-const interactionTicketStyle = css`
-    touch-action: none;
-    box-shadow:
-        0 6px 8px rgba(0, 0, 0, 0.1),
-        0 1px 3px rgba(0, 0, 0, 0.08);
-`;
-
-const ticketContainer = css`
+const container = css`
     width: 100%;
     max-width: 428px;
     position: relative;
@@ -81,9 +74,11 @@ const ticketContainer = css`
     border-radius: 10px;
     margin-bottom: 24px;
     overflow: hidden;
-    cursor: pointer;
     transition: all 0.3s ease;
     background: transparent;
+    box-shadow:
+        0 6px 8px rgba(0, 0, 0, 0.1),
+        0 1px 3px rgba(0, 0, 0, 0.08);
 `;
 
 const leftContent = css`

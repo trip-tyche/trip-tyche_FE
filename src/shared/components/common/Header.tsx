@@ -33,6 +33,7 @@ const headerStyle = css`
     border-bottom: 1px solid ${theme.COLORS.BORDER};
     background-color: ${theme.COLORS.BACKGROUND.WHITE};
     z-index: 30;
+    user-select: none;
 `;
 
 const titleStyle = css`

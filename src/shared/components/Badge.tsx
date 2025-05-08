@@ -2,22 +2,22 @@ import { css } from '@emotion/react';
 
 import { COLORS } from '@/shared/constants/theme';
 
-type BadgeType = 'SUCCESS' | 'ERROR';
+type MessageType = 'SHARED_APPROVE' | 'SHARED_REJECTED';
 
 const MESSAGE = {
-    SUCCESS: '수락됨',
-    ERROR: '거절됨',
+    SHARED_APPROVE: '수락됨',
+    SHARED_REJECTED: '거절됨',
 };
 
-const Badge = ({ type }: { type: BadgeType }) => {
-    return <span css={acceptedBadge(type)}>{MESSAGE[type]}</span>;
+const Badge = ({ message }: { message: MessageType }) => {
+    const isSuccess = message === 'SHARED_APPROVE';
+    return <span css={badge(isSuccess)}>{MESSAGE[message]}</span>;
 };
 
-const acceptedBadge = (type: BadgeType) => css`
-    margin-left: 8px;
+const badge = (isSuccess: boolean) => css`
     padding: 2px 8px;
-    background-color: ${type === 'SUCCESS' ? COLORS.ALERT.SUCCESS.BACKGROUND : COLORS.ALERT.ERROR.BACKGROUND};
-    color: ${type === 'SUCCESS' ? COLORS.ALERT.SUCCESS.TEXT : COLORS.ALERT.ERROR.TEXT};
+    background-color: ${isSuccess ? COLORS.ALERT.SUCCESS.BACKGROUND : COLORS.ALERT.ERROR.BACKGROUND};
+    color: ${isSuccess ? COLORS.ALERT.SUCCESS.TEXT : COLORS.ALERT.ERROR.TEXT};
     font-size: 12px;
     border-radius: 9999px;
 `;

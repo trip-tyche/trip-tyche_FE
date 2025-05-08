@@ -1,38 +1,47 @@
 import { css } from '@emotion/react';
-import { Check } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 
 import SharedTicket from '@/domains/share/components/SharedTicket';
 import { SharedTripDetail, ShareStatus } from '@/domains/share/types';
+import Avatar from '@/shared/components/Avatar';
 import Modal from '@/shared/components/common/Modal';
 import { COLORS } from '@/shared/constants/theme';
 
 interface ShareNotificationProps {
     tripInfo: SharedTripDetail;
+    isSubmitting: boolean;
     onSubmit: (status: ShareStatus) => void;
     onClose: () => void;
 }
 
-const ShareNotification = ({ tripInfo, onClose, onSubmit }: ShareNotificationProps) => {
+const ShareNotification = ({ tripInfo, isSubmitting, onClose, onSubmit }: ShareNotificationProps) => {
+    const country = tripInfo.country.split('/')[1];
     return (
-        <Modal closeModal={onClose}>
-            <div css={modalContent}>
-                <div css={modalHeader}>
-                    <h2 css={modalTitle}>티켓 공유 요청</h2>
+        <Modal closeModal={onClose} customStyle={customModalStyle}>
+            <div css={header}>
+                <h2 css={title}>티켓 공유 요청</h2>
+                <div css={xIcon} onClick={onClose}>
+                    <X />
                 </div>
+            </div>
 
+            <div css={content}>
                 <div css={userInfoSection}>
-                    <div css={userAvatarContainer}>
-                        <img src='/api/placeholder/40/40' alt={tripInfo.ownerNickname} css={userAvatar} />
-                    </div>
-                    <div>
-                        <h3 css={userInfoName}>{tripInfo.ownerNickname}님이</h3>
-                        <p css={userInfoDescription}>그리스 여행에 초대합니다</p>
+                    <Avatar />
+                    <div css={userInfo}>
+                        <h3 css={userInfoName}>{tripInfo.ownerNickname} 님이</h3>
+                        <p css={userInfoDescription}>{country} 여행에 초대합니다</p>
                     </div>
                 </div>
 
-                <p css={invitationMessage}>"함께 그리스 여행 가요! 함께하면 더 즐거울 거예요 👋"</p>
+                <p css={invitationMessage}>"함께 {country} 여행 가요! 함께하면 더 즐거울 거예요 👋"</p>
 
-                <SharedTicket userNickname={tripInfo?.ownerNickname || ''} trip={tripInfo as SharedTripDetail} />
+                <div css={ticketWrapper}>
+                    <SharedTicket
+                        userNickname={tripInfo?.ownerNickname || '알수없음'}
+                        trip={tripInfo as SharedTripDetail}
+                    />
+                </div>
 
                 <div css={benefitsSection}>
                     <h4 css={benefitsTitle}>함께 여행하면 좋은 점</h4>
@@ -51,52 +60,63 @@ const ShareNotification = ({ tripInfo, onClose, onSubmit }: ShareNotificationPro
                         </li>
                     </ul>
                 </div>
+            </div>
 
-                {tripInfo.status === 'PENDING' ? (
-                    <div css={buttonGroup}>
-                        <button css={rejectButton} onClick={() => onSubmit('REJECTED')}>
-                            거절하기
-                        </button>
-                        <button css={acceptButton} onClick={() => onSubmit('APPROVED')}>
-                            함께 여행하기
-                        </button>
-                    </div>
-                ) : (
-                    <>
-                        <img
-                            css={shareStatusImage}
-                            src={`/passport-${tripInfo?.status === 'REJECTED' ? 'rejected' : 'approved'}.png`}
-                            alt={tripInfo?.status === 'REJECTED' ? '거절됨' : '수락됨'}
-                        />
+            {tripInfo.status === 'PENDING' ? (
+                <div css={buttonGroup}>
+                    <button css={rejectButton} onClick={() => onSubmit('REJECTED')}>
+                        거절하기
+                    </button>
+                    <button css={acceptButton(!isSubmitting)} onClick={() => onSubmit('APPROVED')}>
+                        함께 여행하기
+                    </button>
+                </div>
+            ) : (
+                <>
+                    <img
+                        css={shareStatusImage}
+                        src={`/passport-${tripInfo?.status === 'REJECTED' ? 'rejected' : 'approved'}.png`}
+                        alt={tripInfo?.status === 'REJECTED' ? '거절됨' : '수락됨'}
+                    />
+                    <div css={backButtonWrapper}>
                         <button css={backButton} onClick={onClose}>
                             알림으로 돌아가기
                         </button>
-                    </>
-                )}
-            </div>
+                    </div>
+                </>
+            )}
         </Modal>
     );
 };
 
-const modalContent = css`
-    width: 100%;
-    max-width: 400px;
-    padding: 0;
-    border-radius: 12px;
+const customModalStyle = css`
+    width: 400px;
     overflow: hidden;
+    padding: 0;
+    user-select: none;
 `;
 
-const modalHeader = css`
+const header = css`
+    width: 100%;
     padding: 16px;
-    border-bottom: 1px solid ${COLORS.BORDER};
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 1px solid ${COLORS.BORDER};
 `;
 
-const modalTitle = css`
+const title = css`
     font-size: 18px;
     font-weight: 600;
+    color: ${COLORS.TEXT.BLACK};
+`;
+
+const xIcon = css`
+    cursor: pointer;
+`;
+
+const content = css`
+    width: 100%;
 `;
 
 const userInfoSection = css`
@@ -106,19 +126,13 @@ const userInfoSection = css`
     align-items: center;
 `;
 
-const userAvatarContainer = css`
-    margin-right: 12px;
-`;
-
-const userAvatar = css`
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    object-fit: cover;
+const userInfo = css`
+    margin-left: 12px;
 `;
 
 const userInfoName = css`
     font-weight: 500;
+    margin-bottom: 6px;
 `;
 
 const userInfoDescription = css`
@@ -129,11 +143,15 @@ const userInfoDescription = css`
 const invitationMessage = css`
     margin: 0 16px 16px;
     padding: 12px;
-    background-color: white;
+    background-color: ${COLORS.BACKGROUND.WHITE};
     border: 1px solid ${COLORS.BORDER};
     border-radius: 8px;
     font-style: italic;
     color: #4b5563;
+`;
+
+const ticketWrapper = css`
+    padding: 0 16px;
 `;
 
 const benefitsSection = css`
@@ -146,13 +164,11 @@ const benefitsSection = css`
 const benefitsTitle = css`
     font-weight: 500;
     color: #1e40af;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 `;
 
 const benefitsList = css`
     list-style: none;
-    padding: 0;
-    margin: 0;
 `;
 
 const benefitItem = css`
@@ -164,13 +180,14 @@ const benefitItem = css`
 `;
 
 const checkIcon = css`
-    color: #2563eb;
+    color: ${COLORS.PRIMARY};
     margin-right: 8px;
     flex-shrink: 0;
     margin-top: 2px;
 `;
 
 const buttonGroup = css`
+    width: 100%;
     display: flex;
     gap: 12px;
     padding: 16px;
@@ -179,43 +196,67 @@ const buttonGroup = css`
 
 const rejectButton = css`
     flex: 1;
-    padding: 12px;
-    background: white;
-    border: 1px solid #d1d5db;
+    height: 48px;
+    padding: 10px;
     border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background-color: white;
     color: #4b5563;
     font-weight: 500;
     cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+        background-color: #f3f4f6;
+    }
 `;
 
-const acceptButton = css`
+const acceptButton = (isActive: boolean) => css`
     flex: 1;
-    padding: 12px;
-    background: #2563eb;
-    border: none;
+    height: 48px;
+    padding: 10px;
     border-radius: 8px;
-    color: white;
+    border: none;
+    background-color: ${isActive ? COLORS.PRIMARY : COLORS.DISABLED};
+    color: ${isActive ? 'white' : COLORS.ICON.LIGHT};
     font-weight: 500;
-    cursor: pointer;
+    cursor: ${isActive ? 'pointer' : 'not-allowed'};
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        background-color: ${isActive ? COLORS.PRIMARY_HOVER : COLORS.DISABLED};
+    }
+`;
+
+const backButtonWrapper = css`
+    width: 100%;
+    padding: 16px;
+    border-top: 1px solid ${COLORS.BORDER};
 `;
 
 const backButton = css`
     width: 100%;
-    padding: 12px;
-    margin: 16px;
-    background: white;
-    border: 1px solid #d1d5db;
+    height: 48px;
+    padding: 10px;
     border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background-color: ${COLORS.BACKGROUND.WHITE};
     color: #4b5563;
     font-weight: 500;
     cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+        background-color: #f3f4f6;
+    }
 `;
 
 const shareStatusImage = css`
     position: absolute;
-    width: 200px;
-    bottom: 100px;
-    left: 90px;
+    width: 280px;
 `;
 
 export default ShareNotification;
