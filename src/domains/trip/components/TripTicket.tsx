@@ -6,6 +6,7 @@ import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { IoAirplaneSharp } from 'react-icons/io5';
 
 import characterImg from '@/assets/images/character-ogami-1.png';
+import ShareModal from '@/domains/share/components/ShareModal';
 import { useTripShare } from '@/domains/share/hooks/useTripShare';
 import { TICKET } from '@/domains/trip/constants';
 import { Trip } from '@/domains/trip/types';
@@ -24,22 +25,21 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     const { tripKey, tripTitle, country, startDate, endDate, hashtags, ownerNickname } = tripInfo;
 
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-    const [inputValue, setInputValue] = useState('');
+    // const [inputValue, setInputValue] = useState('');
     const { showToast } = useToastStore.getState();
 
     const userInfo = useUserStore((state) => state.userInfo);
 
-    const { isSharing, error, shareTrip, clearError } = useTripShare(inputValue, tripKey!, onShareSuccess);
     const { isModalOpen, isDeleting, handler, deleteTrip, closeModal } = useTicketHandler(tripKey!, {
         onSuccess: (message) => showToast(message),
         onError: (message) => showToast(message),
     });
     const { isAnimating, handleCardClick } = useTicketNavigation(tripKey!);
 
-    function onShareSuccess() {
-        setIsShareModalOpen(false);
-        showToast(`'${inputValue}'님께 여행 공유를 요청했습니다`);
-    }
+    // function onShareSuccess() {
+    //     setIsShareModalOpen(false);
+    //     showToast(`'${inputValue}'님께 여행 공유를 요청했습니다`);
+    // }
 
     const isOwner = userInfo?.nickname === ownerNickname;
 
@@ -128,22 +128,12 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
             )}
 
             {isShareModalOpen && (
-                <InputModal
-                    error={error}
-                    value={inputValue}
-                    onChange={(inputValue) => setInputValue(inputValue)}
-                    title='티켓 공유하기'
-                    description='함께 여행 티켓을 관리할 친구를 추가해 보세요! 친구에게 초대 알림이 전송됩니다'
-                    confirmText='공유하기'
-                    cancelText='취소'
-                    confirmModal={shareTrip}
-                    closeModal={() => {
-                        setIsShareModalOpen(false);
-                        setInputValue('');
-                        clearError();
-                    }}
-                    disabled={isSharing || inputValue.trim().length === 0}
-                    placeholder='친구의 닉네임을 입력해주세요'
+                <ShareModal
+                    tripKey={tripKey!}
+                    tripTitle={tripTitle}
+                    startDate={startDate}
+                    endDate={endDate}
+                    onClose={() => setIsShareModalOpen(false)}
                 />
             )}
         </div>

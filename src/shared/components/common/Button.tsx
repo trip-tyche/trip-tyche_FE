@@ -56,7 +56,6 @@ const buttonStyles = {
             transform: scale(0.97);
         }
         &:disabled {
-            opacity: 0.5;
             cursor: not-allowed;
         }
     `,

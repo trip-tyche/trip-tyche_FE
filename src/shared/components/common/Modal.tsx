@@ -22,6 +22,7 @@ const Modal = ({ closeModal, isConfirm = false, children }: ModalProps) => {
 };
 
 const modalStyle = css`
+    padding: 16px;
     display: flex;
     flex-direction: column;
     justify-content: center;
