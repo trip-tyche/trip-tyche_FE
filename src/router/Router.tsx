@@ -9,23 +9,19 @@ import NotificationPage from '@/pages/NotificationPage';
 import PageNotFound from '@/pages/PageNotFound';
 import SettingPage from '@/pages/SettingPage';
 import SigninPage from '@/pages/SigninPage';
+import TripImageUploadPage from '@/pages/trip/management/TripImageUploadPage';
+import TripInfoFormPage from '@/pages/trip/management/TripInfoFormPage';
+import UnlocatedImagePage from '@/pages/trip/management/UnlocatedImagePage';
 import Spinner from '@/shared/components/common/Spinner';
 import { ROUTES } from '@/shared/constants/paths';
 
 const LoadingSpinner = () => <Spinner text='불러오는 중...' />;
 
 const TripPages = {
-    Management: {
-        TripImageManagePage: lazy(() => import('@/pages/trip/management/TripImageManagePage')),
-        UnlocatedImagePage: lazy(() => import('@/pages/trip/management/UnlocatedImagePage')),
-        TripImageUploadPage: lazy(() => import('@/pages/trip/management/TripImageUploadPage')),
-        TripInfoFormPage: lazy(() => import('@/pages/trip/management/TripInfoFormPage')),
-    },
-    Route: {
-        TripRoutePage: lazy(() => import('@/pages/trip/route/TripRoutePage')),
-        ImageByPinpointPage: lazy(() => import('@/pages/trip/route/ImageByPinpointPage')),
-        ImageByDatePage: lazy(() => import('@/pages/trip/route/ImageByDatePage')),
-    },
+    TripImageManagePage: lazy(() => import('@/pages/trip/management/TripImageManagePage')),
+    TripRoutePage: lazy(() => import('@/pages/trip/route/TripRoutePage')),
+    ImageByPinpointPage: lazy(() => import('@/pages/trip/route/ImageByPinpointPage')),
+    ImageByDatePage: lazy(() => import('@/pages/trip/route/ImageByDatePage')),
 };
 
 const ProtectedRoute = () => {
@@ -80,36 +76,36 @@ const router = createBrowserRouter([
                         children: [
                             {
                                 path: 'images',
-                                element: <TripPages.Management.TripImageManagePage />,
+                                element: <TripPages.TripImageManagePage />,
                             },
                             {
                                 path: 'images/unlocated',
-                                element: <TripPages.Management.UnlocatedImagePage />,
+                                element: <UnlocatedImagePage />,
                             },
                             {
                                 path: 'images/upload',
-                                element: <TripPages.Management.TripImageUploadPage />,
+                                element: <TripImageUploadPage />,
                             },
                             {
                                 path: 'info',
-                                element: <TripPages.Management.TripInfoFormPage />,
+                                element: <TripInfoFormPage />,
                             },
                             {
                                 path: 'edit',
-                                element: <TripPages.Management.TripInfoFormPage />,
+                                element: <TripInfoFormPage />,
                             },
 
                             {
                                 path: 'route',
-                                element: <TripPages.Route.TripRoutePage />,
+                                element: <TripPages.TripRoutePage />,
                             },
                             {
                                 path: 'by-pinpoint/:pinPointId',
-                                element: <TripPages.Route.ImageByPinpointPage />,
+                                element: <TripPages.ImageByPinpointPage />,
                             },
                             {
                                 path: 'by-date/:date',
-                                element: <TripPages.Route.ImageByDatePage />,
+                                element: <TripPages.ImageByDatePage />,
                             },
                         ],
                     },

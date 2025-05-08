@@ -119,7 +119,7 @@ const NickNameForm = ({ mode, onSubmit }: NickNameFormProps) => {
                 >
                     {isSubmitting ? (
                         <div css={submitButtonContentStyle}>
-                            <MoonLoader size={18} color={COLORS.BACKGROUND.WHITE} speedMultiplier={0.8} />
+                            <MoonLoader size={18} color={COLORS.ICON} speedMultiplier={0.8} />
                             <span>처리 중...</span>
                         </div>
                     ) : (

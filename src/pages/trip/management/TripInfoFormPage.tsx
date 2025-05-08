@@ -50,12 +50,10 @@ const TripInfoFormPage = () => {
         }));
     }, [beforeTripInfo]);
 
-    if (isLoading || isSubmitting) {
-        return <Spinner />;
-    }
-
     return (
         <div css={pageContainer}>
+            {(isLoading || isSubmitting) && <Spinner text='여행 정보를 불러오는 중...' />}
+
             <Header
                 title={ROUTES.PATH_TITLE.TRIPS.NEW.INFO}
                 isBackButton={isEditing}
