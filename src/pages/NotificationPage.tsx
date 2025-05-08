@@ -118,6 +118,7 @@ import { useNotificationList } from '@/domains/notification/hooks/queries';
 import { Notification } from '@/domains/notification/types';
 import Header from '@/shared/components/common/Header';
 import Spinner from '@/shared/components/common/Spinner';
+import TabNavigation from '@/shared/components/TabNavigation';
 import { ROUTES } from '@/shared/constants/paths';
 import { COLORS } from '@/shared/constants/theme';
 import { MESSAGE } from '@/shared/constants/ui';
@@ -142,35 +143,25 @@ const NotificationPage = () => {
         return null;
     }
 
+    const handleTabChange = (tabId: string) => {
+        setActiveTab(tabId);
+    };
+
     const notifications = [...result.data].sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
     const hasNotifications = notifications.length > 0;
 
+    const NOTIFICATION_TABS = [
+        { id: 'all', title: '전체' },
+        { id: 'share', title: '여행 공유' },
+        { id: 'notice', title: '알림' },
+    ];
+
     return (
         <div css={container}>
             <Header title={'알림'} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
-
-            <div css={tabNavigationStyle}>
-                <button
-                    css={[tabButtonStyle, activeTab === 'all' && activeTabStyle]}
-                    onClick={() => setActiveTab('all')}
-                >
-                    전체
-                </button>
-                <button
-                    css={[tabButtonStyle, activeTab === 'share' && activeTabStyle]}
-                    onClick={() => setActiveTab('share')}
-                >
-                    공유
-                </button>
-                <button
-                    css={[tabButtonStyle, activeTab === 'notice' && activeTabStyle]}
-                    onClick={() => setActiveTab('notice')}
-                >
-                    공지
-                </button>
-            </div>
+            <TabNavigation tabs={NOTIFICATION_TABS} activeTab={activeTab} onActiveChange={handleTabChange} />
 
             {isLoading ? (
                 <Spinner text='알림 불러오는 중...' />
@@ -204,30 +195,6 @@ const container = css`
     display: flex;
     flex-direction: column;
     background-color: #f9fafb;
-`;
-
-// 탭 네비게이션 스타일
-const tabNavigationStyle = css`
-    display: flex;
-    border-bottom: 1px solid #e5e7eb;
-    background-color: white;
-`;
-
-const tabButtonStyle = css`
-    flex: 1;
-    padding: 12px 0;
-    font-size: 14px;
-    font-weight: 500;
-    text-align: center;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #6b7280;
-`;
-
-const activeTabStyle = css`
-    color: ${COLORS.PRIMARY};
-    border-bottom: 2px solid ${COLORS.PRIMARY};
 `;
 
 const contentStyle = css`
