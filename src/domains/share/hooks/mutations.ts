@@ -9,6 +9,7 @@ export const useShareStatus = () => {
         mutationFn: ({ shareId, status }: { shareId: number; status: string }) =>
             toResult(() => shareAPI.updateShareStatus(shareId, status)),
         onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['notification'] });
             queryClient.invalidateQueries({ queryKey: ['share'] });
         },
     });

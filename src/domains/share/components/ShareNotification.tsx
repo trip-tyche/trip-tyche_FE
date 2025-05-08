@@ -1,21 +1,61 @@
+import { useEffect } from 'react';
+
 import { css } from '@emotion/react';
 import { Check, X } from 'lucide-react';
 
 import SharedTicket from '@/domains/share/components/SharedTicket';
+import { useShareStatus } from '@/domains/share/hooks/mutations';
+import { useShareDetail } from '@/domains/share/hooks/queries';
 import { SharedTripDetail, ShareStatus } from '@/domains/share/types';
 import Avatar from '@/shared/components/Avatar';
 import Modal from '@/shared/components/common/Modal';
+import Spinner from '@/shared/components/common/Spinner';
 import { COLORS } from '@/shared/constants/theme';
+import { useToastStore } from '@/shared/stores/useToastStore';
 
 interface ShareNotificationProps {
-    tripInfo: SharedTripDetail;
-    isSubmitting: boolean;
-    onSubmit: (status: ShareStatus) => void;
+    referenceId: number;
     onClose: () => void;
 }
 
-const ShareNotification = ({ tripInfo, isSubmitting, onClose, onSubmit }: ShareNotificationProps) => {
+const ShareNotification = ({ referenceId, onClose }: ShareNotificationProps) => {
+    const showToast = useToastStore((state) => state.showToast);
+    const { data: shareDetailResult, isLoading } = useShareDetail(referenceId);
+
+    const { mutateAsync: updateShareStatus, isPending: isSubmitting } = useShareStatus();
+
+    const isSuccess = !!(shareDetailResult?.success && shareDetailResult?.data);
+    const tripInfo = isSuccess ? shareDetailResult.data : null;
+
+    useEffect(() => {
+        if (shareDetailResult && !shareDetailResult?.success) {
+            showToast(
+                shareDetailResult?.error === '공유된 여행이 없습니다.'
+                    ? '더 이상 존재하지 않는 여행입니다'
+                    : '공유된 여행이 없습니다',
+            );
+            onClose();
+        }
+    }, [shareDetailResult, isLoading, showToast, onClose]);
+
+    const handleShareStatusChange = async (status: ShareStatus) => {
+        const result = await updateShareStatus({ shareId: referenceId, status });
+
+        const approve = status === 'APPROVED';
+        showToast(result.success ? (approve ? '여행 메이트가 되었어요! 🎉' : '다음에 함께 여행해요 ✈️') : result.error);
+        onClose();
+    };
+
+    if (isLoading) {
+        return <Spinner text='알림 내용 불러오는 중...' />;
+    }
+
+    if (!tripInfo) {
+        return null;
+    }
+
     const country = tripInfo.country.split('/')[1];
+
     return (
         <Modal closeModal={onClose} customStyle={customModalStyle}>
             <div css={header}>
@@ -29,7 +69,7 @@ const ShareNotification = ({ tripInfo, isSubmitting, onClose, onSubmit }: ShareN
                 <div css={userInfoSection}>
                     <Avatar />
                     <div css={userInfo}>
-                        <h3 css={userInfoName}>{tripInfo.ownerNickname} 님이</h3>
+                        <h3 css={userInfoName}>{tripInfo?.ownerNickname} 님이</h3>
                         <p css={userInfoDescription}>{country} 여행에 초대합니다</p>
                     </div>
                 </div>
@@ -62,12 +102,12 @@ const ShareNotification = ({ tripInfo, isSubmitting, onClose, onSubmit }: ShareN
                 </div>
             </div>
 
-            {tripInfo.status === 'PENDING' ? (
+            {tripInfo?.status === 'PENDING' ? (
                 <div css={buttonGroup}>
-                    <button css={rejectButton} onClick={() => onSubmit('REJECTED')}>
+                    <button css={rejectButton} onClick={() => handleShareStatusChange('REJECTED')}>
                         거절하기
                     </button>
-                    <button css={acceptButton(!isSubmitting)} onClick={() => onSubmit('APPROVED')}>
+                    <button css={acceptButton(!isSubmitting)} onClick={() => handleShareStatusChange('APPROVED')}>
                         함께 여행하기
                     </button>
                 </div>

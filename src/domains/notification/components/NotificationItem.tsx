@@ -9,15 +9,12 @@ import { useNotificationDelete, useNotificationStatus } from '@/domains/notifica
 import { Notification } from '@/domains/notification/types';
 import ShareNotification from '@/domains/share/components/ShareNotification';
 import { useShareStatus } from '@/domains/share/hooks/mutations';
-import { useShareDetail } from '@/domains/share/hooks/queries';
 import { ShareStatus } from '@/domains/share/types';
 import { formatKoreanDate, formatKoreanTime } from '@/libs/utils/date';
 import Avatar from '@/shared/components/Avatar';
 import Badge from '@/shared/components/Badge';
-import Spinner from '@/shared/components/common/Spinner';
 import ConfirmModal from '@/shared/components/guide/ConfirmModal';
 import { COLORS } from '@/shared/constants/theme';
-import { MESSAGE } from '@/shared/constants/ui';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 interface NotificationProps {
@@ -31,9 +28,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const showToast = useToastStore((state) => state.showToast);
 
-    const { data: shareDetailResult, isLoading, error } = useShareDetail(referenceId, isShowNotificationContent);
     const { mutateAsync: updateNotificationReadStatus } = useNotificationStatus();
-    const { mutateAsync: updateShareStatus, isPending: isSubmitting } = useShareStatus();
     const { mutateAsync: deleteNotificationAsync } = useNotificationDelete();
 
     const showNotificationContent = async () => {
@@ -41,6 +36,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
             const result = await updateNotificationReadStatus(notificationId);
             if (!result.success) showToast(result.error);
         }
+
         setIsShowNotificationContent(true);
     };
 
@@ -62,14 +58,6 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
         setIsDeleteModalOpen(false);
     };
 
-    const handleShareStatusChange = async (status: ShareStatus) => {
-        const result = await updateShareStatus({ shareId: referenceId, status });
-
-        const approve = status === 'APPROVED';
-        showToast(result.success ? (approve ? '여행 메이트가 되었어요! 🎉' : '다음에 함께 여행해요 ✈️') : result.error);
-        setIsShowNotificationContent(false);
-    };
-
     const handleNotificationDelete = (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
         setIsDeleteModalOpen(true);
@@ -82,16 +70,9 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
     const date = formatKoreanDate(createdAt);
     const time = formatKoreanTime(createdAt);
     const isRead = status === 'READ';
-    const sharedTripInfo = shareDetailResult?.success && shareDetailResult?.data ? shareDetailResult?.data : null;
-
-    if (error) {
-        showToast(error ? error.message : MESSAGE.ERROR.UNKNOWN);
-    }
 
     return (
         <>
-            {isLoading && <Spinner text='알림 내용 불러오는 중...' />}
-
             <div css={container(isRead)} onClick={showNotificationContent}>
                 <Avatar size='sm' isDot={!isRead} />
                 <div css={content}>
@@ -125,13 +106,8 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
                 />
             )}
 
-            {sharedTripInfo && isShowNotificationContent && (
-                <ShareNotification
-                    tripInfo={sharedTripInfo}
-                    isSubmitting={isSubmitting}
-                    onSubmit={(status: ShareStatus) => handleShareStatusChange(status)}
-                    onClose={closeNotificationContent}
-                />
+            {isShowNotificationContent && (
+                <ShareNotification referenceId={referenceId} onClose={closeNotificationContent} />
             )}
         </>
     );
@@ -162,7 +138,7 @@ const header = css`
 
 const sender = css`
     font-weight: 500;
-    color: #1f2937;
+    color: ${COLORS.TEXT.BLACK};
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

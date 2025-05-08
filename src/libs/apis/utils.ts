@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
 
-import { MESSAGE } from '@/shared/constants/ui';
 import { ApiResponse, Result } from '@/libs/apis/types';
+import { MESSAGE } from '@/shared/constants/ui';
 
 export const toResult = async <T>(
     fn: () => Promise<ApiResponse<T>>,
@@ -12,7 +12,6 @@ export const toResult = async <T>(
     },
 ): Promise<Result<T>> => {
     const { onSuccess, onError, onFinally } = callback || {};
-
     try {
         const { data } = await fn();
         onSuccess?.();
