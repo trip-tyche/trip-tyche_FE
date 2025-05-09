@@ -1,52 +1,37 @@
-import { useEffect, useState } from 'react';
-
 import { css } from '@emotion/react';
 import { TouchpadOff, Bell, Settings, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import { useNotificationList } from '@/domains/notification/hooks/queries';
 import TripTicket from '@/domains/trip/components/TripTicket';
 import { useTripTicketList } from '@/domains/trip/hooks/queries';
 import { Trip } from '@/domains/trip/types';
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { tripAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/utils';
-import webSocketService from '@/libs/socket';
 import Button from '@/shared/components/common/Button';
 import Spinner from '@/shared/components/common/Spinner';
 import { ROUTES } from '@/shared/constants/paths';
 import { COLORS } from '@/shared/constants/theme';
+import { MESSAGE } from '@/shared/constants/ui';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 const MainPage = () => {
-    const [notificationCount, setNotificationCount] = useState(0);
-
     const { userInfo } = useUserStore();
     const showToast = useToastStore((state) => state.showToast);
 
-    const { data: result, isLoading } = useTripTicketList();
+    const { data: myTrips, isLoading: isTripsLoading } = useTripTicketList();
+    const { data: notifications, isLoading: isNotificationsLoading } = useNotificationList(Number(userInfo?.userId));
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        webSocketService.connect(String(userInfo?.userId));
+    if (!notifications) return null;
+    if (!notifications?.success) {
+        showToast(notifications ? notifications?.error : MESSAGE.ERROR.UNKNOWN);
+        return null;
+    }
 
-        setTimeout(() => {
-            if (webSocketService.isConnected()) {
-                webSocketService.setUnreadCountCallback((count) => {
-                    console.log(webSocketService);
-                    setNotificationCount(count);
-                });
-
-                webSocketService.requestNotificationCount(String(userInfo?.userId));
-            }
-        }, 200);
-
-        return () => {
-            webSocketService.setUnreadCountCallback(() => null);
-        };
-    }, [userInfo?.userId]);
-
-    const handleCreateButtonClick = async () => {
+    const createNewTrip = async () => {
         const result = await toResult(() => tripAPI.createNewTrip());
         if (result.success) {
             const { tripKey } = result.data;
@@ -56,12 +41,15 @@ const MainPage = () => {
         }
     };
 
-    const tripList = result && result?.success ? [...result.data].reverse() : [];
-    const tripCount = tripList.length;
+    const unreadNotificationCount = notifications?.data.filter(
+        (notification) => notification.status === 'UNREAD',
+    ).length;
+    const sortedTrips = myTrips && myTrips?.success ? [...myTrips.data].reverse() : [];
+    const tripCount = sortedTrips.length;
 
     return (
         <div css={page}>
-            {isLoading && <Spinner text='티켓 정보 불러오는 중...' />}
+            {(isTripsLoading || isNotificationsLoading) && <Spinner text='티켓 정보 불러오는 중...' />}
 
             <header css={header}>
                 <div css={logo}>TRIPTYCHE</div>
@@ -71,7 +59,7 @@ const MainPage = () => {
                         onClick={() => userInfo?.userId && navigate(ROUTES.PATH.NOTIFICATION(userInfo?.userId))}
                     >
                         <Bell css={notificationIcon} />
-                        {notificationCount > 0 && <span css={notificationBadge}>{notificationCount}</span>}
+                        {unreadNotificationCount > 0 && <span css={notificationBadge}>{unreadNotificationCount}</span>}
                     </div>
                     <Settings css={settingsIcon} onClick={() => navigate(ROUTES.PATH.SETTING)} />
                 </div>
@@ -80,19 +68,19 @@ const MainPage = () => {
             <main css={ticketsContainer}>
                 <div css={titleRow}>
                     <h2 css={mainTitle}>나의 여행 티켓</h2>
-                    <Button css={addButton} onClick={handleCreateButtonClick} icon={<Plus size={24} />} />
+                    <Button css={addButton} onClick={createNewTrip} icon={<Plus size={24} />} />
                 </div>
 
                 {tripCount > 0 && <p css={subtitle}>지금까지 {tripCount}장의 티켓을 만들었어요!</p>}
 
                 {tripCount > 0 ? (
                     <div css={tripListContent}>
-                        {tripList.map((trip: Trip) => (
+                        {sortedTrips.map((trip: Trip) => (
                             <TripTicket key={trip.tripKey} tripInfo={trip} />
                         ))}
                     </div>
                 ) : (
-                    !isLoading && (
+                    !isTripsLoading && (
                         <div css={emptyTripList}>
                             <div css={emptyIcon}>
                                 <TouchpadOff color='white' />

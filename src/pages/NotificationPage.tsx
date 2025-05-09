@@ -31,7 +31,6 @@ const NotificationPage = () => {
         navigate(ROUTES.PATH.MAIN);
         return null;
     }
-
     // TODO: 안내 알림 추가 시, 각 API 요청으로 로직 변경
     const handleTabChange = (tabId: string) => {
         setActiveTab(tabId);

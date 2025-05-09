@@ -8,8 +8,6 @@ import NotificationMessage from '@/domains/notification/components/NotificationM
 import { useNotificationDelete, useNotificationStatus } from '@/domains/notification/hooks/mutations';
 import { Notification } from '@/domains/notification/types';
 import ShareNotification from '@/domains/share/components/ShareNotification';
-import { useShareStatus } from '@/domains/share/hooks/mutations';
-import { ShareStatus } from '@/domains/share/types';
 import { formatKoreanDate, formatKoreanTime } from '@/libs/utils/date';
 import Avatar from '@/shared/components/Avatar';
 import Badge from '@/shared/components/Badge';
