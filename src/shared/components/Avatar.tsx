@@ -28,6 +28,7 @@ const iconContainer = (size: string) => css`
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 0.9;
 `;
 
 const dot = css`

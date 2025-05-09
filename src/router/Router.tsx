@@ -112,7 +112,7 @@ const router = createBrowserRouter([
                 ],
             },
             {
-                path: '*',
+                path: '/*',
                 element: (
                     <Suspense fallback={<LoadingSpinner />}>
                         <PageNotFound />

@@ -1,16 +1,141 @@
-import { useRouteError } from 'react-router-dom';
+import { css } from '@emotion/react';
+import { MapPin, Home, RouteOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+import { ROUTES } from '@/shared/constants/paths';
+import { COLORS } from '@/shared/constants/theme';
 
 const PageNotFound = () => {
-    const error = useRouteError();
-    // 리액트 라우터에서 특정 라우트에서 발생한 오류를 처리하고, 해당 오류에 대한 정보를 제공하기 위한 훅
-    console.error(error);
-
+    const navigate = useNavigate();
     return (
-        <div>
-            <h1>Oops!</h1>
-            <p>Sorry, an unexpected error has occurred.</p>
+        <div css={page}>
+            <div css={iconContainer}>
+                <div css={iconContent}>
+                    <div css={routeIcon}>
+                        <RouteOff size={48} color={COLORS.PRIMARY} />
+                    </div>
+                    <div css={pinIcon}>
+                        <MapPin size={40} color={COLORS.TEXT.ERROR} />
+                    </div>
+                </div>
+
+                <div css={iconShadow}></div>
+            </div>
+
+            <h1 css={title}>Page Not Found</h1>
+            <h2 css={subTitle}>길을 잃으셨나요?</h2>
+            <p css={description}>
+                찾으시는 페이지를 발견하지 못했습니다.
+                <br />
+                새로운 여행을 시작하거나 홈으로 돌아가세요.
+            </p>
+
+            <button css={primaryButton} onClick={() => navigate(`${ROUTES.PATH.MAIN}`)}>
+                <Home css={buttonIcon} />
+                홈으로 돌아가기
+            </button>
         </div>
     );
 };
+
+const page = css`
+    max-width: 500px;
+    min-height: 100vh;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    text-align: center;
+    background-color: #f8fafc;
+`;
+
+const iconContainer = css`
+    position: relative;
+    margin-bottom: 3rem;
+`;
+
+const iconContent = css`
+    position: relative;
+    width: 120px;
+    height: 120px;
+`;
+
+const routeIcon = css`
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #dbeafe;
+    border-radius: 50%;
+    opacity: 0.9;
+`;
+
+const pinIcon = css`
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+`;
+
+const iconShadow = css`
+    width: 80px;
+    height: 10px;
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #cbd5e1;
+    border-radius: 50%;
+    opacity: 0.3;
+`;
+
+const title = css`
+    font-size: 36px;
+    font-weight: 700;
+    color: ${COLORS.PRIMARY};
+`;
+
+const subTitle = css`
+    margin: 16px 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: ${COLORS.TEXT.BLACK};
+`;
+
+const description = css`
+    margin-bottom: 34px;
+    color: ${COLORS.TEXT.DESCRIPTION_LIGHT};
+    line-height: 1.6;
+    font-size: 14px;
+`;
+
+const primaryButton = css`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    background-color: ${COLORS.PRIMARY};
+    height: 48px;
+    color: #f2f4f9;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: ${COLORS.PRIMARY_HOVER};
+    }
+`;
+
+const buttonIcon = css`
+    width: 20px;
+    height: 20px;
+    margin-right: 0.5rem;
+`;
 
 export default PageNotFound;
