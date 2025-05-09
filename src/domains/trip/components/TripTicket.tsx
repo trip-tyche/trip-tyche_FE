@@ -5,7 +5,6 @@ import { ImagePlus, Share2, Edit, Trash, Unlink, Info } from 'lucide-react';
 
 import characterImg from '@/assets/images/character-ogami-1.png';
 import ShareModal from '@/domains/share/components/ShareModal';
-import ShareNotification from '@/domains/share/components/ShareNotification';
 import { TICKET } from '@/domains/trip/constants';
 import { Trip } from '@/domains/trip/types';
 import useUserStore from '@/domains/user/stores/useUserStore';

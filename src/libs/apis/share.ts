@@ -19,8 +19,6 @@ export const shareAPI = {
     updateShareStatus: async (shareId: number, status: string): Promise<ApiResponse<string>> =>
         await apiClient.patch(`/v1/shares/${shareId}?status=${status}`),
     // 공유 관계 해제
-    unlinkShared: async (shareId: number): Promise<ApiResponse<string>> => {
-        console.log(shareId);
-        return await apiClient.delete(`/v1/shares/${shareId}`);
-    },
+    unlinkShared: async (shareId: number): Promise<ApiResponse<string>> =>
+        await apiClient.delete(`/v1/shares/${shareId}`),
 };

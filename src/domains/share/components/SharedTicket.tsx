@@ -271,36 +271,4 @@ const flagStyle = (isOwner: boolean) => css`
     font-size: 36px;
 `;
 
-const buttonGroup = css`
-    display: flex;
-    justify-content: space-between;
-    background-color: white;
-    padding: 10px 12px;
-    border-radius: 0 0 14px 14px;
-    border: 1px solid #f3f4f6;
-    border-top: none;
-    transition: all 0.25s ease;
-`;
-
-const buttonStyle = css`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px 8px;
-    border: none;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    gap: 6px;
-    background: transparent;
-    color: #4b5563;
-    transition: color 0.2s ease;
-
-    &:hover {
-        color: ${COLORS.PRIMARY_HOVER};
-    }
-`;
-
 export default SharedTicket;

@@ -1,6 +1,7 @@
 import { Client } from '@stomp/stompjs';
 
 import { SOCKET_URL } from '@/shared/constants/socket';
+import { queryClient } from '@/shared/providers/TanStackProvider';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 const state = {
@@ -72,42 +73,36 @@ const subscribeToShareNotifications = (userId: string) => {
         const { showToast } = useToastStore.getState();
 
         try {
-            const data = JSON.parse(message.body);
-            console.log(message.body, data);
+            const subscribedMessage = JSON.parse(JSON.parse(message.body));
+            const messageType = subscribedMessage.type;
 
-            if (data.unreadCount !== undefined) {
-                state.unReadNotificationCount = data.unreadCount;
+            if (messageType === 'SHARED_REQUEST') {
+                showToast('새로운 공유 요청이 도착했습니다.');
+                // requestUnReadNotificationCount(userId);
+            } else if (messageType === 'SHARED_APPROVE') {
+                showToast('공유 요청이 승인되었습니다.');
+                queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
+            } else if (messageType === 'SHARED_REJECTED') {
+                showToast('공유 요청이 거절되었습니다.');
             }
 
-            const messageType = data.type;
-
-            if (typeof data === 'string') {
-                if (messageType === 'SHARED_REQUEST') {
-                    showToast('새로운 공유 요청이 도착했습니다.');
-                    requestUnReadNotificationCount(userId);
-                } else if (messageType === 'SHARED_APPROVE') {
-                    showToast('공유 요청이 승인되었습니다.');
-                } else if (messageType === 'SHARED_REJECTED') {
-                    showToast('공유 요청이 거절되었습니다.');
-                }
-            }
-            requestUnReadNotificationCount(userId);
+            queryClient.invalidateQueries({ queryKey: ['notification'] });
         } catch (error) {
             console.error('메시지 처리 오류:', error);
         }
     });
 };
 
-const requestUnReadNotificationCount = (userId: string) => {
-    if (!state.client || !state.isConnected) return;
+// const requestUnReadNotificationCount = (userId: string) => {
+//     if (!state.client || !state.isConnected) return;
 
-    state.client.publish({
-        destination: SOCKET_URL.TOPIC.UNREAD,
-        body: JSON.stringify({
-            recipientId: userId,
-        }),
-    });
-};
+//     state.client.publish({
+//         destination: SOCKET_URL.TOPIC.UNREAD,
+//         body: JSON.stringify({
+//             recipientId: userId,
+//         }),
+//     });
+// };
 
 export const socket = {
     get isConnected() {
@@ -115,5 +110,4 @@ export const socket = {
     },
     connect,
     disconnect,
-    requestUnReadNotificationCount,
 };

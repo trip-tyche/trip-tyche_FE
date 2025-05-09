@@ -13,16 +13,11 @@ const RootLayout = () => {
     const { connect, disconnect, isConnected } = socket;
 
     useEffect(() => {
-        const checkConnetion = () => {
-            if (!isConnected && userInfo?.userId) {
-                connect(String(userInfo?.userId));
-            }
-        };
-
-        const interval = setInterval(checkConnetion, 5000);
+        if (!isConnected && userInfo?.userId) {
+            connect(String(userInfo?.userId));
+        }
 
         return () => {
-            clearInterval(interval);
             disconnect();
         };
     }, [userInfo?.userId, isConnected, connect, disconnect]);

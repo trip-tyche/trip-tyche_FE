@@ -10,6 +10,7 @@ export const useShareStatus = () => {
             toResult(() => shareAPI.updateShareStatus(shareId, status)),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['share'] });
+            queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
         },
     });
 };
