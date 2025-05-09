@@ -1,9 +1,7 @@
 import { useState } from 'react';
 
-import { css, keyframes } from '@emotion/react';
-import { ImagePlus, Share2 } from 'lucide-react';
-import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
-import { IoAirplaneSharp } from 'react-icons/io5';
+import { css } from '@emotion/react';
+import { ImagePlus, Share2, Edit, Trash, Unlink, Info } from 'lucide-react';
 
 import characterImg from '@/assets/images/character-ogami-1.png';
 import ShareModal from '@/domains/share/components/ShareModal';
@@ -13,17 +11,16 @@ import useUserStore from '@/domains/user/stores/useUserStore';
 import { formatHyphenToDot, formatToDot } from '@/libs/utils/date';
 import Spinner from '@/shared/components/common/Spinner';
 import ConfirmModal from '@/shared/components/guide/ConfirmModal';
-import { COLORS } from '@/shared/constants/theme';
+import { COLORS, FONT_SIZES } from '@/shared/constants/theme';
 import { useTicketHandler } from '@/shared/hooks/useTicketHandler';
 import { useTicketNavigation } from '@/shared/hooks/useTicketNavigation';
 import { useToastStore } from '@/shared/stores/useToastStore';
-import theme from '@/shared/styles/theme';
 
 const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     const { tripKey, tripTitle, country, startDate, endDate, hashtags, ownerNickname } = tripInfo;
 
+    const [isHovered, setIsHovered] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-    // const [inputValue, setInputValue] = useState('');
     const { showToast } = useToastStore.getState();
 
     const userInfo = useUserStore((state) => state.userInfo);
@@ -34,91 +31,108 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     });
     const { isAnimating, handleCardClick } = useTicketNavigation(tripKey!);
 
-    // function onShareSuccess() {
-    //     setIsShareModalOpen(false);
-    //     showToast(`'${inputValue}'님께 여행 공유를 요청했습니다`);
-    // }
-
     const isOwner = userInfo?.nickname === ownerNickname;
+    const countryEmoji = country.split('/')[0] || '';
+    const destination = country.split('/')[1] || '';
 
     return (
-        <div css={ticket}>
+        <div css={container} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
             {isDeleting && <Spinner text='여행 티켓 삭제 중...' />}
 
-            <main css={ticketStyle} onClick={handleCardClick}>
-                <div css={leftSection}>
-                    <header css={leftTopSection(isOwner)}>
-                        <div>
-                            <h3 css={labelStyle}>PASSENGER</h3>
-                            <p css={valueStyle}>{ownerNickname}</p>
-                        </div>
-                        <div>
-                            <h3 css={labelStyle}>DATE</h3>
-                            <p css={valueStyle}>{formatToDot(startDate)}</p>
-                        </div>
-                        <div>
-                            <h3 css={labelStyle}>DATE</h3>
-                            <p css={valueStyle}>{formatToDot(endDate)}</p>
-                        </div>
-                    </header>
+            <main css={[mainStyle, isHovered && ticketHoverStyle]} onClick={handleCardClick}>
+                <header css={header(isOwner)}>
+                    <div css={headerItem}>
+                        <h3 css={labelStyle}>PASSENGER</h3>
+                        <p css={valueStyle}>{ownerNickname}</p>
+                    </div>
+                    <div css={headerItem}>
+                        <h3 css={labelStyle}>DATE</h3>
+                        <p css={valueStyle}>{formatToDot(startDate)}</p>
+                    </div>
+                    <div css={headerItem}>
+                        <h3 css={labelStyle}>DATE</h3>
+                        <p css={valueStyle}>{formatToDot(endDate)}</p>
+                    </div>
+                    <div css={headerItem}>
+                        <h3 css={labelStyle}>FLIGHT</h3>
+                        <p css={valueStyle}>TYCHE AIR</p>
+                    </div>
+                </header>
 
-                    <main css={contentContainer}>
-                        <div css={citiesStyle}>
-                            <p>{TICKET.DEFAULT_COUNTY}</p>
-                            <IoAirplaneSharp />
-                            <p>{country.split('/')[1]}</p>
-                        </div>
-                        <div css={contentStyle}>
-                            <div css={titleStyle}>
-                                <p css={titleLabelStyle}>Title</p>
-                                <p css={titleValueStyle}>{tripTitle}</p>
+                <div css={contentStyle}>
+                    <div css={citiesStyle}>
+                        <p css={countryNameStyle}>{TICKET.DEFAULT_COUNTY}</p>
+                        <div css={dotsAndCharacterContainer}>
+                            <div css={pointDots}>
+                                <div css={startPointDot} />
+                                <div css={endPointDot} />
                             </div>
-                            <p css={flagStyle}>{country.split('/')[0]}</p>
+                            <div css={characterContainer(isAnimating)}>
+                                <img css={characterStyle} src={characterImg} alt='캐릭터' />
+                                <div css={characterShadow}></div>
+                            </div>
                         </div>
+                        <p css={countryNameStyle}>{destination}</p>
+                    </div>
+
+                    <div css={titleStyle}>
+                        <p css={titleLabelStyle}>Title</p>
+                        <p css={titleValueStyle}>{tripTitle}</p>
+                    </div>
+
+                    <div css={contentFooter}>
                         <div css={hashtagGroup}>
                             {hashtags.map((tag, index) => (
                                 <span key={index} css={hashtagStyle}>
-                                    # {tag}
+                                    <span css={hashSymbol}>#</span> {tag}
                                 </span>
                             ))}
                         </div>
-                    </main>
-                </div>
-
-                <div css={[rightSection, isAnimating && animateRight]}>
-                    <header css={rightTopSection(isOwner)}>
-                        <h3 css={labelStyle}>FLIGHT</h3>
-                        <p css={valueStyle}>TYCHE AIR</p>
-                    </header>
-
-                    <div css={rightContent}>
-                        <img css={imageStyle} src={characterImg} alt='캐릭터' />
+                        <div css={flagStyle(isOwner)}>{countryEmoji}</div>
                     </div>
                 </div>
             </main>
 
             <footer css={buttonGroup}>
                 <button css={buttonStyle} onClick={() => handler.edit()}>
-                    <FaPencilAlt size={14} /> 티켓 수정
+                    <Edit size={14} />
+                    {isOwner ? '티켓 수정' : '정보 보기'}
                 </button>
                 <button css={buttonStyle} onClick={() => handler.images()}>
-                    <ImagePlus size={16} /> 사진 관리
+                    <ImagePlus size={16} />
+                    {isOwner ? '사진 관리' : '사진 보기'}
                 </button>
-                {isOwner && (
+                {isOwner ? (
                     <button css={buttonStyle} onClick={() => setIsShareModalOpen(true)}>
                         <Share2 size={16} /> 티켓 공유
                     </button>
+                ) : (
+                    <button css={buttonStyle} onClick={() => console.log('공유 정보')}>
+                        <Info size={16} /> 공유 정보
+                    </button>
                 )}
                 <button css={buttonStyle} onClick={() => handler.delete()}>
-                    <FaTrashAlt size={14} /> 티켓 삭제
+                    {isOwner ? (
+                        <>
+                            <Trash size={14} /> 티켓 삭제
+                        </>
+                    ) : (
+                        <>
+                            <Unlink size={14} /> 공유 해제
+                        </>
+                    )}
                 </button>
             </footer>
 
             {isModalOpen && (
                 <ConfirmModal
-                    title='여행 티켓을 삭제하시겠습니까?'
-                    description='여행 티켓을 삭제하면 해당 여행의 정보와 사진들은 다시 복구할 수 없습니다. 그래도 삭제하시겠습니까?'
-                    confirmText='삭제'
+                    title={isOwner ? '여행 티켓을 삭제하시겠습니까?' : '공유를 해제하시겠습니까?'}
+                    description={
+                        isOwner
+                            ? '여행 티켓을 삭제하면 해당 여행의 정보와 사진들은 다시 복구할 수 없습니다. 그래도 삭제하시겠습니까?'
+                            : '공유를 해제하면 더 이상 이 여행 티켓에 접근할 수 없게 됩니다. 계속하시겠습니까?'
+                    }
+                    confirmText={isOwner ? '삭제' : '해제'}
                     cancelText='취소'
                     confirmModal={deleteTrip}
                     closeModal={closeModal}
@@ -138,170 +152,221 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     );
 };
 
-const ticket = css`
-    margin-bottom: 12px;
+const container = css`
+    margin-bottom: 8px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
+    transition: all 0.25s ease;
 `;
 
-const ticketStyle = css`
-    height: 192px;
-    position: relative;
-    display: flex;
-    border-radius: 10px;
+const mainStyle = css`
+    width: 100%;
+    border-radius: 14px 14px 0 0;
     cursor: pointer;
-    transition: all 0.3s ease;
+    overflow: hidden;
 `;
 
-const leftSection = css`
-    width: 75%;
-    height: 100%;
-    background: ${theme.COLORS.BACKGROUND.WHITE};
-    border-right: 1px solid ${theme.COLORS.BORDER};
-    border-radius: 0 0 0 8px;
-    box-shadow:
-        -6px 6px 8px rgba(0, 0, 0, 0.1),
-        -1px 1px 3px rgba(0, 0, 0, 0.08);
+const ticketHoverStyle = css`
+    transform: translateY(-2px);
 `;
 
-const leftTopSection = (isOwner: boolean) => css`
-    height: 48px;
+const header = (isOwner: boolean) => css`
     display: flex;
-    justify-content: space-between;
-    border-radius: 8px 0 0 0;
-    background-color: ${isOwner ? theme.COLORS.PRIMARY : theme.COLORS.SECONDARY};
-    color: ${theme.COLORS.TEXT.WHITE};
-    padding: 10px 12px;
+    justify-content: space-around;
+    background: ${isOwner ? COLORS.PRIMARY : '#4b5563'};
+    color: ${COLORS.BACKGROUND.WHITE};
+    padding: 12px 0;
+    position: relative;
+    overflow: hidden;
+`;
+
+const headerItem = css`
+    display: flex;
+    flex-direction: column;
 `;
 
 const labelStyle = css`
-    font-size: ${theme.FONT_SIZES.SM};
+    font-size: 12px;
     color: rgba(255, 255, 255, 0.7);
     margin-bottom: 4px;
+    font-weight: 500;
 `;
 
 const valueStyle = css`
-    font-size: ${theme.FONT_SIZES.SM};
-    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
 `;
 
-const contentContainer = css`
-    padding: 12px;
+const contentStyle = css`
+    width: 100%;
+    padding: 16px 16px 12px 16px;
+    display: flex;
+    flex-direction: column;
+    background: ${COLORS.BACKGROUND.WHITE_SECONDARY};
 `;
 
 const citiesStyle = css`
     display: flex;
-    justify-content: space-between;
-    font-size: ${theme.FONT_SIZES.XXL};
-    font-weight: bold;
+    align-items: center;
 `;
 
-const contentStyle = css`
-    margin: 18px 0 22px 2px;
+const countryNameStyle = css`
+    font-size: 18px;
+    font-weight: 700;
+    color: ${COLORS.TEXT.BLACK};
+`;
+
+const dotsAndCharacterContainer = css`
+    flex: 1;
+    position: relative;
+    margin: 0 12px;
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+`;
+
+const pointDots = css`
+    width: 100%;
+    height: 2px;
+    background: #9ca3af;
+`;
+
+const startPointDot = css`
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #9ca3af;
+    transform: translateY(-50%);
+`;
+
+const endPointDot = css`
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #9ca3af;
+    transform: translateY(-50%);
+`;
+
+const characterContainer = (isHovered: boolean) => css`
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    left: ${isHovered ? '80%' : '0%'};
+    transition: all 1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+const characterStyle = css`
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    z-index: 2;
+`;
+
+const characterShadow = css`
+    position: absolute;
+    bottom: -6px;
+    width: 30px;
+    height: 6px;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+    border-radius: 50%;
+    z-index: 1;
 `;
 
 const titleStyle = css`
+    margin: 24px 0 -8px 4px;
     display: flex;
     flex-direction: column;
     gap: 8px;
 `;
 
 const titleLabelStyle = css`
-    font-size: ${theme.FONT_SIZES.SM};
-    font-weight: bold;
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b7280;
 `;
 
 const titleValueStyle = css`
-    font-weight: bold;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
 `;
 
-const flagStyle = css`
+const contentFooter = css`
     display: flex;
-    align-items: center;
-    margin-right: 4px;
-    font-size: ${theme.FONT_SIZES.XL};
+    justify-content: space-between;
+    align-items: end;
 `;
 
 const hashtagGroup = css`
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 5px;
+    gap: 4px;
 `;
 
 const hashtagStyle = css`
     background-color: #f0f0f0;
-    color: ${theme.COLORS.TEXT.BLACK};
+    color: ${COLORS.TEXT.BLACK};
+    color: #4b5563;
     padding: 5px 10px;
-    border-radius: 15px;
-    font-size: ${theme.FONT_SIZES.SM};
+    border-radius: 9999px;
+    font-size: ${FONT_SIZES.SM};
 `;
 
-const rightSection = css`
-    width: 25%;
-    height: 100%;
-    background: ${theme.COLORS.BACKGROUND.WHITE};
-    border-radius: 0 0 8px 0;
-    box-shadow:
-        6px 6px 8px rgba(0, 0, 0, 0.1),
-        1px 1px 3px rgba(0, 0, 0, 0.08);
+const hashSymbol = css`
+    color: ${COLORS.PRIMARY};
+    font-weight: 700;
 `;
 
-const rightTopSection = (isOwner: boolean) => css`
-    height: 48px;
-    padding: 10px 12px;
-    background-color: ${isOwner ? theme.COLORS.PRIMARY : theme.COLORS.SECONDARY};
-    color: ${theme.COLORS.TEXT.WHITE};
-    border-radius: 0 8px 0 0;
-`;
-
-const rightContent = css`
-    height: calc(100% - 48px);
+const flagStyle = (isOwner: boolean) => css`
+    padding: 4px 8px;
+    background-color: ${isOwner ? '#eff6ff' : '#f1f5f9'};
+    border: 1px solid ${isOwner ? '#dbeafe' : '#e2e8f0'};
+    border-radius: 8px;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
-    gap: 28px;
-    background-color: ${theme.COLORS.BACKGROUND.WHITE};
-    border-radius: 0 0 10px 0;
-`;
-
-const imageStyle = css`
-    width: 52px;
-`;
-
-const slideRight = keyframes`
-  from {
-    transform: translateX(0);
-  }
-  to {
-      transform: translateX(100%);
-    }
-    `;
-
-const animateRight = css`
-    animation: ${slideRight} 0.8s forwards;
+    justify-content: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    font-size: 36px;
 `;
 
 const buttonGroup = css`
     display: flex;
     justify-content: space-between;
-    padding: 8px;
-    border-bottom: 1.5px dashed ${COLORS.TEXT.DESCRIPTION}50;
+    background-color: white;
+    padding: 10px 12px;
+    border-radius: 0 0 14px 14px;
+    border: 1px solid #f3f4f6;
+    border-top: none;
+    transition: all 0.25s ease;
 `;
 
 const buttonStyle = css`
     display: flex;
     align-items: center;
-    padding: 6px 8px;
+    justify-content: center;
+    padding: 4px 8px;
     border: none;
-    border-radius: 4px;
-    font-size: ${theme.FONT_SIZES.SM};
-    font-weight: 600;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
-    gap: 4px;
+    transition: all 0.2s ease;
+    gap: 6px;
     background: transparent;
-    color: ${theme.COLORS.TEXT.BLACK};
+    color: #4b5563;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: ${COLORS.PRIMARY_HOVER};
+    }
 `;
 
 export default TripTicket;
