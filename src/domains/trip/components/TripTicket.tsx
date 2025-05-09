@@ -5,6 +5,7 @@ import { ImagePlus, Share2, Edit, Trash, Unlink, Info } from 'lucide-react';
 
 import characterImg from '@/assets/images/character-ogami-1.png';
 import ShareModal from '@/domains/share/components/ShareModal';
+import ShareNotification from '@/domains/share/components/ShareNotification';
 import { TICKET } from '@/domains/trip/constants';
 import { Trip } from '@/domains/trip/types';
 import useUserStore from '@/domains/user/stores/useUserStore';
@@ -17,7 +18,7 @@ import { useTicketNavigation } from '@/shared/hooks/useTicketNavigation';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
-    const { tripKey, tripTitle, country, startDate, endDate, hashtags, ownerNickname } = tripInfo;
+    const { tripKey, tripTitle, country, startDate, endDate, hashtags, ownerNickname, shareId } = tripInfo;
 
     const [isHovered, setIsHovered] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -25,10 +26,13 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
 
     const userInfo = useUserStore((state) => state.userInfo);
 
-    const { isModalOpen, isDeleting, handler, deleteTrip, closeModal } = useTicketHandler(tripKey!, {
-        onSuccess: (message) => showToast(message),
-        onError: (message) => showToast(message),
-    });
+    const { isModalOpen, isDeleting, isUnLinking, handler, deleteTrip, unlinkShared, closeModal } = useTicketHandler(
+        tripKey!,
+        {
+            onSuccess: (message) => showToast(message),
+            onError: (message) => showToast(message),
+        },
+    );
     const { isAnimating, handleCardClick } = useTicketNavigation(tripKey!);
 
     const isOwner = userInfo?.nickname === ownerNickname;
@@ -38,6 +42,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     return (
         <div css={container} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
             {isDeleting && <Spinner text='여행 티켓 삭제 중...' />}
+            {isUnLinking && <Spinner text='공유 티켓 삭제 중...' />}
 
             <main css={[mainStyle, isHovered && ticketHoverStyle]} onClick={handleCardClick}>
                 <header css={header(isOwner)}>
@@ -111,17 +116,15 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
                         <Info size={16} /> 공유 정보
                     </button>
                 )}
-                <button css={buttonStyle} onClick={() => handler.delete()}>
-                    {isOwner ? (
-                        <>
-                            <Trash size={14} /> 티켓 삭제
-                        </>
-                    ) : (
-                        <>
-                            <Unlink size={14} /> 공유 해제
-                        </>
-                    )}
-                </button>
+                {isOwner ? (
+                    <button css={buttonStyle} onClick={() => handler.delete()}>
+                        <Trash size={14} /> 티켓 삭제
+                    </button>
+                ) : (
+                    <button css={buttonStyle} onClick={() => handler.delete()}>
+                        <Unlink size={14} /> 공유 해제
+                    </button>
+                )}
             </footer>
 
             {isModalOpen && (
@@ -134,7 +137,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
                     }
                     confirmText={isOwner ? '삭제' : '해제'}
                     cancelText='취소'
-                    confirmModal={deleteTrip}
+                    confirmModal={isOwner ? deleteTrip : () => unlinkShared(shareId!)}
                     closeModal={closeModal}
                 />
             )}
@@ -153,16 +156,18 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
 };
 
 const container = css`
+    width: 100%;
     margin-bottom: 8px;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
     transition: all 0.25s ease;
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.06),
+        0 2px 4px -1px rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    overflow: hidden;
 `;
 
 const mainStyle = css`
-    width: 100%;
-    border-radius: 14px 14px 0 0;
     cursor: pointer;
-    overflow: hidden;
 `;
 
 const ticketHoverStyle = css`

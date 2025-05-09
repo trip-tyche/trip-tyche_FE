@@ -74,7 +74,7 @@ const ShareNotification = ({ referenceId, onClose }: ShareNotificationProps) => 
                     </div>
                 </div>
 
-                <p css={invitationMessage}>"함께 {country} 여행 가요! 함께하면 더 즐거울 거예요 👋"</p>
+                <p css={invitationMessage}>"함께 {country} 여행 가요! 👋"</p>
 
                 <div css={ticketWrapper}>
                     <SharedTicket
@@ -130,7 +130,6 @@ const ShareNotification = ({ referenceId, onClose }: ShareNotificationProps) => 
 };
 
 const customModalStyle = css`
-    width: 400px;
     overflow: hidden;
     padding: 0;
     user-select: none;

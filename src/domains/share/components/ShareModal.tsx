@@ -110,7 +110,7 @@ const ShareModal = ({ tripKey, tripTitle, onClose, startDate, endDate }: ShareMo
 };
 
 const customModalStyle = css`
-    width: 400px;
+    user-select: none;
 `;
 
 const titleStyle = css`

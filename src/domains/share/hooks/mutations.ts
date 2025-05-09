@@ -13,3 +13,13 @@ export const useShareStatus = () => {
         },
     });
 };
+
+export const useShareUnlink = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (shareId: number) => toResult(() => shareAPI.unlinkShared(shareId)),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
+        },
+    });
+};

@@ -12,6 +12,7 @@ export interface TripInfo {
     endDate: string;
     hashtags: string[];
     mediaFilesDates?: string[];
+    shareId?: number;
 }
 
 export interface Country {

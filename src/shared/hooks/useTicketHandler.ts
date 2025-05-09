@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
+import { useShareUnlink } from '@/domains/share/hooks/mutations';
 import { useTripDelete } from '@/domains/trip/hooks/mutations';
 import { ROUTES } from '@/shared/constants/paths';
 
@@ -19,9 +19,8 @@ export const useTicketHandler = (
 
     const navigate = useNavigate();
 
-    const queryClient = useQueryClient();
-
-    const { mutateAsync, isPending: isDeleting } = useTripDelete();
+    const { mutateAsync: deleteTripAsync, isPending: isDeleting } = useTripDelete();
+    const { mutateAsync: unlinkSharedAsync, isPending: isUnLinking } = useShareUnlink();
 
     const handler = {
         edit: () => navigate(`${ROUTES.PATH.TRIP.MANAGEMENT.EDIT(tripKey!)}`),
@@ -29,18 +28,30 @@ export const useTicketHandler = (
         delete: () => {
             setIsModalOpen(true);
         },
+        shwoShareInfo: () => {},
+        unlinkShared: () => {},
     };
 
     const deleteTrip = async () => {
         setIsModalOpen(false);
-        const result = await mutateAsync(tripKey);
+        const result = await deleteTripAsync(tripKey);
         if (!result.success) {
             onError?.(result.error);
             setIsModalOpen(false);
             return;
         }
         onSuccess?.(result.data);
-        queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
+    };
+
+    const unlinkShared = async (shareId: number) => {
+        setIsModalOpen(false);
+        const result = await unlinkSharedAsync(shareId);
+        if (!result.success) {
+            onError?.(result.error);
+            setIsModalOpen(false);
+            return;
+        }
+        onSuccess?.(result.data);
     };
 
     const closeModal = () => {
@@ -50,8 +61,10 @@ export const useTicketHandler = (
     return {
         isModalOpen,
         isDeleting,
+        isUnLinking,
         handler,
         deleteTrip,
+        unlinkShared,
         closeModal,
     };
 };

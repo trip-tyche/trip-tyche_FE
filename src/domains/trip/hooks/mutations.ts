@@ -5,8 +5,13 @@ import { mediaAPI, tripAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/utils';
 
 export const useTripDelete = () => {
+    const queryClient = useQueryClient();
+
     return useMutation({
         mutationFn: (tripKey: string) => toResult(() => tripAPI.deleteTripTicket(tripKey)),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
+        },
     });
 };
 

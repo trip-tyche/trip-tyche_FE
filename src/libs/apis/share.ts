@@ -18,4 +18,9 @@ export const shareAPI = {
     // 공유 상태 변경 (수락 / 거절)
     updateShareStatus: async (shareId: number, status: string): Promise<ApiResponse<string>> =>
         await apiClient.patch(`/v1/shares/${shareId}?status=${status}`),
+    // 공유 관계 해제
+    unlinkShared: async (shareId: number): Promise<ApiResponse<string>> => {
+        console.log(shareId);
+        return await apiClient.delete(`/v1/shares/${shareId}`);
+    },
 };
