@@ -220,7 +220,7 @@ const TripInfoForm = ({ isEditing = false, tripInfo, setTripInfo }: TripInfoForm
                             css={[buttonBaseStyle, hashtags.includes(tag) ? selectedButtonStyle : defaultButtonStyle]}
                             onClick={() => handleHashtagSelect(tag)}
                         >
-                            {tag}
+                            # {tag}
                         </button>
                     ))}
                 </div>
