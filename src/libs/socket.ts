@@ -71,7 +71,9 @@ const subscribeToShareNotifications = (userId: string) => {
 
     state.client.subscribe(SOCKET_URL.TOPIC.REQUEST(userId), (message) => {
         const { showToast } = useToastStore.getState();
-
+        console.log('message.body: ', message.body);
+        console.log('JSON.parse(message.body): ', JSON.parse(message.body));
+        console.log('JSON.parse(JSON.parse(message.body)): ', JSON.parse(JSON.parse(message.body)));
         try {
             const subscribedMessage = JSON.parse(JSON.parse(message.body));
             const messageType = subscribedMessage.type;
