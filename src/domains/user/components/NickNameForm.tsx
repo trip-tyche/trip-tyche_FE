@@ -136,7 +136,7 @@ const NickNameForm = ({ mode, onSubmit }: NickNameFormProps) => {
 
 // 스타일 정의
 const page = css`
-    height: 100dvh;
+    height: calc(100dvh - 48px);
     display: flex;
     flex-direction: column;
     background-color: ${COLORS.BACKGROUND.WHITE};
@@ -188,7 +188,6 @@ const inputStyle = css`
     width: 100%;
     padding: 12px 40px;
     outline: none;
-    font-size: 16px;
     border: none;
 `;
 

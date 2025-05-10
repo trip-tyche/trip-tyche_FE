@@ -18,7 +18,7 @@ const connect = (userId: string) => {
     state.userId = userId;
 
     const client = new Client({
-        brokerURL: `${SOCKET_URL.BASE}/ws`,
+        brokerURL: `${SOCKET_URL.BASE}`,
         reconnectDelay: 5000,
         heartbeatIncoming: 50000,
         heartbeatOutgoing: 50000,

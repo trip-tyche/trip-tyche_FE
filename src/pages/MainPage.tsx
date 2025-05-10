@@ -117,6 +117,7 @@ const logo = css`
     font-size: 20px;
     font-weight: 700;
     color: ${COLORS.PRIMARY};
+    user-select: none;
 `;
 
 const headerIcons = css`
@@ -134,6 +135,7 @@ const notificationIcon = css`
     width: 24px;
     height: 24px;
     color: ${COLORS.ICON};
+    -webkit-tap-highlight-color: transparent;
 `;
 
 const notificationBadge = css`
@@ -150,6 +152,7 @@ const notificationBadge = css`
     display: flex;
     justify-content: center;
     align-items: center;
+    user-select: none;
 `;
 
 const settingsIcon = css`
@@ -157,6 +160,7 @@ const settingsIcon = css`
     height: 24px;
     color: ${COLORS.ICON};
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 `;
 
 const ticketsContainer = css`

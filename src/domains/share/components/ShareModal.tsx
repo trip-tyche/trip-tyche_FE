@@ -185,7 +185,6 @@ const searchInputStyle = css`
     padding: 10px 16px 10px 40px;
     border: none;
     border-radius: 8px;
-    font-size: 14px;
     outline: none;
     transition: all 0.2s;
 

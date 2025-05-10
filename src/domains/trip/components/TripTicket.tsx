@@ -19,7 +19,6 @@ import { useToastStore } from '@/shared/stores/useToastStore';
 const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     const { tripKey, tripTitle, country, startDate, endDate, hashtags, ownerNickname, shareId } = tripInfo;
 
-    const [isHovered, setIsHovered] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const { showToast } = useToastStore.getState();
 
@@ -39,11 +38,11 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     const destination = country.split('/')[1] || '';
 
     return (
-        <div css={container} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+        <div css={container}>
             {isDeleting && <Spinner text='여행 티켓 삭제 중...' />}
             {isUnLinking && <Spinner text='공유 티켓 삭제 중...' />}
 
-            <main css={[mainStyle, isHovered && ticketHoverStyle]} onClick={handleCardClick}>
+            <main css={mainStyle} onClick={handleCardClick}>
                 <header css={header(isOwner)}>
                     <div css={headerItem}>
                         <h3 css={labelStyle}>PASSENGER</h3>
@@ -163,14 +162,11 @@ const container = css`
         0 2px 4px -1px rgba(0, 0, 0, 0.08);
     border-radius: 14px;
     overflow: hidden;
+    user-select: none;
 `;
 
 const mainStyle = css`
     cursor: pointer;
-`;
-
-const ticketHoverStyle = css`
-    transform: translateY(-2px);
 `;
 
 const header = (isOwner: boolean) => css`
