@@ -39,6 +39,5 @@ yarn-error.log*
 /certificates
 
 # 프로젝트 관련
-src/pages/trash/
-backup/
+src/pages/BeforeMainPage.tsx
 stats.html
