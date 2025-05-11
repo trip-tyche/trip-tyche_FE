@@ -34,6 +34,13 @@ export const BUTTON = {
     },
 } as const;
 
+export const MAP = {
+    PHOTO_CARD_SIZE: {
+        WIDTH: 100,
+        HEIGHT: 100,
+    },
+};
+
 export const IMAGE_CAROUSEL_STATE = {
     AUTO: 'auto',
     PAUSED: 'paused',

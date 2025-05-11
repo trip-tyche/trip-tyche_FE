@@ -11,7 +11,7 @@ export const GOOGLE_MAPS_CONFIG = {
     region: 'KR',
 } as const;
 
-export const GOOGLE_MAPS_OPTIONS: MapOption = {
+export const MAPS_OPTIONS: MapOption = {
     mapTypeControl: false,
     fullscreenControl: false,
     zoomControl: false,
@@ -37,15 +37,4 @@ export const MARKER_CLUSTER_OPTIONS = {
     zoomOnClick: true,
     minimumClusterSize: 1,
     clickZoom: 2,
-} as const;
-
-export const TIMELINE_MAP = {
-    PHOTO_CARD: {
-        WIDTH: 100,
-        HEIGHT: 100,
-    },
-    DURATION: {
-        MOVE: 3000,
-        WAIT: 3000,
-    },
 } as const;

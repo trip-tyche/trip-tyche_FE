@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { PresignedUrlResponse } from '@/domains/media/image';
-import { ImageFile, ImagesFiles } from '@/domains/media/types';
+import { ImagesFiles } from '@/domains/media/types';
 import { mediaAPI } from '@/libs/apis';
 import {
     completeImages,
@@ -45,17 +45,15 @@ export const useImageUpload = () => {
         setIsProcessing(false);
     };
 
-    const uploadImages = async (imagesToUpload: ImageFile[]) => {
-        if (!tripKey || !imagesToUpload.length) {
+    const uploadImages = async () => {
+        const imagesToUpload = images?.totalImages;
+        if (!tripKey || !imagesToUpload) {
             return;
         }
 
         try {
             setUploadStatus('pending');
-
-            if (!images?.totalImages) return;
-
-            const imageNames = images?.totalImages.map((image) => ({ fileName: image.image.name }));
+            const imageNames = imagesToUpload.map((image) => ({ fileName: image.image.name }));
             const result = await mediaAPI.requestPresignedUrls(tripKey, imageNames);
             if (!result.success) throw new Error(result.error);
             const { data: presignedUrls } = result;
@@ -63,18 +61,18 @@ export const useImageUpload = () => {
             console.time(`image upload to S3`);
             await Promise.all(
                 presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) =>
-                    mediaAPI.uploadToS3(urlInfo.presignedPutUrl, images?.totalImages[index].image),
+                    mediaAPI.uploadToS3(urlInfo.presignedPutUrl, imagesToUpload[index].image),
                 ),
             );
             console.timeEnd(`image upload to S3`);
 
             const metaDatas = presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) => {
-                const { recordDate, location } = images.totalImages[index];
+                const { recordDate, location } = imagesToUpload[index];
                 return {
                     mediaLink: urlInfo.presignedPutUrl.split('?')[0],
                     latitude: location?.latitude || 0,
                     longitude: location?.longitude || 0,
-                    recordDate,
+                    recordDate: recordDate || '1900-01-01T00:00:00',
                 };
             });
 

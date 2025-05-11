@@ -43,7 +43,7 @@ const TripImageUploadPage = () => {
 
     const closeAlertModal = async () => {
         if (images) {
-            uploadImages(images.totalImages);
+            uploadImages();
             setIsUploadModalModalOpen(false);
 
             if (isEdit) {

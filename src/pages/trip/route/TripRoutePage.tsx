@@ -7,19 +7,17 @@ import { BsPersonWalking } from 'react-icons/bs';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { MediaFile } from '@/domains/media/types';
+import { ROUTE } from '@/domains/route/constants';
 import { PinPoint } from '@/domains/route/types';
 import { routeAPI } from '@/libs/apis';
+import { getPixelPositionOffset } from '@/libs/utils/map';
 import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
 import Spinner from '@/shared/components/common/Spinner';
-import {
-    DEFAULT_ZOOM_SCALE,
-    GOOGLE_MAPS_OPTIONS,
-    MARKER_CLUSTER_OPTIONS,
-    TIMELINE_MAP,
-} from '@/shared/constants/maps/config';
+import { DEFAULT_ZOOM_SCALE, MAPS_OPTIONS, MARKER_CLUSTER_OPTIONS } from '@/shared/constants/maps/config';
 import { CHARACTER_ICON_CONFIG, POLYLINE_OPTIONS } from '@/shared/constants/maps/styles';
 import { ROUTES } from '@/shared/constants/paths';
+import { MAP } from '@/shared/constants/ui';
 import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
@@ -155,7 +153,7 @@ const TripRoutePage = () => {
 
         const animate = (time: number) => {
             if (!startTimeRef.current) startTimeRef.current = time;
-            const progress = Math.min((time - startTimeRef.current) / TIMELINE_MAP.DURATION.MOVE, 1);
+            const progress = Math.min((time - startTimeRef.current) / ROUTE.DURATION.MOVE, 1);
 
             const newLat = start.latitude + (end.latitude - start.latitude) * progress;
             const newLng = start.longitude + (end.longitude - start.longitude) * progress;
@@ -178,7 +176,7 @@ const TripRoutePage = () => {
                     if (isPlayingAnimation) {
                         moveCharacter();
                     }
-                }, TIMELINE_MAP.DURATION.WAIT);
+                }, ROUTE.DURATION.WAIT);
             }
         };
 
@@ -192,7 +190,7 @@ const TripRoutePage = () => {
                 () => {
                     moveCharacter();
                 },
-                isLastPinPoint ? 0 : TIMELINE_MAP.DURATION.WAIT,
+                isLastPinPoint ? 0 : ROUTE.DURATION.WAIT,
             );
         }
 
@@ -256,14 +254,6 @@ const TripRoutePage = () => {
         }
     }, [pinPointsInfo, isPlayingAnimation, isLastPinPoint, moveCharacter]);
 
-    const calculatePhotoCardOffset = useCallback((height: number) => {
-        const offset = {
-            x: -TIMELINE_MAP.PHOTO_CARD.WIDTH / 2,
-            y: -(TIMELINE_MAP.PHOTO_CARD.HEIGHT + height),
-        };
-        return offset;
-    }, []);
-
     const clusterOptions = useMemo(
         () => ({
             ...MARKER_CLUSTER_OPTIONS,
@@ -323,7 +313,7 @@ const TripRoutePage = () => {
         <OverlayView
             position={{ lat: marker.latitude, lng: marker.longitude }}
             mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-            getPixelPositionOffset={() => calculatePhotoCardOffset(50)}
+            getPixelPositionOffset={() => getPixelPositionOffset(50)}
         >
             <div css={basePhotoCardStyle}>
                 <img src={marker.mediaLink} alt='포토카드 이미지' />
@@ -346,7 +336,7 @@ const TripRoutePage = () => {
                             <OverlayView
                                 position={characterPosition || undefined}
                                 mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                                getPixelPositionOffset={() => calculatePhotoCardOffset(80)}
+                                getPixelPositionOffset={() => getPixelPositionOffset(80)}
                             >
                                 <div css={photoCardStyle(index === currentPinPointIndex && !isCharacterMoving)}>
                                     <img
@@ -445,7 +435,7 @@ const TripRoutePage = () => {
                     zoom={DEFAULT_ZOOM_SCALE.TIMELINE}
                     center={characterPosition || undefined}
                     options={{
-                        ...GOOGLE_MAPS_OPTIONS,
+                        ...MAPS_OPTIONS,
                         draggable: isMapInteractive,
                         scrollwheel: isMapInteractive,
                     }}
@@ -491,8 +481,8 @@ const customButtonStyle = (variant: string = 'primary') => css`
 
 const basePhotoCardStyle = css`
     background-color: ${theme.COLORS.TEXT.WHITE};
-    width: ${TIMELINE_MAP.PHOTO_CARD.WIDTH}px;
-    height: ${TIMELINE_MAP.PHOTO_CARD.HEIGHT}px;
+    width: ${MAP.PHOTO_CARD_SIZE.WIDTH}px;
+    height: ${MAP.PHOTO_CARD_SIZE.HEIGHT}px;
     border-radius: 20%;
     padding: 1px;
     box-shadow:

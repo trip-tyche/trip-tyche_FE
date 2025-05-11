@@ -1,9 +1,9 @@
-import { TIMELINE_MAP } from '@/shared/constants/maps/config';
+import { MAP } from '@/shared/constants/ui';
 
 export const getPixelPositionOffset = (height: number) => {
     const offset = {
-        x: -TIMELINE_MAP.PHOTO_CARD.WIDTH / 2,
-        y: -(TIMELINE_MAP.PHOTO_CARD.HEIGHT + height),
+        x: -MAP.PHOTO_CARD_SIZE.WIDTH / 2,
+        y: -(MAP.PHOTO_CARD_SIZE.HEIGHT + height),
     };
     return offset;
 };
