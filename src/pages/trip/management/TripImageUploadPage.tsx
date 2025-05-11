@@ -71,6 +71,10 @@ const TripImageUploadPage = () => {
         }
     };
 
+    const imagesWithoutDateCount = images?.imagesWithoutDate.length || 0;
+    const imagesWithoutLocation = images?.imagesWithoutLocation.length || 0;
+    const hasInvalidImages = !!(imagesWithoutDateCount + imagesWithoutLocation);
+
     return (
         <div css={containerStyle}>
             <Header
@@ -146,14 +150,10 @@ const TripImageUploadPage = () => {
                             총 <span css={countStyle}>{images?.totalImages.length}</span>장의 사진을 등록할까요?
                         </h1>
                         <div>
-                            {!!(
-                                Number(images?.imagesWithoutDate.length) && Number(images?.imagesWithoutLocation.length)
-                            ) && (
+                            {hasInvalidImages && (
                                 <p>
-                                    {Number(images?.imagesWithoutDate.length) ||
-                                        0 + Number(images?.imagesWithoutLocation.length) ||
-                                        0}{' '}
-                                    장의 사진은 위치 또는 날짜 정보가 없어요!
+                                    {imagesWithoutDateCount + imagesWithoutLocation} 장의 사진은 위치 또는 날짜 정보가
+                                    없어요!
                                 </p>
                             )}
                         </div>

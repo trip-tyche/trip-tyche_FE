@@ -31,6 +31,7 @@ export const useImageUpload = () => {
         setIsProcessing(true);
         console.time(`extract metadata and resize`);
         const metadatas = await extractMetadataFromImage(uniqueImages);
+        console.log(metadatas);
         const resizedImages = await resizeImages(metadatas, setProgress);
         console.timeEnd(`extract metadata and resize`);
 

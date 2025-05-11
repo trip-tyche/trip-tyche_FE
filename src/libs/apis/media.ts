@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { PresignedUrlRequest, PresignedUrlResponse } from '@/domains/media/image';
-import { MediaFile, UnlocatedMediaFileModel } from '@/domains/media/types';
+import { MediaFile, UnlocatedMediaFileList } from '@/domains/media/types';
 import { apiClient } from '@/libs/apis/client';
 import { API_ENDPOINTS } from '@/libs/apis/constants';
 import { ApiResponse, MediaByDate, MediaByPinPoint, Result } from '@/libs/apis/types';
@@ -22,8 +22,8 @@ export const mediaAPI = {
         const data = await apiClient.get(`${API_ENDPOINTS.TRIPS}/${tripKey}/images/firstimage`);
         return data.data;
     },
-    fetchUnlocatedImages: async (tripKey: string): Promise<UnlocatedMediaFileModel[]> => {
-        const data = await apiClient.get<UnlocatedMediaFileModel[]>(
+    fetchUnlocatedImages: async (tripKey: string): Promise<UnlocatedMediaFileList[]> => {
+        const data = await apiClient.get<UnlocatedMediaFileList[]>(
             `${API_ENDPOINTS.TRIPS}/${tripKey}/images/unlocated`,
         );
         return data.data;

@@ -6,7 +6,8 @@ import { Play, Pause } from 'lucide-react';
 import { BsPersonWalking } from 'react-icons/bs';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { BaseLocationMedia, MediaFileModel, PinPointModel } from '@/domains/media/types';
+import { MediaFile } from '@/domains/media/types';
+import { PinPoint } from '@/domains/route/types';
 import { routeAPI } from '@/libs/apis';
 import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
@@ -26,14 +27,13 @@ import { LatLng, Map } from '@/shared/types/maps';
 
 const TripRoutePage = () => {
     const [tripTitle, setTripTitle] = useState();
-    const [pinPointsInfo, setPinPointsInfo] = useState<PinPointModel[]>([]);
-    const [tripImages, setTripImages] = useState<MediaFileModel[]>([]);
+    const [pinPointsInfo, setPinPointsInfo] = useState<PinPoint[]>([]);
+    const [tripImages, setTripImages] = useState<MediaFile[]>([]);
     const [startDate, setStartDate] = useState('');
-
     const [characterPosition, setCharacterPosition] = useState<LatLng>();
 
     const [currentPinPointIndex, setCurrentPinPointIndex] = useState(0);
-    const [selectedIndividualMarker, setSelectedIndividualMarker] = useState<BaseLocationMedia | null>(null);
+    const [selectedIndividualMarker, setSelectedIndividualMarker] = useState<MediaFile | null>(null);
 
     const [currentZoomScale, setCurrentZoomScale] = useState(DEFAULT_ZOOM_SCALE.TIMELINE);
     const [isMapInteractive, setIsMapInteractive] = useState(true);
@@ -59,17 +59,11 @@ const TripRoutePage = () => {
 
     const isLastPinPoint = currentPinPointIndex === pinPointsInfo.length - 1;
 
-    //  Google Maps가 처음 로드될 때 실행되는 핸들러 함수
     const handleMapLoad = (map: Map) => {
         mapRef.current = map;
         setIsMapLoaded(true);
     };
 
-    // const {
-    //     data: { tripTitle, startDate, pinPoints, mediaFiles: images },
-    // } = useTripTimeline(tripKey!);
-
-    // 데이터 패칭
     useEffect(() => {
         const getTimelineMapData = async () => {
             if (!tripKey) {
@@ -86,18 +80,18 @@ const TripRoutePage = () => {
             }
 
             const validLocationPinPoints = pinPoints.filter(
-                (pinPoint: PinPointModel) => pinPoint.latitude !== 0 && pinPoint.longitude !== 0,
+                (pinPoint: PinPoint) => pinPoint.latitude !== 0 && pinPoint.longitude !== 0,
             );
 
-            const sortedPinPointByDate = validLocationPinPoints.sort((a: PinPointModel, b: PinPointModel) => {
+            const sortedPinPointByDate = validLocationPinPoints.sort((a: PinPoint, b: PinPoint) => {
                 return new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime();
             });
 
             const validLocationImages = images.filter(
-                (image: MediaFileModel) => image.latitude !== 0 && image.longitude !== 0,
+                (image: MediaFile) => image.latitude !== 0 && image.longitude !== 0,
             );
 
-            const imageDates = validLocationImages.map((image: MediaFileModel) => image.recordDate.split('T')[0]);
+            const imageDates = validLocationImages.map((image: MediaFile) => image.recordDate.split('T')[0]);
 
             const uniqueImageDates = [...new Set<string>([...imageDates])].sort((a, b) => a.localeCompare(b));
 
@@ -226,7 +220,7 @@ const TripRoutePage = () => {
         });
     }, [tripKey, startDate, imagesByDates, navigate, pinPointsInfo, currentPinPointIndex]);
 
-    const handleIndividualMarkerClick = (marker: BaseLocationMedia) => {
+    const handleIndividualMarkerClick = (marker: MediaFile) => {
         setSelectedIndividualMarker(marker);
         if (mapRef.current) {
             mapRef.current.panTo({ lat: marker.latitude, lng: marker.longitude });
@@ -325,7 +319,7 @@ const TripRoutePage = () => {
         return <Polyline path={path} options={POLYLINE_OPTIONS} />;
     };
 
-    const renderPhotoCard = (marker: BaseLocationMedia) => (
+    const renderPhotoCard = (marker: MediaFile) => (
         <OverlayView
             position={{ lat: marker.latitude, lng: marker.longitude }}
             mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
@@ -336,6 +330,7 @@ const TripRoutePage = () => {
             </div>
         </OverlayView>
     );
+    console.log(selectedIndividualMarker);
 
     const renderMarkers = () => {
         if (showCharacterView) {
@@ -408,41 +403,37 @@ const TripRoutePage = () => {
 
     const renderButtons = () => {
         return (
-            <>
-                {!isCharacterMoving && (
-                    <div css={buttonGroup}>
+            !isCharacterMoving && (
+                <div css={buttonGroup}>
+                    <Button
+                        text='날짜별 사진보기'
+                        variant='white'
+                        onClick={handleImageByDateButtonClick}
+                        customStyle={customButtonStyle('white')}
+                    />
+                    {showCharacterView ? (
                         <Button
-                            text='날짜별 사진보기'
-                            variant='white'
-                            onClick={handleImageByDateButtonClick}
-                            customStyle={customButtonStyle('white')}
+                            text={
+                                isLastPinPoint
+                                    ? '첫 위치로 돌아가기'
+                                    : isPlayingAnimation
+                                      ? '캐릭터 움직임 멈추기'
+                                      : '캐릭터 움직이기'
+                            }
+                            icon={isLastPinPoint ? '' : isPlayingAnimation ? <Pause size={16} /> : <Play size={16} />}
+                            onClick={togglePlayingButton}
+                            customStyle={customButtonStyle()}
                         />
-                        {showCharacterView ? (
-                            <Button
-                                text={
-                                    isLastPinPoint
-                                        ? '첫 위치로 돌아가기'
-                                        : isPlayingAnimation
-                                          ? '캐릭터 움직임 멈추기'
-                                          : '캐릭터 움직이기'
-                                }
-                                icon={
-                                    isLastPinPoint ? '' : isPlayingAnimation ? <Pause size={16} /> : <Play size={16} />
-                                }
-                                onClick={togglePlayingButton}
-                                customStyle={customButtonStyle()}
-                            />
-                        ) : (
-                            <Button
-                                text='캐릭터 화면에 표시'
-                                icon={<BsPersonWalking size={16} />}
-                                onClick={handleShowCharacterViewButtonClick}
-                                customStyle={customButtonStyle()}
-                            />
-                        )}
-                    </div>
-                )}
-            </>
+                    ) : (
+                        <Button
+                            text='캐릭터 화면에 표시'
+                            icon={<BsPersonWalking size={16} />}
+                            onClick={handleShowCharacterViewButtonClick}
+                            customStyle={customButtonStyle()}
+                        />
+                    )}
+                </div>
+            )
         );
     };
 

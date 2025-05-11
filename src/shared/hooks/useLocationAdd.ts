@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { UnlocatedMediaFile, UnlocatedMediaFileModel } from '@/domains/media/types';
+import { UnlocatedMediaFile, UnlocatedMediaFileList } from '@/domains/media/types';
 import { mediaAPI } from '@/libs/apis';
 import { ROUTES } from '@/shared/constants/paths';
 import { useTripDefaultLocation } from '@/shared/hooks/queries/useTripImage';
@@ -11,7 +11,7 @@ import { useToastStore } from '@/shared/stores/useToastStore';
 import { Location } from '@/shared/types/location';
 
 export const useLocationAdd = () => {
-    const [displayedImages, setDisplayedImages] = useState<UnlocatedMediaFileModel[]>([]);
+    const [displayedImages, setDisplayedImages] = useState<UnlocatedMediaFileList[]>([]);
     const [selectedImages, setSelectedImages] = useState<UnlocatedMediaFile[]>([]);
     const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
     const [isMapVisible, setIsMapVisible] = useState(false);
@@ -88,7 +88,7 @@ export const useLocationAdd = () => {
     };
 
     const imageGroupByDate = useMemo(() => {
-        const grouped = displayedImages.reduce<Record<string, UnlocatedMediaFileModel>>((acc, curr) => {
+        const grouped = displayedImages.reduce<Record<string, UnlocatedMediaFileList>>((acc, curr) => {
             const date = curr.recordDate.split('T')[0];
             if (!acc[date]) {
                 acc[date] = { recordDate: date, media: [...curr.media] };

@@ -1,6 +1,6 @@
-import { UnlocatedMediaFileModel } from '@/domains/media/types';
+import { UnlocatedMediaFileList } from '@/domains/media/types';
 
-export type ImageGroupByDate = Record<string, UnlocatedMediaFileModel[]>;
+export type ImageGroupByDate = Record<string, UnlocatedMediaFileList[]>;
 
 export interface PresignedUrlRequest {
     fileName: string;

@@ -201,7 +201,7 @@ const TripImageManagePage = () => {
                 {
                     <Button
                         text={`위치 없는 사진 관리`}
-                        onClick={() => navigate(`/trip/${tripKey}/images/unlocated`)}
+                        onClick={() => navigate(`/${tripKey}/images/unlocated`)}
                         css={css`
                             width: auto;
                             height: 34px;
