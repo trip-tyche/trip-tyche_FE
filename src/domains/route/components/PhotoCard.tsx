@@ -4,14 +4,14 @@ import { css } from '@emotion/react';
 import { OverlayView } from '@react-google-maps/api';
 
 import { MediaFile } from '@/domains/media/types';
-import { TIMELINE_MAP } from '@/shared/constants/maps/config';
 import { COLORS } from '@/shared/constants/theme';
+import { MAP } from '@/shared/constants/ui';
 
 const PhotoCard = ({ marker }: { marker: MediaFile }) => {
     const getPixelPositionOffset = useCallback((height: number) => {
         const offset = {
-            x: -TIMELINE_MAP.PHOTO_CARD.WIDTH / 2,
-            y: -(TIMELINE_MAP.PHOTO_CARD.HEIGHT + height),
+            x: -MAP.PHOTO_CARD_SIZE.WIDTH / 2,
+            y: -(-MAP.PHOTO_CARD_SIZE.HEIGHT + height),
         };
         return offset;
     }, []);
@@ -31,8 +31,8 @@ const PhotoCard = ({ marker }: { marker: MediaFile }) => {
 
 const basePhotoCardStyle = css`
     background-color: ${COLORS.TEXT.WHITE};
-    width: ${TIMELINE_MAP.PHOTO_CARD.WIDTH}px;
-    height: ${TIMELINE_MAP.PHOTO_CARD.HEIGHT}px;
+    width: ${MAP.PHOTO_CARD_SIZE.WIDTH}px;
+    height: ${MAP.PHOTO_CARD_SIZE.HEIGHT}px;
     border-radius: 20%;
     padding: 1px;
     box-shadow:
@@ -68,11 +68,11 @@ const basePhotoCardStyle = css`
     }
 `;
 
-const photoCardStyle = (isCurrentPin: boolean) => css`
-    ${basePhotoCardStyle}
-    opacity: ${isCurrentPin ? 1 : 0};
-    visibility: ${isCurrentPin ? 'visible' : 'hidden'};
-    pointer-events: ${isCurrentPin ? 'auto' : 'none'};
-`;
+// const photoCardStyle = (isCurrentPin: boolean) => css`
+//     ${basePhotoCardStyle}
+//     opacity: ${isCurrentPin ? 1 : 0};
+//     visibility: ${isCurrentPin ? 'visible' : 'hidden'};
+//     pointer-events: ${isCurrentPin ? 'auto' : 'none'};
+// `;
 
 export default PhotoCard;

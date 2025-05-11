@@ -6,7 +6,7 @@ import { ChevronLeft } from 'lucide-react';
 
 import Button from '@/shared/components/common/Button';
 import Spinner from '@/shared/components/common/Spinner';
-import { DEFAULT_ZOOM_SCALE, GOOGLE_MAPS_OPTIONS } from '@/shared/constants/maps/config';
+import { DEFAULT_ZOOM_SCALE, MAPS_OPTIONS } from '@/shared/constants/maps/config';
 import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
@@ -92,7 +92,7 @@ const LocationAddMap = ({
             <GoogleMap
                 zoom={DEFAULT_ZOOM_SCALE.LOCATION_ADD}
                 center={center}
-                options={GOOGLE_MAPS_OPTIONS}
+                options={MAPS_OPTIONS}
                 mapContainerStyle={{ height: 'calc(100vh + 30px)' }}
                 onClick={handleMapClick}
             >
