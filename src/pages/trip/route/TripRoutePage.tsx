@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Marker, OverlayView, MarkerClusterer, Polyline } from '@react-google-maps/api';
+import { Marker, OverlayView, MarkerClusterer } from '@react-google-maps/api';
 import { Play, Pause } from 'lucide-react';
 import { BsPersonWalking } from 'react-icons/bs';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -9,6 +9,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { MediaFile } from '@/domains/media/types';
 import { filterValidLocationMediaFile, removeDuplicateDates } from '@/domains/media/utils';
 import PhotoCard from '@/domains/route/components/PhotoCard';
+import Polyline from '@/domains/route/components/Polyline';
 import { ROUTE } from '@/domains/route/constants';
 import { useRoute } from '@/domains/route/hooks/queries';
 import { PinPoint } from '@/domains/route/types';
@@ -309,21 +310,14 @@ const TripRoutePage = () => {
         return <Spinner />;
     }
 
-    const renderPolyline = () => {
-        if (pinPoints.length < 2) {
-            return null;
-        }
-
-        const path = pinPoints.map((pinPoint) => ({ lat: pinPoint.latitude, lng: pinPoint.longitude }));
-
-        return <Polyline path={path} options={POLYLINE_OPTIONS} />;
-    };
+    const isPhotoCardVisible = (photoCardIndex: number) =>
+        Boolean(photoCardIndex === currentPinPointIndex && !isCharacterMoving);
 
     const renderMarkers = () => {
         if (showCharacterView) {
             return (
                 <>
-                    {renderPolyline()}
+                    {<Polyline pinPoints={pinPoints} />}
                     {pinPoints.map((point, index) => (
                         <React.Fragment key={point.pinPointId}>
                             <Marker
@@ -337,7 +331,7 @@ const TripRoutePage = () => {
                                 }}
                                 image={point.mediaLink}
                                 heightOffset={80}
-                                isVisible={!isCharacterMoving}
+                                isVisible={isPhotoCardVisible(index)}
                                 onClick={() =>
                                     navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_PINPOINT(tripKey!, point.pinPointId)}`)
                                 }
@@ -438,7 +432,7 @@ const TripRoutePage = () => {
         mapRef.current = map;
         setIsMapLoaded(true);
     };
-    console.log(selectedIndividualMarker);
+
     return (
         <div css={pageContainer}>
             <Header title={tripRouteInfo?.title || ''} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
