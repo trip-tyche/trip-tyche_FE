@@ -10,6 +10,7 @@ import { MediaFile } from '@/domains/media/types';
 import PhotoCard from '@/domains/route/components/PhotoCard';
 import { ROUTE } from '@/domains/route/constants';
 import { PinPoint } from '@/domains/route/types';
+import { filterValidLocationPinPoint, sortPinPointByDate } from '@/domains/route/utils';
 import { routeAPI } from '@/libs/apis';
 import { getPixelPositionOffset } from '@/libs/utils/map';
 import Button from '@/shared/components/common/Button';
@@ -59,11 +60,6 @@ const TripRoutePage = () => {
 
     const isLastPinPoint = currentPinPointIndex === pinPointsInfo.length - 1;
 
-    const handleMapLoad = (map: MapType) => {
-        mapRef.current = map;
-        setIsMapLoaded(true);
-    };
-
     useEffect(() => {
         const getTimelineMapData = async () => {
             if (!tripKey) {
@@ -74,18 +70,12 @@ const TripRoutePage = () => {
 
             setStartDate(startDate);
             if (pinPoints.length === 0) {
-                showToast('여행에 등록된 사진이 없습니다.');
+                showToast('여행에 등록된 사진이 없습니다');
                 navigate(ROUTES.PATH.MAIN);
                 return;
             }
 
-            const validLocationPinPoints = pinPoints.filter(
-                (pinPoint: PinPoint) => pinPoint.latitude !== 0 && pinPoint.longitude !== 0,
-            );
-
-            const sortedPinPointByDate = validLocationPinPoints.sort((a: PinPoint, b: PinPoint) => {
-                return new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime();
-            });
+            const validLocationPinPoints = sortPinPointByDate(filterValidLocationPinPoint(pinPoints));
 
             const validLocationImages = images.filter(
                 (image: MediaFile) => image.latitude !== 0 && image.longitude !== 0,
@@ -98,11 +88,11 @@ const TripRoutePage = () => {
             setTripTitle(tripTitle);
             setTripImages(validLocationImages);
             setImagesByDates(uniqueImageDates);
-            setPinPointsInfo(sortedPinPointByDate);
+            setPinPointsInfo(validLocationPinPoints);
 
             setCharacterPosition({
-                latitude: sortedPinPointByDate[0].latitude,
-                longitude: sortedPinPointByDate[0].longitude,
+                latitude: validLocationPinPoints[0].latitude,
+                longitude: validLocationPinPoints[0].longitude,
             });
             setIsPlayingAnimation(false);
             setIsCharacterMoving(false);
@@ -430,6 +420,13 @@ const TripRoutePage = () => {
                 </div>
             )
         );
+    };
+
+    const handleMapLoad = (map: MapType) => {
+        if (!map) return;
+
+        mapRef.current = map;
+        setIsMapLoaded(true);
     };
 
     return (
