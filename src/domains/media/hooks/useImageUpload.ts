@@ -47,12 +47,14 @@ export const useImageUpload = () => {
 
     const uploadImages = async () => {
         const imagesToUpload = images?.totalImages;
+        console.log(imagesToUpload);
         if (!tripKey || !imagesToUpload) {
             return;
         }
         try {
             setUploadStatus('pending');
             const imageNames = imagesToUpload.map((image) => ({ fileName: image.image.name }));
+            console.log(imageNames);
             const result = await mediaAPI.requestPresignedUrls(tripKey, imageNames);
             if (!result.success) throw new Error(result.error);
             const { data: presignedUrls } = result;

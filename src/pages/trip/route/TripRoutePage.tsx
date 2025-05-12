@@ -48,6 +48,8 @@ const TripRoutePage = () => {
     const [isCharacterMoving, setIsCharacterMoving] = useState(false);
     const [isMapLoaded, setIsMapLoaded] = useState(false);
 
+    const [showSpinner, setShowSpinner] = useState(false);
+
     const { showToast } = useToastStore();
 
     const { isLoaded, loadError } = useGoogleMaps();
@@ -143,6 +145,54 @@ const TripRoutePage = () => {
         }
     }, [pinPoints, state]);
 
+    // const moveCharacter = useCallback(() => {
+    //     if (isLastPinPoint) {
+    //         setIsPlayingAnimation(false);
+    //         setIsCharacterMoving(false);
+    //         setIsMapInteractive(true);
+    //         return;
+    //     }
+
+    //     const start = pinPoints[currentPinPointIndex];
+    //     const end = pinPoints[currentPinPointIndex + 1];
+    //     setIsCharacterMoving(true);
+    //     setIsMapInteractive(false); // 캐릭터 이동 시작 시 지도 조작 비활성화
+
+    //     const animate = (time: number) => {
+    //         if (!startTimeRef.current) startTimeRef.current = time;
+    //         const progress = Math.min((time - startTimeRef.current) / 500, 1);
+    //         // const progress = Math.min((time - startTimeRef.current) / ROUTE.DURATION.MOVE, 1);
+
+    //         const newLat = start.latitude + (end.latitude - start.latitude) * progress;
+    //         const newLng = start.longitude + (end.longitude - start.longitude) * progress;
+    //         const newPosition = { latitude: newLat, longitude: newLng };
+    //         setCharacterPosition(newPosition);
+
+    //         if (mapRef.current) {
+    //             mapRef.current.panTo({ lat: newPosition.latitude, lng: newPosition.longitude });
+    //         }
+
+    //         if (progress < 1) {
+    //             animationRef.current = requestAnimationFrame(animate);
+    //         } else {
+    //             startTimeRef.current = null;
+    //             setCurrentPinPointIndex((prev) => prev + 1);
+    //             setIsCharacterMoving(false);
+    //             setIsMapInteractive(true);
+
+    //             autoPlayTimeoutRef.current = setTimeout(() => {
+    //                 if (isPlayingAnimation) {
+    //                     moveCharacter();
+    //                 }
+    //             }, ROUTE.DURATION.WAIT);
+    //         }
+    //     };
+
+    //     animationRef.current = requestAnimationFrame(animate);
+    // }, [currentPinPointIndex, pinPoints, isPlayingAnimation, isLastPinPoint]);
+
+    // 재생 버튼을 눌렀을 때 캐릭터가 각 위치에서 잠시 멈췄다가 자동으로 다음 위치로 이동하는 자동 재생 기능
+
     const moveCharacter = useCallback(() => {
         if (isLastPinPoint) {
             setIsPlayingAnimation(false);
@@ -154,11 +204,67 @@ const TripRoutePage = () => {
         const start = pinPoints[currentPinPointIndex];
         const end = pinPoints[currentPinPointIndex + 1];
         setIsCharacterMoving(true);
-        setIsMapInteractive(false); // 캐릭터 이동 시작 시 지도 조작 비활성화
+        setIsMapInteractive(false);
+
+        const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * (Math.PI / 180);
+            const dLon = (lon2 - lon1) * (Math.PI / 180);
+            const a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * (Math.PI / 180)) *
+                    Math.cos(lat2 * (Math.PI / 180)) *
+                    Math.sin(dLon / 2) *
+                    Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        };
+
+        const distance = calculateDistance(start.latitude, start.longitude, end.latitude, end.longitude);
+        console.log('distance', distance);
+        const getDurationByDistance = (distanceKm: number): number => {
+            if (distanceKm < 1) {
+                return 1000;
+            } else if (distanceKm < 5) {
+                return 3000;
+            } else if (distanceKm < 10) {
+                return 5000;
+            } else {
+                setShowSpinner(true);
+                setTimeout(() => setShowSpinner(false), 1500);
+                return 100;
+            }
+        };
+
+        const moveDuration = getDurationByDistance(distance);
+
+        if (distance >= 10) {
+            setShowSpinner(true);
+
+            setTimeout(() => {
+                setCharacterPosition({ latitude: end.latitude, longitude: end.longitude });
+                if (mapRef.current) {
+                    mapRef.current.panTo({ lat: end.latitude, lng: end.longitude });
+                }
+
+                setShowSpinner(false);
+                setCurrentPinPointIndex((prev) => prev + 1);
+                setIsCharacterMoving(false);
+                setIsMapInteractive(true);
+
+                autoPlayTimeoutRef.current = setTimeout(() => {
+                    if (isPlayingAnimation) {
+                        moveCharacter();
+                    }
+                }, ROUTE.DURATION.WAIT);
+            }, 1500);
+
+            return;
+        }
 
         const animate = (time: number) => {
             if (!startTimeRef.current) startTimeRef.current = time;
-            const progress = Math.min((time - startTimeRef.current) / ROUTE.DURATION.MOVE, 1);
+            const progress = Math.min((time - startTimeRef.current) / moveDuration, 1);
 
             const newLat = start.latitude + (end.latitude - start.latitude) * progress;
             const newLng = start.longitude + (end.longitude - start.longitude) * progress;
@@ -188,7 +294,6 @@ const TripRoutePage = () => {
         animationRef.current = requestAnimationFrame(animate);
     }, [currentPinPointIndex, pinPoints, isPlayingAnimation, isLastPinPoint]);
 
-    // 재생 버튼을 눌렀을 때 캐릭터가 각 위치에서 잠시 멈췄다가 자동으로 다음 위치로 이동하는 자동 재생 기능
     useEffect(() => {
         if (isPlayingAnimation && !isCharacterMoving) {
             autoPlayTimeoutRef.current = setTimeout(
@@ -356,6 +461,7 @@ const TripRoutePage = () => {
 
     return (
         <div css={container}>
+            {showSpinner && <Spinner text='장거리 이동 중...' />}
             <Header title={tripRouteInfo?.title || ''} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
 
             <Map

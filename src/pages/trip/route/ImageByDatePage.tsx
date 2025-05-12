@@ -70,7 +70,7 @@
 //     const images = result.data;
 
 //     return (
-//         <div css={pageContainer}>
+//         <div css={container}>
 //             <button
 //                 css={backButtonStyle}
 //                 onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`, { state: pinPointId })}
@@ -112,7 +112,7 @@
 //     );
 // };
 
-// const pageContainer = css`
+// const container = css`
 //     height: 100dvh;
 //     display: flex;
 //     flex-direction: column;
@@ -272,6 +272,9 @@ const ImageByDatePage = () => {
         result && 'data' in result && Array.isArray(result.data) ? result.data : [],
         setImageLocation,
     );
+
+    useEffect(() => {}, [imageLocation]);
+
     useEffect(() => {
         if (!imageDates?.length) {
             return;
@@ -279,6 +282,7 @@ const ImageByDatePage = () => {
         setDatesWithImages(imageDates);
         setCurrentDate(imageDates[0]);
     }, [imageDates]);
+
     if (loadError) {
         showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
         navigate(-1);
@@ -286,52 +290,66 @@ const ImageByDatePage = () => {
     if (!isLoaded || isLoading) {
         return <Spinner />;
     }
+
     // null 및 undefined 체크 추가
     if (!result) return <div>데이터를 불러올 수 없습니다.</div>;
     if (!result.success) {
         return <div>데이터를 불러오는데 문제가 발생했습니다.</div>;
     }
     const images = result.data;
+
     return (
-        <div css={pageContainer}>
-            <button
-                css={backButtonStyle}
-                onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`, { state: pinPointId })}
-            >
-                <ChevronLeft color={theme.COLORS.TEXT.DESCRIPTION} size={24} strokeWidth={1.5} />
-            </button>
-            {imageLocation && <DateMap imageLocation={imageLocation} />}
-            <DateSelector
-                currentDate={currentDate || startDate}
-                datesWithImages={datesWithImages}
-                startDate={startDate}
-                onDateSelect={(date: string) => setCurrentDate(date)}
-            />
-            <section ref={imageListRef} css={imageListStyle}>
-                {images.map((image, index) => (
-                    <ImageItem
-                        key={image.mediaFileId}
-                        image={image}
-                        index={index}
-                        onImageLoad={handleImageLoad}
-                        isImageLoaded={isImageLoaded}
-                        reference={(element) => (imageRefs.current[index] = element)}
+        <div css={container}>
+            {(isLoading || !result.data) && <Spinner />}
+            {result.data && (
+                <>
+                    <button
+                        css={backButtonStyle}
+                        onClick={() =>
+                            navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`, {
+                                state: { lastLoactedPinPointId: pinPointId },
+                            })
+                        }
+                    >
+                        <ChevronLeft color={theme.COLORS.TEXT.DESCRIPTION} size={24} strokeWidth={1.5} />
+                    </button>
+                    {imageLocation && <DateMap imageLocation={imageLocation} />}
+                    <DateSelector
+                        currentDate={currentDate || startDate}
+                        datesWithImages={datesWithImages}
+                        startDate={startDate}
+                        onDateSelect={(date: string) => setCurrentDate(date)}
                     />
-                ))}
-            </section>
-            {isFirstLoad && (
-                <div css={scrollHintOverlayStyle(isHintOverlayVisible)}>
-                    <div css={scrollHintContentStyle}>
-                        <p css={scrollHintText}>아래로 스크롤하세요</p>
-                        <ArrowDown size={24} color={theme.COLORS.TEXT.WHITE} />
+                    <div css={imageListStyle}>
+                        <section ref={imageListRef} css={centerFilm}>
+                            {images.map((image, index) => (
+                                <ImageItem
+                                    key={image.mediaFileId}
+                                    image={image}
+                                    index={index}
+                                    onImageLoad={handleImageLoad}
+                                    isImageLoaded={isImageLoaded}
+                                    reference={(element) => (imageRefs.current[index] = element)}
+                                />
+                            ))}
+                        </section>
                     </div>
-                </div>
+
+                    {isFirstLoad && (
+                        <div css={scrollHintOverlayStyle(isHintOverlayVisible)}>
+                            <div css={scrollHintContentStyle}>
+                                <p css={scrollHintText}>아래로 스크롤하세요</p>
+                                <ArrowDown size={24} color={theme.COLORS.TEXT.WHITE} />
+                            </div>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );
 };
 
-const pageContainer = css`
+const container = css`
     height: 100dvh;
     display: flex;
     flex-direction: column;
@@ -357,18 +375,17 @@ const backButtonStyle = css`
     cursor: pointer;
 `;
 
-const imageListStyle = css`
-    flex: 1;
-    overflow-y: auto;
-    position: relative;
+const centerFilm = css`
+    /* flex: 1;
 
-    &::before {
+    ::after {
         content: '';
         position: fixed;
-        left: 0;
+        right: 0;
         top: 234px;
         bottom: 0;
         width: 28px;
+        height: 100%;
         background-color: ${theme.COLORS.BACKGROUND.BLACK};
         z-index: 10;
         box-shadow: 1px 0 3px rgba(0, 0, 0, 0.3);
@@ -385,32 +402,61 @@ const imageListStyle = css`
         background-size: 12px 24px;
         background-position: center;
         background-repeat: repeat-y;
-    }
+    } */
+`;
 
-    &::after {
-        content: '';
-        position: fixed;
-        right: 0;
-        top: 234px;
-        bottom: 0;
-        width: 28px;
-        background-color: ${theme.COLORS.BACKGROUND.BLACK};
-        z-index: 10;
-        box-shadow: -1px 0 3px rgba(0, 0, 0, 0.3);
+// const leftFilm = css`
+//     position: absolute;
+//     left: 0;
+//     /* top: 234px; */
+//     bottom: 0;
+//     width: 28px;
+//     background-color: ${theme.COLORS.BACKGROUND.BLACK};
+//     z-index: 1000;
+//     box-shadow: 1px 0 3px rgba(0, 0, 0, 0.3);
 
-        background-image: repeating-linear-gradient(
-            to bottom,
-            transparent 0px,
-            transparent 5px,
-            rgba(255, 255, 255, 0.9) 5px,
-            rgba(255, 255, 255, 0.9) 15px,
-            transparent 15px,
-            transparent 20px
-        );
-        background-size: 12px 24px;
-        background-position: center;
-        background-repeat: repeat-y;
-    }
+//     background-image: repeating-linear-gradient(
+//         to bottom,
+//         transparent 0px,
+//         transparent 5px,
+//         rgba(255, 255, 255, 0.9) 5px,
+//         rgba(255, 255, 255, 0.9) 15px,
+//         transparent 15px,
+//         transparent 20px
+//     );
+//     background-size: 12px 24px;
+//     background-position: center;
+//     background-repeat: repeat-y;
+// `;
+// const rightFilm = css`
+//     /* position: fixed; */
+//     /* left: 0; */
+//     /* top: 234px; */
+//     /* bottom: 0; */
+//     width: 28px;
+//     background-color: ${theme.COLORS.BACKGROUND.BLACK};
+//     z-index: 10;
+//     box-shadow: 1px 0 3px rgba(0, 0, 0, 0.3);
+
+//     background-image: repeating-linear-gradient(
+//         to bottom,
+//         transparent 0px,
+//         transparent 5px,
+//         rgba(255, 255, 255, 0.9) 5px,
+//         rgba(255, 255, 255, 0.9) 15px,
+//         transparent 15px,
+//         transparent 20px
+//     );
+//     background-size: 12px 24px;
+//     background-position: center;
+//     background-repeat: repeat-y;
+// `;
+
+const imageListStyle = css`
+    max-width: 430px;
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
 `;
 
 const scrollHintOverlayStyle = (isVisible: boolean) => css`
