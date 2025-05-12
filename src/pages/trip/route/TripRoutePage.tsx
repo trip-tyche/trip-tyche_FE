@@ -10,9 +10,9 @@ import { MediaFile } from '@/domains/media/types';
 import { filterValidLocationMediaFile, removeDuplicateDates } from '@/domains/media/utils';
 import PhotoCard from '@/domains/route/components/PhotoCard';
 import { ROUTE } from '@/domains/route/constants';
+import { useRoute } from '@/domains/route/hooks/queries';
 import { PinPoint } from '@/domains/route/types';
 import { filterValidLocationPinPoint, sortPinPointByDate } from '@/domains/route/utils';
-import { routeAPI } from '@/libs/apis';
 import { getPixelPositionOffset } from '@/libs/utils/map';
 import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
@@ -21,17 +21,23 @@ import Map from '@/shared/components/Map';
 import { DEFAULT_CENTER, DEFAULT_ZOOM_SCALE, MARKER_CLUSTER_OPTIONS } from '@/shared/constants/maps/config';
 import { CHARACTER_ICON_CONFIG, POLYLINE_OPTIONS } from '@/shared/constants/maps/styles';
 import { ROUTES } from '@/shared/constants/paths';
-import { MAP } from '@/shared/constants/ui';
+import { MAP, MESSAGE } from '@/shared/constants/ui';
 import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
 import { Location, MapType } from '@/shared/types/map';
 
+interface TripRouteInfo {
+    title: string;
+    startDate: string;
+    endDate: string;
+    dates: string[];
+    tripImages: MediaFile[];
+}
+
 const TripRoutePage = () => {
-    const [tripTitle, setTripTitle] = useState();
-    const [startDate, setStartDate] = useState('');
+    const [tripRouteInfo, setTripRouteInfo] = useState<TripRouteInfo | null>(null);
     const [pinPoints, setPinPoints] = useState<PinPoint[]>([]);
-    const [tripImages, setTripImages] = useState<MediaFile[]>([]);
     const [characterPosition, setCharacterPosition] = useState<Location>();
 
     const [currentPinPointIndex, setCurrentPinPointIndex] = useState(0);
@@ -39,12 +45,10 @@ const TripRoutePage = () => {
 
     const [currentZoomScale, setCurrentZoomScale] = useState(DEFAULT_ZOOM_SCALE.TIMELINE);
     const [isMapInteractive, setIsMapInteractive] = useState(true);
-    const [imagesByDates, setImagesByDates] = useState<string[]>([]);
 
     const [isPlayingAnimation, setIsPlayingAnimation] = useState(false);
     const [isCharacterMoving, setIsCharacterMoving] = useState(false);
     const [isMapLoaded, setIsMapLoaded] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
 
     const { showToast } = useToastStore();
 
@@ -59,45 +63,51 @@ const TripRoutePage = () => {
     const { state } = useLocation();
     const navigate = useNavigate();
 
+    const { data: result, isLoading } = useRoute(tripKey!);
+
     const isLastPinPoint = currentPinPointIndex === pinPoints.length - 1;
 
     useEffect(() => {
-        const getTimelineMapData = async () => {
-            if (!tripKey) return;
+        if (!result || !result.success) {
+            showToast(result?.error || MESSAGE.ERROR.UNKNOWN);
+            navigate(ROUTES.PATH.MAIN);
+            return;
+        }
 
-            setIsLoading(true);
-            const { tripTitle, startDate, pinPoints, mediaFiles: images } = await routeAPI.fetchTripRoute(tripKey);
+        const { tripTitle, startDate, endDate, pinPoints, mediaFiles: tripImages } = result.data;
 
-            const validLocationPinPoints = sortPinPointByDate(filterValidLocationPinPoint(pinPoints));
-            const validLocationImages = filterValidLocationMediaFile(images);
+        const validLocationPinPoints = sortPinPointByDate(filterValidLocationPinPoint(pinPoints));
+        const validLocationImages = filterValidLocationMediaFile(tripImages);
+        const isValidTrip = tripTitle && startDate && endDate && tripImages.length !== 0;
+        const imageDates = validLocationImages.map((image: MediaFile) => image.recordDate.split('T')[0]);
 
-            const imageDates = validLocationImages.map((image: MediaFile) => image.recordDate.split('T')[0]);
+        if (validLocationPinPoints.length === 0) {
+            showToast('여행 경로를 표시할 수 있는 사진이 없습니다');
+            navigate(ROUTES.PATH.MAIN);
+            return;
+        }
 
-            if (validLocationPinPoints.length === 0) {
-                showToast('여행에 등록된 사진이 없습니다');
-                navigate(ROUTES.PATH.MAIN);
-                return;
-            }
+        if (!isValidTrip) {
+            showToast('여행 정보가 올바르지 않아요. 정보를 다시 확인해주세요');
+            navigate(ROUTES.PATH.MAIN);
+            return;
+        }
 
-            const firstPinPointLocation = {
-                latitude: validLocationPinPoints[0].latitude,
-                longitude: validLocationPinPoints[0].longitude,
-            };
-
-            setStartDate(startDate);
-            setTripTitle(tripTitle);
-
-            setImagesByDates(removeDuplicateDates(imageDates));
-
-            setTripImages(validLocationImages);
-            setPinPoints(validLocationPinPoints);
-
-            setCharacterPosition(firstPinPointLocation);
-            setIsLoading(false);
+        const initialPinPointPosition = {
+            latitude: validLocationPinPoints[0].latitude,
+            longitude: validLocationPinPoints[0].longitude,
         };
 
-        getTimelineMapData();
-    }, []);
+        setPinPoints(validLocationPinPoints);
+        setCharacterPosition(initialPinPointPosition);
+        setTripRouteInfo({
+            title: tripTitle,
+            startDate,
+            endDate,
+            dates: removeDuplicateDates(imageDates),
+            tripImages: validLocationImages,
+        });
+    }, [result, navigate, showToast]);
 
     useEffect(() => {
         setIsPlayingAnimation(false);
@@ -208,11 +218,13 @@ const TripRoutePage = () => {
     }, [characterPosition]);
 
     const handleImageByDateButtonClick = useCallback(() => {
+        if (!tripRouteInfo) return;
+
         const pinPointId = String(pinPoints[currentPinPointIndex].pinPointId);
-        navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(tripKey as string, startDate)}`, {
-            state: { startDate, imagesByDates, pinPointId },
+        navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(tripKey as string, tripRouteInfo.startDate)}`, {
+            state: { startDate: tripRouteInfo.startDate, imageByDates: tripRouteInfo?.dates, pinPointId },
         });
-    }, [tripKey, startDate, imagesByDates, navigate, pinPoints, currentPinPointIndex]);
+    }, [tripKey, tripRouteInfo, pinPoints, currentPinPointIndex, navigate]);
 
     const handleIndividualMarkerClick = (marker: MediaFile) => {
         setSelectedIndividualMarker(marker);
@@ -233,14 +245,14 @@ const TripRoutePage = () => {
 
     const togglePlayingButton = useCallback(() => {
         if (isLastPinPoint) {
-            const firstPinPointLocation = {
+            const initialPinPointPosition = {
                 latitude: pinPoints[0].latitude,
                 longitude: pinPoints[0].longitude,
             };
 
             setCurrentPinPointIndex(0);
-            setCharacterPosition(firstPinPointLocation);
-            mapRef.current?.panTo({ lat: firstPinPointLocation.latitude, lng: firstPinPointLocation.longitude });
+            setCharacterPosition(initialPinPointPosition);
+            mapRef.current?.panTo({ lat: initialPinPointPosition.latitude, lng: initialPinPointPosition.longitude });
             setIsCharacterMoving(false);
         } else {
             setIsPlayingAnimation(!isPlayingAnimation);
@@ -356,7 +368,7 @@ const TripRoutePage = () => {
         } else if (showIndividualMarkers) {
             return (
                 <>
-                    {tripImages.map((image) => (
+                    {tripRouteInfo?.tripImages.map((image) => (
                         <Marker
                             key={image.mediaFileId}
                             position={{ lat: image.latitude, lng: image.longitude }}
@@ -372,7 +384,7 @@ const TripRoutePage = () => {
                 <MarkerClusterer options={clusterOptions}>
                     {(clusterer) => (
                         <>
-                            {tripImages.map((image) => (
+                            {tripRouteInfo?.tripImages.map((image) => (
                                 <Marker
                                     key={image.mediaFileId}
                                     position={{ lat: image.latitude, lng: image.longitude }}
@@ -434,7 +446,7 @@ const TripRoutePage = () => {
 
     return (
         <div css={pageContainer}>
-            <Header title={tripTitle || ''} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
+            <Header title={tripRouteInfo?.title || ''} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
             <Map
                 zoom={DEFAULT_ZOOM_SCALE.TIMELINE}
                 center={characterPosition || DEFAULT_CENTER}
