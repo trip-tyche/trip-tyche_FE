@@ -1,9 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { OverlayView, MarkerClusterer } from '@react-google-maps/api';
-import { Play, Pause } from 'lucide-react';
-import { BsPersonWalking } from 'react-icons/bs';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { MediaFile } from '@/domains/media/types';
@@ -15,21 +12,17 @@ import { ROUTE } from '@/domains/route/constants';
 import { useRoute } from '@/domains/route/hooks/queries';
 import { PinPoint } from '@/domains/route/types';
 import { filterValidLocationPinPoint, sortPinPointByDate } from '@/domains/route/utils';
-import { getPixelPositionOffset } from '@/libs/utils/map';
-import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
 import Spinner from '@/shared/components/common/Spinner';
 import Map from '@/shared/components/Map';
 import CharacterMarker from '@/shared/components/map/CharacterMarker';
 import ClusterMarker from '@/shared/components/map/ClusterMarker';
 import Marker from '@/shared/components/map/Marker';
-import { DEFAULT_CENTER, ZOOM_SCALE, MARKER_CLUSTER_OPTIONS } from '@/shared/constants/maps/config';
-import { CHARACTER_ICON_CONFIG, POLYLINE_OPTIONS } from '@/shared/constants/maps/styles';
+import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/maps/config';
 import { ROUTES } from '@/shared/constants/paths';
-import { MAP, MESSAGE } from '@/shared/constants/ui';
+import { MESSAGE } from '@/shared/constants/ui';
 import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
 import { useToastStore } from '@/shared/stores/useToastStore';
-import theme from '@/shared/styles/theme';
 import { Location, MapType } from '@/shared/types/map';
 
 interface TripRouteInfo {
