@@ -1,6 +1,9 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
+import { OverlayView, MarkerClusterer } from '@react-google-maps/api';
+import { Play, Pause } from 'lucide-react';
+import { BsPersonWalking } from 'react-icons/bs';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { MediaFile } from '@/domains/media/types';
@@ -12,16 +15,21 @@ import { ROUTE } from '@/domains/route/constants';
 import { useRoute } from '@/domains/route/hooks/queries';
 import { PinPoint } from '@/domains/route/types';
 import { filterValidLocationPinPoint, sortPinPointByDate } from '@/domains/route/utils';
+import { getPixelPositionOffset } from '@/libs/utils/map';
+import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
 import Spinner from '@/shared/components/common/Spinner';
 import Map from '@/shared/components/Map';
 import CharacterMarker from '@/shared/components/map/CharacterMarker';
+import ClusterMarker from '@/shared/components/map/ClusterMarker';
 import Marker from '@/shared/components/map/Marker';
-import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/maps/config';
+import { DEFAULT_CENTER, ZOOM_SCALE, MARKER_CLUSTER_OPTIONS } from '@/shared/constants/maps/config';
+import { CHARACTER_ICON_CONFIG, POLYLINE_OPTIONS } from '@/shared/constants/maps/styles';
 import { ROUTES } from '@/shared/constants/paths';
-import { MESSAGE } from '@/shared/constants/ui';
+import { MAP, MESSAGE } from '@/shared/constants/ui';
 import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
 import { useToastStore } from '@/shared/stores/useToastStore';
+import theme from '@/shared/styles/theme';
 import { Location, MapType } from '@/shared/types/map';
 
 interface TripRouteInfo {
@@ -65,45 +73,47 @@ const TripRoutePage = () => {
     const isLastPinPoint = currentPinPointIndex === pinPoints.length - 1;
 
     useEffect(() => {
-        if (!result || !result.success) {
-            showToast(result?.error || MESSAGE.ERROR.UNKNOWN);
-            navigate(ROUTES.PATH.MAIN);
-            return;
+        if (result) {
+            if (!result.success) {
+                showToast(result?.error || MESSAGE.ERROR.UNKNOWN);
+                navigate(ROUTES.PATH.MAIN);
+                return;
+            }
+
+            const { tripTitle, startDate, endDate, pinPoints, mediaFiles: tripImages } = result.data;
+
+            const validLocationPinPoints = sortPinPointByDate(filterValidLocationPinPoint(pinPoints));
+            const validLocationImages = filterValidLocationMediaFile(tripImages);
+            const isValidTrip = tripTitle && startDate && endDate && tripImages.length !== 0;
+            const imageDates = validLocationImages.map((image: MediaFile) => image.recordDate.split('T')[0]);
+
+            if (validLocationPinPoints.length === 0) {
+                showToast('여행 경로를 표시할 수 있는 사진이 없습니다');
+                navigate(ROUTES.PATH.MAIN);
+                return;
+            }
+
+            if (!isValidTrip) {
+                showToast('여행 정보가 올바르지 않아요. 정보를 다시 확인해주세요');
+                navigate(ROUTES.PATH.MAIN);
+                return;
+            }
+
+            const initialPinPointPosition = {
+                latitude: validLocationPinPoints[0].latitude,
+                longitude: validLocationPinPoints[0].longitude,
+            };
+
+            setPinPoints(validLocationPinPoints);
+            setCharacterPosition(initialPinPointPosition);
+            setTripRouteInfo({
+                title: tripTitle,
+                startDate,
+                endDate,
+                dates: removeDuplicateDates(imageDates),
+                tripImages: validLocationImages,
+            });
         }
-
-        const { tripTitle, startDate, endDate, pinPoints, mediaFiles: tripImages } = result.data;
-
-        const validLocationPinPoints = sortPinPointByDate(filterValidLocationPinPoint(pinPoints));
-        const validLocationImages = filterValidLocationMediaFile(tripImages);
-        const isValidTrip = tripTitle && startDate && endDate && tripImages.length !== 0;
-        const imageDates = validLocationImages.map((image: MediaFile) => image.recordDate.split('T')[0]);
-
-        if (validLocationPinPoints.length === 0) {
-            showToast('여행 경로를 표시할 수 있는 사진이 없습니다');
-            navigate(ROUTES.PATH.MAIN);
-            return;
-        }
-
-        if (!isValidTrip) {
-            showToast('여행 정보가 올바르지 않아요. 정보를 다시 확인해주세요');
-            navigate(ROUTES.PATH.MAIN);
-            return;
-        }
-
-        const initialPinPointPosition = {
-            latitude: validLocationPinPoints[0].latitude,
-            longitude: validLocationPinPoints[0].longitude,
-        };
-
-        setPinPoints(validLocationPinPoints);
-        setCharacterPosition(initialPinPointPosition);
-        setTripRouteInfo({
-            title: tripTitle,
-            startDate,
-            endDate,
-            dates: removeDuplicateDates(imageDates),
-            tripImages: validLocationImages,
-        });
     }, [result, navigate, showToast]);
 
     useEffect(() => {
@@ -223,10 +233,17 @@ const TripRoutePage = () => {
     }, [tripKey, tripRouteInfo, pinPoints, currentPinPointIndex, navigate]);
 
     const handleIndividualMarkerClick = (marker: MediaFile) => {
-        setSelectedIndividualMarker(marker);
         if (mapRef.current) {
+            // TODO: center로 오는 타이밍 맞추기
+            // console.log(
+            //     marker.latitude,
+            //     marker.longitude,
+            //     mapRef.current.getCenter()?.lat(),
+            //     mapRef.current.getCenter()?.lng(),
+            // );
             mapRef.current.panTo({ lat: marker.latitude, lng: marker.longitude });
         }
+        setSelectedIndividualMarker(marker);
     };
 
     const handleZoomChanged = () => {
@@ -260,21 +277,6 @@ const TripRoutePage = () => {
             }
         }
     }, [pinPoints, isPlayingAnimation, isLastPinPoint, moveCharacter]);
-
-    // const clusterOptions = useMemo(
-    //     () => ({
-    //         ...MARKER_CLUSTER_OPTIONS,
-    //         onClick: (cluster: any, _markers: any) => {
-    //             if (mapRef.current) {
-    //                 const currentZoom = mapRef.current.getZoom() || 0;
-    //                 const newZoom = Math.min(currentZoom + 3, ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE - 1);
-    //                 mapRef.current.setZoom(newZoom);
-    //                 mapRef.current.panTo(cluster.getCenter());
-    //             }
-    //         },
-    //     }),
-    //     [],
-    // );
 
     const showCharacterView = currentZoomScale === ZOOM_SCALE.DEFAULT.ROUTE;
     const showIndividualImageMarkers = currentZoomScale >= ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE;
@@ -334,13 +336,6 @@ const TripRoutePage = () => {
                             onClick={() => handleIndividualMarkerClick(image)}
                         />
                     ))}
-                    {tripRouteInfo?.tripImages.map((image) => (
-                        <Marker
-                            key={image.mediaFileId}
-                            position={{ latitude: image.latitude, longitude: image.longitude }}
-                            isMapLoaded={isMapLoaded}
-                        />
-                    ))}
                     {selectedIndividualMarker && (
                         <PhotoCard
                             position={selectedIndividualMarker}
@@ -350,31 +345,9 @@ const TripRoutePage = () => {
                     )}
                 </>
             );
+        } else {
+            return <ClusterMarker mapRef={mapRef} images={tripRouteInfo?.tripImages || []} />;
         }
-        // } else {
-        //     return (
-        //         // <MarkerClusterer options={clusterOptions}>
-        //         //     {(clusterer) => (
-        //         //         <>
-        //         //             {tripRouteInfo?.tripImages.map((image) => (
-        //         //                 // <Marker
-        //         //                 //     key={image.mediaFileId}
-        //         //                 //     position={{ lat: image.latitude, lng: image.longitude }}
-        //         //                 //     clusterer={clusterer}
-        //         //                 //     // icon={markerIcon || undefined}
-        //         //                 // />
-        //         //                 <Marker
-        //         //                     key={image.mediaFileId}
-        //         //                     position={image}
-        //         //                     clusterer={clusterer}
-        //         //                     isMapLoaded={isMapLoaded}
-        //         //                 />
-        //         //             ))}
-        //         //         </>
-        //         //     )}
-        //         // </MarkerClusterer>
-        //     );
-        // }
     };
 
     const handleMapLoad = (map: MapType) => {
@@ -384,11 +357,14 @@ const TripRoutePage = () => {
         setIsMapLoaded(true);
     };
 
+    if (!isLoaded || isLoading) {
+        return <Spinner />;
+    }
+
     return (
         <div css={container}>
-            {(!isLoaded || isLoading) && <Spinner text='지도 불러오는 중...' />}
-
             <Header title={tripRouteInfo?.title || ''} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
+
             <Map
                 zoom={ZOOM_SCALE.DEFAULT.ROUTE}
                 center={characterPosition || DEFAULT_CENTER}
@@ -400,9 +376,8 @@ const TripRoutePage = () => {
                 <>
                     <Polyline pinPoints={pinPoints} />
                     {renderMarkers()}
-                    {/* {renderButtons()} */}
                     <MapControlButtons
-                        isVisible={isCharacterMoving}
+                        isVisible={!isCharacterMoving}
                         isCharacterView={showCharacterView}
                         isLastPinPoint={isLastPinPoint}
                         isCharacterPlaying={isPlayingAnimation}

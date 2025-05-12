@@ -250,102 +250,86 @@ import theme from '@/shared/styles/theme';
 import { LatLng } from '@/shared/types/map';
 
 const ImageByDatePage = () => {
-    const [currentDate, setCurrentDate] = useState('');
-    const [datesWithImages, setDatesWithImages] = useState<string[]>([]);
-    const [imageLocation, setImageLocation] = useState<LatLng>();
-    const [isImageLoaded, setIsImageLoaded] = useState(false);
-
-    const { isLoaded, loadError } = useGoogleMaps();
-    const showToast = useToastStore((state) => state.showToast);
-
-    const { tripKey } = useParams();
-    const {
-        state: { startDate, imagesByDates: imageDates, pinPointId },
-    } = useLocation();
-
-    const navigate = useNavigate();
-
-    const imageListRef = useRef<HTMLDivElement>(null);
-    const { data: result, isLoading } = useMediaByDate(tripKey!, currentDate || startDate);
-
-    // handleImageLoad 함수 추가
-    const handleImageLoad = () => {
-        setIsImageLoaded(true);
-    };
-
-    const { isHintOverlayVisible, isFirstLoad } = useScrollHint(imageListRef, isLoaded, isImageLoaded);
-    const imageRefs = useImagesLocationObserver(
-        result && 'data' in result && Array.isArray(result.data) ? result.data : [],
-        setImageLocation,
-    );
-
-    useEffect(() => {
-        if (!imageDates?.length) {
-            return;
-        }
-
-        setDatesWithImages(imageDates);
-        setCurrentDate(imageDates[0]);
-    }, [imageDates]);
-
-    if (loadError) {
-        showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
-        navigate(-1);
-    }
-
-    if (!isLoaded || isLoading) {
-        return <Spinner />;
-    }
-
-    // null 및 undefined 체크 추가
-    if (!result) return <div>데이터를 불러올 수 없습니다.</div>;
-    if (!result.success) {
-        return <div>데이터를 불러오는데 문제가 발생했습니다.</div>;
-    }
-
-    const images = result.data;
-
-    return (
-        <div css={pageContainer}>
-            <button
-                css={backButtonStyle}
-                onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`, { state: pinPointId })}
-            >
-                <ChevronLeft color={theme.COLORS.TEXT.DESCRIPTION} size={24} strokeWidth={1.5} />
-            </button>
-
-            {imageLocation && <DateMap imageLocation={imageLocation} />}
-
-            <DateSelector
-                currentDate={currentDate || startDate}
-                datesWithImages={datesWithImages}
-                startDate={startDate}
-                onDateSelect={(date: string) => setCurrentDate(date)}
-            />
-
-            <section ref={imageListRef} css={imageListStyle}>
-                {images.map((image, index) => (
-                    <ImageItem
-                        key={image.mediaFileId}
-                        image={image}
-                        index={index}
-                        onImageLoad={handleImageLoad}
-                        isImageLoaded={isImageLoaded}
-                        reference={(element) => (imageRefs.current[index] = element)}
-                    />
-                ))}
-            </section>
-
-            {isFirstLoad && (
-                <div css={scrollHintOverlayStyle(isHintOverlayVisible)}>
-                    <div css={scrollHintContentStyle}>
-                        <p css={scrollHintText}>아래로 스크롤하세요</p>
-                        <ArrowDown size={24} color={theme.COLORS.TEXT.WHITE} />
-                    </div>
-                </div>
-            )}
-        </div>
-    );
+    // const [currentDate, setCurrentDate] = useState('');
+    // const [datesWithImages, setDatesWithImages] = useState<string[]>([]);
+    // const [imageLocation, setImageLocation] = useState<LatLng>();
+    // const [isImageLoaded, setIsImageLoaded] = useState(false);
+    // const { isLoaded, loadError } = useGoogleMaps();
+    // const showToast = useToastStore((state) => state.showToast);
+    // const { tripKey } = useParams();
+    // const {
+    //     state: { startDate, imagesByDates: imageDates, pinPointId },
+    // } = useLocation();
+    // const navigate = useNavigate();
+    // const imageListRef = useRef<HTMLDivElement>(null);
+    // const { data: result, isLoading } = useMediaByDate(tripKey!, currentDate || startDate);
+    // // handleImageLoad 함수 추가
+    // const handleImageLoad = () => {
+    //     setIsImageLoaded(true);
+    // };
+    // const { isHintOverlayVisible, isFirstLoad } = useScrollHint(imageListRef, isLoaded, isImageLoaded);
+    // const imageRefs = useImagesLocationObserver(
+    //     result && 'data' in result && Array.isArray(result.data) ? result.data : [],
+    //     setImageLocation,
+    // );
+    // useEffect(() => {
+    //     if (!imageDates?.length) {
+    //         return;
+    //     }
+    //     setDatesWithImages(imageDates);
+    //     setCurrentDate(imageDates[0]);
+    // }, [imageDates]);
+    // if (loadError) {
+    //     showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
+    //     navigate(-1);
+    // }
+    // if (!isLoaded || isLoading) {
+    //     return <Spinner />;
+    // }
+    // // null 및 undefined 체크 추가
+    // if (!result) return <div>데이터를 불러올 수 없습니다.</div>;
+    // if (!result.success) {
+    //     return <div>데이터를 불러오는데 문제가 발생했습니다.</div>;
+    // }
+    // const images = result.data;
+    // return (
+    //     <div css={pageContainer}>
+    //         <button
+    //             css={backButtonStyle}
+    //             onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`, { state: pinPointId })}
+    //         >
+    //             <ChevronLeft color={theme.COLORS.TEXT.DESCRIPTION} size={24} strokeWidth={1.5} />
+    //         </button>
+    //         {imageLocation && <DateMap imageLocation={imageLocation} />}
+    //         <DateSelector
+    //             currentDate={currentDate || startDate}
+    //             datesWithImages={datesWithImages}
+    //             startDate={startDate}
+    //             onDateSelect={(date: string) => setCurrentDate(date)}
+    //         />
+    //         <section ref={imageListRef} css={imageListStyle}>
+    //             {images.map((image, index) => (
+    //                 <ImageItem
+    //                     key={image.mediaFileId}
+    //                     image={image}
+    //                     index={index}
+    //                     onImageLoad={handleImageLoad}
+    //                     isImageLoaded={isImageLoaded}
+    //                     reference={(element) => (imageRefs.current[index] = element)}
+    //                 />
+    //             ))}
+    //         </section>
+    //         {isFirstLoad && (
+    //             <div css={scrollHintOverlayStyle(isHintOverlayVisible)}>
+    //                 <div css={scrollHintContentStyle}>
+    //                     <p css={scrollHintText}>아래로 스크롤하세요</p>
+    //                     <ArrowDown size={24} color={theme.COLORS.TEXT.WHITE} />
+    //                 </div>
+    //             </div>
+    //         )}
+    //     </div>
+    // );
+    return <>zxc</>;
 };
 
 const pageContainer = css`
