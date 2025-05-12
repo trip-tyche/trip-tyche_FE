@@ -266,7 +266,7 @@ const ImageByDatePage = () => {
     const navigate = useNavigate();
 
     const imageListRef = useRef<HTMLDivElement>(null);
-    const { data: result, isLoading } = useMediaByDate(tripKey!, currentDate);
+    const { data: result, isLoading } = useMediaByDate(tripKey!, currentDate || startDate);
 
     // handleImageLoad 함수 추가
     const handleImageLoad = () => {
@@ -317,7 +317,7 @@ const ImageByDatePage = () => {
             {imageLocation && <DateMap imageLocation={imageLocation} />}
 
             <DateSelector
-                currentDate={currentDate}
+                currentDate={currentDate || startDate}
                 datesWithImages={datesWithImages}
                 startDate={startDate}
                 onDateSelect={(date: string) => setCurrentDate(date)}

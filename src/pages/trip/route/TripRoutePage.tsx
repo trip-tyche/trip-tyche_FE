@@ -120,7 +120,6 @@ const TripRoutePage = () => {
             if (animationRef.current) {
                 cancelAnimationFrame(animationRef.current);
             }
-            localStorage.removeItem('lastLoactedPinPointId');
         };
     }, []);
 
@@ -222,7 +221,7 @@ const TripRoutePage = () => {
 
         const pinPointId = String(pinPoints[currentPinPointIndex].pinPointId);
         navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(tripKey as string, tripRouteInfo.startDate)}`, {
-            state: { startDate: tripRouteInfo.startDate, imageByDates: tripRouteInfo?.dates, pinPointId },
+            state: { startDate: tripRouteInfo.startDate, imagesByDates: tripRouteInfo?.dates, pinPointId },
         });
     }, [tripKey, tripRouteInfo, pinPoints, currentPinPointIndex, navigate]);
 
@@ -331,26 +330,18 @@ const TripRoutePage = () => {
                                 position={{ lat: point.latitude, lng: point.longitude }}
                                 icon={markerIcon || undefined}
                             />
-                            <OverlayView
+                            <PhotoCard
                                 position={{
-                                    lat: characterPosition?.latitude || 0,
-                                    lng: characterPosition?.longitude || 0,
+                                    latitude: characterPosition?.latitude || 0,
+                                    longitude: characterPosition?.longitude || 0,
                                 }}
-                                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                                getPixelPositionOffset={() => getPixelPositionOffset(80)}
-                            >
-                                <div css={photoCardStyle(index === currentPinPointIndex && !isCharacterMoving)}>
-                                    <img
-                                        src={point.mediaLink}
-                                        alt='포토카드 이미지'
-                                        onClick={() =>
-                                            navigate(
-                                                `${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_PINPOINT(tripKey!, point.pinPointId)}`,
-                                            )
-                                        }
-                                    />
-                                </div>
-                            </OverlayView>
+                                image={point.mediaLink}
+                                heightOffset={80}
+                                isVisible={!isCharacterMoving}
+                                onClick={() =>
+                                    navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_PINPOINT(tripKey!, point.pinPointId)}`)
+                                }
+                            />
                         </React.Fragment>
                     ))}
                     {characterPosition && (
@@ -376,7 +367,13 @@ const TripRoutePage = () => {
                             onClick={() => handleIndividualMarkerClick(image)}
                         />
                     ))}
-                    {isMapLoaded && selectedIndividualMarker && <PhotoCard marker={selectedIndividualMarker} />}
+                    {selectedIndividualMarker && (
+                        <PhotoCard
+                            position={selectedIndividualMarker}
+                            image={selectedIndividualMarker.mediaLink}
+                            heightOffset={50}
+                        />
+                    )}
                 </>
             );
         } else {
@@ -441,9 +438,7 @@ const TripRoutePage = () => {
         mapRef.current = map;
         setIsMapLoaded(true);
     };
-
-    console.log('zxcvzxcv', characterPosition);
-
+    console.log(selectedIndividualMarker);
     return (
         <div css={pageContainer}>
             <Header title={tripRouteInfo?.title || ''} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />

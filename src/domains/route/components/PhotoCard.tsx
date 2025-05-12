@@ -1,33 +1,39 @@
-import { useCallback } from 'react';
-
 import { css } from '@emotion/react';
 import { OverlayView } from '@react-google-maps/api';
 
-import { MediaFile } from '@/domains/media/types';
+import { getPixelPositionOffset } from '@/libs/utils/map';
 import { COLORS } from '@/shared/constants/theme';
 import { MAP } from '@/shared/constants/ui';
+import { Location } from '@/shared/types/map';
 
-const PhotoCard = ({ marker }: { marker: MediaFile }) => {
-    const getPixelPositionOffset = useCallback((height: number) => {
-        const offset = {
-            x: -MAP.PHOTO_CARD_SIZE.WIDTH / 2,
-            y: -(-MAP.PHOTO_CARD_SIZE.HEIGHT + height),
-        };
-        return offset;
-    }, []);
+interface PhotoCardProps {
+    position: Location;
+    image: string;
+    heightOffset: number;
+    isVisible?: boolean;
+    onClick?: () => void;
+}
 
+const PhotoCard = ({ position, image, isVisible, heightOffset, onClick }: PhotoCardProps) => {
     return (
         <OverlayView
-            position={{ lat: marker.latitude, lng: marker.longitude }}
+            position={{ lat: position.latitude, lng: position.longitude }}
             mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-            getPixelPositionOffset={() => getPixelPositionOffset(50)}
+            getPixelPositionOffset={() => getPixelPositionOffset(heightOffset)}
         >
-            <div css={basePhotoCardStyle}>
-                <img src={marker.mediaLink} alt='포토카드 이미지' />
+            <div css={photoCardStyle(isVisible)}>
+                <img src={image} alt='포토카드' onClick={onClick} />
             </div>
         </OverlayView>
     );
 };
+
+const photoCardStyle = (isVisible = true) => css`
+    ${basePhotoCardStyle}
+    opacity: ${isVisible ? 1 : 0};
+    visibility: ${isVisible ? 'visible' : 'hidden'};
+    pointer-events: ${isVisible ? 'auto' : 'none'};
+`;
 
 const basePhotoCardStyle = css`
     background-color: ${COLORS.TEXT.WHITE};
@@ -67,12 +73,5 @@ const basePhotoCardStyle = css`
         border-radius: 20%;
     }
 `;
-
-// const photoCardStyle = (isCurrentPin: boolean) => css`
-//     ${basePhotoCardStyle}
-//     opacity: ${isCurrentPin ? 1 : 0};
-//     visibility: ${isCurrentPin ? 'visible' : 'hidden'};
-//     pointer-events: ${isCurrentPin ? 'auto' : 'none'};
-// `;
 
 export default PhotoCard;

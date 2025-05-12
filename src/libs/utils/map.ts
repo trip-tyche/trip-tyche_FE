@@ -5,5 +5,6 @@ export const getPixelPositionOffset = (height: number) => {
         x: -MAP.PHOTO_CARD_SIZE.WIDTH / 2,
         y: -(MAP.PHOTO_CARD_SIZE.HEIGHT + height),
     };
+
     return offset;
 };
