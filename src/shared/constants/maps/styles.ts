@@ -1,7 +1,7 @@
 import characterImage from '/character-1.png';
 
 import { PolylineOption } from '@/shared/types/map';
-import theme from '@/shared/styles/theme';
+import { COLORS } from '@/shared/constants/theme';
 
 export const MARKER_ICON_CONFIG = {
     path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
@@ -14,23 +14,21 @@ export const MARKER_ICON_CONFIG = {
 
 export const CHARACTER_ICON_CONFIG = {
     url: characterImage,
-    scaledSize: { width: 50, height: 65 },
-    anchorPoint: { x: 25, y: 65 },
+    scaledSize: { width: 45, height: 60 },
+    anchorPoint: { x: 28, y: 50 },
 } as const;
 
 export const POLYLINE_OPTIONS: PolylineOption = {
-    strokeColor: `${theme.COLORS.TEXT.DESCRIPTION}`,
-    strokeOpacity: 0,
-    strokeWeight: 2,
+    strokeColor: `${COLORS.PRIMARY}`,
+    strokeOpacity: 0.7,
+    strokeWeight: 0,
     icons: [
         {
             icon: {
                 path: 'M 0,-1 0,1',
-                strokeOpacity: 0.5,
                 scale: 3,
             },
-            offset: '0',
-            repeat: '15px',
+            repeat: '12px',
         },
     ],
 } as const;

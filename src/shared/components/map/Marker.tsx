@@ -6,10 +6,11 @@ import { Location } from '@/shared/types/map';
 interface MarkerProps {
     position: Location;
     isMapLoaded?: boolean;
+    isVisible?: boolean;
     onClick?: () => void;
 }
 
-const Marker = ({ position, isMapLoaded, onClick }: MarkerProps) => {
+const Marker = ({ position, isMapLoaded, isVisible = true, onClick }: MarkerProps) => {
     if (!isMapLoaded) {
         return;
     }
@@ -18,6 +19,8 @@ const Marker = ({ position, isMapLoaded, onClick }: MarkerProps) => {
         ...MARKER_ICON_CONFIG,
         anchor: new window.google.maps.Point(12, 23),
     };
+
+    if (!isVisible) return null;
 
     return (
         <GoogleMapsMarker

@@ -397,6 +397,12 @@ const TripRoutePage = () => {
                             <Marker
                                 position={{ latitude: point.latitude, longitude: point.longitude }}
                                 isMapLoaded={isMapLoaded}
+                                isVisible={
+                                    !(
+                                        characterPosition?.latitude === point.latitude &&
+                                        characterPosition?.longitude === point.longitude
+                                    )
+                                }
                             />
                             <PhotoCard
                                 position={{
