@@ -15,3 +15,6 @@ export const filterValidLocationMediaFile = (mediaFiles: MediaFile[]) =>
  */
 export const filterValidDatePinPoint = (mediaFiles: MediaFile[]) =>
     mediaFiles.filter((mediaFile) => !mediaFile.recordDate.startsWith('1900-01-01'));
+
+export const removeDuplicateDates = (datesString: string[]) =>
+    [...new Set<string>([...datesString])].sort((a, b) => a.localeCompare(b));

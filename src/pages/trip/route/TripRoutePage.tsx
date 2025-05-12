@@ -7,7 +7,7 @@ import { BsPersonWalking } from 'react-icons/bs';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { MediaFile } from '@/domains/media/types';
-import { filterValidLocationMediaFile } from '@/domains/media/utils';
+import { filterValidLocationMediaFile, removeDuplicateDates } from '@/domains/media/utils';
 import PhotoCard from '@/domains/route/components/PhotoCard';
 import { ROUTE } from '@/domains/route/constants';
 import { PinPoint } from '@/domains/route/types';
@@ -29,9 +29,9 @@ import { Location, MapType } from '@/shared/types/map';
 
 const TripRoutePage = () => {
     const [tripTitle, setTripTitle] = useState();
-    const [pinPointsInfo, setPinPointsInfo] = useState<PinPoint[]>([]);
-    const [tripImages, setTripImages] = useState<MediaFile[]>([]);
     const [startDate, setStartDate] = useState('');
+    const [pinPoints, setPinPoints] = useState<PinPoint[]>([]);
+    const [tripImages, setTripImages] = useState<MediaFile[]>([]);
     const [characterPosition, setCharacterPosition] = useState<Location>();
 
     const [currentPinPointIndex, setCurrentPinPointIndex] = useState(0);
@@ -59,46 +59,49 @@ const TripRoutePage = () => {
     const { state } = useLocation();
     const navigate = useNavigate();
 
-    const isLastPinPoint = currentPinPointIndex === pinPointsInfo.length - 1;
+    const isLastPinPoint = currentPinPointIndex === pinPoints.length - 1;
 
     useEffect(() => {
         const getTimelineMapData = async () => {
-            if (!tripKey) {
-                return;
-            }
+            if (!tripKey) return;
 
+            setIsLoading(true);
             const { tripTitle, startDate, pinPoints, mediaFiles: images } = await routeAPI.fetchTripRoute(tripKey);
-
-            setStartDate(startDate);
-            if (pinPoints.length === 0) {
-                showToast('여행에 등록된 사진이 없습니다');
-                navigate(ROUTES.PATH.MAIN);
-                return;
-            }
 
             const validLocationPinPoints = sortPinPointByDate(filterValidLocationPinPoint(pinPoints));
             const validLocationImages = filterValidLocationMediaFile(images);
 
             const imageDates = validLocationImages.map((image: MediaFile) => image.recordDate.split('T')[0]);
 
-            const uniqueImageDates = [...new Set<string>([...imageDates])].sort((a, b) => a.localeCompare(b));
+            if (validLocationPinPoints.length === 0) {
+                showToast('여행에 등록된 사진이 없습니다');
+                navigate(ROUTES.PATH.MAIN);
+                return;
+            }
 
-            setTripTitle(tripTitle);
-            setTripImages(validLocationImages);
-            setImagesByDates(uniqueImageDates);
-            setPinPointsInfo(validLocationPinPoints);
-
-            setCharacterPosition({
+            const firstPinPointLocation = {
                 latitude: validLocationPinPoints[0].latitude,
                 longitude: validLocationPinPoints[0].longitude,
-            });
-            setIsPlayingAnimation(false);
-            setIsCharacterMoving(false);
+            };
+
+            setStartDate(startDate);
+            setTripTitle(tripTitle);
+
+            setImagesByDates(removeDuplicateDates(imageDates));
+
+            setTripImages(validLocationImages);
+            setPinPoints(validLocationPinPoints);
+
+            setCharacterPosition(firstPinPointLocation);
+            setIsLoading(false);
         };
 
-        setIsLoading(true);
         getTimelineMapData();
-        setIsLoading(false);
+    }, []);
+
+    useEffect(() => {
+        setIsPlayingAnimation(false);
+        setIsCharacterMoving(false);
 
         return () => {
             if (autoPlayTimeoutRef.current) {
@@ -113,23 +116,23 @@ const TripRoutePage = () => {
 
     // 슬라이드 페이지 갔다올 때 최근 핀포인트 확인
     useEffect(() => {
-        if (pinPointsInfo.length > 0 && state) {
+        if (pinPoints.length > 0 && state) {
             const currentPinPointId = state?.lastLoactedPinPointId;
 
             if (currentPinPointId) {
-                const startPinPointIndex = pinPointsInfo.findIndex(
+                const startPinPointIndex = pinPoints.findIndex(
                     (pinPoint) => String(pinPoint.pinPointId) === currentPinPointId,
                 );
                 if (startPinPointIndex !== -1) {
                     setCurrentPinPointIndex(startPinPointIndex);
                     setCharacterPosition({
-                        latitude: pinPointsInfo[startPinPointIndex].latitude,
-                        longitude: pinPointsInfo[startPinPointIndex].longitude,
+                        latitude: pinPoints[startPinPointIndex].latitude,
+                        longitude: pinPoints[startPinPointIndex].longitude,
                     });
                 }
             }
         }
-    }, [pinPointsInfo, state]);
+    }, [pinPoints, state]);
 
     const moveCharacter = useCallback(() => {
         if (isLastPinPoint) {
@@ -139,8 +142,8 @@ const TripRoutePage = () => {
             return;
         }
 
-        const start = pinPointsInfo[currentPinPointIndex];
-        const end = pinPointsInfo[currentPinPointIndex + 1];
+        const start = pinPoints[currentPinPointIndex];
+        const end = pinPoints[currentPinPointIndex + 1];
         setIsCharacterMoving(true);
         setIsMapInteractive(false); // 캐릭터 이동 시작 시 지도 조작 비활성화
 
@@ -174,7 +177,7 @@ const TripRoutePage = () => {
         };
 
         animationRef.current = requestAnimationFrame(animate);
-    }, [currentPinPointIndex, pinPointsInfo, isPlayingAnimation, isLastPinPoint]);
+    }, [currentPinPointIndex, pinPoints, isPlayingAnimation, isLastPinPoint]);
 
     // 재생 버튼을 눌렀을 때 캐릭터가 각 위치에서 잠시 멈췄다가 자동으로 다음 위치로 이동하는 자동 재생 기능
     useEffect(() => {
@@ -205,11 +208,11 @@ const TripRoutePage = () => {
     }, [characterPosition]);
 
     const handleImageByDateButtonClick = useCallback(() => {
-        const pinPointId = String(pinPointsInfo[currentPinPointIndex].pinPointId);
+        const pinPointId = String(pinPoints[currentPinPointIndex].pinPointId);
         navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(tripKey as string, startDate)}`, {
             state: { startDate, imagesByDates, pinPointId },
         });
-    }, [tripKey, startDate, imagesByDates, navigate, pinPointsInfo, currentPinPointIndex]);
+    }, [tripKey, startDate, imagesByDates, navigate, pinPoints, currentPinPointIndex]);
 
     const handleIndividualMarkerClick = (marker: MediaFile) => {
         setSelectedIndividualMarker(marker);
@@ -231,8 +234,8 @@ const TripRoutePage = () => {
     const togglePlayingButton = useCallback(() => {
         if (isLastPinPoint) {
             const firstPinPointLocation = {
-                latitude: pinPointsInfo[0].latitude,
-                longitude: pinPointsInfo[0].longitude,
+                latitude: pinPoints[0].latitude,
+                longitude: pinPoints[0].longitude,
             };
 
             setCurrentPinPointIndex(0);
@@ -248,7 +251,7 @@ const TripRoutePage = () => {
                 moveCharacter();
             }
         }
-    }, [pinPointsInfo, isPlayingAnimation, isLastPinPoint, moveCharacter]);
+    }, [pinPoints, isPlayingAnimation, isLastPinPoint, moveCharacter]);
 
     const clusterOptions = useMemo(
         () => ({
@@ -296,11 +299,11 @@ const TripRoutePage = () => {
     }
 
     const renderPolyline = () => {
-        if (pinPointsInfo.length < 2) {
+        if (pinPoints.length < 2) {
             return null;
         }
 
-        const path = pinPointsInfo.map((pinPoint) => ({ lat: pinPoint.latitude, lng: pinPoint.longitude }));
+        const path = pinPoints.map((pinPoint) => ({ lat: pinPoint.latitude, lng: pinPoint.longitude }));
 
         return <Polyline path={path} options={POLYLINE_OPTIONS} />;
     };
@@ -310,7 +313,7 @@ const TripRoutePage = () => {
             return (
                 <>
                     {renderPolyline()}
-                    {pinPointsInfo.map((point, index) => (
+                    {pinPoints.map((point, index) => (
                         <React.Fragment key={point.pinPointId}>
                             <Marker
                                 position={{ lat: point.latitude, lng: point.longitude }}
@@ -426,6 +429,8 @@ const TripRoutePage = () => {
         mapRef.current = map;
         setIsMapLoaded(true);
     };
+
+    console.log('zxcvzxcv', characterPosition);
 
     return (
         <div css={pageContainer}>
