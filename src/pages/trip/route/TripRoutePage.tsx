@@ -7,6 +7,7 @@ import { BsPersonWalking } from 'react-icons/bs';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { MediaFile } from '@/domains/media/types';
+import { filterValidLocationMediaFile } from '@/domains/media/utils';
 import PhotoCard from '@/domains/route/components/PhotoCard';
 import { ROUTE } from '@/domains/route/constants';
 import { PinPoint } from '@/domains/route/types';
@@ -76,11 +77,7 @@ const TripRoutePage = () => {
             }
 
             const validLocationPinPoints = sortPinPointByDate(filterValidLocationPinPoint(pinPoints));
-            console.log('pinPoints', pinPoints);
-            console.log('validLocationPinPoints', validLocationPinPoints);
-            const validLocationImages = images.filter(
-                (image: MediaFile) => image.latitude !== 0 && image.longitude !== 0,
-            );
+            const validLocationImages = filterValidLocationMediaFile(images);
 
             const imageDates = validLocationImages.map((image: MediaFile) => image.recordDate.split('T')[0]);
 

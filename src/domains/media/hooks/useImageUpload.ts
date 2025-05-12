@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom';
 
 import { PresignedUrlResponse } from '@/domains/media/image';
 import { ImagesFiles } from '@/domains/media/types';
-import { filterValidDatePinPoint } from '@/domains/media/utils';
 import { mediaAPI } from '@/libs/apis';
 import {
     completeImages,
