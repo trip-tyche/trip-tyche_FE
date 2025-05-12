@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { GoogleMap } from '@react-google-maps/api';
 
-import { MAPS_OPTIONS } from '@/shared/constants/maps/config';
+import { MAPS_OPTIONS } from '@/shared/constants/map';
 import { Location, MapType } from '@/shared/types/map';
 
 interface MapProps {

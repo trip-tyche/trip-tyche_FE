@@ -1,7 +1,7 @@
 import { Polyline as GoogleMapsPolyline } from '@react-google-maps/api';
 
 import { PinPoint } from '@/domains/route/types';
-import { POLYLINE_OPTIONS } from '@/shared/constants/maps/styles';
+import { POLYLINE_OPTIONS } from '@/shared/constants/map';
 
 const Polyline = ({ pinPoints }: { pinPoints: PinPoint[] }) => {
     if (pinPoints.length < 2) return null;

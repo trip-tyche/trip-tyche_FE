@@ -1,6 +1,6 @@
 import { Marker as GoogleMapsMarker } from '@react-google-maps/api';
 
-import { MARKER_ICON_CONFIG } from '@/shared/constants/maps/styles';
+import { MARKER_ICON_CONFIG } from '@/shared/constants/map';
 import { Location } from '@/shared/types/map';
 
 interface MarkerProps {
@@ -15,17 +15,12 @@ const Marker = ({ position, isMapLoaded, isVisible = true, onClick }: MarkerProp
         return;
     }
 
-    const icon = {
-        ...MARKER_ICON_CONFIG,
-        anchor: new window.google.maps.Point(12, 23),
-    };
-
     if (!isVisible) return null;
 
     return (
         <GoogleMapsMarker
             position={{ lat: position.latitude, lng: position.longitude }}
-            icon={icon}
+            icon={MARKER_ICON_CONFIG}
             onClick={onClick}
         />
     );

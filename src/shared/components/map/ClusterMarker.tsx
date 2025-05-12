@@ -3,8 +3,7 @@ import { RefObject, useMemo } from 'react';
 import { Marker, MarkerClusterer } from '@react-google-maps/api';
 
 import { MediaFile } from '@/domains/media/types';
-import { MARKER_CLUSTER_OPTIONS, ZOOM_SCALE } from '@/shared/constants/maps/config';
-import { MARKER_ICON_CONFIG } from '@/shared/constants/maps/styles';
+import { MARKER_CLUSTER_OPTIONS, MARKER_ICON_CONFIG, ZOOM_SCALE } from '@/shared/constants/map';
 import { MapType } from '@/shared/types/map';
 
 interface ClusterMarkerProps {

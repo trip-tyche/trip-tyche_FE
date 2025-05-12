@@ -1,6 +1,6 @@
 import { Marker } from '@react-google-maps/api';
 
-import { CHARACTER_ICON_CONFIG } from '@/shared/constants/maps/styles';
+import { CHARACTER_ICON_CONFIG } from '@/shared/constants/map';
 import { Location } from '@/shared/types/map';
 
 const CharacterMarker = ({ position, isMapLoaded }: { position: Location; isMapLoaded: boolean }) => {

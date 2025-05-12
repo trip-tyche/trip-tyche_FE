@@ -5,7 +5,7 @@ import { css } from '@emotion/react';
 import Spinner from '@/shared/components/common/Spinner';
 import Map from '@/shared/components/Map';
 import Marker from '@/shared/components/map/Marker';
-import { ZOOM_SCALE } from '@/shared/constants/maps/config';
+import { ZOOM_SCALE } from '@/shared/constants/map';
 import { LatLng } from '@/shared/types/map';
 
 interface DateMapProps {

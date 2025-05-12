@@ -7,7 +7,7 @@ import { ChevronLeft } from 'lucide-react';
 import Button from '@/shared/components/common/Button';
 import Spinner from '@/shared/components/common/Spinner';
 import Marker from '@/shared/components/map/Marker';
-import { ZOOM_SCALE, MAPS_OPTIONS } from '@/shared/constants/maps/config';
+import { ZOOM_SCALE, MAPS_OPTIONS } from '@/shared/constants/map';
 import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';

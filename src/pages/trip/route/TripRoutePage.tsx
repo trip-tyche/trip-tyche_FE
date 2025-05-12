@@ -18,7 +18,7 @@ import Map from '@/shared/components/Map';
 import CharacterMarker from '@/shared/components/map/CharacterMarker';
 import ClusterMarker from '@/shared/components/map/ClusterMarker';
 import Marker from '@/shared/components/map/Marker';
-import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/maps/config';
+import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/map';
 import { ROUTES } from '@/shared/constants/paths';
 import { MESSAGE } from '@/shared/constants/ui';
 import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
