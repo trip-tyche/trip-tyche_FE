@@ -76,7 +76,8 @@ const TripRoutePage = () => {
             }
 
             const validLocationPinPoints = sortPinPointByDate(filterValidLocationPinPoint(pinPoints));
-
+            console.log('pinPoints', pinPoints);
+            console.log('validLocationPinPoints', validLocationPinPoints);
             const validLocationImages = images.filter(
                 (image: MediaFile) => image.latitude !== 0 && image.longitude !== 0,
             );

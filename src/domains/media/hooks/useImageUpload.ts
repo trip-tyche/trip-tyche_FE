@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import { PresignedUrlResponse } from '@/domains/media/image';
 import { ImagesFiles } from '@/domains/media/types';
+import { filterValidDatePinPoint } from '@/domains/media/utils';
 import { mediaAPI } from '@/libs/apis';
 import {
     completeImages,
@@ -50,7 +51,6 @@ export const useImageUpload = () => {
         if (!tripKey || !imagesToUpload) {
             return;
         }
-
         try {
             setUploadStatus('pending');
             const imageNames = imagesToUpload.map((image) => ({ fileName: image.image.name }));
