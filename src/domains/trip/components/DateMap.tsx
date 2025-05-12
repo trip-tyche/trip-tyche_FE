@@ -1,8 +1,8 @@
 import { css } from '@emotion/react';
-import { GoogleMap, Marker } from '@react-google-maps/api';
 
-import { MAPS_OPTIONS, DEFAULT_ZOOM_SCALE } from '@/shared/constants/maps/config';
-import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
+import Map from '@/shared/components/Map';
+import Marker from '@/shared/components/map/Marker';
+import { ZOOM_SCALE } from '@/shared/constants/maps/config';
 import { LatLng } from '@/shared/types/map';
 
 interface DateMapProps {
@@ -10,18 +10,11 @@ interface DateMapProps {
 }
 
 const DateMap = ({ imageLocation }: DateMapProps) => {
-    const { markerIcon } = useGoogleMaps();
-
     return (
         <div css={mapWrapper}>
-            <GoogleMap
-                zoom={DEFAULT_ZOOM_SCALE.IMAGE_BY_DATE}
-                center={imageLocation}
-                options={MAPS_OPTIONS}
-                mapContainerStyle={{ height: 'calc(100% + 30px)' }}
-            >
-                <Marker position={imageLocation} icon={markerIcon || undefined} />
-            </GoogleMap>
+            <Map zoom={ZOOM_SCALE.DEFAULT.ROUTE} center={{ latitude: imageLocation.lat, longitude: imageLocation.lng }}>
+                <Marker position={{ latitude: imageLocation.lat, longitude: imageLocation.lng }} />
+            </Map>
         </div>
     );
 };

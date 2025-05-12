@@ -1,12 +1,13 @@
 import { useState, useRef } from 'react';
 
 import { css } from '@emotion/react';
-import { GoogleMap, Marker, Autocomplete } from '@react-google-maps/api';
+import { GoogleMap, Autocomplete } from '@react-google-maps/api';
 import { ChevronLeft } from 'lucide-react';
 
 import Button from '@/shared/components/common/Button';
 import Spinner from '@/shared/components/common/Spinner';
-import { DEFAULT_ZOOM_SCALE, MAPS_OPTIONS } from '@/shared/constants/maps/config';
+import Marker from '@/shared/components/map/Marker';
+import { ZOOM_SCALE, MAPS_OPTIONS } from '@/shared/constants/maps/config';
 import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
@@ -34,7 +35,7 @@ const LocationAddMap = ({
 
     const showToast = useToastStore((state) => state.showToast);
 
-    const { isLoaded, loadError, markerIcon } = useGoogleMaps();
+    const { isLoaded, loadError } = useGoogleMaps();
 
     const autocompleteRef = useRef<PlacesAutocomplete>(null);
 
@@ -89,13 +90,16 @@ const LocationAddMap = ({
                 </Autocomplete>
             </div>
             <GoogleMap
-                zoom={DEFAULT_ZOOM_SCALE.LOCATION_ADD}
+                zoom={ZOOM_SCALE.DEFAULT.LOCATION_ADD}
                 center={center}
                 options={MAPS_OPTIONS}
                 mapContainerStyle={{ height: 'calc(100vh + 30px)' }}
                 onClick={handleMapClick}
             >
-                {selectedLocation && <Marker position={selectedLocation} icon={markerIcon || undefined} />}
+                {/* {selectedLocation && <Marker position={selectedLocation} icon={markerIcon || undefined} />} */}
+                {selectedLocation && (
+                    <Marker position={{ latitude: selectedLocation.lat, longitude: selectedLocation.lng }} />
+                )}
             </GoogleMap>
             <div css={buttonWrapper}>
                 <Button

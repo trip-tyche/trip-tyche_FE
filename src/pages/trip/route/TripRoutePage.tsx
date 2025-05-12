@@ -1,31 +1,27 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Marker, OverlayView, MarkerClusterer } from '@react-google-maps/api';
-import { Play, Pause } from 'lucide-react';
-import { BsPersonWalking } from 'react-icons/bs';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { MediaFile } from '@/domains/media/types';
 import { filterValidLocationMediaFile, removeDuplicateDates } from '@/domains/media/utils';
+import MapControlButtons from '@/domains/route/components/MapControlButtons';
 import PhotoCard from '@/domains/route/components/PhotoCard';
 import Polyline from '@/domains/route/components/Polyline';
 import { ROUTE } from '@/domains/route/constants';
 import { useRoute } from '@/domains/route/hooks/queries';
 import { PinPoint } from '@/domains/route/types';
 import { filterValidLocationPinPoint, sortPinPointByDate } from '@/domains/route/utils';
-import { getPixelPositionOffset } from '@/libs/utils/map';
-import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
 import Spinner from '@/shared/components/common/Spinner';
 import Map from '@/shared/components/Map';
-import { DEFAULT_CENTER, DEFAULT_ZOOM_SCALE, MARKER_CLUSTER_OPTIONS } from '@/shared/constants/maps/config';
-import { CHARACTER_ICON_CONFIG, POLYLINE_OPTIONS } from '@/shared/constants/maps/styles';
+import CharacterMarker from '@/shared/components/map/CharacterMarker';
+import Marker from '@/shared/components/map/Marker';
+import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/maps/config';
 import { ROUTES } from '@/shared/constants/paths';
-import { MAP, MESSAGE } from '@/shared/constants/ui';
+import { MESSAGE } from '@/shared/constants/ui';
 import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
 import { useToastStore } from '@/shared/stores/useToastStore';
-import theme from '@/shared/styles/theme';
 import { Location, MapType } from '@/shared/types/map';
 
 interface TripRouteInfo {
@@ -44,7 +40,7 @@ const TripRoutePage = () => {
     const [currentPinPointIndex, setCurrentPinPointIndex] = useState(0);
     const [selectedIndividualMarker, setSelectedIndividualMarker] = useState<MediaFile | null>(null);
 
-    const [currentZoomScale, setCurrentZoomScale] = useState(DEFAULT_ZOOM_SCALE.TIMELINE);
+    const [currentZoomScale, setCurrentZoomScale] = useState(ZOOM_SCALE.DEFAULT.ROUTE);
     const [isMapInteractive, setIsMapInteractive] = useState(true);
 
     const [isPlayingAnimation, setIsPlayingAnimation] = useState(false);
@@ -53,7 +49,7 @@ const TripRoutePage = () => {
 
     const { showToast } = useToastStore();
 
-    const { isLoaded, loadError, markerIcon } = useGoogleMaps();
+    const { isLoaded, loadError } = useGoogleMaps();
 
     const mapRef = useRef<MapType | null>(null);
     const animationRef = useRef<number | null>(null);
@@ -209,7 +205,7 @@ const TripRoutePage = () => {
 
     const handleShowCharacterViewButtonClick = useCallback(() => {
         if (mapRef.current) {
-            mapRef.current.setZoom(DEFAULT_ZOOM_SCALE.TIMELINE);
+            mapRef.current.setZoom(ZOOM_SCALE.DEFAULT.ROUTE);
             // 지도 중심을 캐릭터 위치로 이동
             if (characterPosition) {
                 mapRef.current.panTo({ lat: characterPosition.latitude, lng: characterPosition.longitude });
@@ -265,49 +261,28 @@ const TripRoutePage = () => {
         }
     }, [pinPoints, isPlayingAnimation, isLastPinPoint, moveCharacter]);
 
-    const clusterOptions = useMemo(
-        () => ({
-            ...MARKER_CLUSTER_OPTIONS,
-            onClick: (cluster: any, _markers: any) => {
-                if (mapRef.current) {
-                    const currentZoom = mapRef.current.getZoom() || 0;
-                    const newZoom = Math.min(currentZoom + 3, DEFAULT_ZOOM_SCALE.INDIVIDUAL_MARKER_VISIBLE - 1);
-                    mapRef.current.setZoom(newZoom);
-                    mapRef.current.panTo(cluster.getCenter());
-                }
-            },
-        }),
-        [],
-    );
+    // const clusterOptions = useMemo(
+    //     () => ({
+    //         ...MARKER_CLUSTER_OPTIONS,
+    //         onClick: (cluster: any, _markers: any) => {
+    //             if (mapRef.current) {
+    //                 const currentZoom = mapRef.current.getZoom() || 0;
+    //                 const newZoom = Math.min(currentZoom + 3, ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE - 1);
+    //                 mapRef.current.setZoom(newZoom);
+    //                 mapRef.current.panTo(cluster.getCenter());
+    //             }
+    //         },
+    //     }),
+    //     [],
+    // );
 
-    const characterIcon = useMemo(() => {
-        if (isLoaded) {
-            return {
-                url: CHARACTER_ICON_CONFIG.url,
-                scaledSize: new window.google.maps.Size(
-                    CHARACTER_ICON_CONFIG.scaledSize.width,
-                    CHARACTER_ICON_CONFIG.scaledSize.height,
-                ),
-                anchor: new window.google.maps.Point(
-                    CHARACTER_ICON_CONFIG.anchorPoint.x,
-                    CHARACTER_ICON_CONFIG.anchorPoint.y,
-                ),
-            };
-        }
-        return null;
-    }, [isLoaded]);
-
-    const showCharacterView = currentZoomScale === DEFAULT_ZOOM_SCALE.TIMELINE;
-    const showIndividualMarkers = currentZoomScale >= DEFAULT_ZOOM_SCALE.INDIVIDUAL_MARKER_VISIBLE;
+    const showCharacterView = currentZoomScale === ZOOM_SCALE.DEFAULT.ROUTE;
+    const showIndividualImageMarkers = currentZoomScale >= ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE;
 
     if (loadError) {
         showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
         navigate(ROUTES.PATH.MAIN);
         return;
-    }
-
-    if (!isLoaded || isLoading) {
-        return <Spinner />;
     }
 
     const isPhotoCardVisible = (photoCardIndex: number) =>
@@ -317,12 +292,11 @@ const TripRoutePage = () => {
         if (showCharacterView) {
             return (
                 <>
-                    {<Polyline pinPoints={pinPoints} />}
                     {pinPoints.map((point, index) => (
                         <React.Fragment key={point.pinPointId}>
                             <Marker
-                                position={{ lat: point.latitude, lng: point.longitude }}
-                                icon={markerIcon || undefined}
+                                position={{ latitude: point.latitude, longitude: point.longitude }}
+                                isMapLoaded={isMapLoaded}
                             />
                             <PhotoCard
                                 position={{
@@ -339,26 +313,32 @@ const TripRoutePage = () => {
                         </React.Fragment>
                     ))}
                     {characterPosition && (
-                        <Marker
+                        <CharacterMarker
                             position={{
-                                lat: characterPosition?.latitude || 0,
-                                lng: characterPosition?.longitude || 0,
+                                latitude: characterPosition?.latitude,
+                                longitude: characterPosition?.longitude,
                             }}
-                            icon={characterIcon || undefined}
-                            zIndex={1000}
+                            isMapLoaded={isMapLoaded}
                         />
                     )}
                 </>
             );
-        } else if (showIndividualMarkers) {
+        } else if (showIndividualImageMarkers) {
             return (
                 <>
                     {tripRouteInfo?.tripImages.map((image) => (
                         <Marker
                             key={image.mediaFileId}
-                            position={{ lat: image.latitude, lng: image.longitude }}
-                            icon={markerIcon || undefined}
+                            position={{ latitude: image.latitude, longitude: image.longitude }}
+                            isMapLoaded={isMapLoaded}
                             onClick={() => handleIndividualMarkerClick(image)}
+                        />
+                    ))}
+                    {tripRouteInfo?.tripImages.map((image) => (
+                        <Marker
+                            key={image.mediaFileId}
+                            position={{ latitude: image.latitude, longitude: image.longitude }}
+                            isMapLoaded={isMapLoaded}
                         />
                     ))}
                     {selectedIndividualMarker && (
@@ -370,60 +350,31 @@ const TripRoutePage = () => {
                     )}
                 </>
             );
-        } else {
-            return (
-                <MarkerClusterer options={clusterOptions}>
-                    {(clusterer) => (
-                        <>
-                            {tripRouteInfo?.tripImages.map((image) => (
-                                <Marker
-                                    key={image.mediaFileId}
-                                    position={{ lat: image.latitude, lng: image.longitude }}
-                                    clusterer={clusterer}
-                                    // icon={markerIcon || undefined}
-                                />
-                            ))}
-                        </>
-                    )}
-                </MarkerClusterer>
-            );
         }
-    };
-
-    const renderButtons = () => {
-        return (
-            !isCharacterMoving && (
-                <div css={buttonGroup}>
-                    <Button
-                        text='날짜별 사진보기'
-                        variant='white'
-                        onClick={handleImageByDateButtonClick}
-                        customStyle={customButtonStyle('white')}
-                    />
-                    {showCharacterView ? (
-                        <Button
-                            text={
-                                isLastPinPoint
-                                    ? '첫 위치로 돌아가기'
-                                    : isPlayingAnimation
-                                      ? '캐릭터 움직임 멈추기'
-                                      : '캐릭터 움직이기'
-                            }
-                            icon={isLastPinPoint ? '' : isPlayingAnimation ? <Pause size={16} /> : <Play size={16} />}
-                            onClick={togglePlayingButton}
-                            customStyle={customButtonStyle()}
-                        />
-                    ) : (
-                        <Button
-                            text='캐릭터 화면에 표시'
-                            icon={<BsPersonWalking size={16} />}
-                            onClick={handleShowCharacterViewButtonClick}
-                            customStyle={customButtonStyle()}
-                        />
-                    )}
-                </div>
-            )
-        );
+        // } else {
+        //     return (
+        //         // <MarkerClusterer options={clusterOptions}>
+        //         //     {(clusterer) => (
+        //         //         <>
+        //         //             {tripRouteInfo?.tripImages.map((image) => (
+        //         //                 // <Marker
+        //         //                 //     key={image.mediaFileId}
+        //         //                 //     position={{ lat: image.latitude, lng: image.longitude }}
+        //         //                 //     clusterer={clusterer}
+        //         //                 //     // icon={markerIcon || undefined}
+        //         //                 // />
+        //         //                 <Marker
+        //         //                     key={image.mediaFileId}
+        //         //                     position={image}
+        //         //                     clusterer={clusterer}
+        //         //                     isMapLoaded={isMapLoaded}
+        //         //                 />
+        //         //             ))}
+        //         //         </>
+        //         //     )}
+        //         // </MarkerClusterer>
+        //     );
+        // }
     };
 
     const handleMapLoad = (map: MapType) => {
@@ -434,10 +385,12 @@ const TripRoutePage = () => {
     };
 
     return (
-        <div css={pageContainer}>
+        <div css={container}>
+            {(!isLoaded || isLoading) && <Spinner text='지도 불러오는 중...' />}
+
             <Header title={tripRouteInfo?.title || ''} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
             <Map
-                zoom={DEFAULT_ZOOM_SCALE.TIMELINE}
+                zoom={ZOOM_SCALE.DEFAULT.ROUTE}
                 center={characterPosition || DEFAULT_CENTER}
                 isInteractive={isMapInteractive}
                 onLoad={handleMapLoad}
@@ -445,81 +398,31 @@ const TripRoutePage = () => {
                 onClick={() => setSelectedIndividualMarker(null)}
             >
                 <>
+                    <Polyline pinPoints={pinPoints} />
                     {renderMarkers()}
-                    {renderButtons()}
+                    {/* {renderButtons()} */}
+                    <MapControlButtons
+                        isVisible={isCharacterMoving}
+                        isCharacterView={showCharacterView}
+                        isLastPinPoint={isLastPinPoint}
+                        isCharacterPlaying={isPlayingAnimation}
+                        handler={{
+                            handleDateViewClick: handleImageByDateButtonClick,
+                            handleCharacterViewClick: handleShowCharacterViewButtonClick,
+                            handleCharacterPlayToggle: togglePlayingButton,
+                        }}
+                    />
                 </>
             </Map>
         </div>
     );
 };
 
-const pageContainer = css`
+const container = css`
     height: 100dvh;
     display: flex;
     flex-direction: column;
     position: relative;
-`;
-
-const buttonGroup = css`
-    position: absolute;
-    width: 100%;
-    bottom: 30px;
-    padding: 12px;
-    display: flex;
-    gap: 8px;
-`;
-
-const customButtonStyle = (variant: string = 'primary') => css`
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    color: ${variant === 'white' ? theme.COLORS.TEXT.DESCRIPTION : ''};
-    font-weight: bold;
-    transition: all 0.3s ease;
-`;
-
-const basePhotoCardStyle = css`
-    background-color: ${theme.COLORS.TEXT.WHITE};
-    width: ${MAP.PHOTO_CARD_SIZE.WIDTH}px;
-    height: ${MAP.PHOTO_CARD_SIZE.HEIGHT}px;
-    border-radius: 20%;
-    padding: 1px;
-    box-shadow:
-        rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
-        rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-    position: relative;
-
-    &:hover {
-        transform: scale(1.05);
-    }
-
-    &::after {
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        border-top: 10px solid white;
-        box-shadow:
-            rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
-            rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
-    }
-
-    img {
-        width: 100%;
-        aspect-ratio: 1;
-        object-fit: cover;
-        border-radius: 20%;
-    }
-`;
-
-const photoCardStyle = (isCurrentPin: boolean) => css`
-    ${basePhotoCardStyle}
-    opacity: ${isCurrentPin ? 1 : 0};
-    visibility: ${isCurrentPin ? 'visible' : 'hidden'};
-    pointer-events: ${isCurrentPin ? 'auto' : 'none'};
 `;
 
 export default TripRoutePage;
