@@ -12,7 +12,7 @@
 // import ImageItem from '@/domains/trip/components/ImageItem';
 // import Spinner from '@/shared/components/common/Spinner';
 // import { ROUTES } from '@/shared/constants/paths';
-// import { useMap } from '@/shared/hooks/useMap';
+// import { useMapControl } from '@/shared/hooks/useMapControl';
 // import { useScrollHint } from '@/shared/hooks/useScrollHint';
 // import { useToastStore } from '@/shared/stores/useToastStore';
 // import theme from '@/shared/styles/theme';
@@ -24,7 +24,7 @@
 
 //     // const [imageLocation, setImageLocation] = useState<LatLng>();
 
-//     const { isMapScriptLoaded, isMapScriptLoadError } = useMap();
+//     const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl();
 //     const showToast = useToastStore((state) => state.showToast);
 
 //     const { tripKey } = useParams();
@@ -243,7 +243,7 @@ import DateSelector from '@/domains/trip/components/DateSelector';
 import ImageItem from '@/domains/trip/components/ImageItem';
 import Spinner from '@/shared/components/common/Spinner';
 import { ROUTES } from '@/shared/constants/paths';
-import { useMap } from '@/shared/hooks/useMap';
+import { useMapControl } from '@/shared/hooks/useMapControl';
 import { useScrollHint } from '@/shared/hooks/useScrollHint';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
@@ -254,7 +254,7 @@ const ImageByDatePage = () => {
     const [datesWithImages, setDatesWithImages] = useState<string[]>([]);
     const [imageLocation, setImageLocation] = useState<LatLng>();
     const [isImageLoaded, setIsImageLoaded] = useState(false);
-    const { isMapScriptLoaded, isMapScriptLoadError } = useMap();
+    const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl();
     const showToast = useToastStore((state) => state.showToast);
     const { tripKey } = useParams();
     const {

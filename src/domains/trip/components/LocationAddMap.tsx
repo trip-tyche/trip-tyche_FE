@@ -8,7 +8,7 @@ import Button from '@/shared/components/common/Button';
 import Spinner from '@/shared/components/common/Spinner';
 import Marker from '@/shared/components/map/Marker';
 import { ZOOM_SCALE, MAPS_OPTIONS } from '@/shared/constants/map';
-import { useMap } from '@/shared/hooks/useMap';
+import { useMapControl } from '@/shared/hooks/useMapControl';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
 import { Location, LatLng, MapMouseEvent, PlacesAutocomplete } from '@/shared/types/map';
@@ -35,7 +35,7 @@ const LocationAddMap = ({
 
     const showToast = useToastStore((state) => state.showToast);
 
-    const { isMapScriptLoaded, isMapScriptLoadError } = useMap();
+    const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl();
 
     const autocompleteRef = useRef<PlacesAutocomplete>(null);
 

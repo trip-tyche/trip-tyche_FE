@@ -21,7 +21,7 @@ import Marker from '@/shared/components/map/Marker';
 import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/map';
 import { ROUTES } from '@/shared/constants/paths';
 import { MESSAGE } from '@/shared/constants/ui';
-import { useMap } from '@/shared/hooks/useMap';
+import { useMapControl } from '@/shared/hooks/useMapControl';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import { Location } from '@/shared/types/map';
 
@@ -51,7 +51,7 @@ const TripRoutePage = () => {
 
     const { showToast } = useToastStore();
 
-    const { mapRef, isMapScriptLoaded, isMapScriptLoadError, isMapRendered, handleMapRender } = useMap();
+    const { mapRef, isMapScriptLoaded, isMapScriptLoadError, isMapRendered, handleMapRender } = useMapControl();
 
     const animationRef = useRef<number | null>(null);
     const startTimeRef = useRef<number | null>(null);
@@ -318,7 +318,7 @@ const TripRoutePage = () => {
             }
         }
     }, [characterPosition]);
-
+    console.log('zxcv');
     const handleImageByDateButtonClick = useCallback(() => {
         if (!tripRouteInfo) return;
 
@@ -378,7 +378,7 @@ const TripRoutePage = () => {
     const showIndividualImageMarkers = currentZoomScale >= ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE;
 
     if (isMapScriptLoadError) {
-        showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
+        showToast('지도를 불러오는데 실패했습니다');
         navigate(ROUTES.PATH.MAIN);
         return;
     }
