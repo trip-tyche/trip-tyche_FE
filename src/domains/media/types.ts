@@ -1,4 +1,4 @@
-import { Location } from '@/shared/types/location';
+import { Location } from '@/shared/types/map';
 
 export interface MediaFile {
     mediaFileId: string;

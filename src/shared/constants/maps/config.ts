@@ -1,6 +1,6 @@
 import { Libraries } from '@react-google-maps/api';
 
-import { MapOption } from '@/shared/types/maps';
+import { MapOption } from '@/shared/types/map';
 
 export const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 

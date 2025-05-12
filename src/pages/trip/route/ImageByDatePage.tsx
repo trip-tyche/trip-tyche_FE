@@ -247,7 +247,7 @@ import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
 import { useScrollHint } from '@/shared/hooks/useScrollHint';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
-import { LatLng } from '@/shared/types/maps';
+import { LatLng } from '@/shared/types/map';
 
 const ImageByDatePage = () => {
     const [currentDate, setCurrentDate] = useState('');

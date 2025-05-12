@@ -10,8 +10,7 @@ import { DEFAULT_ZOOM_SCALE, MAPS_OPTIONS } from '@/shared/constants/maps/config
 import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
-import { Location } from '@/shared/types/location';
-import { LatLng, MapMouseEvent, PlacesAutocomplete } from '@/shared/types/maps';
+import { Location, LatLng, MapMouseEvent, PlacesAutocomplete } from '@/shared/types/map';
 
 interface LocationAddMapProps {
     defaultLocation: Location;

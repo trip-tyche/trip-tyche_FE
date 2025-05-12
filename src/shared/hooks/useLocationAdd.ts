@@ -8,7 +8,7 @@ import { mediaAPI } from '@/libs/apis';
 import { ROUTES } from '@/shared/constants/paths';
 import { useTripDefaultLocation } from '@/shared/hooks/queries/useTripImage';
 import { useToastStore } from '@/shared/stores/useToastStore';
-import { Location } from '@/shared/types/location';
+import { Location } from '@/shared/types/map';
 
 export const useLocationAdd = () => {
     const [displayedImages, setDisplayedImages] = useState<UnlocatedMediaFileList[]>([]);

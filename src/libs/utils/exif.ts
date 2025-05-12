@@ -1,7 +1,7 @@
 import piexif from 'piexifjs';
 
 import { Exif } from '@/shared/types/exif';
-import { Location } from '@/shared/types/location';
+import { Location } from '@/shared/types/map';
 
 // 이미지 파일에서 EXIF 데이터 추출
 const readExifData = (file: File): Promise<Exif | null> => {

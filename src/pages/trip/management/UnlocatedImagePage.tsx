@@ -396,7 +396,7 @@ import ConfirmModal from '@/shared/components/guide/ConfirmModal';
 import { ROUTES } from '@/shared/constants/paths';
 import { COLORS } from '@/shared/constants/theme';
 import { useToastStore } from '@/shared/stores/useToastStore';
-import { Location } from '@/shared/types/location';
+import { Location } from '@/shared/types/map';
 
 interface Media {
     mediaFileId: number;

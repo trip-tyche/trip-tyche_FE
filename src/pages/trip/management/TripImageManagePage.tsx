@@ -22,7 +22,7 @@ import { COLORS } from '@/shared/constants/theme';
 import { useTripImages } from '@/shared/hooks/queries/useImage';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
-import { Location } from '@/shared/types/location';
+import { Location } from '@/shared/types/map';
 
 const TripImageManagePage = () => {
     const [isSelectionMode, setIsSelectionMode] = useState(false);

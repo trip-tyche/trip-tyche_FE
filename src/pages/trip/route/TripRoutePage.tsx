@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { GoogleMap, Marker, OverlayView, MarkerClusterer, Polyline } from '@react-google-maps/api';
+import { Marker, OverlayView, MarkerClusterer, Polyline } from '@react-google-maps/api';
 import { Play, Pause } from 'lucide-react';
 import { BsPersonWalking } from 'react-icons/bs';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { MediaFile } from '@/domains/media/types';
+import PhotoCard from '@/domains/route/components/PhotoCard';
 import { ROUTE } from '@/domains/route/constants';
 import { PinPoint } from '@/domains/route/types';
 import { routeAPI } from '@/libs/apis';
@@ -14,21 +15,22 @@ import { getPixelPositionOffset } from '@/libs/utils/map';
 import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
 import Spinner from '@/shared/components/common/Spinner';
-import { DEFAULT_ZOOM_SCALE, MAPS_OPTIONS, MARKER_CLUSTER_OPTIONS } from '@/shared/constants/maps/config';
+import Map from '@/shared/components/Map';
+import { DEFAULT_CENTER, DEFAULT_ZOOM_SCALE, MARKER_CLUSTER_OPTIONS } from '@/shared/constants/maps/config';
 import { CHARACTER_ICON_CONFIG, POLYLINE_OPTIONS } from '@/shared/constants/maps/styles';
 import { ROUTES } from '@/shared/constants/paths';
 import { MAP } from '@/shared/constants/ui';
 import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
-import { LatLng, Map } from '@/shared/types/maps';
+import { Location, MapType } from '@/shared/types/map';
 
 const TripRoutePage = () => {
     const [tripTitle, setTripTitle] = useState();
     const [pinPointsInfo, setPinPointsInfo] = useState<PinPoint[]>([]);
     const [tripImages, setTripImages] = useState<MediaFile[]>([]);
     const [startDate, setStartDate] = useState('');
-    const [characterPosition, setCharacterPosition] = useState<LatLng>();
+    const [characterPosition, setCharacterPosition] = useState<Location>();
 
     const [currentPinPointIndex, setCurrentPinPointIndex] = useState(0);
     const [selectedIndividualMarker, setSelectedIndividualMarker] = useState<MediaFile | null>(null);
@@ -46,7 +48,7 @@ const TripRoutePage = () => {
 
     const { isLoaded, loadError, markerIcon } = useGoogleMaps();
 
-    const mapRef = useRef<Map | null>(null);
+    const mapRef = useRef<MapType | null>(null);
     const animationRef = useRef<number | null>(null);
     const startTimeRef = useRef<number | null>(null);
     const autoPlayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -57,7 +59,7 @@ const TripRoutePage = () => {
 
     const isLastPinPoint = currentPinPointIndex === pinPointsInfo.length - 1;
 
-    const handleMapLoad = (map: Map) => {
+    const handleMapLoad = (map: MapType) => {
         mapRef.current = map;
         setIsMapLoaded(true);
     };
@@ -98,7 +100,10 @@ const TripRoutePage = () => {
             setImagesByDates(uniqueImageDates);
             setPinPointsInfo(sortedPinPointByDate);
 
-            setCharacterPosition({ lat: sortedPinPointByDate[0].latitude, lng: sortedPinPointByDate[0].longitude });
+            setCharacterPosition({
+                latitude: sortedPinPointByDate[0].latitude,
+                longitude: sortedPinPointByDate[0].longitude,
+            });
             setIsPlayingAnimation(false);
             setIsCharacterMoving(false);
         };
@@ -130,8 +135,8 @@ const TripRoutePage = () => {
                 if (startPinPointIndex !== -1) {
                     setCurrentPinPointIndex(startPinPointIndex);
                     setCharacterPosition({
-                        lat: pinPointsInfo[startPinPointIndex].latitude,
-                        lng: pinPointsInfo[startPinPointIndex].longitude,
+                        latitude: pinPointsInfo[startPinPointIndex].latitude,
+                        longitude: pinPointsInfo[startPinPointIndex].longitude,
                     });
                 }
             }
@@ -157,11 +162,11 @@ const TripRoutePage = () => {
 
             const newLat = start.latitude + (end.latitude - start.latitude) * progress;
             const newLng = start.longitude + (end.longitude - start.longitude) * progress;
-            const newPosition = { lat: newLat, lng: newLng };
+            const newPosition = { latitude: newLat, longitude: newLng };
             setCharacterPosition(newPosition);
 
             if (mapRef.current) {
-                mapRef.current.panTo(newPosition);
+                mapRef.current.panTo({ lat: newPosition.latitude, lng: newPosition.longitude });
             }
 
             if (progress < 1) {
@@ -206,7 +211,7 @@ const TripRoutePage = () => {
             mapRef.current.setZoom(DEFAULT_ZOOM_SCALE.TIMELINE);
             // 지도 중심을 캐릭터 위치로 이동
             if (characterPosition) {
-                mapRef.current.panTo(characterPosition);
+                mapRef.current.panTo({ lat: characterPosition.latitude, lng: characterPosition.longitude });
             }
         }
     }, [characterPosition]);
@@ -237,11 +242,14 @@ const TripRoutePage = () => {
 
     const togglePlayingButton = useCallback(() => {
         if (isLastPinPoint) {
-            const firstPinPointLocation = { lat: pinPointsInfo[0].latitude, lng: pinPointsInfo[0].longitude };
+            const firstPinPointLocation = {
+                latitude: pinPointsInfo[0].latitude,
+                longitude: pinPointsInfo[0].longitude,
+            };
 
             setCurrentPinPointIndex(0);
             setCharacterPosition(firstPinPointLocation);
-            mapRef.current?.panTo(firstPinPointLocation);
+            mapRef.current?.panTo({ lat: firstPinPointLocation.latitude, lng: firstPinPointLocation.longitude });
             setIsCharacterMoving(false);
         } else {
             setIsPlayingAnimation(!isPlayingAnimation);
@@ -309,19 +317,6 @@ const TripRoutePage = () => {
         return <Polyline path={path} options={POLYLINE_OPTIONS} />;
     };
 
-    const renderPhotoCard = (marker: MediaFile) => (
-        <OverlayView
-            position={{ lat: marker.latitude, lng: marker.longitude }}
-            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-            getPixelPositionOffset={() => getPixelPositionOffset(50)}
-        >
-            <div css={basePhotoCardStyle}>
-                <img src={marker.mediaLink} alt='포토카드 이미지' />
-            </div>
-        </OverlayView>
-    );
-    console.log(selectedIndividualMarker);
-
     const renderMarkers = () => {
         if (showCharacterView) {
             return (
@@ -334,7 +329,10 @@ const TripRoutePage = () => {
                                 icon={markerIcon || undefined}
                             />
                             <OverlayView
-                                position={characterPosition || undefined}
+                                position={{
+                                    lat: characterPosition?.latitude || 0,
+                                    lng: characterPosition?.longitude || 0,
+                                }}
                                 mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                                 getPixelPositionOffset={() => getPixelPositionOffset(80)}
                             >
@@ -353,7 +351,14 @@ const TripRoutePage = () => {
                         </React.Fragment>
                     ))}
                     {characterPosition && (
-                        <Marker position={characterPosition} icon={characterIcon || undefined} zIndex={1000} />
+                        <Marker
+                            position={{
+                                lat: characterPosition?.latitude || 0,
+                                lng: characterPosition?.longitude || 0,
+                            }}
+                            icon={characterIcon || undefined}
+                            zIndex={1000}
+                        />
                     )}
                 </>
             );
@@ -368,7 +373,7 @@ const TripRoutePage = () => {
                             onClick={() => handleIndividualMarkerClick(image)}
                         />
                     ))}
-                    {isMapLoaded && selectedIndividualMarker && renderPhotoCard(selectedIndividualMarker)}
+                    {isMapLoaded && selectedIndividualMarker && <PhotoCard marker={selectedIndividualMarker} />}
                 </>
             );
         } else {
@@ -430,24 +435,19 @@ const TripRoutePage = () => {
     return (
         <div css={pageContainer}>
             <Header title={tripTitle || ''} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
-            <div css={mapWrapper}>
-                <GoogleMap
-                    zoom={DEFAULT_ZOOM_SCALE.TIMELINE}
-                    center={characterPosition || undefined}
-                    options={{
-                        ...MAPS_OPTIONS,
-                        draggable: isMapInteractive,
-                        scrollwheel: isMapInteractive,
-                    }}
-                    mapContainerStyle={{ height: 'calc(100% + 30px)' }}
-                    onLoad={handleMapLoad}
-                    onZoomChanged={handleZoomChanged}
-                    onClick={() => setSelectedIndividualMarker(null)}
-                >
+            <Map
+                zoom={DEFAULT_ZOOM_SCALE.TIMELINE}
+                center={characterPosition || DEFAULT_CENTER}
+                isInteractive={isMapInteractive}
+                onLoad={handleMapLoad}
+                onZoomChanged={handleZoomChanged}
+                onClick={() => setSelectedIndividualMarker(null)}
+            >
+                <>
                     {renderMarkers()}
                     {renderButtons()}
-                </GoogleMap>
-            </div>
+                </>
+            </Map>
         </div>
     );
 };
@@ -457,10 +457,6 @@ const pageContainer = css`
     display: flex;
     flex-direction: column;
     position: relative;
-`;
-
-const mapWrapper = css`
-    flex-grow: 1;
 `;
 
 const buttonGroup = css`

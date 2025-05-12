@@ -1,5 +1,5 @@
 import { TripInfo } from '@/domains/trip/types';
-import { Location } from '@/shared/types/location';
+import { Location } from '@/shared/types/map';
 
 // 사용자 닉네임 유효성 검사
 export const validateUserNickName = (inputValue: string, minLength = 2, maxLength = 10) => {

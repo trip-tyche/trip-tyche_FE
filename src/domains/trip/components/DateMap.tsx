@@ -3,7 +3,7 @@ import { GoogleMap, Marker } from '@react-google-maps/api';
 
 import { MAPS_OPTIONS, DEFAULT_ZOOM_SCALE } from '@/shared/constants/maps/config';
 import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
-import { LatLng } from '@/shared/types/maps';
+import { LatLng } from '@/shared/types/map';
 
 interface DateMapProps {
     imageLocation: LatLng;

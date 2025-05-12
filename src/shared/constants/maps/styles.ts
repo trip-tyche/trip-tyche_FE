@@ -1,6 +1,6 @@
 import characterImage from '/character-1.png';
 
-import { PolylineOption } from '@/shared/types/maps';
+import { PolylineOption } from '@/shared/types/map';
 import theme from '@/shared/styles/theme';
 
 export const MARKER_ICON_CONFIG = {
