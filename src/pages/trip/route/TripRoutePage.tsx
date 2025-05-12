@@ -21,9 +21,9 @@ import Marker from '@/shared/components/map/Marker';
 import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/map';
 import { ROUTES } from '@/shared/constants/paths';
 import { MESSAGE } from '@/shared/constants/ui';
-import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
+import { useMap } from '@/shared/hooks/useMap';
 import { useToastStore } from '@/shared/stores/useToastStore';
-import { Location, MapType } from '@/shared/types/map';
+import { Location } from '@/shared/types/map';
 
 interface TripRouteInfo {
     title: string;
@@ -46,15 +46,13 @@ const TripRoutePage = () => {
 
     const [isPlayingAnimation, setIsPlayingAnimation] = useState(false);
     const [isCharacterMoving, setIsCharacterMoving] = useState(false);
-    const [isMapLoaded, setIsMapLoaded] = useState(false);
 
     const [showSpinner, setShowSpinner] = useState(false);
 
     const { showToast } = useToastStore();
 
-    const { isLoaded, loadError } = useGoogleMaps();
+    const { mapRef, isMapScriptLoaded, isMapScriptLoadError, isMapRendered, handleMapRender } = useMap();
 
-    const mapRef = useRef<MapType | null>(null);
     const animationRef = useRef<number | null>(null);
     const startTimeRef = useRef<number | null>(null);
     const autoPlayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -379,7 +377,7 @@ const TripRoutePage = () => {
     const showCharacterView = currentZoomScale === ZOOM_SCALE.DEFAULT.ROUTE;
     const showIndividualImageMarkers = currentZoomScale >= ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE;
 
-    if (loadError) {
+    if (isMapScriptLoadError) {
         showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
         navigate(ROUTES.PATH.MAIN);
         return;
@@ -396,7 +394,7 @@ const TripRoutePage = () => {
                         <React.Fragment key={point.pinPointId}>
                             <Marker
                                 position={{ latitude: point.latitude, longitude: point.longitude }}
-                                isMapLoaded={isMapLoaded}
+                                isMapRendered={isMapRendered}
                                 isVisible={
                                     !(
                                         characterPosition?.latitude === point.latitude &&
@@ -424,7 +422,7 @@ const TripRoutePage = () => {
                                 latitude: characterPosition?.latitude,
                                 longitude: characterPosition?.longitude,
                             }}
-                            isMapLoaded={isMapLoaded}
+                            isMapRendered={isMapRendered}
                         />
                     )}
                 </>
@@ -436,7 +434,7 @@ const TripRoutePage = () => {
                         <Marker
                             key={image.mediaFileId}
                             position={{ latitude: image.latitude, longitude: image.longitude }}
-                            isMapLoaded={isMapLoaded}
+                            isMapRendered={isMapRendered}
                             onClick={() => handleIndividualMarkerClick(image)}
                         />
                     ))}
@@ -454,14 +452,7 @@ const TripRoutePage = () => {
         }
     };
 
-    const handleMapLoad = (map: MapType) => {
-        if (!map) return;
-
-        mapRef.current = map;
-        setIsMapLoaded(true);
-    };
-
-    if (!isLoaded || isLoading) {
+    if (!isMapScriptLoaded || isLoading) {
         return <Spinner />;
     }
 
@@ -474,7 +465,7 @@ const TripRoutePage = () => {
                 zoom={ZOOM_SCALE.DEFAULT.ROUTE}
                 center={characterPosition || DEFAULT_CENTER}
                 isInteractive={isMapInteractive}
-                onLoad={handleMapLoad}
+                onLoad={handleMapRender}
                 onZoomChanged={handleZoomChanged}
                 onClick={() => setSelectedIndividualMarker(null)}
             >

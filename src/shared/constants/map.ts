@@ -74,7 +74,6 @@ export const MARKER_ICON_CONFIG = {
     strokeWeight: 0,
     rotation: 0,
     scale: 1.9,
-    anchor: new window.google.maps.Point(12, 22),
 } as const;
 
 // 캐릭터 마커 환경

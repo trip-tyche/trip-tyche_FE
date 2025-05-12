@@ -17,6 +17,8 @@ interface MapProps {
 const Map = ({ zoom, center, children, isInteractive = true, onLoad, onZoomChanged, onClick }: MapProps) => {
     const { latitude, longitude } = center;
 
+    console.log('hi');
+
     return (
         <div css={map}>
             <GoogleMap

@@ -5,22 +5,18 @@ import { Location } from '@/shared/types/map';
 
 interface MarkerProps {
     position: Location;
-    isMapLoaded?: boolean;
+    isMapRendered?: boolean;
     isVisible?: boolean;
     onClick?: () => void;
 }
 
-const Marker = ({ position, isMapLoaded, isVisible = true, onClick }: MarkerProps) => {
-    if (!isMapLoaded) {
-        return;
-    }
-
-    if (!isVisible) return null;
+const Marker = ({ position, isMapRendered, isVisible = true, onClick }: MarkerProps) => {
+    if (!isMapRendered || !isVisible) return null;
 
     return (
         <GoogleMapsMarker
             position={{ lat: position.latitude, lng: position.longitude }}
-            icon={MARKER_ICON_CONFIG}
+            icon={{ ...MARKER_ICON_CONFIG, anchor: new window.google.maps.Point(12, 22) }}
             onClick={onClick}
         />
     );

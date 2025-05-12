@@ -12,7 +12,7 @@
 // import ImageItem from '@/domains/trip/components/ImageItem';
 // import Spinner from '@/shared/components/common/Spinner';
 // import { ROUTES } from '@/shared/constants/paths';
-// import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
+// import { useMap } from '@/shared/hooks/useMap';
 // import { useScrollHint } from '@/shared/hooks/useScrollHint';
 // import { useToastStore } from '@/shared/stores/useToastStore';
 // import theme from '@/shared/styles/theme';
@@ -24,7 +24,7 @@
 
 //     // const [imageLocation, setImageLocation] = useState<LatLng>();
 
-//     const { isLoaded, loadError } = useGoogleMaps();
+//     const { isMapScriptLoaded, isMapScriptLoadError } = useMap();
 //     const showToast = useToastStore((state) => state.showToast);
 
 //     const { tripKey } = useParams();
@@ -37,8 +37,8 @@
 //     const imageListRef = useRef<HTMLDivElement>(null);
 //     const { data: result, isLoading } = useMediaByDate(tripKey!, currentDate);
 
-//     // const { isHintOverlayVisible, isFirstLoad } = useScrollHint(imageListRef, isLoaded);
-//     const { isHintOverlayVisible, isFirstLoad } = useScrollHint(imageListRef, isLoaded, isImageLoaded);
+//     // const { isHintOverlayVisible, isFirstLoad } = useScrollHint(imageListRef, isMapScriptLoaded);
+//     const { isHintOverlayVisible, isFirstLoad } = useScrollHint(imageListRef, isMapScriptLoaded, isImageLoaded);
 //     const imageRefs = useImagesLocationObserver(
 //         'data' in result! && Array.isArray(result.data) ? result.data : [],
 //         setImageLocation,
@@ -53,12 +53,12 @@
 //         setCurrentDate(imageDates[0]);
 //     }, [imageDates]);
 
-//     if (loadError) {
+//     if (isMapScriptLoadError) {
 //         showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
 //         navigate(-1);
 //     }
 
-//     if (!isLoaded || isLoading) {
+//     if (!isMapScriptLoaded || isLoading) {
 //         return <Spinner />;
 //     }
 
@@ -243,7 +243,7 @@ import DateSelector from '@/domains/trip/components/DateSelector';
 import ImageItem from '@/domains/trip/components/ImageItem';
 import Spinner from '@/shared/components/common/Spinner';
 import { ROUTES } from '@/shared/constants/paths';
-import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
+import { useMap } from '@/shared/hooks/useMap';
 import { useScrollHint } from '@/shared/hooks/useScrollHint';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
@@ -254,7 +254,7 @@ const ImageByDatePage = () => {
     const [datesWithImages, setDatesWithImages] = useState<string[]>([]);
     const [imageLocation, setImageLocation] = useState<LatLng>();
     const [isImageLoaded, setIsImageLoaded] = useState(false);
-    const { isLoaded, loadError } = useGoogleMaps();
+    const { isMapScriptLoaded, isMapScriptLoadError } = useMap();
     const showToast = useToastStore((state) => state.showToast);
     const { tripKey } = useParams();
     const {
@@ -267,7 +267,7 @@ const ImageByDatePage = () => {
     const handleImageLoad = () => {
         setIsImageLoaded(true);
     };
-    const { isHintOverlayVisible, isFirstLoad } = useScrollHint(imageListRef, isLoaded, isImageLoaded);
+    const { isHintOverlayVisible, isFirstLoad } = useScrollHint(imageListRef, isMapScriptLoaded, isImageLoaded);
     const imageRefs = useImagesLocationObserver(
         result && 'data' in result && Array.isArray(result.data) ? result.data : [],
         setImageLocation,
@@ -283,11 +283,11 @@ const ImageByDatePage = () => {
         setCurrentDate(imageDates[0]);
     }, [imageDates]);
 
-    if (loadError) {
+    if (isMapScriptLoadError) {
         showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
         navigate(-1);
     }
-    if (!isLoaded || isLoading) {
+    if (!isMapScriptLoaded || isLoading) {
         return <Spinner />;
     }
 

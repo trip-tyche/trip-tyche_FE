@@ -8,7 +8,7 @@ import Button from '@/shared/components/common/Button';
 import Spinner from '@/shared/components/common/Spinner';
 import Marker from '@/shared/components/map/Marker';
 import { ZOOM_SCALE, MAPS_OPTIONS } from '@/shared/constants/map';
-import { useGoogleMaps } from '@/shared/hooks/useGoogleMaps';
+import { useMap } from '@/shared/hooks/useMap';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
 import { Location, LatLng, MapMouseEvent, PlacesAutocomplete } from '@/shared/types/map';
@@ -35,7 +35,7 @@ const LocationAddMap = ({
 
     const showToast = useToastStore((state) => state.showToast);
 
-    const { isLoaded, loadError } = useGoogleMaps();
+    const { isMapScriptLoaded, isMapScriptLoadError } = useMap();
 
     const autocompleteRef = useRef<PlacesAutocomplete>(null);
 
@@ -66,12 +66,12 @@ const LocationAddMap = ({
         }
     };
 
-    if (loadError) {
+    if (isMapScriptLoadError) {
         setIsMapVisible(false);
         showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
     }
 
-    if (!isLoaded) {
+    if (!isMapScriptLoaded) {
         return <Spinner />;
     }
 
