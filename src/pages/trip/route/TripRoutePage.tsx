@@ -135,7 +135,7 @@ const TripRoutePage = () => {
     useEffect(() => {
         if (pinPoints.length > 0 && state) {
             const currentPinPointId = state?.lastLoactedPinPointId;
-            const recentPinPointId = sessionStorage.getItem('recentPinPointId');
+            // const recentPinPointId = sessionStorage.getItem('recentPinPointId');
 
             if (currentPinPointId) {
                 const startPinPointIndex = pinPoints.findIndex(
@@ -484,7 +484,7 @@ const TripRoutePage = () => {
                 }}
             >
                 <>
-                    <Polyline pinPoints={pinPoints} />
+                    <Polyline pinPoints={pinPoints} isCharacterVisible={showCharacterView} />
                     {renderMarkers()}
                     <MapControlButtons
                         isVisible={!isCharacterMoving}

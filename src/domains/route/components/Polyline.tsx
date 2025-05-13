@@ -4,14 +4,21 @@ import { PinPoint } from '@/domains/route/types';
 import { COLORS } from '@/shared/constants/theme';
 import { PolylineOption } from '@/shared/types/map';
 
-const Polyline = ({ pinPoints }: { pinPoints: PinPoint[] }) => {
-    if (pinPoints.length < 2) return null;
+const Polyline = ({
+    pinPoints,
+    isCharacterVisible = true,
+}: {
+    pinPoints: PinPoint[];
+    isCharacterVisible?: boolean;
+}) => {
+    const SINGLE_PINPOINT = 1;
 
+    if (pinPoints.length === SINGLE_PINPOINT) return null;
     const path = pinPoints.map((pinPoint) => ({ lat: pinPoint.latitude, lng: pinPoint.longitude }));
 
     const options: PolylineOption = {
-        strokeColor: `${COLORS.PRIMARY}`,
-        strokeOpacity: 0.7,
+        strokeColor: isCharacterVisible ? COLORS.PRIMARY : COLORS.TEXT.DESCRIPTION_LIGHT,
+        strokeOpacity: isCharacterVisible ? 0.7 : 0.5,
         strokeWeight: 0,
         icons: [
             {
