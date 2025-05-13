@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { OverlayView, OverlayViewF } from '@react-google-maps/api';
 import { X } from 'lucide-react';
 
 import { getPixelPositionOffset } from '@/libs/utils/map';
+import CircleSpinner from '@/shared/components/CircleSpinner';
 import { COLORS } from '@/shared/constants/theme';
 import { MAP } from '@/shared/constants/ui';
 import { Location } from '@/shared/types/map';
@@ -19,14 +20,25 @@ interface PhotoCardProps {
 
 const PhotoCard = ({ position, image, isVisible, heightOffset, onClick }: PhotoCardProps) => {
     const [showImageDetail, setShowImageDetail] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    const handleClick = useCallback((event: React.MouseEvent | React.TouchEvent) => {
+        event.stopPropagation();
+
+        if (onClick) {
+            onClick();
+        } else {
+            setShowImageDetail(true);
+        }
+    }, []);
+
+    const handleImageLoad = useCallback(() => {
+        // setIsLoading(false);
+    }, []);
+
+    console.log(isLoading);
 
     if (!isVisible) return null;
-
-    const handleClick = (event: React.MouseEvent | React.TouchEvent) => {
-        event.stopPropagation();
-        onClick?.();
-        setShowImageDetail(true);
-    };
 
     return (
         <>
@@ -35,8 +47,9 @@ const PhotoCard = ({ position, image, isVisible, heightOffset, onClick }: PhotoC
                 mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                 getPixelPositionOffset={() => getPixelPositionOffset(heightOffset)}
             >
-                <div css={photoCardStyle} onClick={(event) => handleClick(event)}>
-                    <img src={image} alt='포토카드' />
+                <div css={photoCardStyle(isLoading)} onClick={(event) => handleClick(event)}>
+                    {isLoading && <CircleSpinner />}
+                    <img src={image} alt='포토카드' onLoad={handleImageLoad} />
                 </div>
             </OverlayViewF>
 
@@ -79,7 +92,7 @@ const imageDetailWrapper = css`
     }
 `;
 
-const photoCardStyle = css`
+const photoCardStyle = (isLoading: boolean) => css`
     background-color: ${COLORS.TEXT.WHITE};
     width: ${MAP.PHOTO_CARD_SIZE.WIDTH}px;
     height: ${MAP.PHOTO_CARD_SIZE.HEIGHT}px;
@@ -115,6 +128,8 @@ const photoCardStyle = css`
         aspect-ratio: 1;
         object-fit: cover;
         border-radius: 15%;
+        opacity: ${isLoading ? 0 : 1};
+        transition: opacity 0.3s ease;
     }
 `;
 
