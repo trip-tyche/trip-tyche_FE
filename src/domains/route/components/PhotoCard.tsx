@@ -25,6 +25,10 @@ const PhotoCard = ({ position, image, isVisible, heightOffset, onClick }: PhotoC
     const handleClick = useCallback((event: React.MouseEvent | React.TouchEvent) => {
         event.stopPropagation();
 
+        if (event.type.startsWith('touch')) {
+            event.preventDefault();
+        }
+
         if (onClick) {
             onClick();
         } else {
