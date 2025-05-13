@@ -29,7 +29,7 @@ interface TripRouteInfo {
     title: string;
     startDate: string;
     endDate: string;
-    imagesByDates: string[];
+    imageDates: string[];
     tripImages: MediaFile[];
 }
 
@@ -65,7 +65,6 @@ const TripRoutePage = () => {
     const autoPlayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const { tripKey } = useParams();
-    const { state } = useLocation();
     const navigate = useNavigate();
 
     const { data: result, isLoading } = useRoute(tripKey!);
@@ -110,11 +109,29 @@ const TripRoutePage = () => {
                 title: tripTitle,
                 startDate,
                 endDate,
-                imagesByDates: removeDuplicateDates(imageDates),
+                imageDates: removeDuplicateDates(imageDates),
                 tripImages: validLocationImages,
             });
         }
-    }, [result, navigate, showToast]);
+    }, [result]);
+
+    useEffect(() => {
+        if (pinPoints.length > 0) {
+            const recentPinPointId = sessionStorage.getItem('recentPinPointId');
+            if (recentPinPointId) {
+                const recentPinPointIndex = pinPoints.findIndex(
+                    (pinPoint) => String(pinPoint.pinPointId) === recentPinPointId,
+                );
+                if (recentPinPointIndex !== -1) {
+                    setCurrentPinPointIndex(recentPinPointIndex);
+                    setCharacterPosition({
+                        latitude: pinPoints[recentPinPointIndex].latitude,
+                        longitude: pinPoints[recentPinPointIndex].longitude,
+                    });
+                }
+            }
+        }
+    }, [pinPoints]);
 
     useEffect(() => {
         setIsPlayingAnimation(false);
@@ -129,27 +146,6 @@ const TripRoutePage = () => {
             }
         };
     }, []);
-
-    // 슬라이드 페이지 갔다올 때 최근 핀포인트 확인
-    useEffect(() => {
-        if (pinPoints.length > 0 && state) {
-            const currentPinPointId = state?.lastLoactedPinPointId;
-            // const recentPinPointId = sessionStorage.getItem('recentPinPointId');
-
-            if (currentPinPointId) {
-                const startPinPointIndex = pinPoints.findIndex(
-                    (pinPoint) => String(pinPoint.pinPointId) === currentPinPointId,
-                );
-                if (startPinPointIndex !== -1) {
-                    setCurrentPinPointIndex(startPinPointIndex);
-                    setCharacterPosition({
-                        latitude: pinPoints[startPinPointIndex].latitude,
-                        longitude: pinPoints[startPinPointIndex].longitude,
-                    });
-                }
-            }
-        }
-    }, [pinPoints, state]);
 
     // const moveCharacter = useCallback(() => {
     //     if (isLastPinPoint) {
@@ -228,6 +224,7 @@ const TripRoutePage = () => {
         };
 
         const distance = calculateDistance(start.latitude, start.longitude, end.latitude, end.longitude);
+
         const getDurationByDistance = (distanceKm: number): number => {
             if (distanceKm < 1) {
                 return 1000;
@@ -376,21 +373,17 @@ const TripRoutePage = () => {
         }
     }, [pinPoints, isPlayingAnimation, isLastPinPoint, moveCharacter, updateMapCenter]);
 
-    console.log('animationRef', animationRef.current);
-    console.log('startTimeRef', startTimeRef.current);
-    console.log('autoPlayTimeoutRef', autoPlayTimeoutRef.current);
-
     const navigateImagesByDatePage = useCallback(() => {
-        const { startDate, imagesByDates } = tripRouteInfo || {};
-        if (!startDate || !imagesByDates) return;
+        const { startDate, imageDates } = tripRouteInfo || {};
+        if (!startDate || !imageDates) return;
 
         const recentPinPointId = String(pinPoints[currentPinPointIndex].pinPointId);
         sessionStorage.setItem('recentPinPointId', recentPinPointId);
 
-        const initialDate = startDate === imagesByDates[0] ? startDate : imagesByDates[0];
+        const initialDate = startDate === imageDates[0] ? startDate : imageDates[0];
 
         navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(String(tripKey), initialDate)}`, {
-            state: { startDate, imagesByDates },
+            state: { startDate, imageDates },
         });
     }, [tripKey, tripRouteInfo, pinPoints, currentPinPointIndex, navigate]);
 
@@ -468,7 +461,7 @@ const TripRoutePage = () => {
         }
     };
 
-    if (!isMapScriptLoaded || isLoading) {
+    if (!isMapScriptLoaded || isLoading || !mapStatus.center) {
         return <Spinner />;
     }
 
@@ -490,7 +483,7 @@ const TripRoutePage = () => {
 
             <Map
                 zoom={mapStatus.zoom}
-                center={mapStatus.center || DEFAULT_CENTER}
+                center={mapStatus.center}
                 isInteractive={isMapInteractive}
                 onLoad={handleMapRender}
                 onZoomChanged={handleZoomChanged}

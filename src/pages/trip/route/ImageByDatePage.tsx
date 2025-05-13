@@ -259,11 +259,12 @@ const ImageByDatePage = () => {
     const showToast = useToastStore((state) => state.showToast);
     const { tripKey } = useParams();
     const {
-        state: { startDate, imagesByDates: imageDates, pinPointId },
+        state: { startDate, imageDates },
     } = useLocation();
     const navigate = useNavigate();
     const imageListRef = useRef<HTMLDivElement>(null);
     const { data: result, isLoading } = useMediaByDate(tripKey!, currentDate || startDate);
+
     // handleImageLoad 함수 추가
     const handleImageLoad = () => {
         setIsImageLoaded(true);
@@ -306,11 +307,7 @@ const ImageByDatePage = () => {
                 <>
                     <button
                         css={backButtonStyle}
-                        onClick={() =>
-                            navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`, {
-                                state: { lastLoactedPinPointId: pinPointId },
-                            })
-                        }
+                        onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`)}
                     >
                         <ChevronLeft color={theme.COLORS.TEXT.DESCRIPTION} size={24} strokeWidth={1.5} />
                     </button>

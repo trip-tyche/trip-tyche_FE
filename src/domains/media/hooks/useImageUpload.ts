@@ -73,7 +73,7 @@ export const useImageUpload = () => {
                     mediaLink: urlInfo.presignedPutUrl.split('?')[0],
                     latitude: location?.latitude || 0,
                     longitude: location?.longitude || 0,
-                    recordDate: recordDate || '1900-01-01T00:00:00',
+                    recordDate: recordDate || '1980-01-01T00:00:00',
                 };
             });
 
