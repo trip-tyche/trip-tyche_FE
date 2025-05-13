@@ -33,10 +33,12 @@ const PhotoCard = ({ position, image, isVisible, heightOffset, onClick }: PhotoC
     }, []);
 
     const handleImageLoad = useCallback(() => {
-        // setIsLoading(false);
+        setIsLoading(false);
     }, []);
 
-    console.log(isLoading);
+    const closeImageDetail = () => {
+        setShowImageDetail(false);
+    };
 
     if (!isVisible) return null;
 
@@ -54,35 +56,57 @@ const PhotoCard = ({ position, image, isVisible, heightOffset, onClick }: PhotoC
             </OverlayViewF>
 
             {showImageDetail && (
-                <div css={imageDetailWrapper}>
-                    <div onClick={() => setShowImageDetail(false)}>
-                        <X size={28} color={COLORS.BACKGROUND.WHITE} />
+                <>
+                    <div css={imageDetailWrapper}>
+                        <div onClick={closeImageDetail}>
+                            <X size={24} color={COLORS.BACKGROUND.WHITE} />
+                        </div>
+                        <img src={image} alt='포토카드' />
                     </div>
-                    <img src={image} alt='포토카드' />
-                </div>
+                    <div css={overlay} onClick={closeImageDetail} />
+                </>
             )}
         </>
     );
 };
 
+const overlay = css`
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background-color: ${COLORS.BACKGROUND.BLACK};
+    opacity: 0.9;
+    cursor: pointer;
+`;
+
 const imageDetailWrapper = css`
     position: absolute;
-    top: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, calc(-50% - 24px));
+    width: 90%;
+    max-height: calc(100dvh - 96px);
+    border-radius: 16px;
+    overflow: hidden;
 
-    background-color: ${COLORS.BACKGROUND.BLACK};
     z-index: 9999;
 
     div {
+        padding: 4px;
         position: absolute;
         top: 14px;
         right: 14px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: ${COLORS.BACKGROUND.BLACK};
+        transition: background-color 0.2s;
         cursor: pointer;
+
+        &:hover {
+            background: #000000;
+        }
     }
 
     img {
