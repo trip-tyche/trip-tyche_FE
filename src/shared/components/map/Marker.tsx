@@ -1,11 +1,12 @@
-import { memo } from 'react';
+import { memo, RefObject } from 'react';
 
 import { Marker as GoogleMapsMarker } from '@react-google-maps/api';
 
 import { COLORS } from '@/shared/constants/theme';
-import { Location } from '@/shared/types/map';
+import { Location, MapType } from '@/shared/types/map';
 
 interface MarkerProps {
+    mapRef?: RefObject<MapType>;
     position: Location;
     isMapRendered?: boolean;
     isVisible?: boolean;
@@ -16,6 +17,7 @@ interface MarkerProps {
 
 const Marker = memo(
     ({
+        mapRef,
         isClick = false,
         position,
         isMapRendered,
@@ -38,11 +40,18 @@ const Marker = memo(
             anchor: new window.google.maps.Point(12, 22),
         };
 
+        const handleClick = () => {
+            if (!isIndividualImageMarker) {
+                mapRef?.current?.panTo({ lat: position.latitude, lng: position.longitude });
+            }
+            onClick?.();
+        };
+
         return (
             <GoogleMapsMarker
                 position={{ lat: position.latitude, lng: position.longitude }}
                 icon={options}
-                onClick={onClick}
+                onClick={handleClick}
                 zIndex={isClick ? 999 : 99}
             />
         );

@@ -57,7 +57,7 @@ const TripRoutePage = () => {
         isMapScriptLoadError,
         isMapRendered,
         handleMapRender,
-        handleZoomChanged,
+        handleMapZoomChanged,
         updateMapCenter,
     } = useMapControl(ZOOM_SCALE.DEFAULT.ROUTE, characterPosition);
 
@@ -390,6 +390,7 @@ const TripRoutePage = () => {
                     {pinPoints.map((point, index) => (
                         <React.Fragment key={point.pinPointId}>
                             <Marker
+                                mapRef={mapRef}
                                 position={{ latitude: point.latitude, longitude: point.longitude }}
                                 isMapRendered={isMapRendered}
                                 isVisible={
@@ -459,6 +460,28 @@ const TripRoutePage = () => {
         return <Spinner />;
     }
 
+    const handleZoomChanged = () => {
+        handleMapZoomChanged(() => {
+            if (mapStatus.zoom < ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE) {
+                setSelectedIndividualMarker(null);
+            }
+        });
+
+        updateMapCenter({
+            latitude: mapRef.current?.getCenter()?.lat() || 0,
+            longitude: mapRef.current?.getCenter()?.lng() || 0,
+        });
+    };
+
+    const handleMapClick = () => {
+        setSelectedIndividualMarker(null);
+
+        updateMapCenter({
+            latitude: mapRef.current?.getCenter()?.lat() || 0,
+            longitude: mapRef.current?.getCenter()?.lng() || 0,
+        });
+    };
+
     return (
         <div css={container}>
             {showSpinner && <Spinner text='장거리 이동 중...' />}
@@ -469,20 +492,8 @@ const TripRoutePage = () => {
                 center={mapStatus.center || DEFAULT_CENTER}
                 isInteractive={isMapInteractive}
                 onLoad={handleMapRender}
-                onZoomChanged={() => {
-                    handleZoomChanged(() => setSelectedIndividualMarker(null));
-                    updateMapCenter({
-                        latitude: mapRef.current?.getCenter()?.lat() || 0,
-                        longitude: mapRef.current?.getCenter()?.lng() || 0,
-                    });
-                }}
-                onClick={() => {
-                    setSelectedIndividualMarker(null);
-                    updateMapCenter({
-                        latitude: mapRef.current?.getCenter()?.lat() || 0,
-                        longitude: mapRef.current?.getCenter()?.lng() || 0,
-                    });
-                }}
+                onZoomChanged={handleZoomChanged}
+                onClick={handleMapClick}
             >
                 <>
                     <Polyline pinPoints={pinPoints} isCharacterVisible={showCharacterView} />

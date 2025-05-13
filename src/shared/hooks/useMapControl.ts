@@ -24,7 +24,7 @@ export const useMapControl = (initialZoom: number, initialCenter: Location | nul
         }
     }, []);
 
-    const handleZoomChanged = (callback?: () => void) => {
+    const handleMapZoomChanged = useCallback((callback?: () => void) => {
         if (mapRef.current) {
             const newZoom = mapRef.current.getZoom();
             if (newZoom) {
@@ -32,7 +32,7 @@ export const useMapControl = (initialZoom: number, initialCenter: Location | nul
                 callback?.();
             }
         }
-    };
+    }, []);
 
     const updateMapZoom = (zoom: number, callback?: () => void) => {
         if (mapRef.current) {
@@ -63,7 +63,7 @@ export const useMapControl = (initialZoom: number, initialCenter: Location | nul
         isMapScriptLoadError,
         isMapRendered,
         handleMapRender,
-        handleZoomChanged,
+        handleMapZoomChanged,
         updateMapZoom,
         updateMapCenter,
     };
