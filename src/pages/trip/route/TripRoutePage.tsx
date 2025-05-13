@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { MediaFile } from '@/domains/media/types';
 import { filterValidLocationMediaFile, removeDuplicateDates } from '@/domains/media/utils';
@@ -18,7 +18,7 @@ import Map from '@/shared/components/Map';
 import CharacterMarker from '@/shared/components/map/CharacterMarker';
 import ClusterMarker from '@/shared/components/map/ClusterMarker';
 import Marker from '@/shared/components/map/Marker';
-import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/map';
+import { ZOOM_SCALE } from '@/shared/constants/map';
 import { ROUTES } from '@/shared/constants/paths';
 import { MESSAGE } from '@/shared/constants/ui';
 import { useMapControl } from '@/shared/hooks/useMapControl';
