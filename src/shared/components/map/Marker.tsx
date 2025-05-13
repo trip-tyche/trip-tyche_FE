@@ -7,16 +7,17 @@ interface MarkerProps {
     position: Location;
     isMapRendered?: boolean;
     isVisible?: boolean;
+    isClick?: boolean;
     onClick?: () => void;
 }
 
-const Marker = ({ position, isMapRendered, isVisible = true, onClick }: MarkerProps) => {
+const Marker = ({ isClick, position, isMapRendered, isVisible = true, onClick }: MarkerProps) => {
     if (!isMapRendered || !isVisible) return null;
 
     return (
         <GoogleMapsMarker
             position={{ lat: position.latitude, lng: position.longitude }}
-            icon={{ ...MARKER_ICON_CONFIG, anchor: new window.google.maps.Point(12, 22) }}
+            icon={{ ...MARKER_ICON_CONFIG(isClick), anchor: new window.google.maps.Point(12, 22) }}
             onClick={onClick}
         />
     );

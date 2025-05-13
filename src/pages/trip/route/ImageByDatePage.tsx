@@ -242,6 +242,7 @@ import DateMap from '@/domains/trip/components/DateMap';
 import DateSelector from '@/domains/trip/components/DateSelector';
 import ImageItem from '@/domains/trip/components/ImageItem';
 import Spinner from '@/shared/components/common/Spinner';
+import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/map';
 import { ROUTES } from '@/shared/constants/paths';
 import { useMapControl } from '@/shared/hooks/useMapControl';
 import { useScrollHint } from '@/shared/hooks/useScrollHint';
@@ -254,7 +255,7 @@ const ImageByDatePage = () => {
     const [datesWithImages, setDatesWithImages] = useState<string[]>([]);
     const [imageLocation, setImageLocation] = useState<LatLng>();
     const [isImageLoaded, setIsImageLoaded] = useState(false);
-    const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl();
+    const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl(ZOOM_SCALE.DEFAULT.IMAGE_BY_DATE, DEFAULT_CENTER);
     const showToast = useToastStore((state) => state.showToast);
     const { tripKey } = useParams();
     const {

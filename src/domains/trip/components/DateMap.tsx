@@ -13,11 +13,11 @@ interface DateMapProps {
 }
 
 const DateMap = ({ imageLocation }: DateMapProps) => {
-    const [isMapLoaded, setIsMapLoaded] = useState(false);
+    const [isMapRendered, setIsMapLoaded] = useState(false);
 
     return (
         <div css={mapWrapper}>
-            {!isMapLoaded && <Spinner />}
+            {!isMapRendered && <Spinner />}
 
             <Map
                 zoom={ZOOM_SCALE.DEFAULT.ROUTE}
@@ -26,7 +26,7 @@ const DateMap = ({ imageLocation }: DateMapProps) => {
             >
                 <Marker
                     position={{ latitude: imageLocation.lat, longitude: imageLocation.lng }}
-                    isMapLoaded={isMapLoaded}
+                    isMapRendered={isMapRendered}
                 />
             </Map>
         </div>

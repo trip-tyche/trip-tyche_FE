@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { OverlayView } from '@react-google-maps/api';
+import { OverlayView, OverlayViewF } from '@react-google-maps/api';
 
 import { getPixelPositionOffset } from '@/libs/utils/map';
 import { COLORS } from '@/shared/constants/theme';
@@ -15,27 +15,28 @@ interface PhotoCardProps {
 }
 
 const PhotoCard = ({ position, image, isVisible, heightOffset, onClick }: PhotoCardProps) => {
+    if (!isVisible) return null;
+
+    const handleClick = (event: React.MouseEvent | React.TouchEvent) => {
+        event.stopPropagation();
+        onClick?.();
+
+        console.log(position, getPixelPositionOffset(heightOffset));
+    };
     return (
-        <OverlayView
+        <OverlayViewF
             position={{ lat: position.latitude, lng: position.longitude }}
             mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
             getPixelPositionOffset={() => getPixelPositionOffset(heightOffset)}
         >
-            <div css={photoCardStyle(isVisible)}>
-                <img src={image} alt='포토카드' onClick={onClick} />
+            <div css={photoCardStyle} onClick={(event) => handleClick(event)}>
+                <img src={image} alt='포토카드' />
             </div>
-        </OverlayView>
+        </OverlayViewF>
     );
 };
 
-const photoCardStyle = (isVisible = true) => css`
-    ${basePhotoCardStyle}
-    opacity: ${isVisible ? 1 : 0};
-    visibility: ${isVisible ? 'visible' : 'hidden'};
-    pointer-events: ${isVisible ? 'auto' : 'none'};
-`;
-
-const basePhotoCardStyle = css`
+const photoCardStyle = css`
     background-color: ${COLORS.TEXT.WHITE};
     width: ${MAP.PHOTO_CARD_SIZE.WIDTH}px;
     height: ${MAP.PHOTO_CARD_SIZE.HEIGHT}px;

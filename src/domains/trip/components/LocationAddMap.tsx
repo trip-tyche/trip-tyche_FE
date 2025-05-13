@@ -7,7 +7,7 @@ import { ChevronLeft } from 'lucide-react';
 import Button from '@/shared/components/common/Button';
 import Spinner from '@/shared/components/common/Spinner';
 import Marker from '@/shared/components/map/Marker';
-import { ZOOM_SCALE, MAPS_OPTIONS } from '@/shared/constants/map';
+import { ZOOM_SCALE, MAPS_OPTIONS, DEFAULT_CENTER } from '@/shared/constants/map';
 import { useMapControl } from '@/shared/hooks/useMapControl';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
@@ -35,7 +35,7 @@ const LocationAddMap = ({
 
     const showToast = useToastStore((state) => state.showToast);
 
-    const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl();
+    const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl(ZOOM_SCALE.DEFAULT.LOCATION_ADD, DEFAULT_CENTER);
 
     const autocompleteRef = useRef<PlacesAutocomplete>(null);
 

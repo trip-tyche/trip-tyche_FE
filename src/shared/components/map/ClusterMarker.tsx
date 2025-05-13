@@ -37,7 +37,7 @@ const ClusterMarker = ({ mapRef, images }: ClusterMarkerProps) => {
                             position={{ lat: image.latitude, lng: image.longitude }}
                             clusterer={clusterer}
                             icon={{
-                                ...MARKER_ICON_CONFIG,
+                                ...MARKER_ICON_CONFIG(),
                                 anchor: new window.google.maps.Point(12, 23),
                             }}
                         />

@@ -1,15 +1,21 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useLoadScript } from '@react-google-maps/api';
 
 import { GOOGLE_MAPS_CONFIG } from '@/shared/constants/map';
 import { Location, MapType } from '@/shared/types/map';
 
-export const useMapControl = () => {
+export const useMapControl = (initialZoom: number, initialCenter: Location | null) => {
     const [isMapRendered, setIsMapRendered] = useState(false);
     const { isLoaded: isMapScriptLoaded, loadError: isMapScriptLoadError } = useLoadScript(GOOGLE_MAPS_CONFIG);
+    const [zoom, setZoom] = useState(initialZoom);
+    const [center, setCenter] = useState(initialCenter);
 
     const mapRef = useRef<MapType | null>(null);
+
+    useEffect(() => {
+        setCenter(initialCenter);
+    }, [initialCenter]);
 
     const handleMapRender = useCallback((map: MapType) => {
         if (map) {
@@ -18,32 +24,47 @@ export const useMapControl = () => {
         }
     }, []);
 
-    const updateMapStatus = (
-        zoom: number | null,
-        center: Location | null,
-        handler?: { onZoomChange?: () => void; onCenterChange?: () => void },
-    ) => {
+    const handleZoomChanged = (callback?: () => void) => {
         if (mapRef.current) {
-            const { onZoomChange, onCenterChange } = handler || {};
-
-            if (zoom) {
-                mapRef.current.setZoom(zoom);
-                onZoomChange?.();
-            }
-
-            if (center) {
-                mapRef.current.setCenter({ lat: center.latitude, lng: center.longitude });
-                onCenterChange?.();
+            const newZoom = mapRef.current.getZoom();
+            if (newZoom) {
+                setZoom(newZoom);
+                callback?.();
             }
         }
     };
 
+    const updateMapZoom = (zoom: number, callback?: () => void) => {
+        if (mapRef.current) {
+            console.log('xcxcx');
+
+            mapRef.current.setZoom(zoom);
+            setZoom(zoom);
+            callback?.();
+        }
+    };
+
+    const updateMapCenter = (center: Location, isPanTo = false) => {
+        if (mapRef.current) {
+            isPanTo
+                ? mapRef.current.panTo({ lat: center.latitude, lng: center.longitude })
+                : mapRef.current.setCenter({ lat: center.latitude, lng: center.longitude });
+            setCenter(center);
+        }
+    };
+
     return {
+        mapRef,
+        mapStatus: {
+            zoom,
+            center,
+        },
         isMapScriptLoaded,
         isMapScriptLoadError,
-        mapRef,
         isMapRendered,
-        updateMapStatus,
         handleMapRender,
+        handleZoomChanged,
+        updateMapZoom,
+        updateMapCenter,
     };
 };

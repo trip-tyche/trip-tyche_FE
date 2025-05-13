@@ -36,12 +36,12 @@ interface TripRouteInfo {
 const TripRoutePage = () => {
     const [tripRouteInfo, setTripRouteInfo] = useState<TripRouteInfo | null>(null);
     const [pinPoints, setPinPoints] = useState<PinPoint[]>([]);
-    const [characterPosition, setCharacterPosition] = useState<Location>();
+    const [characterPosition, setCharacterPosition] = useState<Location | null>(null);
 
     const [currentPinPointIndex, setCurrentPinPointIndex] = useState(0);
     const [selectedIndividualMarker, setSelectedIndividualMarker] = useState<MediaFile | null>(null);
 
-    const [currentZoomScale, setCurrentZoomScale] = useState(ZOOM_SCALE.DEFAULT.ROUTE);
+    // const [zoom, setCurrentZoomScale] = useState(ZOOM_SCALE.DEFAULT.ROUTE);
     const [isMapInteractive, setIsMapInteractive] = useState(true);
 
     const [isPlayingAnimation, setIsPlayingAnimation] = useState(false);
@@ -50,8 +50,16 @@ const TripRoutePage = () => {
     const [showSpinner, setShowSpinner] = useState(false);
 
     const { showToast } = useToastStore();
-
-    const { mapRef, isMapScriptLoaded, isMapScriptLoadError, isMapRendered, handleMapRender } = useMapControl();
+    const {
+        mapRef,
+        mapStatus,
+        isMapScriptLoaded,
+        isMapScriptLoadError,
+        isMapRendered,
+        handleMapRender,
+        handleZoomChanged,
+        updateMapCenter,
+    } = useMapControl(ZOOM_SCALE.DEFAULT.ROUTE, characterPosition);
 
     const animationRef = useRef<number | null>(null);
     const startTimeRef = useRef<number | null>(null);
@@ -167,7 +175,8 @@ const TripRoutePage = () => {
     //         setCharacterPosition(newPosition);
 
     //         if (mapRef.current) {
-    //             mapRef.current.panTo({ lat: newPosition.latitude, lng: newPosition.longitude });
+    //             updateMapCenter({ latitude: newPosition.latitude, longitude: newPosition.longitude }, true);
+
     //         }
 
     //         if (progress < 1) {
@@ -242,7 +251,7 @@ const TripRoutePage = () => {
             setTimeout(() => {
                 setCharacterPosition({ latitude: end.latitude, longitude: end.longitude });
                 if (mapRef.current) {
-                    mapRef.current.panTo({ lat: end.latitude, lng: end.longitude });
+                    updateMapCenter({ latitude: end.latitude, longitude: end.longitude }, true);
                 }
 
                 setShowSpinner(false);
@@ -267,10 +276,11 @@ const TripRoutePage = () => {
             const newLat = start.latitude + (end.latitude - start.latitude) * progress;
             const newLng = start.longitude + (end.longitude - start.longitude) * progress;
             const newPosition = { latitude: newLat, longitude: newLng };
+            console.log(newPosition);
             setCharacterPosition(newPosition);
 
             if (mapRef.current) {
-                mapRef.current.panTo({ lat: newPosition.latitude, lng: newPosition.longitude });
+                updateMapCenter({ latitude: newPosition.latitude, longitude: newPosition.longitude }, true);
             }
 
             if (progress < 1) {
@@ -314,11 +324,11 @@ const TripRoutePage = () => {
             mapRef.current.setZoom(ZOOM_SCALE.DEFAULT.ROUTE);
             // 지도 중심을 캐릭터 위치로 이동
             if (characterPosition) {
-                mapRef.current.panTo({ lat: characterPosition.latitude, lng: characterPosition.longitude });
+                updateMapCenter({ latitude: characterPosition.latitude, longitude: characterPosition.longitude });
             }
         }
     }, [characterPosition]);
-    console.log('zxcv');
+
     const handleImageByDateButtonClick = useCallback(() => {
         if (!tripRouteInfo) return;
 
@@ -337,20 +347,24 @@ const TripRoutePage = () => {
             //     mapRef.current.getCenter()?.lat(),
             //     mapRef.current.getCenter()?.lng(),
             // );
-            mapRef.current.panTo({ lat: marker.latitude, lng: marker.longitude });
+            // console.log('marker', marker);
+            console.log('vv');
+            // updateMapZoom(13);
+            updateMapCenter({ latitude: marker.latitude, longitude: marker.longitude }, true);
         }
         setSelectedIndividualMarker(marker);
     };
 
-    const handleZoomChanged = () => {
-        setSelectedIndividualMarker(null);
-        if (mapRef.current) {
-            const newZoom = mapRef.current.getZoom();
-            if (newZoom !== undefined) {
-                setCurrentZoomScale(newZoom);
-            }
-        }
-    };
+    // const handleZoomChanged = () => {
+    //     setSelectedIndividualMarker(null);
+    //     if (mapRef.current) {
+    //         const newZoom = mapRef.current.getZoom();
+    //         if (newZoom !== undefined) {
+    //             // setCurrentZoomScale(newZoom);
+    //             // updateMapZoom(newZoom);
+    //         }
+    //     }
+    // };
 
     const togglePlayingButton = useCallback(() => {
         if (isLastPinPoint) {
@@ -361,7 +375,10 @@ const TripRoutePage = () => {
 
             setCurrentPinPointIndex(0);
             setCharacterPosition(initialPinPointPosition);
-            mapRef.current?.panTo({ lat: initialPinPointPosition.latitude, lng: initialPinPointPosition.longitude });
+            updateMapCenter(
+                { latitude: initialPinPointPosition.latitude, longitude: initialPinPointPosition.longitude },
+                true,
+            );
             setIsCharacterMoving(false);
         } else {
             setIsPlayingAnimation(!isPlayingAnimation);
@@ -374,22 +391,21 @@ const TripRoutePage = () => {
         }
     }, [pinPoints, isPlayingAnimation, isLastPinPoint, moveCharacter]);
 
-    const showCharacterView = currentZoomScale === ZOOM_SCALE.DEFAULT.ROUTE;
-    const showIndividualImageMarkers = currentZoomScale >= ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE;
+    const showCharacterView = mapStatus.zoom === ZOOM_SCALE.DEFAULT.ROUTE;
+    const showIndividualImageMarkers = mapStatus.zoom >= ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE;
 
     if (isMapScriptLoadError) {
         showToast('지도를 불러오는데 실패했습니다');
         navigate(ROUTES.PATH.MAIN);
         return;
     }
-
     const isPhotoCardVisible = (photoCardIndex: number) =>
         Boolean(photoCardIndex === currentPinPointIndex && !isCharacterMoving);
-
     const renderMarkers = () => {
         if (showCharacterView) {
             return (
                 <>
+                    {/* TODO: 컴포넌트 분리 및 useCallback, useMemo 사용 */}
                     {pinPoints.map((point, index) => (
                         <React.Fragment key={point.pinPointId}>
                             <Marker
@@ -430,19 +446,24 @@ const TripRoutePage = () => {
         } else if (showIndividualImageMarkers) {
             return (
                 <>
-                    {tripRouteInfo?.tripImages.map((image) => (
-                        <Marker
-                            key={image.mediaFileId}
-                            position={{ latitude: image.latitude, longitude: image.longitude }}
-                            isMapRendered={isMapRendered}
-                            onClick={() => handleIndividualMarkerClick(image)}
-                        />
-                    ))}
+                    {/* TODO: 컴포넌트 분리 및 useCallback, useMemo 사용 */}
+                    {tripRouteInfo?.tripImages.map((image) => {
+                        return (
+                            <Marker
+                                key={image.mediaFileId}
+                                isClick={!!(image.mediaFileId === selectedIndividualMarker?.mediaFileId)}
+                                position={{ latitude: image.latitude, longitude: image.longitude }}
+                                isMapRendered={isMapRendered}
+                                onClick={() => handleIndividualMarkerClick(image)}
+                            />
+                        );
+                    })}
                     {selectedIndividualMarker && (
                         <PhotoCard
                             position={selectedIndividualMarker}
                             image={selectedIndividualMarker.mediaLink}
                             heightOffset={50}
+                            isVisible={!!selectedIndividualMarker}
                         />
                     )}
                 </>
@@ -462,12 +483,24 @@ const TripRoutePage = () => {
             <Header title={tripRouteInfo?.title || ''} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
 
             <Map
-                zoom={ZOOM_SCALE.DEFAULT.ROUTE}
-                center={characterPosition || DEFAULT_CENTER}
+                zoom={mapStatus.zoom}
+                center={mapStatus.center || DEFAULT_CENTER}
                 isInteractive={isMapInteractive}
                 onLoad={handleMapRender}
-                onZoomChanged={handleZoomChanged}
-                onClick={() => setSelectedIndividualMarker(null)}
+                onZoomChanged={() => {
+                    handleZoomChanged(() => setSelectedIndividualMarker(null));
+                    updateMapCenter({
+                        latitude: mapRef.current?.getCenter()?.lat() || 0,
+                        longitude: mapRef.current?.getCenter()?.lng() || 0,
+                    });
+                }}
+                onClick={() => {
+                    setSelectedIndividualMarker(null);
+                    updateMapCenter({
+                        latitude: mapRef.current?.getCenter()?.lat() || 0,
+                        longitude: mapRef.current?.getCenter()?.lng() || 0,
+                    });
+                }}
             >
                 <>
                     <Polyline pinPoints={pinPoints} />

@@ -17,8 +17,6 @@ interface MapProps {
 const Map = ({ zoom, center, children, isInteractive = true, onLoad, onZoomChanged, onClick }: MapProps) => {
     const { latitude, longitude } = center;
 
-    console.log('hi');
-
     return (
         <div css={map}>
             <GoogleMap
@@ -28,6 +26,9 @@ const Map = ({ zoom, center, children, isInteractive = true, onLoad, onZoomChang
                     ...MAPS_OPTIONS,
                     draggable: isInteractive,
                     scrollwheel: isInteractive,
+                    minZoom: 3,
+                    maxZoom: 19,
+                    panControl: true,
                 }}
                 mapContainerStyle={{ height: 'calc(100% + 30px)' }}
                 onLoad={onLoad}

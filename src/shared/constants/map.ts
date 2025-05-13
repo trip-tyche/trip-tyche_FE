@@ -67,14 +67,14 @@ export const POLYLINE_OPTIONS: PolylineOption = {
 } as const;
 
 // 기본 마커 환경
-export const MARKER_ICON_CONFIG = {
+export const MARKER_ICON_CONFIG = (isClick = false) => ({
     path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
-    fillColor: '#0073bb',
+    fillColor: isClick ? COLORS.PRIMARY_HOVER : COLORS.PRIMARY,
     fillOpacity: 1,
     strokeWeight: 0,
-    rotation: 0,
-    scale: 1.9,
-} as const;
+    rotation: 1,
+    scale: isClick ? 2 : 1.9,
+});
 
 // 캐릭터 마커 환경
 export const CHARACTER_ICON_CONFIG = {
