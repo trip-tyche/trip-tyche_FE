@@ -135,6 +135,7 @@ const TripRoutePage = () => {
     useEffect(() => {
         if (pinPoints.length > 0 && state) {
             const currentPinPointId = state?.lastLoactedPinPointId;
+            const recentPinPointId = sessionStorage.getItem('recentPinPointId');
 
             if (currentPinPointId) {
                 const startPinPointIndex = pinPoints.findIndex(
@@ -340,31 +341,10 @@ const TripRoutePage = () => {
 
     const handleIndividualMarkerClick = (marker: MediaFile) => {
         if (mapRef.current) {
-            // TODO: center로 오는 타이밍 맞추기
-            // console.log(
-            //     marker.latitude,
-            //     marker.longitude,
-            //     mapRef.current.getCenter()?.lat(),
-            //     mapRef.current.getCenter()?.lng(),
-            // );
-            // console.log('marker', marker);
-            console.log('vv');
-            // updateMapZoom(13);
             updateMapCenter({ latitude: marker.latitude, longitude: marker.longitude }, true);
         }
         setSelectedIndividualMarker(marker);
     };
-
-    // const handleZoomChanged = () => {
-    //     setSelectedIndividualMarker(null);
-    //     if (mapRef.current) {
-    //         const newZoom = mapRef.current.getZoom();
-    //         if (newZoom !== undefined) {
-    //             // setCurrentZoomScale(newZoom);
-    //             // updateMapZoom(newZoom);
-    //         }
-    //     }
-    // };
 
     const togglePlayingButton = useCallback(() => {
         if (isLastPinPoint) {
@@ -401,6 +381,7 @@ const TripRoutePage = () => {
     }
     const isPhotoCardVisible = (photoCardIndex: number) =>
         Boolean(photoCardIndex === currentPinPointIndex && !isCharacterMoving);
+
     const renderMarkers = () => {
         if (showCharacterView) {
             return (

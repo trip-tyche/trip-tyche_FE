@@ -37,10 +37,10 @@ const MapControlButtons = ({
                     <Button
                         text={
                             isLastPinPoint
-                                ? '첫 위치로 돌아가기'
+                                ? '처음 위치로 돌아가기'
                                 : isCharacterPlaying
-                                  ? '캐릭터 움직임 멈추기'
-                                  : '캐릭터 움직이기'
+                                  ? '잠시 멈추기'
+                                  : '다음 위치로 이동하기'
                         }
                         icon={isLastPinPoint ? '' : isCharacterPlaying ? <Pause size={16} /> : <Play size={16} />}
                         onClick={handler.handleCharacterPlayToggle}
@@ -48,7 +48,7 @@ const MapControlButtons = ({
                     />
                 ) : (
                     <Button
-                        text='캐릭터 화면에 표시'
+                        text='경로로 돌아가기'
                         icon={<BsPersonWalking size={16} />}
                         onClick={handler.handleCharacterViewClick}
                         customStyle={customButtonStyle()}

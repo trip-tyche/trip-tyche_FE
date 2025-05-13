@@ -3,7 +3,7 @@ import { RefObject, useMemo } from 'react';
 import { Marker, MarkerClusterer } from '@react-google-maps/api';
 
 import { MediaFile } from '@/domains/media/types';
-import { MARKER_CLUSTER_OPTIONS, MARKER_ICON_CONFIG, ZOOM_SCALE } from '@/shared/constants/map';
+import { ZOOM_SCALE } from '@/shared/constants/map';
 import { MapType } from '@/shared/types/map';
 
 interface ClusterMarkerProps {
@@ -12,9 +12,12 @@ interface ClusterMarkerProps {
 }
 
 const ClusterMarker = ({ mapRef, images }: ClusterMarkerProps) => {
-    const clusterOptions = useMemo(
+    const options = useMemo(
         () => ({
-            ...MARKER_CLUSTER_OPTIONS,
+            maxZoom: ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE - 1,
+            zoomOnClick: true,
+            minimumClusterSize: 1,
+            clickZoom: 2,
             onClick: (cluster: any, _markers: any) => {
                 if (mapRef.current) {
                     const currentZoom = mapRef.current.getZoom() || 0;
@@ -28,7 +31,7 @@ const ClusterMarker = ({ mapRef, images }: ClusterMarkerProps) => {
     );
 
     return (
-        <MarkerClusterer options={clusterOptions}>
+        <MarkerClusterer options={options}>
             {(clusterer) => (
                 <>
                     {images.map((image) => (
@@ -36,10 +39,6 @@ const ClusterMarker = ({ mapRef, images }: ClusterMarkerProps) => {
                             key={image.mediaFileId}
                             position={{ lat: image.latitude, lng: image.longitude }}
                             clusterer={clusterer}
-                            icon={{
-                                ...MARKER_ICON_CONFIG(),
-                                anchor: new window.google.maps.Point(12, 23),
-                            }}
                         />
                     ))}
                 </>
