@@ -36,8 +36,8 @@ export const BUTTON = {
 
 export const MAP = {
     PHOTO_CARD_SIZE: {
-        WIDTH: 100,
-        HEIGHT: 100,
+        WIDTH: 120,
+        HEIGHT: 120,
     },
 };
 

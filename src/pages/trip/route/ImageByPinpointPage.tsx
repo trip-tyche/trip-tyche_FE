@@ -7,8 +7,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ImageCarousel from '@/domains/media/components/ImageCarousel';
 import { useMediaByPinPoint } from '@/domains/media/hooks/queries';
 import { ROUTES } from '@/shared/constants/paths';
+import { COLORS } from '@/shared/constants/theme';
 import { IMAGE_CAROUSEL_STATE } from '@/shared/constants/ui';
-import theme from '@/shared/styles/theme';
 import { ImageCarouselState } from '@/shared/types';
 
 const ImageByPinpointPage = () => {
@@ -30,8 +30,8 @@ const ImageByPinpointPage = () => {
         <div css={pageContainer}>
             {carouselState !== 'zoomed' && (
                 <X
-                    size={24}
-                    color={theme.COLORS.TEXT.WHITE}
+                    size={28}
+                    color={COLORS.BACKGROUND.WHITE}
                     onClick={() =>
                         navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey!)}`, {
                             state: { lastLoactedPinPointId: pinPointId },
@@ -52,8 +52,8 @@ const pageContainer = css`
 const iconStyle = css`
     position: absolute;
     cursor: pointer;
-    top: 15px;
-    right: 15px;
+    top: 14px;
+    right: 14px;
     z-index: 1000;
 `;
 

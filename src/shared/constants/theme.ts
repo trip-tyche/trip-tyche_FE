@@ -17,7 +17,7 @@ export const COLORS = {
     DISABLED: '#e5e7eb',
     BACKGROUND: {
         PRIMARY: '#eff6ff',
-        BLACK: '#090909',
+        BLACK: '#101010',
         WHITE: '#FFFFFF',
         WHITE_SECONDARY: '#f9fafb',
         ICON: '#8B95A1',

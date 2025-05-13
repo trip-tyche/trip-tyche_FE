@@ -435,6 +435,7 @@ const TripRoutePage = () => {
                                 isClick={!!(image.mediaFileId === selectedIndividualMarker?.mediaFileId)}
                                 position={{ latitude: image.latitude, longitude: image.longitude }}
                                 isMapRendered={isMapRendered}
+                                isIndividualImageMarker
                                 onClick={() => handleIndividualMarkerClick(image)}
                             />
                         );
@@ -443,7 +444,7 @@ const TripRoutePage = () => {
                         <PhotoCard
                             position={selectedIndividualMarker}
                             image={selectedIndividualMarker.mediaLink}
-                            heightOffset={50}
+                            heightOffset={55}
                             isVisible={!!selectedIndividualMarker}
                         />
                     )}
