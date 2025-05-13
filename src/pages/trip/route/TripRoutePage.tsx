@@ -29,7 +29,7 @@ interface TripRouteInfo {
     title: string;
     startDate: string;
     endDate: string;
-    dates: string[];
+    imagesByDates: string[];
     tripImages: MediaFile[];
 }
 
@@ -41,11 +41,9 @@ const TripRoutePage = () => {
     const [currentPinPointIndex, setCurrentPinPointIndex] = useState(0);
     const [selectedIndividualMarker, setSelectedIndividualMarker] = useState<MediaFile | null>(null);
 
-    // const [zoom, setCurrentZoomScale] = useState(ZOOM_SCALE.DEFAULT.ROUTE);
     const [isMapInteractive, setIsMapInteractive] = useState(true);
-
-    const [isPlayingAnimation, setIsPlayingAnimation] = useState(false);
     const [isCharacterMoving, setIsCharacterMoving] = useState(false);
+    const [isPlayingAnimation, setIsPlayingAnimation] = useState(false);
 
     const [showSpinner, setShowSpinner] = useState(false);
 
@@ -59,6 +57,7 @@ const TripRoutePage = () => {
         handleMapRender,
         handleMapZoomChanged,
         updateMapCenter,
+        updateMapZoom,
     } = useMapControl(ZOOM_SCALE.DEFAULT.ROUTE, characterPosition);
 
     const animationRef = useRef<number | null>(null);
@@ -111,7 +110,7 @@ const TripRoutePage = () => {
                 title: tripTitle,
                 startDate,
                 endDate,
-                dates: removeDuplicateDates(imageDates),
+                imagesByDates: removeDuplicateDates(imageDates),
                 tripImages: validLocationImages,
             });
         }
@@ -229,7 +228,6 @@ const TripRoutePage = () => {
         };
 
         const distance = calculateDistance(start.latitude, start.longitude, end.latitude, end.longitude);
-        console.log('distance', distance);
         const getDurationByDistance = (distanceKm: number): number => {
             if (distanceKm < 1) {
                 return 1000;
@@ -252,7 +250,7 @@ const TripRoutePage = () => {
             setTimeout(() => {
                 setCharacterPosition({ latitude: end.latitude, longitude: end.longitude });
                 if (mapRef.current) {
-                    updateMapCenter({ latitude: end.latitude, longitude: end.longitude }, true);
+                    updateMapCenter({ latitude: end.latitude, longitude: end.longitude });
                 }
 
                 setShowSpinner(false);
@@ -277,11 +275,10 @@ const TripRoutePage = () => {
             const newLat = start.latitude + (end.latitude - start.latitude) * progress;
             const newLng = start.longitude + (end.longitude - start.longitude) * progress;
             const newPosition = { latitude: newLat, longitude: newLng };
-            console.log(newPosition);
             setCharacterPosition(newPosition);
 
             if (mapRef.current) {
-                updateMapCenter({ latitude: newPosition.latitude, longitude: newPosition.longitude }, true);
+                updateMapCenter({ latitude: newPosition.latitude, longitude: newPosition.longitude });
             }
 
             if (progress < 1) {
@@ -320,45 +317,53 @@ const TripRoutePage = () => {
         };
     }, [isPlayingAnimation, isCharacterMoving, isLastPinPoint, moveCharacter]);
 
-    const handleShowCharacterViewButtonClick = useCallback(() => {
-        if (mapRef.current) {
-            mapRef.current.setZoom(ZOOM_SCALE.DEFAULT.ROUTE);
-            // 지도 중심을 캐릭터 위치로 이동
-            if (characterPosition) {
-                updateMapCenter({ latitude: characterPosition.latitude, longitude: characterPosition.longitude });
-            }
-        }
-    }, [characterPosition]);
-
-    const handleImageByDateButtonClick = useCallback(() => {
-        if (!tripRouteInfo) return;
-
-        const pinPointId = String(pinPoints[currentPinPointIndex].pinPointId);
-        navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(tripKey as string, tripRouteInfo.startDate)}`, {
-            state: { startDate: tripRouteInfo.startDate, imagesByDates: tripRouteInfo?.dates, pinPointId },
-        });
-    }, [tripKey, tripRouteInfo, pinPoints, currentPinPointIndex, navigate]);
-
     const handleIndividualMarkerClick = (marker: MediaFile) => {
         if (mapRef.current) {
-            updateMapCenter({ latitude: marker.latitude, longitude: marker.longitude }, true);
+            updateMapCenter({ latitude: marker.latitude, longitude: marker.longitude });
         }
         setSelectedIndividualMarker(marker);
     };
 
-    const togglePlayingButton = useCallback(() => {
-        if (isLastPinPoint) {
-            const initialPinPointPosition = {
-                latitude: pinPoints[0].latitude,
-                longitude: pinPoints[0].longitude,
-            };
+    const showCharacterView = useCallback(() => {
+        if (mapRef.current) {
+            if (characterPosition) {
+                updateMapCenter({ latitude: characterPosition.latitude, longitude: characterPosition.longitude });
+            }
+            updateMapZoom(ZOOM_SCALE.DEFAULT.ROUTE);
+        }
+    }, [mapRef, characterPosition, updateMapCenter, updateMapZoom]);
 
+    const handleZoomChanged = () => {
+        handleMapZoomChanged(() => {
+            if (mapStatus.zoom < ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE) {
+                setSelectedIndividualMarker(null);
+            }
+        });
+
+        updateMapCenter({
+            latitude: mapRef.current?.getCenter()?.lat() || 0,
+            longitude: mapRef.current?.getCenter()?.lng() || 0,
+        });
+    };
+
+    const handleMapClick = () => {
+        setSelectedIndividualMarker(null);
+
+        updateMapCenter({
+            latitude: mapRef.current?.getCenter()?.lat() || 0,
+            longitude: mapRef.current?.getCenter()?.lng() || 0,
+        });
+    };
+
+    const togglePlayingAnimation = useCallback(() => {
+        if (isLastPinPoint) {
+            const initialPinPointPosition = { latitude: pinPoints[0].latitude, longitude: pinPoints[0].longitude };
+            updateMapCenter({
+                latitude: initialPinPointPosition.latitude,
+                longitude: initialPinPointPosition.longitude,
+            });
             setCurrentPinPointIndex(0);
             setCharacterPosition(initialPinPointPosition);
-            updateMapCenter(
-                { latitude: initialPinPointPosition.latitude, longitude: initialPinPointPosition.longitude },
-                true,
-            );
             setIsCharacterMoving(false);
         } else {
             setIsPlayingAnimation(!isPlayingAnimation);
@@ -369,21 +374,28 @@ const TripRoutePage = () => {
                 moveCharacter();
             }
         }
-    }, [pinPoints, isPlayingAnimation, isLastPinPoint, moveCharacter]);
+    }, [pinPoints, isPlayingAnimation, isLastPinPoint, moveCharacter, updateMapCenter]);
 
-    const showCharacterView = mapStatus.zoom === ZOOM_SCALE.DEFAULT.ROUTE;
-    const showIndividualImageMarkers = mapStatus.zoom >= ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE;
+    console.log('animationRef', animationRef.current);
+    console.log('startTimeRef', startTimeRef.current);
+    console.log('autoPlayTimeoutRef', autoPlayTimeoutRef.current);
 
-    if (isMapScriptLoadError) {
-        showToast('지도를 불러오는데 실패했습니다');
-        navigate(ROUTES.PATH.MAIN);
-        return;
-    }
-    const isPhotoCardVisible = (photoCardIndex: number) =>
-        Boolean(photoCardIndex === currentPinPointIndex && !isCharacterMoving);
+    const navigateImagesByDatePage = useCallback(() => {
+        const { startDate, imagesByDates } = tripRouteInfo || {};
+        if (!startDate || !imagesByDates) return;
+
+        const recentPinPointId = String(pinPoints[currentPinPointIndex].pinPointId);
+        sessionStorage.setItem('recentPinPointId', recentPinPointId);
+
+        const initialDate = startDate === imagesByDates[0] ? startDate : imagesByDates[0];
+
+        navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(String(tripKey), initialDate)}`, {
+            state: { startDate, imagesByDates },
+        });
+    }, [tripKey, tripRouteInfo, pinPoints, currentPinPointIndex, navigate]);
 
     const renderMarkers = () => {
-        if (showCharacterView) {
+        if (isCharacterView) {
             return (
                 <>
                     {/* TODO: 컴포넌트 분리 및 useCallback, useMemo 사용 */}
@@ -406,7 +418,7 @@ const TripRoutePage = () => {
                                     longitude: characterPosition?.longitude || 0,
                                 }}
                                 image={point.mediaLink}
-                                heightOffset={80}
+                                heightOffset={65}
                                 isVisible={isPhotoCardVisible(index)}
                                 onClick={() =>
                                     navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_PINPOINT(tripKey!, point.pinPointId)}`)
@@ -425,7 +437,7 @@ const TripRoutePage = () => {
                     )}
                 </>
             );
-        } else if (showIndividualImageMarkers) {
+        } else if (isIndividualImageMarkersView) {
             return (
                 <>
                     {/* TODO: 컴포넌트 분리 및 useCallback, useMemo 사용 */}
@@ -460,27 +472,16 @@ const TripRoutePage = () => {
         return <Spinner />;
     }
 
-    const handleZoomChanged = () => {
-        handleMapZoomChanged(() => {
-            if (mapStatus.zoom < ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE) {
-                setSelectedIndividualMarker(null);
-            }
-        });
+    if (isMapScriptLoadError) {
+        showToast('지도를 불러오는데 실패했습니다');
+        navigate(ROUTES.PATH.MAIN);
+        return;
+    }
 
-        updateMapCenter({
-            latitude: mapRef.current?.getCenter()?.lat() || 0,
-            longitude: mapRef.current?.getCenter()?.lng() || 0,
-        });
-    };
-
-    const handleMapClick = () => {
-        setSelectedIndividualMarker(null);
-
-        updateMapCenter({
-            latitude: mapRef.current?.getCenter()?.lat() || 0,
-            longitude: mapRef.current?.getCenter()?.lng() || 0,
-        });
-    };
+    const isCharacterView = mapStatus.zoom === ZOOM_SCALE.DEFAULT.ROUTE;
+    const isIndividualImageMarkersView = mapStatus.zoom >= ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE;
+    const isPhotoCardVisible = (photoCardIndex: number) =>
+        !!(photoCardIndex === currentPinPointIndex && !isCharacterMoving);
 
     return (
         <div css={container}>
@@ -496,17 +497,17 @@ const TripRoutePage = () => {
                 onClick={handleMapClick}
             >
                 <>
-                    <Polyline pinPoints={pinPoints} isCharacterVisible={showCharacterView} />
+                    <Polyline pinPoints={pinPoints} isCharacterVisible={isCharacterView} />
                     {renderMarkers()}
                     <MapControlButtons
                         isVisible={!isCharacterMoving}
-                        isCharacterView={showCharacterView}
+                        isCharacterView={isCharacterView}
                         isLastPinPoint={isLastPinPoint}
                         isCharacterPlaying={isPlayingAnimation}
                         handler={{
-                            handleDateViewClick: handleImageByDateButtonClick,
-                            handleCharacterViewClick: handleShowCharacterViewButtonClick,
-                            handleCharacterPlayToggle: togglePlayingButton,
+                            handleDateViewClick: navigateImagesByDatePage,
+                            handleCharacterViewClick: showCharacterView,
+                            handleCharacterPlayToggle: togglePlayingAnimation,
                         }}
                     />
                 </>
