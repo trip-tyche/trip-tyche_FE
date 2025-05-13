@@ -41,10 +41,10 @@ const Marker = memo(
         };
 
         const handleClick = () => {
-            if (!isIndividualImageMarker) {
-                mapRef?.current?.panTo({ lat: position.latitude, lng: position.longitude });
-            }
-            onClick?.();
+            mapRef?.current?.panTo({ lat: position.latitude, lng: position.longitude });
+            setTimeout(() => {
+                onClick?.();
+            }, 400);
         };
 
         return (

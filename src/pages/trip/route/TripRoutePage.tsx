@@ -374,7 +374,7 @@ const TripRoutePage = () => {
     }, [pinPoints, isPlayingAnimation, isLastPinPoint, moveCharacter, updateMapCenter]);
 
     const navigateImagesByDatePage = useCallback(() => {
-        const { startDate, imageDates } = tripRouteInfo || {};
+        const { startDate, endDate, imageDates } = tripRouteInfo || {};
         if (!startDate || !imageDates) return;
 
         const recentPinPointId = String(pinPoints[currentPinPointIndex].pinPointId);
@@ -387,38 +387,53 @@ const TripRoutePage = () => {
         });
     }, [tripKey, tripRouteInfo, pinPoints, currentPinPointIndex, navigate]);
 
+    const handlePinPointMarkClick = (position: PinPoint, index: number) => {
+        setCharacterPosition(position);
+        setCurrentPinPointIndex(index);
+        setIsCharacterMoving(false);
+        setIsPlayingAnimation(false);
+
+        updateMapCenter({
+            latitude: mapRef.current?.getCenter()?.lat() || 0,
+            longitude: mapRef.current?.getCenter()?.lng() || 0,
+        });
+    };
+
     const renderMarkers = () => {
-        if (isCharacterView) {
+        if (isCharacterVisible) {
             return (
                 <>
                     {/* TODO: 컴포넌트 분리 및 useCallback, useMemo 사용 */}
-                    {pinPoints.map((point, index) => (
-                        <React.Fragment key={point.pinPointId}>
-                            <Marker
-                                mapRef={mapRef}
-                                position={{ latitude: point.latitude, longitude: point.longitude }}
-                                isMapRendered={isMapRendered}
-                                isVisible={
-                                    !(
-                                        characterPosition?.latitude === point.latitude &&
-                                        characterPosition?.longitude === point.longitude
-                                    )
-                                }
-                            />
-                            <PhotoCard
-                                position={{
-                                    latitude: characterPosition?.latitude || 0,
-                                    longitude: characterPosition?.longitude || 0,
-                                }}
-                                image={point.mediaLink}
-                                heightOffset={65}
-                                isVisible={isPhotoCardVisible(index)}
-                                onClick={() =>
-                                    navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_PINPOINT(tripKey!, point.pinPointId)}`)
-                                }
-                            />
-                        </React.Fragment>
-                    ))}
+                    {pinPoints.map((point, index) => {
+                        // console.log(point);
+                        return (
+                            <React.Fragment key={point.pinPointId}>
+                                <Marker
+                                    mapRef={mapRef}
+                                    position={{ latitude: point.latitude, longitude: point.longitude }}
+                                    isMapRendered={isMapRendered}
+                                    isVisible={!isPinPointOnCharacter(point)}
+                                    onClick={() =>
+                                        isCharacterMoving ? undefined : handlePinPointMarkClick(point, index)
+                                    }
+                                />
+                                <PhotoCard
+                                    position={{
+                                        latitude: characterPosition?.latitude || 0,
+                                        longitude: characterPosition?.longitude || 0,
+                                    }}
+                                    image={point.mediaLink}
+                                    heightOffset={65}
+                                    isVisible={isPhotoCardVisible(index)}
+                                    onClick={() =>
+                                        navigate(
+                                            `${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_PINPOINT(tripKey!, point.pinPointId)}`,
+                                        )
+                                    }
+                                />
+                            </React.Fragment>
+                        );
+                    })}
                     {characterPosition && (
                         <CharacterMarker
                             position={{
@@ -430,13 +445,14 @@ const TripRoutePage = () => {
                     )}
                 </>
             );
-        } else if (isIndividualImageMarkersView) {
+        } else if (isIndividualImageMarkersVisible) {
             return (
                 <>
                     {/* TODO: 컴포넌트 분리 및 useCallback, useMemo 사용 */}
                     {tripRouteInfo?.tripImages.map((image) => {
                         return (
                             <Marker
+                                mapRef={mapRef}
                                 key={image.mediaFileId}
                                 isClick={!!(image.mediaFileId === selectedIndividualMarker?.mediaFileId)}
                                 position={{ latitude: image.latitude, longitude: image.longitude }}
@@ -471,10 +487,15 @@ const TripRoutePage = () => {
         return;
     }
 
-    const isCharacterView = mapStatus.zoom === ZOOM_SCALE.DEFAULT.ROUTE;
-    const isIndividualImageMarkersView = mapStatus.zoom >= ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE;
+    const isPinPointOnCharacter = (pinPoint: PinPoint) =>
+        characterPosition?.latitude === pinPoint.latitude && characterPosition?.longitude === pinPoint.longitude;
+    const isCharacterVisible = mapStatus.zoom === ZOOM_SCALE.DEFAULT.ROUTE;
+    const isIndividualImageMarkersVisible = mapStatus.zoom >= ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE;
     const isPhotoCardVisible = (photoCardIndex: number) =>
         !!(photoCardIndex === currentPinPointIndex && !isCharacterMoving);
+    const mapCenter = isCharacterVisible
+        ? { latitude: characterPosition?.latitude || 0, longitude: characterPosition?.longitude || 0 }
+        : mapStatus.center;
 
     return (
         <div css={container}>
@@ -483,6 +504,7 @@ const TripRoutePage = () => {
 
             <Map
                 zoom={mapStatus.zoom}
+                // center={mapCenter}
                 center={mapStatus.center}
                 isInteractive={isMapInteractive}
                 onLoad={handleMapRender}
@@ -490,11 +512,11 @@ const TripRoutePage = () => {
                 onClick={handleMapClick}
             >
                 <>
-                    <Polyline pinPoints={pinPoints} isCharacterVisible={isCharacterView} />
+                    <Polyline pinPoints={pinPoints} isCharacterVisible={isCharacterVisible} />
                     {renderMarkers()}
                     <MapControlButtons
                         isVisible={!isCharacterMoving}
-                        isCharacterView={isCharacterView}
+                        isCharacterView={isCharacterVisible}
                         isLastPinPoint={isLastPinPoint}
                         isCharacterPlaying={isPlayingAnimation}
                         handler={{

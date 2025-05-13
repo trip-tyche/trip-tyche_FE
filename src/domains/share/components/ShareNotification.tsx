@@ -31,7 +31,7 @@ const ShareNotification = ({ referenceId, onClose }: ShareNotificationProps) => 
         if (shareDetailResult && !shareDetailResult?.success) {
             showToast(
                 shareDetailResult?.error === '공유된 여행이 없습니다.'
-                    ? '더 이상 존재하지 않는 여행입니다'
+                    ? '이미 삭제된 여행입니다'
                     : '공유된 여행이 없습니다',
             );
             onClose();

@@ -18,7 +18,7 @@ interface PhotoCardProps {
     onClick?: () => void;
 }
 
-const PhotoCard = ({ position, image, isVisible, heightOffset, onClick }: PhotoCardProps) => {
+const PhotoCard = ({ position, image, isVisible = true, heightOffset, onClick }: PhotoCardProps) => {
     const [showImageDetail, setShowImageDetail] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -53,7 +53,7 @@ const PhotoCard = ({ position, image, isVisible, heightOffset, onClick }: PhotoC
                 mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                 getPixelPositionOffset={() => getPixelPositionOffset(heightOffset)}
             >
-                <div css={photoCardStyle(isLoading)} onClick={(event) => handleClick(event)}>
+                <div css={photoCardStyle(isLoading, isVisible)} onClick={(event) => handleClick(event)}>
                     {isLoading && <CircleSpinner />}
                     <img src={image} alt='포토카드' onLoad={handleImageLoad} />
                 </div>
@@ -120,7 +120,7 @@ const imageDetailWrapper = css`
     }
 `;
 
-const photoCardStyle = (isLoading: boolean) => css`
+const photoCardStyle = (isLoading: boolean, isVisible: boolean) => css`
     background-color: ${COLORS.TEXT.WHITE};
     width: ${MAP.PHOTO_CARD_SIZE.WIDTH}px;
     height: ${MAP.PHOTO_CARD_SIZE.HEIGHT}px;
