@@ -37,8 +37,8 @@
 //     const imageListRef = useRef<HTMLDivElement>(null);
 //     const { data: result, isLoading } = useMediaByDate(tripKey!, currentDate);
 
-//     // const { isHintOverlayVisible, isFirstLoad } = useScrollHint(imageListRef, isMapScriptLoaded);
-//     const { isHintOverlayVisible, isFirstLoad } = useScrollHint(imageListRef, isMapScriptLoaded, isImageLoaded);
+//     // const { isHintOverlayVisible, isFirstUser } = useScrollHint(imageListRef, isMapScriptLoaded);
+//     const { isHintOverlayVisible, isFirstUser } = useScrollHint(imageListRef, isMapScriptLoaded, isImageLoaded);
 //     const imageRefs = useImagesLocationObserver(
 //         'data' in result! && Array.isArray(result.data) ? result.data : [],
 //         setImageLocation,
@@ -100,7 +100,7 @@
 //                 ))}
 //             </section>
 
-//             {isFirstLoad && (
+//             {isFirstUser && (
 //                 <div css={scrollHintOverlayStyle(isHintOverlayVisible)}>
 //                     <div css={scrollHintContentStyle}>
 //                         <p css={scrollHintText}>아래로 스크롤하세요</p>
@@ -249,13 +249,13 @@ import { useMapControl } from '@/shared/hooks/useMapControl';
 import { useScrollHint } from '@/shared/hooks/useScrollHint';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
-import { LatLng } from '@/shared/types/map';
+import { Location } from '@/shared/types/map';
 
 const ImageByDatePage = () => {
     const [currentDate, setCurrentDate] = useState('');
     const [datesWithImages, setDatesWithImages] = useState<string[]>([]);
-    const [imageLocation, setImageLocation] = useState<LatLng>();
-    const [isImageLoaded, setIsImageLoaded] = useState(false);
+    const [imageLocation, setImageLocation] = useState<Location>();
+    const [isAllImageLoad, setIsAllImageLoad] = useState(false);
 
     const showToast = useToastStore((state) => state.showToast);
 
@@ -266,10 +266,11 @@ const ImageByDatePage = () => {
     const navigate = useNavigate();
 
     const imageListRef = useRef<HTMLDivElement>(null);
+    const imageCount = useRef<boolean[]>([]);
 
     const { data: result, isLoading } = useMediaByDate(tripKey!, currentDate || startDate);
     const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl(ZOOM_SCALE.DEFAULT.IMAGE_BY_DATE, DEFAULT_CENTER);
-    const { isHintOverlayVisible, isFirstLoad } = useScrollHint(imageListRef, isMapScriptLoaded, isImageLoaded);
+    const { isHintOverlayVisible, isFirstUser } = useScrollHint(imageListRef, isMapScriptLoaded, isAllImageLoad);
 
     useEffect(() => {
         if (!imageDates?.length) {
@@ -279,10 +280,11 @@ const ImageByDatePage = () => {
         setCurrentDate(imageDates[0]);
     }, [imageDates]);
 
-    // handleImageLoad 함수 추가
-    const handleImageLoad = () => {
-        setIsImageLoaded(true);
-    };
+    useEffect(() => {
+        if (result?.success && result.data && imageCount.current) {
+            imageCount.current = Array(result.data.length).fill(false);
+        }
+    }, [result]);
 
     const imageRefs = useImagesLocationObserver(
         result && 'data' in result && Array.isArray(result.data) ? result.data : [],
@@ -304,43 +306,47 @@ const ImageByDatePage = () => {
 
     const images = result.data;
 
+    const handleImageLoad = (index: number) => {
+        imageCount.current[index] = true;
+
+        const isAllImageLoad = imageCount.current.every((index) => !!index);
+        if (isAllImageLoad) {
+            setIsAllImageLoad(true);
+        }
+    };
+
     return (
         <div css={container}>
-            {(isLoading || !result.data) && <Spinner />}
+            <BackButton onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`)} />
 
-            {result.data && (
-                <>
-                    <BackButton onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`)} />
+            <DateMap imageLocation={imageLocation ? imageLocation : DEFAULT_CENTER} />
+            <DateSelector
+                currentDate={currentDate || startDate}
+                datesWithImages={datesWithImages}
+                startDate={startDate}
+                onDateSelect={(date: string) => setCurrentDate(date)}
+            />
 
-                    {imageLocation && <DateMap imageLocation={imageLocation} />}
-                    <DateSelector
-                        currentDate={currentDate || startDate}
-                        datesWithImages={datesWithImages}
-                        startDate={startDate}
-                        onDateSelect={(date: string) => setCurrentDate(date)}
+            {(isLoading || !result.data || !isAllImageLoad) && <Spinner text='사진 불러오는 중...' />}
+            <main ref={imageListRef} css={imageListStyle}>
+                {images.map((image, index) => (
+                    <ImageItem
+                        key={image.mediaFileId}
+                        reference={(element) => (imageRefs.current[index] = element)}
+                        image={image}
+                        index={index}
+                        onImageLoad={() => handleImageLoad(index)}
                     />
-                    <section ref={imageListRef} css={imageListStyle}>
-                        {images.map((image, index) => (
-                            <ImageItem
-                                key={image.mediaFileId}
-                                image={image}
-                                index={index}
-                                onImageLoad={handleImageLoad}
-                                isImageLoaded={isImageLoaded}
-                                reference={(element) => (imageRefs.current[index] = element)}
-                            />
-                        ))}
-                    </section>
+                ))}
+            </main>
 
-                    {isFirstLoad && (
-                        <div css={scrollHintOverlayStyle(isHintOverlayVisible)}>
-                            <div css={scrollHintContentStyle}>
-                                <p css={scrollHintText}>아래로 스크롤하세요</p>
-                                <ArrowDown size={24} color={theme.COLORS.TEXT.WHITE} />
-                            </div>
-                        </div>
-                    )}
-                </>
+            {isFirstUser && (
+                <div css={scrollHintOverlayStyle(isHintOverlayVisible)}>
+                    <div css={scrollHintContentStyle}>
+                        <p css={scrollHintText}>아래로 스크롤하세요</p>
+                        <ArrowDown size={24} color={theme.COLORS.TEXT.WHITE} />
+                    </div>
+                </div>
             )}
         </div>
     );

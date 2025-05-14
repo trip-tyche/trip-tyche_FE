@@ -1,9 +1,9 @@
 import { RefObject, useEffect, useState } from 'react';
 
-// export const useScrollHint = (imageListRef: RefObject<HTMLDivElement>, isLoaded: boolean) => {
 export const useScrollHint = (imageListRef: RefObject<HTMLDivElement>, isLoaded: boolean, isImageLoaded: boolean) => {
+    const isUsedService = Boolean(localStorage.getItem('isUsedService'));
     const [isHintOverlayVisible, setIsHintOverlayVisible] = useState(false);
-    const [isFirstLoad, setIsFirstLoad] = useState(true);
+    const [isFirstUser, setIsFirstUser] = useState(isUsedService ? false : true);
 
     const scrollFirstLoad = (element: HTMLElement, target: number, duration: number) => {
         const start = element.scrollTop;
@@ -27,8 +27,12 @@ export const useScrollHint = (imageListRef: RefObject<HTMLDivElement>, isLoaded:
     };
 
     useEffect(() => {
-        if (isLoaded && isImageLoaded && imageListRef.current && isFirstLoad) {
-            // if (isLoaded && imageListRef.current && isFirstLoad) {
+        localStorage.setItem('isUsedService', 'true');
+    }, []);
+
+    useEffect(() => {
+        if (isLoaded && isImageLoaded && imageListRef.current && isFirstUser) {
+            // if (isLoaded && imageListRef.current && isFirstUser) {
             setIsHintOverlayVisible(true);
 
             const element = imageListRef.current;
@@ -37,7 +41,7 @@ export const useScrollHint = (imageListRef: RefObject<HTMLDivElement>, isLoaded:
 
             const hideHint = () => {
                 setIsHintOverlayVisible(false);
-                setIsFirstLoad(false);
+                setIsFirstUser(false);
             };
 
             const timeoutIds = [setTimeout(scrollDown, 100), setTimeout(scrollUp, 1500), setTimeout(hideHint, 2500)];
@@ -46,10 +50,10 @@ export const useScrollHint = (imageListRef: RefObject<HTMLDivElement>, isLoaded:
                 timeoutIds.forEach(clearTimeout);
             };
         }
-    }, [isLoaded, isFirstLoad, imageListRef]);
+    }, [isLoaded, isFirstUser, imageListRef]);
 
     return {
         isHintOverlayVisible,
-        isFirstLoad,
+        isFirstUser,
     };
 };

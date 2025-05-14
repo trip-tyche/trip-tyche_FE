@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import { MediaFile } from '@/domains/media/types';
-import { LatLng } from '@/shared/types/map';
+import { Location } from '@/shared/types/map';
 
-export const useImagesLocationObserver = (images: MediaFile[], setImageLocation: (location: LatLng) => void) => {
+export const useImagesLocationObserver = (images: MediaFile[], setImageLocation: (location: Location) => void) => {
     const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
     const observerCallback = useCallback(
@@ -13,7 +13,7 @@ export const useImagesLocationObserver = (images: MediaFile[], setImageLocation:
                     const index = parseInt(entry.target.getAttribute('data-index') || '0', 10);
                     const image = images[index];
                     if (image) {
-                        setImageLocation({ lat: image.latitude, lng: image.longitude });
+                        setImageLocation({ latitude: image.latitude, longitude: image.longitude });
                     }
                 }
             });

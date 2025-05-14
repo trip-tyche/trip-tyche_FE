@@ -1,25 +1,29 @@
+import { useCallback, useEffect, useState } from 'react';
+
 import { css } from '@emotion/react';
 
 import { MediaFile } from '@/domains/media/types';
 import { FONT_SIZES } from '@/shared/constants/theme';
 
 interface ImageItemProps {
-    image: MediaFile;
-    index: number;
-    onImageLoad: () => void;
-    isImageLoaded: boolean;
     reference: (element: HTMLDivElement | null) => void;
+    index: number;
+    image: MediaFile;
+    onImageLoad?: (index: number) => void;
 }
 
-const ImageItem = ({ image, index, reference, onImageLoad, isImageLoaded }: ImageItemProps) => {
-    // const ImageItem = ({ image, index }: ImageItemProps) => {
+const ImageItem = ({ image, index, reference, onImageLoad }: ImageItemProps) => {
+    const [isLoading, setIsLoading] = useState(true);
+
+    const handleImageLoad = useCallback(() => {
+        setIsLoading(false);
+        onImageLoad?.(index);
+    }, []);
+
     return (
-        // <div css={imageItemStyle} data-index={index}>
         <div ref={reference} css={imageItemStyle} data-index={index}>
-            {/* <img src={image.mediaLink} alt={`이미지 ${image.mediaFileId}`} css={imageStyle} /> */}
-            <img src={image.mediaLink} alt={`이미지 ${image.mediaFileId}`} onLoad={onImageLoad} css={imageStyle} />
-            {/* <p css={timeStampStyle}>{image.recordDate.split('T')[1]}</p> */}
-            {isImageLoaded && <p css={timeStampStyle}>{image.recordDate.split('T')[1]}</p>}
+            <img src={image.mediaLink} alt={`이미지 ${image.mediaFileId}`} onLoad={handleImageLoad} css={imageStyle} />
+            {!isLoading && <p css={timeStampStyle}>{image.recordDate.split('T')[1]}</p>}
         </div>
     );
 };
