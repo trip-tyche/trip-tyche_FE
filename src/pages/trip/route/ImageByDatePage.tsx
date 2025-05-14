@@ -29,7 +29,7 @@ const ImageByDatePage = () => {
 
     const { tripKey } = useParams();
     const {
-        state: { startDate, imageDates },
+        state: { startDate, endDate, imageDates, defaultLocation },
     } = useLocation();
     const navigate = useNavigate();
 
@@ -79,7 +79,7 @@ const ImageByDatePage = () => {
         <div css={container}>
             <BackButton onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`)} />
 
-            <DateMap imageLocation={imageLocation ? imageLocation : DEFAULT_CENTER} />
+            <DateMap imageLocation={imageLocation ? imageLocation : defaultLocation} />
             <DateSelector
                 currentDate={currentDate || startDate}
                 datesWithImages={datesWithImages}

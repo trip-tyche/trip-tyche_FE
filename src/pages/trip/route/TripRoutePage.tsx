@@ -311,9 +311,13 @@ const TripRoutePage = () => {
         sessionStorage.setItem('recentPinPointId', recentPinPointId);
 
         const initialDate = startDate === imageDates[0] ? startDate : imageDates[0];
+        const defaultLocation = {
+            latitude: tripRouteInfo?.tripImages[0].latitude,
+            longitude: tripRouteInfo?.tripImages[0].longitude,
+        };
 
         navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(String(tripKey), initialDate)}`, {
-            state: { startDate, imageDates },
+            state: { startDate, endDate, imageDates, defaultLocation },
         });
     }, [tripKey, tripRouteInfo, pinPoints, currentPinPointIndex, navigate]);
 

@@ -41,8 +41,8 @@ const imageStyle = css`
 const timeStampStyle = css`
     z-index: 2;
     position: absolute;
-    bottom: 8px;
-    right: 8px;
+    bottom: 12px;
+    right: 12px;
     margin: 0;
     padding: 2px 4px;
     font-family: 'DS-DIGII', sans-serif;

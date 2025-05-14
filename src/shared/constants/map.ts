@@ -17,6 +17,7 @@ export const GOOGLE_MAPS_CONFIG = {
 export const MAPS_OPTIONS: MapOption = {
     minZoom: 3,
     maxZoom: 19,
+    disableDefaultUI: true,
     mapTypeControl: false,
     fullscreenControl: false,
     zoomControl: false,
