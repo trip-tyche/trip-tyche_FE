@@ -233,7 +233,7 @@
 import { useEffect, useState, useRef } from 'react';
 
 import { css } from '@emotion/react';
-import { ArrowDown, ChevronLeft } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { useMediaByDate } from '@/domains/media/hooks/queries';
@@ -241,6 +241,7 @@ import { useImagesLocationObserver } from '@/domains/media/hooks/useImagesLocati
 import DateMap from '@/domains/trip/components/DateMap';
 import DateSelector from '@/domains/trip/components/DateSelector';
 import ImageItem from '@/domains/trip/components/ImageItem';
+import BackButton from '@/shared/components/common/Button/BackButton';
 import Spinner from '@/shared/components/common/Spinner';
 import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/map';
 import { ROUTES } from '@/shared/constants/paths';
@@ -255,27 +256,20 @@ const ImageByDatePage = () => {
     const [datesWithImages, setDatesWithImages] = useState<string[]>([]);
     const [imageLocation, setImageLocation] = useState<LatLng>();
     const [isImageLoaded, setIsImageLoaded] = useState(false);
-    const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl(ZOOM_SCALE.DEFAULT.IMAGE_BY_DATE, DEFAULT_CENTER);
+
     const showToast = useToastStore((state) => state.showToast);
+
     const { tripKey } = useParams();
     const {
         state: { startDate, imageDates },
     } = useLocation();
     const navigate = useNavigate();
+
     const imageListRef = useRef<HTMLDivElement>(null);
+
     const { data: result, isLoading } = useMediaByDate(tripKey!, currentDate || startDate);
-
-    // handleImageLoad 함수 추가
-    const handleImageLoad = () => {
-        setIsImageLoaded(true);
-    };
+    const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl(ZOOM_SCALE.DEFAULT.IMAGE_BY_DATE, DEFAULT_CENTER);
     const { isHintOverlayVisible, isFirstLoad } = useScrollHint(imageListRef, isMapScriptLoaded, isImageLoaded);
-    const imageRefs = useImagesLocationObserver(
-        result && 'data' in result && Array.isArray(result.data) ? result.data : [],
-        setImageLocation,
-    );
-
-    useEffect(() => {}, [imageLocation]);
 
     useEffect(() => {
         if (!imageDates?.length) {
@@ -285,6 +279,16 @@ const ImageByDatePage = () => {
         setCurrentDate(imageDates[0]);
     }, [imageDates]);
 
+    // handleImageLoad 함수 추가
+    const handleImageLoad = () => {
+        setIsImageLoaded(true);
+    };
+
+    const imageRefs = useImagesLocationObserver(
+        result && 'data' in result && Array.isArray(result.data) ? result.data : [],
+        setImageLocation,
+    );
+
     if (isMapScriptLoadError) {
         showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
         navigate(-1);
@@ -293,24 +297,21 @@ const ImageByDatePage = () => {
         return <Spinner />;
     }
 
-    // null 및 undefined 체크 추가
     if (!result) return <div>데이터를 불러올 수 없습니다.</div>;
     if (!result.success) {
         return <div>데이터를 불러오는데 문제가 발생했습니다.</div>;
     }
+
     const images = result.data;
 
     return (
         <div css={container}>
             {(isLoading || !result.data) && <Spinner />}
+
             {result.data && (
                 <>
-                    <button
-                        css={backButtonStyle}
-                        onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`)}
-                    >
-                        <ChevronLeft color={theme.COLORS.TEXT.DESCRIPTION} size={24} strokeWidth={1.5} />
-                    </button>
+                    <BackButton onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`)} />
+
                     {imageLocation && <DateMap imageLocation={imageLocation} />}
                     <DateSelector
                         currentDate={currentDate || startDate}
@@ -318,20 +319,18 @@ const ImageByDatePage = () => {
                         startDate={startDate}
                         onDateSelect={(date: string) => setCurrentDate(date)}
                     />
-                    <div css={imageListStyle}>
-                        <section ref={imageListRef} css={centerFilm}>
-                            {images.map((image, index) => (
-                                <ImageItem
-                                    key={image.mediaFileId}
-                                    image={image}
-                                    index={index}
-                                    onImageLoad={handleImageLoad}
-                                    isImageLoaded={isImageLoaded}
-                                    reference={(element) => (imageRefs.current[index] = element)}
-                                />
-                            ))}
-                        </section>
-                    </div>
+                    <section ref={imageListRef} css={imageListStyle}>
+                        {images.map((image, index) => (
+                            <ImageItem
+                                key={image.mediaFileId}
+                                image={image}
+                                index={index}
+                                onImageLoad={handleImageLoad}
+                                isImageLoaded={isImageLoaded}
+                                reference={(element) => (imageRefs.current[index] = element)}
+                            />
+                        ))}
+                    </section>
 
                     {isFirstLoad && (
                         <div css={scrollHintOverlayStyle(isHintOverlayVisible)}>
@@ -356,99 +355,6 @@ const container = css`
     background-color: ${theme.COLORS.BACKGROUND.BLACK};
     position: relative;
 `;
-
-const backButtonStyle = css`
-    width: 40px;
-    height: 40px;
-    position: absolute;
-    z-index: 1;
-    top: 8px;
-    left: 8px;
-    border: 1px solid ${theme.COLORS.TEXT.DESCRIPTION};
-    border: none;
-    box-shadow:
-        rgba(50, 50, 93, 0.25) 13px 13px 30px -10px,
-        rgba(0, 0, 0, 0.8) 5px 8px 16px -10px;
-    border-radius: 4px;
-    cursor: pointer;
-`;
-
-const centerFilm = css`
-    /* flex: 1;
-
-    ::after {
-        content: '';
-        position: fixed;
-        right: 0;
-        top: 234px;
-        bottom: 0;
-        width: 28px;
-        height: 100%;
-        background-color: ${theme.COLORS.BACKGROUND.BLACK};
-        z-index: 10;
-        box-shadow: 1px 0 3px rgba(0, 0, 0, 0.3);
-
-        background-image: repeating-linear-gradient(
-            to bottom,
-            transparent 0px,
-            transparent 5px,
-            rgba(255, 255, 255, 0.9) 5px,
-            rgba(255, 255, 255, 0.9) 15px,
-            transparent 15px,
-            transparent 20px
-        );
-        background-size: 12px 24px;
-        background-position: center;
-        background-repeat: repeat-y;
-    } */
-`;
-
-// const leftFilm = css`
-//     position: absolute;
-//     left: 0;
-//     /* top: 234px; */
-//     bottom: 0;
-//     width: 28px;
-//     background-color: ${theme.COLORS.BACKGROUND.BLACK};
-//     z-index: 1000;
-//     box-shadow: 1px 0 3px rgba(0, 0, 0, 0.3);
-
-//     background-image: repeating-linear-gradient(
-//         to bottom,
-//         transparent 0px,
-//         transparent 5px,
-//         rgba(255, 255, 255, 0.9) 5px,
-//         rgba(255, 255, 255, 0.9) 15px,
-//         transparent 15px,
-//         transparent 20px
-//     );
-//     background-size: 12px 24px;
-//     background-position: center;
-//     background-repeat: repeat-y;
-// `;
-// const rightFilm = css`
-//     /* position: fixed; */
-//     /* left: 0; */
-//     /* top: 234px; */
-//     /* bottom: 0; */
-//     width: 28px;
-//     background-color: ${theme.COLORS.BACKGROUND.BLACK};
-//     z-index: 10;
-//     box-shadow: 1px 0 3px rgba(0, 0, 0, 0.3);
-
-//     background-image: repeating-linear-gradient(
-//         to bottom,
-//         transparent 0px,
-//         transparent 5px,
-//         rgba(255, 255, 255, 0.9) 5px,
-//         rgba(255, 255, 255, 0.9) 15px,
-//         transparent 15px,
-//         transparent 20px
-//     );
-//     background-size: 12px 24px;
-//     background-position: center;
-//     background-repeat: repeat-y;
-// `;
 
 const imageListStyle = css`
     max-width: 430px;

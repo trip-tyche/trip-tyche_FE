@@ -15,11 +15,13 @@ export const GOOGLE_MAPS_CONFIG = {
 
 // 기본 지도 옵션
 export const MAPS_OPTIONS: MapOption = {
+    minZoom: 3,
+    maxZoom: 19,
     mapTypeControl: false,
     fullscreenControl: false,
     zoomControl: false,
     streetViewControl: false,
-    rotateControl: true,
+    rotateControl: false,
     clickableIcons: false,
 } as const;
 

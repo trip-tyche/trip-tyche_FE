@@ -11,7 +11,12 @@ import Polyline from '@/domains/route/components/Polyline';
 import { ROUTE } from '@/domains/route/constants';
 import { useRoute } from '@/domains/route/hooks/queries';
 import { PinPoint } from '@/domains/route/types';
-import { filterValidLocationPinPoint, sortPinPointByDate } from '@/domains/route/utils';
+import {
+    calculateDistance,
+    filterValidLocationPinPoint,
+    getAnimationConfig,
+    sortPinPointByDate,
+} from '@/domains/route/utils';
 import Header from '@/shared/components/common/Header';
 import Spinner from '@/shared/components/common/Spinner';
 import Map from '@/shared/components/Map';
@@ -20,6 +25,7 @@ import ClusterMarker from '@/shared/components/map/ClusterMarker';
 import Marker from '@/shared/components/map/Marker';
 import { ZOOM_SCALE } from '@/shared/constants/map';
 import { ROUTES } from '@/shared/constants/paths';
+import { COLORS } from '@/shared/constants/theme';
 import { MESSAGE } from '@/shared/constants/ui';
 import { useMapControl } from '@/shared/hooks/useMapControl';
 import { useToastStore } from '@/shared/stores/useToastStore';
@@ -45,7 +51,8 @@ const TripRoutePage = () => {
     const [isCharacterMoving, setIsCharacterMoving] = useState(false);
     const [isPlayingAnimation, setIsPlayingAnimation] = useState(false);
 
-    const [showSpinner, setShowSpinner] = useState(false);
+    const [currentTransportType, setCurrentTransportType] = useState('walking');
+    const [showTravelMessage, setShowTravelMessage] = useState('');
 
     const { showToast } = useToastStore();
     const {
@@ -147,55 +154,6 @@ const TripRoutePage = () => {
         };
     }, []);
 
-    // const moveCharacter = useCallback(() => {
-    //     if (isLastPinPoint) {
-    //         setIsPlayingAnimation(false);
-    //         setIsCharacterMoving(false);
-    //         setIsMapInteractive(true);
-    //         return;
-    //     }
-
-    //     const start = pinPoints[currentPinPointIndex];
-    //     const end = pinPoints[currentPinPointIndex + 1];
-    //     setIsCharacterMoving(true);
-    //     setIsMapInteractive(false); // 캐릭터 이동 시작 시 지도 조작 비활성화
-
-    //     const animate = (time: number) => {
-    //         if (!startTimeRef.current) startTimeRef.current = time;
-    //         const progress = Math.min((time - startTimeRef.current) / 500, 1);
-    //         // const progress = Math.min((time - startTimeRef.current) / ROUTE.DURATION.MOVE, 1);
-
-    //         const newLat = start.latitude + (end.latitude - start.latitude) * progress;
-    //         const newLng = start.longitude + (end.longitude - start.longitude) * progress;
-    //         const newPosition = { latitude: newLat, longitude: newLng };
-    //         setCharacterPosition(newPosition);
-
-    //         if (mapRef.current) {
-    //             updateMapCenter({ latitude: newPosition.latitude, longitude: newPosition.longitude }, true);
-
-    //         }
-
-    //         if (progress < 1) {
-    //             animationRef.current = requestAnimationFrame(animate);
-    //         } else {
-    //             startTimeRef.current = null;
-    //             setCurrentPinPointIndex((prev) => prev + 1);
-    //             setIsCharacterMoving(false);
-    //             setIsMapInteractive(true);
-
-    //             autoPlayTimeoutRef.current = setTimeout(() => {
-    //                 if (isPlayingAnimation) {
-    //                     moveCharacter();
-    //                 }
-    //             }, ROUTE.DURATION.WAIT);
-    //         }
-    //     };
-
-    //     animationRef.current = requestAnimationFrame(animate);
-    // }, [currentPinPointIndex, pinPoints, isPlayingAnimation, isLastPinPoint]);
-
-    // 재생 버튼을 눌렀을 때 캐릭터가 각 위치에서 잠시 멈췄다가 자동으로 다음 위치로 이동하는 자동 재생 기능
-
     const moveCharacter = useCallback(() => {
         if (isLastPinPoint) {
             setIsPlayingAnimation(false);
@@ -209,83 +167,54 @@ const TripRoutePage = () => {
         setIsCharacterMoving(true);
         setIsMapInteractive(false);
 
-        const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
-            const R = 6371;
-            const dLat = (lat2 - lat1) * (Math.PI / 180);
-            const dLon = (lon2 - lon1) * (Math.PI / 180);
-            const a =
-                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(lat1 * (Math.PI / 180)) *
-                    Math.cos(lat2 * (Math.PI / 180)) *
-                    Math.sin(dLon / 2) *
-                    Math.sin(dLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c;
-        };
-
         const distance = calculateDistance(start.latitude, start.longitude, end.latitude, end.longitude);
+        const settings = getAnimationConfig(distance);
 
-        const getDurationByDistance = (distanceKm: number): number => {
-            if (distanceKm < 1) {
-                return 1000;
-            } else if (distanceKm < 5) {
-                return 3000;
-            } else if (distanceKm < 10) {
-                return 5000;
-            } else {
-                setShowSpinner(true);
-                setTimeout(() => setShowSpinner(false), 1500);
-                return 100;
-            }
-        };
-
-        const moveDuration = getDurationByDistance(distance);
-
-        if (distance >= 10) {
-            setShowSpinner(true);
-
-            setTimeout(() => {
-                setCharacterPosition({ latitude: end.latitude, longitude: end.longitude });
-                if (mapRef.current) {
-                    updateMapCenter({ latitude: end.latitude, longitude: end.longitude });
-                }
-
-                setShowSpinner(false);
-                setCurrentPinPointIndex((prev) => prev + 1);
-                setIsCharacterMoving(false);
-                setIsMapInteractive(true);
-
-                autoPlayTimeoutRef.current = setTimeout(() => {
-                    if (isPlayingAnimation) {
-                        moveCharacter();
-                    }
-                }, ROUTE.DURATION.WAIT);
-            }, 1500);
-
-            return;
-        }
+        updateMapZoom(settings.zoomLevel);
+        setCurrentTransportType(settings.transportType);
+        setShowTravelMessage(
+            distance >= 1 ? `${Math.round(distance).toLocaleString()}km 이동 중...` : '짧은 거리 이동 중...',
+        );
 
         const animate = (time: number) => {
             if (!startTimeRef.current) startTimeRef.current = time;
-            const progress = Math.min((time - startTimeRef.current) / moveDuration, 1);
 
+            // 단순 선형 진행 (가속/감속 없음)
+            const progress = Math.min((time - startTimeRef.current) / settings.duration, 1);
+
+            // 좌표 계산 - 직선 보간법 사용
             const newLat = start.latitude + (end.latitude - start.latitude) * progress;
             const newLng = start.longitude + (end.longitude - start.longitude) * progress;
             const newPosition = { latitude: newLat, longitude: newLng };
+
+            // 캐릭터 위치 업데이트
             setCharacterPosition(newPosition);
 
+            // 지도 중심 업데이트 - 캐릭터 따라가기
             if (mapRef.current) {
                 updateMapCenter({ latitude: newPosition.latitude, longitude: newPosition.longitude });
             }
 
             if (progress < 1) {
+                // 애니메이션 계속
                 animationRef.current = requestAnimationFrame(animate);
             } else {
+                // 애니메이션 종료
                 startTimeRef.current = null;
                 setCurrentPinPointIndex((prev) => prev + 1);
                 setIsCharacterMoving(false);
                 setIsMapInteractive(true);
+                setShowTravelMessage('');
 
+                // 기본 이동 수단으로 복귀
+                setCurrentTransportType('walking');
+
+                // 이동 완료 후 기본 줌 레벨로 복원
+                setTimeout(() => {
+                    updateMapZoom(ZOOM_SCALE.DEFAULT.ROUTE);
+                }, 300);
+
+                // 자동 재생 중이면 다음 위치로 이동
                 autoPlayTimeoutRef.current = setTimeout(() => {
                     if (isPlayingAnimation) {
                         moveCharacter();
@@ -294,8 +223,9 @@ const TripRoutePage = () => {
             }
         };
 
+        // 애니메이션 시작
         animationRef.current = requestAnimationFrame(animate);
-    }, [currentPinPointIndex, pinPoints, isPlayingAnimation, isLastPinPoint]);
+    }, [mapRef, currentPinPointIndex, pinPoints, isPlayingAnimation, isLastPinPoint, updateMapCenter, updateMapZoom]);
 
     useEffect(() => {
         if (isPlayingAnimation && !isCharacterMoving) {
@@ -393,6 +323,7 @@ const TripRoutePage = () => {
         setIsCharacterMoving(false);
         setIsPlayingAnimation(false);
 
+        // TODO: 깜빡거림 현상 분석 (없으면 깜빡)
         updateMapCenter({
             latitude: mapRef.current?.getCenter()?.lat() || 0,
             longitude: mapRef.current?.getCenter()?.lng() || 0,
@@ -440,9 +371,11 @@ const TripRoutePage = () => {
                                 latitude: characterPosition?.latitude,
                                 longitude: characterPosition?.longitude,
                             }}
+                            transportType={currentTransportType}
                             isMapRendered={isMapRendered}
                         />
                     )}
+                    {showTravelMessage && <div css={travelMessageStyle}>{showTravelMessage}</div>}
                 </>
             );
         } else if (isIndividualImageMarkersVisible) {
@@ -489,22 +422,23 @@ const TripRoutePage = () => {
 
     const isPinPointOnCharacter = (pinPoint: PinPoint) =>
         characterPosition?.latitude === pinPoint.latitude && characterPosition?.longitude === pinPoint.longitude;
-    const isCharacterVisible = mapStatus.zoom === ZOOM_SCALE.DEFAULT.ROUTE;
+    const isCharacterVisible = isCharacterMoving || mapStatus.zoom === ZOOM_SCALE.DEFAULT.ROUTE;
     const isIndividualImageMarkersVisible = mapStatus.zoom >= ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE;
     const isPhotoCardVisible = (photoCardIndex: number) =>
         !!(photoCardIndex === currentPinPointIndex && !isCharacterMoving);
-    const mapCenter = isCharacterVisible
-        ? { latitude: characterPosition?.latitude || 0, longitude: characterPosition?.longitude || 0 }
-        : mapStatus.center;
+    // TODO: 깜빡거림 현상 분석
+    // const mapCenter = isCharacterVisible
+    //     ? { latitude: characterPosition?.latitude || 0, longitude: characterPosition?.longitude || 0 }
+    //     : mapStatus.center;
 
     return (
         <div css={container}>
-            {showSpinner && <Spinner text='장거리 이동 중...' />}
+            {/* {showSpinner && <Spinner text='장거리 이동 중...' />} */}
             <Header title={tripRouteInfo?.title || ''} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
 
             <Map
                 zoom={mapStatus.zoom}
-                // center={mapCenter}
+                // center={mapCenter} // TODO: 깜빡거림 현상 분석
                 center={mapStatus.center}
                 isInteractive={isMapInteractive}
                 onLoad={handleMapRender}
@@ -536,6 +470,23 @@ const container = css`
     display: flex;
     flex-direction: column;
     position: relative;
+`;
+
+const travelMessageStyle = css`
+    position: absolute;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: ${COLORS.BACKGROUND.WHITE};
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 `;
 
 export default TripRoutePage;

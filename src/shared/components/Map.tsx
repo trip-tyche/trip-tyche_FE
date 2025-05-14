@@ -9,7 +9,7 @@ interface MapProps {
     center: Location;
     children: React.ReactNode;
     isInteractive?: boolean;
-    onLoad?: (map: MapType) => void;
+    onLoad: (map: MapType) => void;
     onZoomChanged?: () => void;
     onClick?: () => void;
 }
@@ -26,9 +26,6 @@ const Map = ({ zoom, center, children, isInteractive = true, onLoad, onZoomChang
                     ...MAPS_OPTIONS,
                     draggable: isInteractive,
                     scrollwheel: isInteractive,
-                    minZoom: 3,
-                    maxZoom: 19,
-                    panControl: true,
                 }}
                 mapContainerStyle={{ height: 'calc(100% + 30px)' }}
                 onLoad={onLoad}

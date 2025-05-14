@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 
 import { MediaFile } from '@/domains/media/types';
-import theme from '@/shared/styles/theme';
+import { FONT_SIZES } from '@/shared/constants/theme';
 
 interface ImageItemProps {
     image: MediaFile;
@@ -27,7 +27,6 @@ const ImageItem = ({ image, index, reference, onImageLoad, isImageLoaded }: Imag
 const imageItemStyle = css`
     margin-bottom: 12px;
     position: relative;
-    padding: 0 20px;
     width: 100%;
 `;
 
@@ -39,13 +38,13 @@ const timeStampStyle = css`
     z-index: 2;
     position: absolute;
     bottom: 8px;
-    right: 30px;
+    right: 8px;
     margin: 0;
     padding: 2px 4px;
     font-family: 'DS-DIGII', sans-serif;
     font-weight: bold;
     font-style: italic;
-    font-size: ${theme.FONT_SIZES.XL};
+    font-size: ${FONT_SIZES.XL};
     color: #ff9b37;
     letter-spacing: 1px;
     opacity: 0.95;

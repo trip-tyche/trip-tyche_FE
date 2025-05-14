@@ -36,8 +36,6 @@ export const useMapControl = (initialZoom: number, initialCenter: Location | nul
 
     const updateMapZoom = useCallback((zoom: number, callback?: () => void) => {
         if (mapRef.current) {
-            console.log('xcxcx');
-
             mapRef.current.setZoom(zoom);
             setZoom(zoom);
             callback?.();
@@ -46,7 +44,6 @@ export const useMapControl = (initialZoom: number, initialCenter: Location | nul
 
     const updateMapCenter = useCallback((center: Location) => {
         if (mapRef.current) {
-            console.log('zvzxvxvcv', center);
             mapRef.current.panTo({ lat: center.latitude, lng: center.longitude });
             setCenter(center);
         }
