@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { css } from '@emotion/react';
 
@@ -9,7 +9,7 @@ interface ImageItemProps {
     reference: (element: HTMLDivElement | null) => void;
     index: number;
     image: MediaFile;
-    onImageLoad?: (index: number) => void;
+    onImageLoad?: () => void;
 }
 
 const ImageItem = ({ image, index, reference, onImageLoad }: ImageItemProps) => {
@@ -17,7 +17,7 @@ const ImageItem = ({ image, index, reference, onImageLoad }: ImageItemProps) => 
 
     const handleImageLoad = useCallback(() => {
         setIsLoading(false);
-        onImageLoad?.(index);
+        onImageLoad?.();
     }, []);
 
     return (
