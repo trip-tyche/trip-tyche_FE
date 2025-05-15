@@ -32,10 +32,10 @@ const ImageByDatePage = () => {
     const showToast = useToastStore((state) => state.showToast);
 
     const { tripKey } = useParams();
-    const {
-        state: { startDate, endDate, imageDates: dates, defaultLocation },
-    } = useLocation();
-    console.log(startDate, endDate);
+    const location = useLocation();
+
+    const { startDate, endDate, imageDates: dates, defaultLocation } = location.state || {};
+
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 

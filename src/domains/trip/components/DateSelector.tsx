@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { css } from '@emotion/react';
 
@@ -19,13 +19,13 @@ const DateSelector = React.memo(
         const scrollContainerRef = useRef<HTMLDivElement>(null);
         const buttonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
-        const generateDayList = useCallback(() => {
+        const generateDayList = useMemo(() => {
             if (!startDate || !imageDates.length) {
                 return [];
             }
 
             return imageDates.map((date) => ({ date, dayNumber: calculateTripDay(date, startDate, endDate) }));
-        }, [imageDates, startDate]);
+        }, [imageDates, startDate, endDate]);
 
         const scrollToCenter = useCallback((targetDate: string) => {
             const container = scrollContainerRef.current;
@@ -55,7 +55,7 @@ const DateSelector = React.memo(
 
         return (
             <div ref={scrollContainerRef} css={buttonGroup}>
-                {generateDayList().map(({ date, dayNumber }) => (
+                {generateDayList.map(({ date, dayNumber }) => (
                     <button
                         key={date}
                         ref={(element) => {
