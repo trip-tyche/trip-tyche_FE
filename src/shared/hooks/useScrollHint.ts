@@ -3,7 +3,7 @@ import { RefObject, useEffect, useState } from 'react';
 export const useScrollHint = (imageListRef: RefObject<HTMLDivElement>, isLoaded: boolean, isImageLoaded: boolean) => {
     const isUsedService = Boolean(localStorage.getItem('isUsedService'));
     const [isHintOverlayVisible, setIsHintOverlayVisible] = useState(false);
-    const [isFirstUser, setIsFirstUser] = useState(isUsedService ? false : true);
+    const [isFirstUser, setIsFirstUser] = useState(!isUsedService ? false : true);
 
     const scrollFirstLoad = (element: HTMLElement, target: number, duration: number) => {
         const start = element.scrollTop;

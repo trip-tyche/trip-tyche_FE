@@ -21,7 +21,7 @@ export const ROUTES = {
 
                 IMAGE: {
                     BY_PINPOINT: (tripKey: TripKey, pinPointId: PinPointId) => `/${tripKey}/by-pinpoint/${pinPointId}`,
-                    BY_DATE: (tripKey: TripKey, date: string) => `/${tripKey}/by-date/${date}`,
+                    BY_DATE: (tripKey: TripKey) => `/${tripKey}/by-date`,
                 },
             },
         },

@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { css } from '@emotion/react';
 import { TouchpadOff, Bell, Settings, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +26,10 @@ const MainPage = () => {
     const { data: notifications, isLoading: isNotificationsLoading } = useNotificationList(Number(userInfo?.userId));
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        sessionStorage.removeItem('recentPinPointId');
+    }, []);
 
     if (!notifications) return null;
     if (!notifications?.success) {

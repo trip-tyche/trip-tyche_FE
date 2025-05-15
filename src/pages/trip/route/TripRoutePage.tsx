@@ -166,8 +166,10 @@ const TripRoutePage = () => {
         const end = pinPoints[currentPinPointIndex + 1];
         setIsCharacterMoving(true);
         setIsMapInteractive(false);
-
+        console.time('calculate-distance');
         const distance = calculateDistance(start.latitude, start.longitude, end.latitude, end.longitude);
+        console.timeEnd('calculate-distance');
+
         const settings = getAnimationConfig(distance);
 
         updateMapZoom(settings.zoomLevel);
@@ -310,13 +312,13 @@ const TripRoutePage = () => {
         const recentPinPointId = String(pinPoints[currentPinPointIndex].pinPointId);
         sessionStorage.setItem('recentPinPointId', recentPinPointId);
 
-        const initialDate = startDate === imageDates[0] ? startDate : imageDates[0];
+        // const initialDate = startDate === imageDates[0] ? startDate : imageDates[0];
         const defaultLocation = {
             latitude: tripRouteInfo?.tripImages[0].latitude,
             longitude: tripRouteInfo?.tripImages[0].longitude,
         };
 
-        navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(String(tripKey), initialDate)}`, {
+        navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(String(tripKey))}`, {
             state: { startDate, endDate, imageDates, defaultLocation },
         });
     }, [tripKey, tripRouteInfo, pinPoints, currentPinPointIndex, navigate]);

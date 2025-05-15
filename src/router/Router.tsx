@@ -26,10 +26,11 @@ const TripPages = {
 
 const ProtectedRoute = () => {
     const { isChecking } = useAuthCheck();
-
+    console.log('icChecking: ', isChecking);
     if (isChecking) {
         return <LoadingSpinner />;
     }
+    console.log('router-af');
 
     return (
         <Suspense fallback={<LoadingSpinner />}>
@@ -104,7 +105,7 @@ const router = createBrowserRouter([
                                 element: <TripPages.ImageByPinpointPage />,
                             },
                             {
-                                path: 'by-date/:date',
+                                path: 'by-date',
                                 element: <TripPages.ImageByDatePage />,
                             },
                         ],
