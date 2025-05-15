@@ -43,6 +43,8 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     );
     const { isAnimating, handleCardClick } = useTicketNavigation(tripKey!);
 
+    if (isCompletedTrip === undefined) return null;
+
     const isOwner = userInfo?.nickname === ownerNickname;
     const countryEmoji = isCompletedTrip ? country.split('/')[0] || '' : '';
     const destination = isCompletedTrip ? country.split('/')[1] || '' : '트립티케';
@@ -56,7 +58,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
             {isUnLinking && <Spinner text='공유 티켓 삭제 중...' />}
             {!isCompletedTrip && (
                 <div css={isUncompletedTripOverlayStyle}>
-                    <button css={isUncompletedTripButtonStyle} onClick={() => handler.edit()}>
+                    <button css={isUncompletedTripButtonStyle} onClick={() => handler.edit(isCompletedTrip)}>
                         <Touchpad size={20} /> 여행 정보 이어서 작성하기
                     </button>
                 </div>
@@ -119,7 +121,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
             </main>
 
             <footer css={buttonGroup}>
-                <button css={buttonStyle} onClick={() => handler.edit()}>
+                <button css={buttonStyle} onClick={() => handler.edit(isCompletedTrip)}>
                     <Edit size={14} />
                     {isOwner ? '티켓 수정' : '정보 보기'}
                 </button>

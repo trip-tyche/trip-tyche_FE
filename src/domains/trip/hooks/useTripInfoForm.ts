@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { useTripUpdate } from '@/domains/trip/hooks/mutations';
 import { TripInfo } from '@/domains/trip/types';
@@ -21,6 +21,9 @@ export const useTripInfoForm = (isEditing: boolean, form: TripInfo) => {
 
     const navigate = useNavigate();
     const { tripKey } = useParams();
+    const [searchParams] = useSearchParams();
+
+    const isUnCompletedTrip = searchParams.get('isUnCompleted') !== null;
 
     const queryClient = useQueryClient();
 
@@ -42,6 +45,10 @@ export const useTripInfoForm = (isEditing: boolean, form: TripInfo) => {
             if (!updateResult.success) throw Error(updateResult.error);
 
             if (isEditing) {
+                if (isUnCompletedTrip) {
+                    const finalizeResult = await toResult(() => tripAPI.finalizeTripTicket(tripKey));
+                    if (!finalizeResult.success) throw Error(finalizeResult.error);
+                }
                 queryClient.invalidateQueries({ queryKey: ['ticket-info'] });
                 showToast('여행 정보가 성공적으로 수정되었습니다');
             } else {

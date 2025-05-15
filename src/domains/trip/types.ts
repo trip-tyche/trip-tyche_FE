@@ -12,7 +12,7 @@ export interface TripInfo {
     hashtags: string[];
     mediaFilesDates?: string[];
     shareId?: number;
-    confirmed: boolean;
+    confirmed?: boolean;
 }
 
 export interface Country {
