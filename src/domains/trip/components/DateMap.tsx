@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { css } from '@emotion/react';
 
-import Spinner from '@/shared/components/common/Spinner';
+import Spinner from '@/shared/components/common/Indicator';
 import Map from '@/shared/components/Map';
 import Marker from '@/shared/components/map/Marker';
 import { ZOOM_SCALE } from '@/shared/constants/map';

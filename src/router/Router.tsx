@@ -13,10 +13,10 @@ import SigninPage from '@/pages/SigninPage';
 import TripImageUploadPage from '@/pages/trip/management/TripImageUploadPage';
 import TripInfoFormPage from '@/pages/trip/management/TripInfoFormPage';
 import UnlocatedImagePage from '@/pages/trip/management/UnlocatedImagePage';
-import Spinner from '@/shared/components/common/Spinner';
+import Indicator from '@/shared/components/common/Indicator';
 import { ROUTES } from '@/shared/constants/paths';
 
-const LoadingSpinner = () => <Spinner text='불러오는 중...' />;
+const LoadingSpinner = () => <Indicator text='불러오는 중...' />;
 
 const TripPages = {
     TripImageManagePage: lazy(() => import('@/pages/trip/management/TripImageManagePage')),

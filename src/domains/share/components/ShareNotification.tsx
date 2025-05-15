@@ -8,8 +8,8 @@ import { useShareStatus } from '@/domains/share/hooks/mutations';
 import { useShareDetail } from '@/domains/share/hooks/queries';
 import { SharedTripDetail, ShareStatus } from '@/domains/share/types';
 import Avatar from '@/shared/components/Avatar';
+import Indicator from '@/shared/components/common/Indicator';
 import Modal from '@/shared/components/common/Modal';
-import Spinner from '@/shared/components/common/Spinner';
 import { COLORS } from '@/shared/constants/theme';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
@@ -47,7 +47,7 @@ const ShareNotification = ({ referenceId, onClose }: ShareNotificationProps) => 
     };
 
     if (isLoading) {
-        return <Spinner text='알림 내용 불러오는 중...' />;
+        return <Indicator text='알림 내용 불러오는 중...' />;
     }
 
     if (!tripInfo) {

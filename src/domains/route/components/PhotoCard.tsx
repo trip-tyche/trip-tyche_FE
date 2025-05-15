@@ -5,7 +5,7 @@ import { OverlayView, OverlayViewF } from '@react-google-maps/api';
 import { X } from 'lucide-react';
 
 import { getPixelPositionOffset } from '@/libs/utils/map';
-import CircleSpinner from '@/shared/components/CircleSpinner';
+import Spinner from '@/shared/components/Spinner';
 import { COLORS } from '@/shared/constants/theme';
 import { MAP } from '@/shared/constants/ui';
 import { Location } from '@/shared/types/map';
@@ -54,7 +54,11 @@ const PhotoCard = ({ position, image, isVisible = true, heightOffset, onClick }:
                 getPixelPositionOffset={() => getPixelPositionOffset(heightOffset)}
             >
                 <div css={photoCardStyle(isLoading)} onClick={(event) => handleClick(event)}>
-                    {isLoading && <CircleSpinner />}
+                    {isLoading && (
+                        <div css={spinnerWrapper}>
+                            <Spinner />
+                        </div>
+                    )}
                     <img src={image} alt='포토카드' onLoad={handleImageLoad} />
                 </div>
             </OverlayViewF>
@@ -159,6 +163,14 @@ const photoCardStyle = (isLoading: boolean) => css`
         opacity: ${isLoading ? 0 : 1};
         transition: opacity 0.3s ease;
     }
+`;
+
+const spinnerWrapper = css`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
 export default PhotoCard;

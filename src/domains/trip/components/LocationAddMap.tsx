@@ -5,7 +5,7 @@ import { GoogleMap, Autocomplete } from '@react-google-maps/api';
 import { ChevronLeft } from 'lucide-react';
 
 import Button from '@/shared/components/common/Button';
-import Spinner from '@/shared/components/common/Spinner';
+import Indicator from '@/shared/components/common/Indicator';
 import Marker from '@/shared/components/map/Marker';
 import { ZOOM_SCALE, MAPS_OPTIONS, DEFAULT_CENTER } from '@/shared/constants/map';
 import { useMapControl } from '@/shared/hooks/useMapControl';
@@ -72,7 +72,7 @@ const LocationAddMap = ({
     }
 
     if (!isMapScriptLoaded) {
-        return <Spinner />;
+        return <Indicator />;
     }
 
     return (

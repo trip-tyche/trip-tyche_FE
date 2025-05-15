@@ -12,7 +12,7 @@ import DateMap from '@/domains/trip/components/DateMap';
 import DateSelector from '@/domains/trip/components/DateSelector';
 import ImageItem from '@/domains/trip/components/ImageItem';
 import BackButton from '@/shared/components/common/Button/BackButton';
-import Spinner from '@/shared/components/common/Spinner';
+import Indicator from '@/shared/components/common/Indicator';
 import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/map';
 import { ROUTES } from '@/shared/constants/paths';
 import { COLORS } from '@/shared/constants/theme';
@@ -94,7 +94,7 @@ const ImageByDatePage = () => {
         navigate(-1);
     }
     if (!isMapScriptLoaded || isLoading) {
-        return <Spinner />;
+        return <Indicator />;
     }
 
     if (!result) return <div>데이터를 불러올 수 없습니다.</div>;
@@ -102,7 +102,7 @@ const ImageByDatePage = () => {
 
     return (
         <div css={container}>
-            {(isLoading || !isAllImageLoad) && <Spinner text='사진 불러오는 중...' />}
+            {(isLoading || !isAllImageLoad) && <Indicator text='사진 불러오는 중...' />}
 
             <BackButton onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`)} />
 

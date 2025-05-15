@@ -3,12 +3,12 @@ import { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { X, Check, User, AlertCircle } from 'lucide-react';
-import { MoonLoader } from 'react-spinners';
 
 import { NICKNAME_FORM } from '@/domains/user/constants';
 import { useNickname } from '@/domains/user/hooks/useNickname';
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { validateUserNickName } from '@/libs/utils/validate';
+import Spinner from '@/shared/components/Spinner';
 import { COLORS } from '@/shared/constants/theme';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import { FormMode } from '@/shared/types';
@@ -119,7 +119,7 @@ const NickNameForm = ({ mode, onSubmit }: NickNameFormProps) => {
                 >
                     {isSubmitting ? (
                         <div css={submitButtonContentStyle}>
-                            <MoonLoader size={18} color={COLORS.ICON.DEFAULT} speedMultiplier={0.8} />
+                            <Spinner diameter={22} isLightBackGround={false} />
                             <span>처리 중...</span>
                         </div>
                     ) : (
@@ -310,7 +310,7 @@ const submitButtonContentStyle = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 12px;
 `;
 
 export default NickNameForm;

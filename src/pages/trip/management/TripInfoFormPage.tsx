@@ -11,7 +11,7 @@ import { useTripInfoForm } from '@/domains/trip/hooks/useTripInfoForm';
 import { TripInfo } from '@/domains/trip/types';
 import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
-import Spinner from '@/shared/components/common/Spinner';
+import Indicator from '@/shared/components/common/Indicator';
 import UploadingSpinner from '@/shared/components/guide/UploadingSpinner';
 import { ROUTES } from '@/shared/constants/paths';
 import { useToastStore } from '@/shared/stores/useToastStore';
@@ -52,7 +52,7 @@ const TripInfoFormPage = () => {
 
     return (
         <div css={pageContainer}>
-            {(isLoading || isSubmitting) && <Spinner text='여행 정보 불러오는 중...' />}
+            {(isLoading || isSubmitting) && <Indicator text='여행 정보 불러오는 중...' />}
 
             <Header
                 title={ROUTES.PATH_TITLE.TRIPS.NEW.INFO}

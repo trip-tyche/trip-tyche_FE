@@ -15,7 +15,7 @@ import { mediaAPI } from '@/libs/apis';
 import { formatToISOLocal, formatToKorean } from '@/libs/utils/date';
 import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
-import Spinner from '@/shared/components/common/Spinner';
+import Indicator from '@/shared/components/common/Indicator';
 import ConfirmModal from '@/shared/components/guide/ConfirmModal';
 import { ROUTES } from '@/shared/constants/paths';
 import { COLORS } from '@/shared/constants/theme';
@@ -174,7 +174,7 @@ const TripImageManagePage = () => {
     const isSelectedImage = selectedImages.length > 0;
 
     if (isLoading) {
-        return <Spinner />;
+        return <Indicator />;
     }
 
     return isDateVisible ? (

@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { GoCheckCircleFill } from 'react-icons/go';
 
 import { UnlocatedMediaFile } from '@/domains/media/types';
-import Spinner from '@/shared/components/common/Spinner';
+import Indicator from '@/shared/components/common/Indicator';
 import theme from '@/shared/styles/theme';
 
 interface ImageGridProps {
@@ -42,7 +42,7 @@ const ImageGrid = ({ imageSize = 3, displayedImages, selectedImages, onHashtagSe
     };
 
     if (!allImagesLoaded) {
-        return <Spinner />;
+        return <Indicator />;
     }
 
     return (

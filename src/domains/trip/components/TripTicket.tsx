@@ -9,7 +9,7 @@ import { TICKET } from '@/domains/trip/constants';
 import { Trip } from '@/domains/trip/types';
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { formatHyphenToDot, formatToDot } from '@/libs/utils/date';
-import Spinner from '@/shared/components/common/Spinner';
+import Indicator from '@/shared/components/common/Indicator';
 import ConfirmModal from '@/shared/components/guide/ConfirmModal';
 import { COLORS, FONT_SIZES } from '@/shared/constants/theme';
 import { useTicketHandler } from '@/shared/hooks/useTicketHandler';
@@ -54,8 +54,8 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
 
     return (
         <div css={container}>
-            {isDeleting && <Spinner text='여행 티켓 삭제 중...' />}
-            {isUnLinking && <Spinner text='공유 티켓 삭제 중...' />}
+            {isDeleting && <Indicator text='여행 티켓 삭제 중...' />}
+            {isUnLinking && <Indicator text='공유 티켓 삭제 중...' />}
             {!isCompletedTrip && (
                 <div css={isUncompletedTripOverlayStyle}>
                     <button css={isUncompletedTripButtonStyle} onClick={() => handler.edit(isCompletedTrip)}>
@@ -200,7 +200,7 @@ const isUncompletedTripOverlayStyle = () => css`
     justify-content: center;
     align-items: center;
     background-color: ${`${COLORS.BACKGROUND.ICON}70`};
-    z-index: 9999;
+    z-index: 9;
     cursor: pointer;
 `;
 

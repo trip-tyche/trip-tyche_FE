@@ -12,7 +12,7 @@ import useUserStore from '@/domains/user/stores/useUserStore';
 import { tripAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/utils';
 import Button from '@/shared/components/common/Button';
-import Spinner from '@/shared/components/common/Spinner';
+import Indicator from '@/shared/components/common/Indicator';
 import { ROUTES } from '@/shared/constants/paths';
 import { COLORS } from '@/shared/constants/theme';
 import { MESSAGE } from '@/shared/constants/ui';
@@ -55,7 +55,7 @@ const MainPage = () => {
 
     return (
         <div css={page}>
-            {(isTripsLoading || isNotificationsLoading) && <Spinner text='티켓 정보 불러오는 중...' />}
+            {(isTripsLoading || isNotificationsLoading) && <Indicator text='티켓 정보 불러오는 중...' />}
 
             <header css={header}>
                 <div css={logo}>TRIPTYCHE</div>

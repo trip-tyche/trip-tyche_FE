@@ -18,7 +18,7 @@ import {
     sortPinPointByDate,
 } from '@/domains/route/utils';
 import Header from '@/shared/components/common/Header';
-import Spinner from '@/shared/components/common/Spinner';
+import Indicator from '@/shared/components/common/Indicator';
 import Map from '@/shared/components/Map';
 import CharacterMarker from '@/shared/components/map/CharacterMarker';
 import ClusterMarker from '@/shared/components/map/ClusterMarker';
@@ -417,7 +417,7 @@ const TripRoutePage = () => {
     };
 
     if (!isMapScriptLoaded || isLoading || !mapStatus.center) {
-        return <Spinner />;
+        return <Indicator />;
     }
 
     if (isMapScriptLoadError) {
@@ -439,7 +439,7 @@ const TripRoutePage = () => {
 
     return (
         <div css={container}>
-            {/* {showSpinner && <Spinner text='장거리 이동 중...' />} */}
+            {/* {showIndicator && <Indicator text='장거리 이동 중...' />} */}
             <Header title={tripRouteInfo?.title || ''} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
 
             <Map

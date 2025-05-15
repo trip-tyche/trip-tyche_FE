@@ -9,7 +9,7 @@ import { NOTIFICATION_TABS } from '@/domains/notification/constants';
 import { useNotificationList } from '@/domains/notification/hooks/queries';
 import { Notification } from '@/domains/notification/types';
 import Header from '@/shared/components/common/Header';
-import Spinner from '@/shared/components/common/Spinner';
+import Indicator from '@/shared/components/common/Indicator';
 import TabNavigation from '@/shared/components/TabNavigation';
 import { ROUTES } from '@/shared/constants/paths';
 import { MESSAGE } from '@/shared/constants/ui';
@@ -47,7 +47,7 @@ const NotificationPage = () => {
             <TabNavigation tabs={NOTIFICATION_TABS} activeTab={activeTab} onActiveChange={handleTabChange} />
 
             {isLoading ? (
-                <Spinner text='알림 불러오는 중...' />
+                <Indicator text='알림 불러오는 중...' />
             ) : (
                 <div css={content}>
                     {/* TODO: 안내 알림 추가 시, 각 API 요청으로 로직 변경 */}
