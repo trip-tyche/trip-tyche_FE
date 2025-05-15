@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { shareAPI, userAPI } from '@/libs/apis';
-import { toResult } from '@/libs/apis/utils';
+import { toResult } from '@/libs/apis/shared/utils';
 import { MESSAGE } from '@/shared/constants/ui';
 
 export const useTripShare = (nickname: string, tripKey: string, onSuccess?: () => void) => {

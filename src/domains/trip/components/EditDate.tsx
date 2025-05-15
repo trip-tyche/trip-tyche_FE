@@ -6,7 +6,7 @@ import { Calendar, Clock } from 'lucide-react';
 
 import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
-import { COLORS } from '@/shared/constants/theme';
+import { COLORS } from '@/shared/constants/style';
 
 interface EditDateProps {
     defaultDate: string;

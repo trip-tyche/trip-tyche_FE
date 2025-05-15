@@ -6,8 +6,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import ImageCarousel from '@/domains/media/components/ImageCarousel';
 import { useMediaByPinPoint } from '@/domains/media/hooks/queries';
-import { ROUTES } from '@/shared/constants/paths';
-import { COLORS } from '@/shared/constants/theme';
+import { ROUTES } from '@/shared/constants/route';
+import { COLORS } from '@/shared/constants/style';
 import { IMAGE_CAROUSEL_STATE } from '@/shared/constants/ui';
 import { ImageCarouselState } from '@/shared/types';
 

@@ -8,8 +8,8 @@ import { NICKNAME_FORM } from '@/domains/user/constants';
 import { useNickname } from '@/domains/user/hooks/useNickname';
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { validateUserNickName } from '@/libs/utils/validate';
-import Spinner from '@/shared/components/Spinner';
-import { COLORS } from '@/shared/constants/theme';
+import Spinner from '@/shared/components/common/Spinner';
+import { COLORS } from '@/shared/constants/style';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import { FormMode } from '@/shared/types';
 

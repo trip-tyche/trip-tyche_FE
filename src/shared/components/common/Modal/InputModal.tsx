@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 
 import Button from '@/shared/components/common/Button';
 import Input from '@/shared/components/common/Input';
-import Modal from '@/shared/components/common/Modal';
+import Modal from '@/shared/components/common/Modal/Modal';
 import theme from '@/shared/styles/theme';
 
 export interface InputModalProps {

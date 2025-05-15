@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { GoCheckCircleFill } from 'react-icons/go';
 
 import { UnlocatedMediaFile } from '@/domains/media/types';
-import Indicator from '@/shared/components/common/Indicator';
+import Indicator from '@/shared/components/common/Spinner/Indicator';
 import theme from '@/shared/styles/theme';
 
 interface ImageGridProps {

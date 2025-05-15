@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { css } from '@emotion/react';
 
 import { MediaFile } from '@/domains/media/types';
-import { FONT_SIZES } from '@/shared/constants/theme';
+import { FONT_SIZES } from '@/shared/constants/style';
 
 interface ImageItemProps {
     reference: (element: HTMLDivElement | null) => void;

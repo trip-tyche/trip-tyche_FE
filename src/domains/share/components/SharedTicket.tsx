@@ -6,7 +6,7 @@ import characterImg from '@/assets/images/character-ogami-1.png';
 import { SharedTripDetail } from '@/domains/share/types';
 import { TICKET } from '@/domains/trip/constants';
 import { formatToDot } from '@/libs/utils/date';
-import { COLORS, FONT_SIZES } from '@/shared/constants/theme';
+import { COLORS, FONT_SIZES } from '@/shared/constants/style';
 
 interface IntroTicketProps {
     trip: SharedTripDetail;

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useShareUnlink } from '@/domains/share/hooks/mutations';
 import { useTripDelete } from '@/domains/trip/hooks/mutations';
-import { ROUTES } from '@/shared/constants/paths';
+import { ROUTES } from '@/shared/constants/route';
 
 export const useTicketHandler = (
     tripKey: string,

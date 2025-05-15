@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 
 import { MediaFile } from '@/domains/media/types';
 import { mediaAPI } from '@/libs/apis';
-import { Result } from '@/libs/apis/types';
-import { toResult } from '@/libs/apis/utils';
+import { Result } from '@/libs/apis/shared/types';
+import { toResult } from '@/libs/apis/shared/utils';
 
 interface MediaFiles {
     startDate: string;

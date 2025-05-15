@@ -1,5 +1,5 @@
-import { apiClient } from '@/libs/apis/client';
-import { ApiResponse, RouteResponse } from '@/libs/apis/types';
+import { apiClient } from '@/libs/apis/shared/client';
+import { ApiResponse, RouteResponse } from '@/libs/apis/shared/types';
 // import { RouteResponse } from '@/api/types';
 
 export const routeAPI = {

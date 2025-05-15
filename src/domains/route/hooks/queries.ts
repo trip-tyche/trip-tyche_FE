@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { routeAPI } from '@/libs/apis';
-import { toResult } from '@/libs/apis/utils';
+import { toResult } from '@/libs/apis/shared/utils';
 
 export const useRoute = (tripKey: string) => {
     return useQuery({

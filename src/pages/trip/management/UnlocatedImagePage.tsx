@@ -391,10 +391,10 @@ import { mediaAPI } from '@/libs/apis';
 import { formatToKorean } from '@/libs/utils/date';
 import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
-import Spinner from '@/shared/components/common/Indicator';
-import ConfirmModal from '@/shared/components/guide/ConfirmModal';
-import { ROUTES } from '@/shared/constants/paths';
-import { COLORS } from '@/shared/constants/theme';
+import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
+import Spinner from '@/shared/components/common/Spinner/Indicator';
+import { ROUTES } from '@/shared/constants/route';
+import { COLORS } from '@/shared/constants/style';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import { Location } from '@/shared/types/map';
 

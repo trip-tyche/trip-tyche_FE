@@ -6,9 +6,9 @@ import { Search, Send, AlertCircle } from 'lucide-react';
 import { useTripShare } from '@/domains/share/hooks/useTripShare';
 import { NICKNAME_FORM } from '@/domains/user/constants';
 import { validateUserNickName } from '@/libs/utils/validate';
-import Avatar from '@/shared/components/Avatar';
-import Modal from '@/shared/components/common/Modal';
-import { COLORS } from '@/shared/constants/theme';
+import Avatar from '@/shared/components/common/Avatar';
+import Modal from '@/shared/components/common/Modal/Modal';
+import { COLORS } from '@/shared/constants/style';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 export interface ShareModalProps {

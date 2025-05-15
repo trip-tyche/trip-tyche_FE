@@ -9,9 +9,9 @@ import { NOTIFICATION_TABS } from '@/domains/notification/constants';
 import { useNotificationList } from '@/domains/notification/hooks/queries';
 import { Notification } from '@/domains/notification/types';
 import Header from '@/shared/components/common/Header';
-import Indicator from '@/shared/components/common/Indicator';
-import TabNavigation from '@/shared/components/TabNavigation';
-import { ROUTES } from '@/shared/constants/paths';
+import Indicator from '@/shared/components/common/Spinner/Indicator';
+import TabNavigation from '@/shared/components/common/Tab/TabNavigation';
+import { ROUTES } from '@/shared/constants/route';
 import { MESSAGE } from '@/shared/constants/ui';
 import { useToastStore } from '@/shared/stores/useToastStore';
 

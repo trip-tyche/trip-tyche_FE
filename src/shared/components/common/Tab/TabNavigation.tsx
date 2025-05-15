@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 
-import Tab from '@/shared/components/Tab';
-import { COLORS } from '@/shared/constants/theme';
+import Tab from '@/shared/components/common/Tab';
+import { COLORS } from '@/shared/constants/style';
 import { TabItem } from '@/shared/types';
 
 interface TabNavigationProps {

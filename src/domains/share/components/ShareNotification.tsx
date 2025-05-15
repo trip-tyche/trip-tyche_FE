@@ -7,10 +7,10 @@ import SharedTicket from '@/domains/share/components/SharedTicket';
 import { useShareStatus } from '@/domains/share/hooks/mutations';
 import { useShareDetail } from '@/domains/share/hooks/queries';
 import { SharedTripDetail, ShareStatus } from '@/domains/share/types';
-import Avatar from '@/shared/components/Avatar';
-import Indicator from '@/shared/components/common/Indicator';
-import Modal from '@/shared/components/common/Modal';
-import { COLORS } from '@/shared/constants/theme';
+import Avatar from '@/shared/components/common/Avatar';
+import Indicator from '@/shared/components/common/Spinner/Indicator';
+import Modal from '@/shared/components/common/Modal/Modal';
+import { COLORS } from '@/shared/constants/style';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 interface ShareNotificationProps {

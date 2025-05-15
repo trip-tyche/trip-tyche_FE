@@ -13,8 +13,8 @@ import SigninPage from '@/pages/SigninPage';
 import TripImageUploadPage from '@/pages/trip/management/TripImageUploadPage';
 import TripInfoFormPage from '@/pages/trip/management/TripInfoFormPage';
 import UnlocatedImagePage from '@/pages/trip/management/UnlocatedImagePage';
-import Indicator from '@/shared/components/common/Indicator';
-import { ROUTES } from '@/shared/constants/paths';
+import Indicator from '@/shared/components/common/Spinner/Indicator';
+import { ROUTES } from '@/shared/constants/route';
 
 const LoadingSpinner = () => <Indicator text='불러오는 중...' />;
 

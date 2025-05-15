@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { userAPI } from '@/libs/apis';
-import { toResult } from '@/libs/apis/utils';
+import { toResult } from '@/libs/apis/shared/utils';
 import { MESSAGE } from '@/shared/constants/ui';
 
 export const useNickname = (nickname: string, onSuccess?: () => void) => {

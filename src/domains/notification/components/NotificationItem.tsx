@@ -9,10 +9,10 @@ import { useNotificationDelete, useNotificationStatus } from '@/domains/notifica
 import { Notification } from '@/domains/notification/types';
 import ShareNotification from '@/domains/share/components/ShareNotification';
 import { formatKoreanDate, formatKoreanTime } from '@/libs/utils/date';
-import Avatar from '@/shared/components/Avatar';
-import Badge from '@/shared/components/Badge';
-import ConfirmModal from '@/shared/components/guide/ConfirmModal';
-import { COLORS } from '@/shared/constants/theme';
+import Avatar from '@/shared/components/common/Avatar';
+import Badge from '@/shared/components/common/Badge';
+import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
+import { COLORS } from '@/shared/constants/style';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 interface NotificationProps {

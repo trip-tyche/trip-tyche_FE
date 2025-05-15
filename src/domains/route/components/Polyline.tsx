@@ -1,7 +1,7 @@
 import { Polyline as GoogleMapsPolyline } from '@react-google-maps/api';
 
 import { PinPoint } from '@/domains/route/types';
-import { COLORS } from '@/shared/constants/theme';
+import { COLORS } from '@/shared/constants/style';
 import { PolylineOption } from '@/shared/types/map';
 
 const Polyline = ({

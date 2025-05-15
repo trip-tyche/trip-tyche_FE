@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { mediaAPI } from '@/libs/apis';
-import { toResult } from '@/libs/apis/utils';
+import { toResult } from '@/libs/apis/shared/utils';
 
 export const useMediaByPinPoint = (tripKey: string, pinPointId: string) =>
     useQuery({

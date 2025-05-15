@@ -8,7 +8,7 @@ import { filterValidLocationMediaFile, removeDuplicateDates } from '@/domains/me
 import MapControlButtons from '@/domains/route/components/MapControlButtons';
 import PhotoCard from '@/domains/route/components/PhotoCard';
 import Polyline from '@/domains/route/components/Polyline';
-import { ROUTE } from '@/domains/route/constants';
+import { DURATION } from '@/domains/route/constants';
 import { useRoute } from '@/domains/route/hooks/queries';
 import { PinPoint } from '@/domains/route/types';
 import {
@@ -18,14 +18,14 @@ import {
     sortPinPointByDate,
 } from '@/domains/route/utils';
 import Header from '@/shared/components/common/Header';
-import Indicator from '@/shared/components/common/Indicator';
-import Map from '@/shared/components/Map';
+import Indicator from '@/shared/components/common/Spinner/Indicator';
 import CharacterMarker from '@/shared/components/map/CharacterMarker';
 import ClusterMarker from '@/shared/components/map/ClusterMarker';
+import Map from '@/shared/components/map/Map';
 import Marker from '@/shared/components/map/Marker';
 import { ZOOM_SCALE } from '@/shared/constants/map';
-import { ROUTES } from '@/shared/constants/paths';
-import { COLORS } from '@/shared/constants/theme';
+import { ROUTES } from '@/shared/constants/route';
+import { COLORS } from '@/shared/constants/style';
 import { MESSAGE } from '@/shared/constants/ui';
 import { useMapControl } from '@/shared/hooks/useMapControl';
 import { useToastStore } from '@/shared/stores/useToastStore';
@@ -221,7 +221,7 @@ const TripRoutePage = () => {
                     if (isPlayingAnimation) {
                         moveCharacter();
                     }
-                }, ROUTE.DURATION.WAIT);
+                }, DURATION.WAIT);
             }
         };
 
@@ -235,7 +235,7 @@ const TripRoutePage = () => {
                 () => {
                     moveCharacter();
                 },
-                isLastPinPoint ? 0 : ROUTE.DURATION.WAIT,
+                isLastPinPoint ? 0 : DURATION.WAIT,
             );
         }
 

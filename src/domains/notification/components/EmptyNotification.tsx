@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { BellOff } from 'lucide-react';
 
-import { COLORS } from '@/shared/constants/theme';
+import { COLORS } from '@/shared/constants/style';
 
 const EmptyNotification = () => {
     return (

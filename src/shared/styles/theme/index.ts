@@ -1,4 +1,4 @@
-import { COLORS, FONT_SIZES } from '@/shared/constants/theme';
+import { COLORS, FONT_SIZES } from '@/shared/constants/style';
 import { Theme } from '@/shared/styles/theme/type';
 
 const theme: Theme = {

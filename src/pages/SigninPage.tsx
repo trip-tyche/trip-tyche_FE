@@ -5,8 +5,8 @@ import { Tooltip } from '@mantine/core';
 
 import backgroundImage from '@/assets/images/background-mobile-3.webp';
 import LoginButton from '@/domains/user/components/LoginButton';
-import { OAUTH_CONFIG } from '@/libs/apis/constants';
-import { COLORS } from '@/shared/constants/theme';
+import { OAUTH_CONFIG } from '@/libs/apis/shared/constants';
+import { COLORS } from '@/shared/constants/style';
 
 const SigninPage = () => {
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);

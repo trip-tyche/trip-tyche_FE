@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { Touchpad } from 'lucide-react';
 
-import { COLORS } from '@/shared/constants/theme';
+import { COLORS } from '@/shared/constants/style';
 
 type AvatarSize = 'lg' | 'sm';
 

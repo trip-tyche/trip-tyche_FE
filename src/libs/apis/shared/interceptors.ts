@@ -1,8 +1,8 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 import useUserStore from '@/domains/user/stores/useUserStore';
-import { apiClient } from '@/libs/apis/client';
-import { API_BASE_URL } from '@/libs/apis/constants';
+import { apiClient } from '@/libs/apis/shared/client';
+import { API_BASE_URL } from '@/libs/apis/shared/constants';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 interface ErrorResponse<T> {

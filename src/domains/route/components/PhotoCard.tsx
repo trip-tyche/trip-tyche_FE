@@ -5,8 +5,8 @@ import { OverlayView, OverlayViewF } from '@react-google-maps/api';
 import { X } from 'lucide-react';
 
 import { getPixelPositionOffset } from '@/libs/utils/map';
-import Spinner from '@/shared/components/Spinner';
-import { COLORS } from '@/shared/constants/theme';
+import Spinner from '@/shared/components/common/Spinner';
+import { COLORS } from '@/shared/constants/style';
 import { MAP } from '@/shared/constants/ui';
 import { Location } from '@/shared/types/map';
 

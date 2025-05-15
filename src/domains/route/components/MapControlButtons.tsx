@@ -3,7 +3,7 @@ import { Pause, Play } from 'lucide-react';
 import { BsPersonWalking } from 'react-icons/bs';
 
 import Button from '@/shared/components/common/Button';
-import { COLORS } from '@/shared/constants/theme';
+import { COLORS } from '@/shared/constants/style';
 
 interface MapControlButtonsProps {
     isVisible: boolean;

@@ -1,6 +1,6 @@
 import { UserInfo } from '@/domains/user/types';
-import { apiClient } from '@/libs/apis/client';
-import { ApiResponse } from '@/libs/apis/types';
+import { apiClient } from '@/libs/apis/shared/client';
+import { ApiResponse } from '@/libs/apis/shared/types';
 
 export const userAPI = {
     // 사용자 정보 조회 (userId, nickname, tripsCount, recentTrip)

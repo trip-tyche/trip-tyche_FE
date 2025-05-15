@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { userAPI } from '@/libs/apis';
-import { toResult } from '@/libs/apis/utils';
+import { toResult } from '@/libs/apis/shared/utils';
 
 export const useAuthCheck = () => {
     const [isChecking, setIsChecking] = useState(true);

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-import { ROUTES } from '@/shared/constants/paths';
+import { ROUTES } from '@/shared/constants/route';
 
 export const useTicketNavigation = (tripKey: string) => {
     const [isAnimating, setIsAnimating] = useState(false);

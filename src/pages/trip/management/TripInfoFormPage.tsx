@@ -11,9 +11,8 @@ import { useTripInfoForm } from '@/domains/trip/hooks/useTripInfoForm';
 import { TripInfo } from '@/domains/trip/types';
 import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
-import Indicator from '@/shared/components/common/Indicator';
-import UploadingSpinner from '@/shared/components/guide/UploadingSpinner';
-import { ROUTES } from '@/shared/constants/paths';
+import Indicator from '@/shared/components/common/Spinner/Indicator';
+import { ROUTES } from '@/shared/constants/route';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 const TripInfoFormPage = () => {
@@ -48,11 +47,11 @@ const TripInfoFormPage = () => {
             ...tripInfo,
             mediaFilesDates,
         }));
-    }, [beforeTripInfo]);
+    }, [beforeTripInfo, isEditing, mediaFilesDates]);
 
     return (
         <div css={pageContainer}>
-            {(isLoading || isSubmitting) && <Indicator text='여행 정보 불러오는 중...' />}
+            {(isLoading || isSubmitting || isImageSubmitting) && <Indicator text='여행 정보 불러오는 중...' />}
 
             <Header
                 title={ROUTES.PATH_TITLE.TRIPS.NEW.INFO}
@@ -67,7 +66,6 @@ const TripInfoFormPage = () => {
                     disabled={!isFormComplete}
                 />
             </main>
-            {isImageSubmitting && <UploadingSpinner />}
         </div>
     );
 };

@@ -1,8 +1,8 @@
 import { css } from '@emotion/react';
 
 import Button from '@/shared/components/common/Button';
-import Modal from '@/shared/components/common/Modal';
-import { COLORS } from '@/shared/constants/theme';
+import Modal from '@/shared/components/common/Modal/Modal';
+import { COLORS } from '@/shared/constants/style';
 
 export interface ConfirmModalProps {
     title: string;

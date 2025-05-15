@@ -4,8 +4,8 @@ import { css } from '@emotion/react';
 import { GoCheckCircleFill } from 'react-icons/go';
 
 import { MediaFileMetaData } from '@/domains/media/types';
-import Indicator from '@/shared/components/common/Indicator';
-import { COLORS } from '@/shared/constants/theme';
+import Indicator from '@/shared/components/common/Spinner/Indicator';
+import { COLORS } from '@/shared/constants/style';
 
 interface MediaImageGridProps {
     images: MediaFileMetaData[];

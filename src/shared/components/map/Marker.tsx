@@ -2,7 +2,7 @@ import { memo, RefObject } from 'react';
 
 import { Marker as GoogleMapsMarker } from '@react-google-maps/api';
 
-import { COLORS } from '@/shared/constants/theme';
+import { COLORS } from '@/shared/constants/style';
 import { Location, MapType } from '@/shared/types/map';
 
 interface MarkerProps {

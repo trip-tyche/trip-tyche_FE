@@ -1,6 +1,6 @@
 import { Trip } from '@/domains/trip/types';
-import { apiClient } from '@/libs/apis/client';
-import { ApiResponse } from '@/libs/apis/types';
+import { apiClient } from '@/libs/apis/shared/client';
+import { ApiResponse } from '@/libs/apis/shared/types';
 
 export const tripAPI = {
     // 사용자의 전체 여행 티켓 목록 조회

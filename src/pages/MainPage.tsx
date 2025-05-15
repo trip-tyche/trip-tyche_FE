@@ -10,11 +10,11 @@ import { useTripTicketList } from '@/domains/trip/hooks/queries';
 import { Trip } from '@/domains/trip/types';
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { tripAPI } from '@/libs/apis';
-import { toResult } from '@/libs/apis/utils';
+import { toResult } from '@/libs/apis/shared/utils';
 import Button from '@/shared/components/common/Button';
-import Indicator from '@/shared/components/common/Indicator';
-import { ROUTES } from '@/shared/constants/paths';
-import { COLORS } from '@/shared/constants/theme';
+import Indicator from '@/shared/components/common/Spinner/Indicator';
+import { ROUTES } from '@/shared/constants/route';
+import { COLORS } from '@/shared/constants/style';
 import { MESSAGE } from '@/shared/constants/ui';
 import { useToastStore } from '@/shared/stores/useToastStore';
 

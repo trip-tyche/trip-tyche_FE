@@ -5,7 +5,7 @@ import { GoogleMap, Autocomplete } from '@react-google-maps/api';
 import { ChevronLeft } from 'lucide-react';
 
 import Button from '@/shared/components/common/Button';
-import Indicator from '@/shared/components/common/Indicator';
+import Indicator from '@/shared/components/common/Spinner/Indicator';
 import Marker from '@/shared/components/map/Marker';
 import { ZOOM_SCALE, MAPS_OPTIONS, DEFAULT_CENTER } from '@/shared/constants/map';
 import { useMapControl } from '@/shared/hooks/useMapControl';

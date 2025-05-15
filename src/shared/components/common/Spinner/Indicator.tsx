@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 
-import Spinner from '@/shared/components/Spinner';
-import { COLORS } from '@/shared/constants/theme';
+import Spinner from '@/shared/components/common/Spinner';
+import { COLORS } from '@/shared/constants/style';
 
 const Indicator = ({ text = '불러오는 중...' }: { text?: string }) => (
     <>

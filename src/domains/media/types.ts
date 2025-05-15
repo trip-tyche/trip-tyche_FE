@@ -31,6 +31,13 @@ export interface UnlocatedMediaFileList {
     media: UnlocatedMediaFile[];
 }
 
+// export type ImageGroupByDate = Record<string, UnlocatedMediaFileList[]>;
+
+export interface PresignedUrlResponse {
+    fileKey: string;
+    presignedPutUrl: string;
+}
+
 //----------------------------------
 
 export interface MediaFileWithDate {

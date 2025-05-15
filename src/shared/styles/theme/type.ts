@@ -1,4 +1,4 @@
-import { COLORS, FONT_SIZES } from '@/shared/constants/theme';
+import { COLORS, FONT_SIZES } from '@/shared/constants/style';
 
 type ColorsTypes = typeof COLORS;
 type FontSizeTypes = typeof FONT_SIZES;

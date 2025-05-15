@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import { COLORS } from '@/shared/constants/theme';
+import { COLORS } from '@/shared/constants/style';
 
 type MessageType = 'SHARED_APPROVE' | 'SHARED_REJECTED';
 

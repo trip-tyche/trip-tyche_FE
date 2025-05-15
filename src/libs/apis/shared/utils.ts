@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 
-import { ApiResponse, Result } from '@/libs/apis/types';
+import { ApiResponse, Result } from '@/libs/apis/shared/types';
 import { MESSAGE } from '@/shared/constants/ui';
 
 export const toResult = async <T>(

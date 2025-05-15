@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { Trip } from '@/domains/trip/types';
 import { mediaAPI, tripAPI } from '@/libs/apis';
-import { toResult } from '@/libs/apis/utils';
+import { toResult } from '@/libs/apis/shared/utils';
 
 export const useTripDelete = () => {
     const queryClient = useQueryClient();

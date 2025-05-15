@@ -144,8 +144,8 @@ import { css } from '@emotion/react';
 import { MapPin, Home, RouteOff, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import { ROUTES } from '@/shared/constants/paths';
-import { COLORS } from '@/shared/constants/theme';
+import { ROUTES } from '@/shared/constants/route';
+import { COLORS } from '@/shared/constants/style';
 
 const PageNotFound = () => {
     const navigate = useNavigate();

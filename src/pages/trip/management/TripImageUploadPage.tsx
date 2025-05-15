@@ -7,11 +7,11 @@ import { useLocation, useNavigate, useParams, useSearchParams } from 'react-rout
 
 import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
 import Header from '@/shared/components/common/Header';
-import AlertModal from '@/shared/components/guide/AlertModal';
-import ConfirmModal from '@/shared/components/guide/ConfirmModal';
-import UploadingSpinner from '@/shared/components/guide/UploadingSpinner';
-import { ROUTES } from '@/shared/constants/paths';
-import { COLORS } from '@/shared/constants/theme';
+import AlertModal from '@/shared/components/common/Modal/AlertModal';
+import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
+import Indicator from '@/shared/components/common/Spinner/Indicator';
+import { ROUTES } from '@/shared/constants/route';
+import { COLORS } from '@/shared/constants/style';
 import { MESSAGE } from '@/shared/constants/ui';
 import useBrowserCheck from '@/shared/hooks/useBrowserCheck';
 import { useToastStore } from '@/shared/stores/useToastStore';
@@ -77,6 +77,8 @@ const TripImageUploadPage = () => {
 
     return (
         <div css={containerStyle}>
+            {isUploading && <Indicator />}
+
             <Header
                 title={'사진 등록'}
                 isBackButton
@@ -160,7 +162,6 @@ const TripImageUploadPage = () => {
                     </div>
                 </AlertModal>
             )}
-            {isUploading && <UploadingSpinner />}
         </div>
     );
 };

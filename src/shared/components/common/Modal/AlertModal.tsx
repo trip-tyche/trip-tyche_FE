@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 
 import Button from '@/shared/components/common/Button';
-import Modal from '@/shared/components/common/Modal';
+import Modal from '@/shared/components/common/Modal/Modal';
 
 interface AlertModalProps {
     confirmText: string;

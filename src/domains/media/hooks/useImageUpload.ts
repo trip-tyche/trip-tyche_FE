@@ -2,10 +2,9 @@ import { useState } from 'react';
 
 import { useParams, useSearchParams } from 'react-router-dom';
 
-import { PresignedUrlResponse } from '@/domains/media/image';
-import { ImagesFiles } from '@/domains/media/types';
+import { PresignedUrlResponse, ImagesFiles } from '@/domains/media/types';
 import { mediaAPI } from '@/libs/apis';
-import { toResult } from '@/libs/apis/utils';
+import { toResult } from '@/libs/apis/shared/utils';
 import {
     completeImages,
     extractMetadataFromImage,

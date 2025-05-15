@@ -1,10 +1,9 @@
 import axios from 'axios';
 
-import { PresignedUrlRequest, PresignedUrlResponse } from '@/domains/media/image';
-import { MediaFile, UnlocatedMediaFileList } from '@/domains/media/types';
-import { apiClient } from '@/libs/apis/client';
-import { API_ENDPOINTS } from '@/libs/apis/constants';
-import { ApiResponse, MediaByDate, MediaByPinPoint, Result } from '@/libs/apis/types';
+import { PresignedUrlResponse, MediaFile, UnlocatedMediaFileList } from '@/domains/media/types';
+import { apiClient } from '@/libs/apis/shared/client';
+import { API_ENDPOINTS } from '@/libs/apis/shared/constants';
+import { ApiResponse, MediaByDate, MediaByPinPoint, Result } from '@/libs/apis/shared/types';
 import { exceptTimeFromDateString } from '@/libs/utils/date';
 import { Location } from '@/shared/types/map';
 
@@ -36,7 +35,7 @@ export const mediaAPI = {
     // 미디어 파일 업로드를 위한 Presigned URL 생성
     requestPresignedUrls: async (
         tripKey: string,
-        imageNames: PresignedUrlRequest[],
+        imageNames: { fileName: string }[],
     ): Promise<Result<PresignedUrlResponse[]>> => {
         try {
             const response = await apiClient.post(`/v1/trips/${tripKey}/presigned-url`, { files: imageNames });
