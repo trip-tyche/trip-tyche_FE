@@ -11,6 +11,7 @@ import { filterValidLocationMediaFile } from '@/domains/media/utils';
 import DateMap from '@/domains/trip/components/DateMap';
 import DateSelector from '@/domains/trip/components/DateSelector';
 import ImageItem from '@/domains/trip/components/ImageItem';
+import { addStartDateAndEndDateToImageDates } from '@/libs/utils/media';
 import BackButton from '@/shared/components/common/Button/BackButton';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/map';
@@ -23,18 +24,18 @@ import theme from '@/shared/styles/theme';
 import { Location } from '@/shared/types/map';
 
 const ImageByDatePage = () => {
-    const [currentDate, setCurrentDate] = useState('');
+    const [selectedDate, setSelectedDate] = useState('');
     const [imageDates, setImageDates] = useState<string[]>([]);
-    const [imageLocation, setImageLocation] = useState<Location>();
+    const [imageLocation, setImageLocation] = useState<Location>(DEFAULT_CENTER);
     const [isAllImageLoad, setIsAllImageLoad] = useState(false);
     const [images, setImages] = useState<MediaFile[]>([]);
 
     const showToast = useToastStore((state) => state.showToast);
 
     const { tripKey } = useParams();
-    const location = useLocation();
+    // const location = useLocation();
 
-    const { startDate, endDate, imageDates: dates, defaultLocation } = location.state || {};
+    // const { startDate, endDate, imageDates: dates, defaultLocation } = location.state || {};
 
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
@@ -42,30 +43,24 @@ const ImageByDatePage = () => {
     const imageListRef = useRef<HTMLDivElement>(null);
     const loadedImagesCount = useRef<number>(0);
 
-    const { data: result, isLoading } = useMediaByDate(tripKey!, currentDate);
+    const { data: result, isLoading } = useMediaByDate(tripKey!, selectedDate);
     const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl(ZOOM_SCALE.DEFAULT.IMAGE_BY_DATE, DEFAULT_CENTER);
     const { isHintOverlayVisible, isFirstUser } = useScrollHint(imageListRef, isMapScriptLoaded, isAllImageLoad);
 
     useEffect(() => {
-        if (!dates?.length) {
-            return;
-        }
-        const formattedDates = dates.filter((date: string) => date > startDate && date < endDate);
-
-        formattedDates.push(endDate);
-        formattedDates.unshift(startDate);
-
-        setImageDates(formattedDates);
-        setCurrentDate(formattedDates[0]);
+        const imageDates = JSON.parse(sessionStorage.getItem('imageDates') || '') as string[];
+        console.log(imageDates);
+        setImageDates(imageDates);
+        setSelectedDate(imageDates[0]);
     }, []);
 
     useEffect(() => {
-        if (currentDate) {
+        if (selectedDate) {
             const newSearchParams = new URLSearchParams(searchParams);
-            newSearchParams.set('date', currentDate);
+            newSearchParams.set('date', selectedDate);
             setSearchParams(newSearchParams);
         }
-    }, [searchParams, currentDate]);
+    }, [searchParams, selectedDate]);
 
     useEffect(() => {
         if (result) {
@@ -106,13 +101,11 @@ const ImageByDatePage = () => {
 
             <BackButton onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`)} />
 
-            <DateMap imageLocation={imageLocation ? imageLocation : defaultLocation} />
+            <DateMap imageLocation={imageLocation} />
             <DateSelector
-                firstImageDate={currentDate || startDate}
+                selectedDate={selectedDate}
                 imageDates={imageDates}
-                startDate={startDate}
-                endDate={endDate}
-                onDateSelect={(date: string) => setCurrentDate(date)}
+                onDateSelect={(date: string) => setSelectedDate(date)}
             />
 
             {emptyImage ? (

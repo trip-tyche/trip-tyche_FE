@@ -17,6 +17,7 @@ import {
     getAnimationConfig,
     sortPinPointByDate,
 } from '@/domains/route/utils';
+import { addStartDateAndEndDateToImageDates } from '@/libs/utils/media';
 import Header from '@/shared/components/common/Header';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import CharacterMarker from '@/shared/components/map/CharacterMarker';
@@ -306,21 +307,14 @@ const TripRoutePage = () => {
     }, [pinPoints, isPlayingAnimation, isLastPinPoint, moveCharacter, updateMapCenter]);
 
     const navigateImagesByDatePage = useCallback(() => {
-        const { startDate, endDate, imageDates } = tripRouteInfo || {};
-        if (!startDate || !imageDates) return;
-
+        const { startDate, endDate, imageDates: dates } = tripRouteInfo || {};
+        const imageDates = addStartDateAndEndDateToImageDates(startDate || '', endDate || '', dates || []);
         const recentPinPointId = String(pinPoints[currentPinPointIndex].pinPointId);
+
         sessionStorage.setItem('recentPinPointId', recentPinPointId);
+        sessionStorage.setItem('imageDates', JSON.stringify(imageDates));
 
-        // const initialDate = startDate === imageDates[0] ? startDate : imageDates[0];
-        const defaultLocation = {
-            latitude: tripRouteInfo?.tripImages[0].latitude,
-            longitude: tripRouteInfo?.tripImages[0].longitude,
-        };
-
-        navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(String(tripKey))}`, {
-            state: { startDate, endDate, imageDates, defaultLocation },
-        });
+        navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(String(tripKey))}`);
     }, [tripKey, tripRouteInfo, pinPoints, currentPinPointIndex, navigate]);
 
     const handlePinPointMarkClick = (position: PinPoint, index: number) => {

@@ -2,80 +2,71 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { css } from '@emotion/react';
 
-import { calculateTripDay } from '@/domains/trip/utils';
+import { getDays } from '@/domains/trip/utils';
 import { formatToKorean } from '@/libs/utils/date';
 import theme from '@/shared/styles/theme';
 
 interface DateSelectorProps {
-    startDate: string;
-    endDate: string;
-    firstImageDate: string;
+    selectedDate: string;
     imageDates: string[];
     onDateSelect: (date: string) => void;
 }
 
-const DateSelector = React.memo(
-    ({ startDate, endDate, firstImageDate, imageDates, onDateSelect }: DateSelectorProps) => {
-        const scrollContainerRef = useRef<HTMLDivElement>(null);
-        const buttonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+const DateSelector = React.memo(({ selectedDate, imageDates, onDateSelect }: DateSelectorProps) => {
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const buttonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
-        const generateDayList = useMemo(() => {
-            if (!startDate || !imageDates.length) {
-                return [];
-            }
+    const generateDayList = useMemo(() => getDays(imageDates), [imageDates]);
+    console.log(generateDayList);
 
-            return imageDates.map((date) => ({ date, dayNumber: calculateTripDay(date, startDate, endDate) }));
-        }, [imageDates, startDate, endDate]);
+    const scrollToCenter = useCallback((targetDate: string) => {
+        const container = scrollContainerRef.current;
+        const button = buttonRefs.current.get(targetDate);
 
-        const scrollToCenter = useCallback((targetDate: string) => {
-            const container = scrollContainerRef.current;
-            const button = buttonRefs.current.get(targetDate);
+        if (!(container && button)) {
+            return;
+        }
 
-            if (!(container && button)) {
-                return;
-            }
+        const containerWidth = container.offsetWidth;
+        const buttonLeft = button.offsetLeft;
+        const buttonWidth = button.offsetWidth;
 
-            const containerWidth = container.offsetWidth;
-            const buttonLeft = button.offsetLeft;
-            const buttonWidth = button.offsetWidth;
+        const targetScrollLeft = buttonLeft - containerWidth / 2 + buttonWidth / 2 - 20;
 
-            const targetScrollLeft = buttonLeft - containerWidth / 2 + buttonWidth / 2 - 20;
+        container.scrollTo({
+            left: targetScrollLeft,
+            behavior: 'smooth',
+        });
+    }, []);
 
-            container.scrollTo({
-                left: targetScrollLeft,
-                behavior: 'smooth',
-            });
-        }, []);
+    useEffect(() => {
+        if (selectedDate) {
+            scrollToCenter(selectedDate);
+        }
+    }, [selectedDate, scrollToCenter]);
 
-        useEffect(() => {
-            if (firstImageDate) {
-                scrollToCenter(firstImageDate);
-            }
-        }, [firstImageDate, scrollToCenter]);
-
-        return (
-            <div ref={scrollContainerRef} css={buttonGroup}>
-                {generateDayList.map(({ date, dayNumber }) => (
-                    <button
-                        key={date}
-                        ref={(element) => {
-                            if (element) {
-                                buttonRefs.current.set(date, element);
-                            } else {
-                                buttonRefs.current.delete(date);
-                            }
-                        }}
-                        css={dayButtonStyle(firstImageDate === date)}
-                        onClick={() => onDateSelect(date)}
-                    >
-                        <h3>{dayNumber}</h3>
-                        <p>{formatToKorean(date)}</p>
-                    </button>
-                ))}
-            </div>
-        );
-    },
-);
+    return (
+        <div ref={scrollContainerRef} css={buttonGroup}>
+            {generateDayList.map(({ date, dayNumber }) => (
+                <button
+                    key={date}
+                    ref={(element) => {
+                        if (element) {
+                            buttonRefs.current.set(date, element);
+                        } else {
+                            buttonRefs.current.delete(date);
+                        }
+                    }}
+                    css={dayButtonStyle(selectedDate === date)}
+                    onClick={() => onDateSelect(date)}
+                >
+                    <h3>{dayNumber}</h3>
+                    <p>{formatToKorean(date)}</p>
+                </button>
+            ))}
+        </div>
+    );
+});
 
 const buttonGroup = css`
     display: flex;
