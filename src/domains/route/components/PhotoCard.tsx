@@ -26,6 +26,7 @@ const PhotoCard = ({ position, image, isVisible = true, heightOffset, onClick }:
         event.stopPropagation();
 
         if (event.type.startsWith('touch')) {
+            console.log('event.type: ', event.type);
             event.preventDefault();
         }
 
@@ -53,7 +54,11 @@ const PhotoCard = ({ position, image, isVisible = true, heightOffset, onClick }:
                 mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                 getPixelPositionOffset={() => getPixelPositionOffset(heightOffset)}
             >
-                <div css={photoCardStyle(isLoading)} onClick={(event) => handleClick(event)}>
+                <div
+                    css={photoCardStyle(isLoading)}
+                    onTouchStart={(event) => handleClick(event)}
+                    onClick={(event) => handleClick(event)}
+                >
                     {isLoading && (
                         <div css={spinnerWrapper}>
                             <Spinner />

@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 
 import { css } from '@emotion/react';
 import { ArrowDown, ImageOff } from 'lucide-react';
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { useMediaByDate } from '@/domains/media/hooks/queries';
 import { useImagesLocationObserver } from '@/domains/media/hooks/useImagesLocationObserver';
@@ -11,7 +11,6 @@ import { filterValidLocationMediaFile } from '@/domains/media/utils';
 import DateMap from '@/domains/trip/components/DateMap';
 import DateSelector from '@/domains/trip/components/DateSelector';
 import ImageItem from '@/domains/trip/components/ImageItem';
-import { addStartDateAndEndDateToImageDates } from '@/libs/utils/media';
 import BackButton from '@/shared/components/common/Button/BackButton';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/map';
@@ -33,9 +32,6 @@ const ImageByDatePage = () => {
     const showToast = useToastStore((state) => state.showToast);
 
     const { tripKey } = useParams();
-    // const location = useLocation();
-
-    // const { startDate, endDate, imageDates: dates, defaultLocation } = location.state || {};
 
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
@@ -49,18 +45,9 @@ const ImageByDatePage = () => {
 
     useEffect(() => {
         const imageDates = JSON.parse(sessionStorage.getItem('imageDates') || '') as string[];
-        console.log(imageDates);
         setImageDates(imageDates);
         setSelectedDate(imageDates[0]);
     }, []);
-
-    useEffect(() => {
-        if (selectedDate) {
-            const newSearchParams = new URLSearchParams(searchParams);
-            newSearchParams.set('date', selectedDate);
-            setSearchParams(newSearchParams);
-        }
-    }, [searchParams, selectedDate]);
 
     useEffect(() => {
         if (result) {
@@ -71,6 +58,14 @@ const ImageByDatePage = () => {
             }
         }
     }, [result]);
+
+    useEffect(() => {
+        if (selectedDate) {
+            const newSearchParams = new URLSearchParams(searchParams);
+            newSearchParams.set('date', selectedDate);
+            setSearchParams(newSearchParams);
+        }
+    }, [searchParams, selectedDate, setSearchParams]);
 
     const imageRefs = useImagesLocationObserver(
         result && 'data' in result && Array.isArray(result.data) ? result.data : [],
@@ -84,52 +79,52 @@ const ImageByDatePage = () => {
         }
     };
 
-    if (isMapScriptLoadError) {
-        showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
-        navigate(-1);
-    }
     if (!isMapScriptLoaded || isLoading) {
         return <Indicator />;
     }
 
-    if (!result) return <div>데이터를 불러올 수 없습니다.</div>;
+    if (isMapScriptLoadError) {
+        showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
+        navigate(-1);
+    }
+
     const emptyImage = images.length !== 0;
 
     return (
-        <div css={container}>
-            {(isLoading || !isAllImageLoad) && <Indicator text='사진 불러오는 중...' />}
+        <>
+            <div css={container}>
+                {(!result || isLoading || !isAllImageLoad) && <Indicator text='사진 불러오는 중...' />}
 
-            <BackButton onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`)} />
+                <BackButton onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`)} />
+                <DateMap imageLocation={imageLocation} />
+                <DateSelector
+                    selectedDate={selectedDate}
+                    imageDates={imageDates}
+                    onDateSelect={(date: string) => setSelectedDate(date)}
+                />
 
-            <DateMap imageLocation={imageLocation} />
-            <DateSelector
-                selectedDate={selectedDate}
-                imageDates={imageDates}
-                onDateSelect={(date: string) => setSelectedDate(date)}
-            />
-
-            {emptyImage ? (
-                <main ref={imageListRef} css={imageListStyle}>
-                    {images.map((image, index) => (
-                        <ImageItem
-                            key={image.mediaFileId}
-                            reference={(element) => (imageRefs.current[index] = element)}
-                            image={image}
-                            index={index}
-                            onImageLoad={handleImageLoad}
-                        />
-                    ))}
-                </main>
-            ) : (
-                <div css={emptyImageList}>
-                    <div css={emptyIcon}>
-                        <ImageOff color='white' />
+                {emptyImage ? (
+                    <main ref={imageListRef} css={imageListStyle}>
+                        {images.map((image, index) => (
+                            <ImageItem
+                                key={image.mediaFileId}
+                                reference={(element) => (imageRefs.current[index] = element)}
+                                image={image}
+                                index={index}
+                                onImageLoad={handleImageLoad}
+                            />
+                        ))}
+                    </main>
+                ) : (
+                    <div css={emptyImageList}>
+                        <div css={emptyIcon}>
+                            <ImageOff color='white' />
+                        </div>
+                        <h3 css={emptyImageListHeading}>등록된 사진이 없어요</h3>
+                        <p css={emptyImageListDescription}>{`티켓 속 사진 관리에서\n새로운 사진을 등록해주세요`}</p>
                     </div>
-                    <h3 css={emptyImageListHeading}>등록된 사진이 없어요</h3>
-                    <p css={emptyImageListDescription}>{`티켓 속 사진 관리에서\n새로운 사진을 등록해주세요`}</p>
-                </div>
-            )}
-
+                )}
+            </div>
             {isFirstUser && (
                 <div css={scrollHintOverlayStyle(isHintOverlayVisible)}>
                     <div css={scrollHintContentStyle}>
@@ -138,7 +133,7 @@ const ImageByDatePage = () => {
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 };
 

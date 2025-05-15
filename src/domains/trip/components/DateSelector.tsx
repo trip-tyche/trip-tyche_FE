@@ -16,8 +16,7 @@ const DateSelector = React.memo(({ selectedDate, imageDates, onDateSelect }: Dat
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const buttonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
-    const generateDayList = useMemo(() => getDays(imageDates), [imageDates]);
-    console.log(generateDayList);
+    const days = useMemo(() => getDays(imageDates), [imageDates]);
 
     const scrollToCenter = useCallback((targetDate: string) => {
         const container = scrollContainerRef.current;
@@ -47,7 +46,7 @@ const DateSelector = React.memo(({ selectedDate, imageDates, onDateSelect }: Dat
 
     return (
         <div ref={scrollContainerRef} css={buttonGroup}>
-            {generateDayList.map(({ date, dayNumber }) => (
+            {days.map(({ date, dayNumber }) => (
                 <button
                     key={date}
                     ref={(element) => {
