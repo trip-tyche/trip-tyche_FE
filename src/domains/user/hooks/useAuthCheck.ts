@@ -14,11 +14,14 @@ export const useAuthCheck = () => {
 
     useEffect(() => {
         const checkAuth = async () => {
-            if (isAuthenticated) return;
+            if (isAuthenticated) {
+                setIsChecking(false);
+                return;
+            }
 
             setIsChecking(true);
             const result = await toResult(() => userAPI.fetchUserInfo(), {
-                onFinally: () => {
+                onSuccess: () => {
                     setIsChecking(false);
                 },
             });
@@ -29,6 +32,7 @@ export const useAuthCheck = () => {
 
             const userInfo = result.data;
             login(userInfo);
+            setIsChecking(false);
         };
 
         checkAuth();
