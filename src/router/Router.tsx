@@ -4,6 +4,7 @@ import { createBrowserRouter, Outlet } from 'react-router-dom';
 
 import { useAuthCheck } from '@/domains/user/hooks/useAuthCheck';
 import RootLayout from '@/layouts/RootLayout';
+import ErrorPage from '@/pages/ErrorPage';
 import MainPage from '@/pages/MainPage';
 import NotificationPage from '@/pages/NotificationPage';
 import PageNotFound from '@/pages/PageNotFound';
@@ -44,7 +45,7 @@ const router = createBrowserRouter([
         element: <RootLayout />,
         errorElement: (
             <Suspense fallback={<LoadingSpinner />}>
-                <PageNotFound />
+                <ErrorPage />
             </Suspense>
         ),
         children: [
