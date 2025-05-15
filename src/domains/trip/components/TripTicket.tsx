@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { css } from '@emotion/react';
-import { ImagePlus, Share2, Edit, Trash, Unlink, Info, Touchpad } from 'lucide-react';
+import { ImagePlus, Share2, Edit, Trash, Unlink, Info, Plus } from 'lucide-react';
 
 import characterImg from '@/assets/images/character-ogami-1.png';
 import ShareModal from '@/domains/share/components/ShareModal';
@@ -48,9 +48,9 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     const isOwner = userInfo?.nickname === ownerNickname;
     const countryEmoji = isCompletedTrip ? country.split('/')[0] || '' : '';
     const destination = isCompletedTrip ? country.split('/')[1] || '' : '트립티케';
-    const formattedStartDate = isCompletedTrip ? formatToDot(startDate) : '2025-01-01';
-    const formattedEndDate = isCompletedTrip ? formatToDot(endDate) : '2025-01-01';
-    const formattedTitle = isCompletedTrip ? tripTitle : '여행이 아직 완성되지 않았어요...';
+    const formattedStartDate = isCompletedTrip ? formatToDot(startDate) : '2000-01-01';
+    const formattedEndDate = isCompletedTrip ? formatToDot(endDate) : '2000-01-01';
+    const formattedTitle = isCompletedTrip ? tripTitle : '여행이 아직 완성되지 않았어요';
 
     return (
         <div css={container}>
@@ -59,7 +59,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
             {!isCompletedTrip && (
                 <div css={isUncompletedTripOverlayStyle}>
                     <button css={isUncompletedTripButtonStyle} onClick={() => handler.edit(isCompletedTrip)}>
-                        <Touchpad size={20} /> 여행 정보 이어서 작성하기
+                        <Plus size={20} /> 여행 정보 이어서 작성하기
                     </button>
                 </div>
             )}
@@ -209,6 +209,7 @@ const isUncompletedTripButtonStyle = () => css`
     display: flex;
     align-items: center;
     gap: 6px;
+    color: ${COLORS.TEXT.BLACK};
     background-color: ${COLORS.BACKGROUND.WHITE};
     border: none;
     border-radius: 24px;
