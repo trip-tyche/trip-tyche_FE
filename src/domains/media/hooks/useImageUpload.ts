@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 import { PresignedUrlResponse } from '@/domains/media/image';
 import { ImagesFiles } from '@/domains/media/types';
@@ -24,6 +24,11 @@ export const useImageUpload = () => {
     const setUploadStatus = useUploadStatusStore((state) => state.setUploadStatus);
 
     const { tripKey } = useParams();
+    const [searchParams] = useSearchParams();
+
+    const isEdit = searchParams.get('edit') !== null;
+
+    console.log(searchParams.get('edit'), isEdit);
 
     const extractMetaDataAndResizeImages = async (images: FileList | null) => {
         if (!images) return;
@@ -82,8 +87,10 @@ export const useImageUpload = () => {
             await mediaAPI.createMediaFileMetadata(tripKey, metaDatas);
             console.timeEnd(`send metadata to server`);
 
-            const imageUploadResult = await toResult(async () => await mediaAPI.uploadedImages(tripKey));
-            console.log(imageUploadResult);
+            if (!isEdit) {
+                const result = await toResult(async () => await mediaAPI.uploadedImages(tripKey));
+                if (!result.success) throw Error(result.error);
+            }
 
             setUploadStatus('completed');
         } catch (error) {

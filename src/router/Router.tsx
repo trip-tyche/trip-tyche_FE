@@ -26,11 +26,10 @@ const TripPages = {
 
 const ProtectedRoute = () => {
     const { isChecking } = useAuthCheck();
-    console.log('icChecking: ', isChecking);
+
     if (isChecking) {
         return <LoadingSpinner />;
     }
-    console.log('router-af');
 
     return (
         <Suspense fallback={<LoadingSpinner />}>
