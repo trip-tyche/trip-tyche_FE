@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ROUTES } from '@/shared/constants/paths';
+import { useToastStore } from '@/shared/stores/useToastStore';
 
 export const useTicketNavigation = (tripKey: string) => {
     const [isAnimating, setIsAnimating] = useState(false);

@@ -9,7 +9,7 @@ export const tripAPI = {
     fetchTripTicketInfo: async (tripKey: string): Promise<ApiResponse<Trip>> =>
         await apiClient.get(`/v1/trips/${tripKey}`),
     // 여행 티켓 최종 등록
-    finalizeTripTicekt: async (tripKey: string): Promise<ApiResponse<string>> =>
+    finalizeTripTicket: async (tripKey: string): Promise<ApiResponse<string>> =>
         await apiClient.patch(`/v1/trips/${tripKey}/finalize`),
     // 새 여행 등록을 위한 tripKey 생성
     createNewTrip: async (): Promise<ApiResponse<{ tripKey: string }>> => await apiClient.post(`/v1/trips`),

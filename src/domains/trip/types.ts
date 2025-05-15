@@ -1,5 +1,4 @@
 export interface Trip extends TripInfo {
-    // userNickname?: string;
     ownerNickname?: string;
     sharedUserNicknames?: string[];
 }
@@ -13,6 +12,7 @@ export interface TripInfo {
     hashtags: string[];
     mediaFilesDates?: string[];
     shareId?: number;
+    confirmed: boolean;
 }
 
 export interface Country {

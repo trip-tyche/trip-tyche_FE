@@ -45,7 +45,7 @@ export const useTripInfoForm = (isEditing: boolean, form: TripInfo) => {
                 queryClient.invalidateQueries({ queryKey: ['ticket-info'] });
                 showToast('여행 정보가 성공적으로 수정되었습니다');
             } else {
-                const finalizeResult = await toResult(() => tripAPI.finalizeTripTicekt(tripKey));
+                const finalizeResult = await toResult(() => tripAPI.finalizeTripTicket(tripKey));
                 if (!finalizeResult.success) throw Error(finalizeResult.error);
 
                 setIsImageSubmitting(true);

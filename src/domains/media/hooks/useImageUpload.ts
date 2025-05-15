@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { PresignedUrlResponse } from '@/domains/media/image';
 import { ImagesFiles } from '@/domains/media/types';
 import { mediaAPI } from '@/libs/apis';
+import { toResult } from '@/libs/apis/utils';
 import {
     completeImages,
     extractMetadataFromImage,
@@ -80,6 +81,9 @@ export const useImageUpload = () => {
             console.time(`send metadata to server`);
             await mediaAPI.createMediaFileMetadata(tripKey, metaDatas);
             console.timeEnd(`send metadata to server`);
+
+            const imageUploadResult = await toResult(async () => await mediaAPI.uploadedImages(tripKey));
+            console.log(imageUploadResult);
 
             setUploadStatus('completed');
         } catch (error) {

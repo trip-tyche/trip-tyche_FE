@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { css } from '@emotion/react';
-import { ImagePlus, Share2, Edit, Trash, Unlink, Info } from 'lucide-react';
+import { ImagePlus, Share2, Edit, Trash, Unlink, Info, Touchpad } from 'lucide-react';
 
 import characterImg from '@/assets/images/character-ogami-1.png';
 import ShareModal from '@/domains/share/components/ShareModal';
@@ -17,7 +17,17 @@ import { useTicketNavigation } from '@/shared/hooks/useTicketNavigation';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
-    const { tripKey, tripTitle, country, startDate, endDate, hashtags, ownerNickname, shareId } = tripInfo;
+    const {
+        tripKey,
+        tripTitle,
+        country,
+        startDate,
+        endDate,
+        hashtags,
+        ownerNickname,
+        shareId,
+        confirmed: isCompletedTrip,
+    } = tripInfo;
 
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const { showToast } = useToastStore.getState();
@@ -34,13 +44,23 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     const { isAnimating, handleCardClick } = useTicketNavigation(tripKey!);
 
     const isOwner = userInfo?.nickname === ownerNickname;
-    const countryEmoji = country.split('/')[0] || '';
-    const destination = country.split('/')[1] || '';
+    const countryEmoji = isCompletedTrip ? country.split('/')[0] || '' : '';
+    const destination = isCompletedTrip ? country.split('/')[1] || '' : '트립티케';
+    const formattedStartDate = isCompletedTrip ? formatToDot(startDate) : '2025-01-01';
+    const formattedEndDate = isCompletedTrip ? formatToDot(endDate) : '2025-01-01';
+    const formattedTitle = isCompletedTrip ? tripTitle : '여행이 아직 완성되지 않았어요...';
 
     return (
         <div css={container}>
             {isDeleting && <Spinner text='여행 티켓 삭제 중...' />}
             {isUnLinking && <Spinner text='공유 티켓 삭제 중...' />}
+            {!isCompletedTrip && (
+                <div css={isUncompletedTripOverlayStyle}>
+                    <button css={isUncompletedTripButtonStyle} onClick={() => handler.edit()}>
+                        <Touchpad size={20} /> 여행 정보 이어서 작성하기
+                    </button>
+                </div>
+            )}
 
             <main css={mainStyle} onClick={handleCardClick}>
                 <header css={header(isOwner)}>
@@ -50,11 +70,11 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
                     </div>
                     <div css={headerItem}>
                         <h3 css={labelStyle}>DATE</h3>
-                        <p css={valueStyle}>{formatToDot(startDate)}</p>
+                        <p css={valueStyle}>{formattedStartDate}</p>
                     </div>
                     <div css={headerItem}>
                         <h3 css={labelStyle}>DATE</h3>
-                        <p css={valueStyle}>{formatToDot(endDate)}</p>
+                        <p css={valueStyle}>{formattedEndDate}</p>
                     </div>
                     <div css={headerItem}>
                         <h3 css={labelStyle}>FLIGHT</h3>
@@ -80,16 +100,18 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
 
                     <div css={titleStyle}>
                         <p css={titleLabelStyle}>Title</p>
-                        <p css={titleValueStyle}>{tripTitle}</p>
+                        <p css={titleValueStyle}>{formattedTitle}</p>
                     </div>
 
                     <div css={contentFooter}>
                         <div css={hashtagGroup}>
-                            {hashtags.map((tag, index) => (
-                                <span key={index} css={hashtagStyle}>
-                                    <span css={hashSymbol}>#</span> {tag}
-                                </span>
-                            ))}
+                            {hashtags
+                                .filter((tag) => tag !== '')
+                                .map((tag, index) => (
+                                    <span key={index} css={hashtagStyle}>
+                                        <span css={hashSymbol}>#</span> {tag}
+                                    </span>
+                                ))}
                         </div>
                         <div css={flagStyle(isOwner)}>{countryEmoji}</div>
                     </div>
@@ -156,6 +178,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
 const container = css`
     width: 100%;
     margin-bottom: 8px;
+    position: relative;
     transition: all 0.25s ease;
     box-shadow:
         0 4px 6px -1px rgba(0, 0, 0, 0.06),
@@ -163,6 +186,34 @@ const container = css`
     border-radius: 14px;
     overflow: hidden;
     user-select: none;
+`;
+
+const isUncompletedTripOverlayStyle = () => css`
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: ${`${COLORS.BACKGROUND.ICON}70`};
+    z-index: 9999;
+    cursor: pointer;
+`;
+
+const isUncompletedTripButtonStyle = () => css`
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: ${COLORS.BACKGROUND.WHITE};
+    border: none;
+    border-radius: 24px;
+    cursor: pointer;
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.06),
+        0 2px 4px -1px rgba(0, 0, 0, 0.08);
 `;
 
 const mainStyle = css`
@@ -196,7 +247,7 @@ const valueStyle = css`
     font-weight: 600;
 `;
 
-const contentStyle = css`
+const contentStyle = () => css`
     width: 100%;
     padding: 16px 16px 12px 16px;
     display: flex;
