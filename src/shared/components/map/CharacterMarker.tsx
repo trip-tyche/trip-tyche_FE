@@ -1,6 +1,6 @@
 import { Marker } from '@react-google-maps/api';
 
-// import characterImage from '/character.png';
+import characterImage from '/character.png';
 import planeImage from '/plane-icon.png';
 import carImage from '/car-icon.png';
 
@@ -22,8 +22,8 @@ const CharacterMarker = ({ position, isMapRendered, transportType = 'walking' }:
             case 'car':
                 return {
                     url: carImage,
-                    scaledSize: new window.google.maps.Size(50, 44),
-                    anchor: new window.google.maps.Point(20, 36),
+                    scaledSize: new window.google.maps.Size(55, 50),
+                    anchor: new window.google.maps.Point(22, 32),
                 };
             case 'plane':
                 return {
@@ -32,15 +32,10 @@ const CharacterMarker = ({ position, isMapRendered, transportType = 'walking' }:
                     anchor: new window.google.maps.Point(28, 28),
                 };
             default:
-                // return {
-                //     url: characterImage,
-                //     scaledSize: new window.google.maps.Size(45, 60),
-                //     anchor: new window.google.maps.Point(28, 50),
-                // };
                 return {
-                    url: carImage,
-                    scaledSize: new window.google.maps.Size(50, 44),
-                    anchor: new window.google.maps.Point(20, 36),
+                    url: characterImage,
+                    scaledSize: new window.google.maps.Size(45, 60),
+                    anchor: new window.google.maps.Point(28, 50),
                 };
         }
     };
