@@ -67,7 +67,7 @@ const ImageByDatePage = () => {
         if (loadedImagesCount.current === images.length) {
             setIsAllImageLoad(true);
         }
-    }, []);
+    }, [images]);
 
     if (!isMapScriptLoaded || isLoading) {
         return <Indicator />;
