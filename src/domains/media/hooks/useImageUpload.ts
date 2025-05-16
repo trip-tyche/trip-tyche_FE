@@ -27,8 +27,6 @@ export const useImageUpload = () => {
 
     const isEdit = searchParams.get('edit') !== null;
 
-    console.log(searchParams.get('edit'), isEdit);
-
     const extractMetaDataAndResizeImages = async (images: FileList | null) => {
         if (!images) return;
         const uniqueImages = removeDuplicateImages(images);
@@ -36,7 +34,6 @@ export const useImageUpload = () => {
         setIsProcessing(true);
         console.time(`extract metadata and resize`);
         const metadatas = await extractMetadataFromImage(uniqueImages);
-        console.log(metadatas);
         const resizedImages = await resizeImages(metadatas, setProgress);
         console.timeEnd(`extract metadata and resize`);
 
@@ -52,14 +49,12 @@ export const useImageUpload = () => {
 
     const uploadImages = async () => {
         const imagesToUpload = images?.totalImages;
-        console.log(imagesToUpload);
         if (!tripKey || !imagesToUpload) {
             return;
         }
         try {
             setUploadStatus('pending');
             const imageNames = imagesToUpload.map((image) => ({ fileName: image.image.name }));
-            console.log(imageNames);
             const result = await mediaAPI.requestPresignedUrls(tripKey, imageNames);
             if (!result.success) throw new Error(result.error);
             const { data: presignedUrls } = result;
