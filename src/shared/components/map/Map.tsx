@@ -30,7 +30,10 @@ const Map = ({ zoom, center, children, isInteractive = true, onLoad, onZoomChang
                 mapContainerStyle={{ height: 'calc(100% + 30px)' }}
                 onLoad={onLoad}
                 onZoomChanged={onZoomChanged}
-                onClick={onClick}
+                onClick={() => {
+                    console.log('map click!');
+                    onClick?.();
+                }}
             >
                 {children}
             </GoogleMap>
