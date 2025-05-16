@@ -23,12 +23,13 @@ const PhotoCard = ({ position, image, isVisible = true, heightOffset, onClick }:
     const [isLoading, setIsLoading] = useState(true);
 
     const handleClick = useCallback((event: React.MouseEvent | React.TouchEvent) => {
-        event.stopPropagation();
+        if (event.type.startsWith('touch')) {
+            console.log('event.type: ', event.type);
+            event.preventDefault();
+        }
 
-        // if (event.type.startsWith('touch')) {
-        //     console.log('event.type: ', event.type);
-        //     event.preventDefault();
-        // }
+        event.stopPropagation();
+        console.log('photocard-click');
 
         if (onClick) {
             onClick();
@@ -56,7 +57,7 @@ const PhotoCard = ({ position, image, isVisible = true, heightOffset, onClick }:
             >
                 <div
                     css={photoCardStyle(isLoading)}
-                    onTouchStart={(event) => handleClick(event)}
+                    // onTouchStart={(event) => handleClick(event)}
                     onClick={(event) => handleClick(event)}
                 >
                     {isLoading && (
