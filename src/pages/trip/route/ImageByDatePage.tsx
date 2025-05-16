@@ -1,11 +1,11 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 
 import { css } from '@emotion/react';
 import { ArrowDown, ImageOff } from 'lucide-react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { useMediaByDate } from '@/domains/media/hooks/queries';
-import { useImagesLocationObserver } from '@/domains/media/hooks/useImagesLocationObserver';
+import { useImageLocationObserver } from '@/domains/media/hooks/useImageLocationObserver';
 import { MediaFile } from '@/domains/media/types';
 import { filterValidLocationMediaFile } from '@/domains/media/utils';
 import DateSelector from '@/domains/trip/components/DateSelector';
@@ -28,6 +28,8 @@ const ImageByDatePage = () => {
     const [imageLocation, setImageLocation] = useState<Location | null>(null);
     const [isAllImageLoad, setIsAllImageLoad] = useState(false);
     const [images, setImages] = useState<MediaFile[]>([]);
+
+    console.log('imageLocation: ', imageLocation);
 
     const showToast = useToastStore((state) => state.showToast);
 
@@ -67,17 +69,18 @@ const ImageByDatePage = () => {
         }
     }, [searchParams, selectedDate, setSearchParams]);
 
-    const imageRefs = useImagesLocationObserver(
-        result && 'data' in result && Array.isArray(result.data) ? result.data : [],
-        setImageLocation,
-    );
+    const handleImageLocationChange = useCallback((location: Location) => {
+        setImageLocation(location);
+    }, []);
 
-    const handleImageLoad = () => {
+    const imageRefs = useImageLocationObserver(images, handleImageLocationChange);
+
+    const handleImageLoad = useCallback(() => {
         loadedImagesCount.current += 1;
         if (loadedImagesCount.current === images.length) {
             setIsAllImageLoad(true);
         }
-    };
+    }, []);
 
     if (!isMapScriptLoaded || isLoading) {
         return <Indicator />;
@@ -146,6 +149,7 @@ const container = css`
     overflow-y: auto;
     background-color: #f9fafb;
     position: relative;
+    user-select: none;
 `;
 
 const imageListStyle = css`

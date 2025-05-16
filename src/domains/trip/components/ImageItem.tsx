@@ -18,7 +18,7 @@ const ImageItem = ({ image, index, reference, onImageLoad }: ImageItemProps) => 
     const handleImageLoad = useCallback(() => {
         setIsLoading(false);
         onImageLoad?.();
-    }, []);
+    }, [onImageLoad]);
 
     return (
         <div ref={reference} css={imageItemStyle} data-index={index}>
@@ -32,6 +32,7 @@ const imageItemStyle = css`
     margin-bottom: 12px;
     position: relative;
     width: 100%;
+    pointer-events: none;
 `;
 
 const imageStyle = css`

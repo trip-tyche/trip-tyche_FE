@@ -78,6 +78,7 @@ const buttonGroup = css`
     scrollbar-width: none;
     -ms-overflow-style: none;
     scroll-behavior: smooth;
+
     &::-webkit-scrollbar {
         display: none;
     }
