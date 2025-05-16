@@ -1,6 +1,6 @@
 import { Marker } from '@react-google-maps/api';
 
-import characterImage from '/character.png';
+// import characterImage from '/character.png';
 import planeImage from '/plane-icon.png';
 import carImage from '/car-icon.png';
 
