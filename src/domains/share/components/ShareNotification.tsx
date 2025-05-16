@@ -8,8 +8,8 @@ import { useShareStatus } from '@/domains/share/hooks/mutations';
 import { useShareDetail } from '@/domains/share/hooks/queries';
 import { SharedTripDetail, ShareStatus } from '@/domains/share/types';
 import Avatar from '@/shared/components/common/Avatar';
-import Indicator from '@/shared/components/common/Spinner/Indicator';
 import Modal from '@/shared/components/common/Modal/Modal';
+import Indicator from '@/shared/components/common/Spinner/Indicator';
 import { COLORS } from '@/shared/constants/style';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
@@ -202,7 +202,7 @@ const benefitsSection = css`
 
 const benefitsTitle = css`
     font-weight: 500;
-    color: #1e40af;
+    color: ${COLORS.PRIMARY_HOVER};
     margin-bottom: 12px;
 `;
 

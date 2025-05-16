@@ -5,7 +5,10 @@ import { Progress } from '@mantine/core';
 import { Camera, Heart, ImageUp, MapPin, Upload } from 'lucide-react';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
+import MediaUploadSection from '@/domains/media/components/MediaUploadSection';
 import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
+import Button from '@/shared/components/common/Button';
+import Guide from '@/shared/components/common/Guide';
 import Header from '@/shared/components/common/Header';
 import AlertModal from '@/shared/components/common/Modal/AlertModal';
 import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
@@ -76,6 +79,12 @@ const TripImageUploadPage = () => {
     const imagesWithoutLocation = images?.imagesWithoutLocation.length || 0;
     const hasInvalidImages = !!(imagesWithoutDateCount + imagesWithoutLocation);
 
+    const imagesUploadGuide = [
+        '중복된 사진들의 경우, 1장으로 등록됩니다',
+        '날짜 및 위치 정보가 없는 사진은 나중에 직접 등록하실 수 있습니다',
+        '여행 중 찍은 사진을 모두 선택하면 자동으로 여정이 생성됩니다',
+    ];
+
     return (
         <div css={page}>
             {isUploading && <Indicator />}
@@ -94,8 +103,7 @@ const TripImageUploadPage = () => {
 
             <ProgressHeader currentStep='upload' />
 
-            <main css={mainStyle}>
-                {/* <section css={sectionStyle}>
+            {/* <section css={sectionStyle}>
                     <h4>[사진 등록 가이드]</h4>
                     <p>1. 중복된 사진들의 경우, 1장으로 등록됩니다.</p>
                     <p>2. 날짜 및 위치 정보가 없는 사진은 나중에 직접 등록하실 수 있습니다.</p>
@@ -136,242 +144,25 @@ const TripImageUploadPage = () => {
                         )}
                     </div>
                 </section> */}
+            <main css={mainStyle}>
+                <h2 css={titleStyle}>여행 사진 등록</h2>
+                <Guide title='사진 등록 가이드' texts={imagesUploadGuide} />
+
+                <MediaUploadSection />
+
                 <div
                     css={css`
-                        padding: 16px;
-                        display: flex;
-                        flex-direction: column;
-                        height: 100%;
-                        background: ${COLORS.BACKGROUND.WHITE_SECONDARY};
+                        margin-top: 1rem;
+                        text-align: center;
+                        font-size: 0.75rem;
+                        color: #6b7280;
+                        font-style: italic;
                     `}
                 >
-                    <h2
-                        css={css`
-                            font-weight: 600;
-                            margin-bottom: 0.75rem;
-                            color: ${COLORS.TEXT.BLACK};
-                            display: flex;
-                            align-items: center;
-                        `}
-                    >
-                        여행 사진 등록
-                    </h2>
-
-                    <div
-                        css={css`
-                            font-size: 0.875rem;
-                            color: #4b5563;
-                            margin-bottom: 1.5rem;
-                            background-color: white;
-                            padding: 0.75rem;
-                            border-radius: 0.5rem;
-                            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-                            border: 1px solid #dbeafe;
-                        `}
-                    >
-                        <p
-                            css={css`
-                                margin-bottom: 0.25rem;
-                                font-style: italic;
-                                color: #1e40af;
-                                font-weight: 500;
-                            `}
-                        >
-                            사진에 담긴 추억을 공유해보세요
-                        </p>
-
-                        <p
-                            css={css`
-                                display: flex;
-                                align-items: center;
-                                margin-bottom: 0.25rem;
-                            `}
-                        >
-                            <span
-                                css={css`
-                                    width: 4px;
-                                    height: 4px;
-                                    border-radius: 50%;
-                                    background-color: #60a5fa;
-                                    margin-right: 0.5rem;
-                                `}
-                            ></span>
-                            같은 순간의 사진들은 하나의 특별한 기억으로 저장됩니다
-                        </p>
-
-                        <p
-                            css={css`
-                                display: flex;
-                                align-items: center;
-                                margin-bottom: 0.25rem;
-                            `}
-                        >
-                            <span
-                                css={css`
-                                    width: 4px;
-                                    height: 4px;
-                                    border-radius: 50%;
-                                    background-color: #60a5fa;
-                                    margin-right: 0.5rem;
-                                `}
-                            ></span>
-                            날짜와 장소 정보는 나중에도 추가할 수 있어요
-                        </p>
-
-                        <p
-                            css={css`
-                                display: flex;
-                                align-items: center;
-                            `}
-                        >
-                            <span
-                                css={css`
-                                    width: 4px;
-                                    height: 4px;
-                                    border-radius: 50%;
-                                    background-color: #60a5fa;
-                                    margin-right: 0.5rem;
-                                `}
-                            ></span>
-                            사진 속 순간들이 모여 당신만의 여행 스토리가 됩니다
-                        </p>
-                    </div>
-
-                    <div
-                        css={css`
-                            flex: 1;
-                            border: 2px dashed #bfdbfe;
-                            border-radius: 0.5rem;
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            justify-content: center;
-                            padding: 1.5rem;
-                            cursor: pointer;
-                            background-color: rgba(255, 255, 255, 0.7);
-                            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-                            transition: all 0.3s ease;
-
-                            &:hover {
-                                background-color: #eff6ff;
-                            }
-                        `}
-                        // onClick={simulateUpload}
-                    >
-                        <div
-                            css={css`
-                                background-color: #dbeafe;
-                                padding: 1rem;
-                                border-radius: 9999px;
-                                margin-bottom: 1rem;
-                                box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-                            `}
-                        >
-                            <Upload
-                                css={css`
-                                    width: 2.5rem;
-                                    height: 2.5rem;
-                                    color: ${COLORS.PRIMARY};
-                                `}
-                            />
-                        </div>
-
-                        <p
-                            css={css`
-                                font-size: 1.125rem;
-                                font-weight: 500;
-                                margin-bottom: 0.5rem;
-                                color: #1e3a8a;
-                            `}
-                        >
-                            소중한 순간을 공유해주세요
-                        </p>
-
-                        <p
-                            css={css`
-                                color: #4b5563;
-                                font-size: 0.875rem;
-                                text-align: center;
-                                margin-bottom: 1.5rem;
-                                line-height: 1.5;
-                            `}
-                        >
-                            당신의 발자취가 담긴 사진들로
-                            <br />
-                            잊지 못할 여행 이야기를 만들어 드립니다
-                        </p>
-
-                        <div
-                            css={css`
-                                position: relative;
-                            `}
-                        >
-                            <button
-                                css={css`
-                                    background: linear-gradient(to right, #2563eb, #4f46e5);
-                                    color: white;
-                                    padding: 0.75rem 2rem;
-                                    border-radius: 0.5rem;
-                                    font-weight: 500;
-                                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                                    transition: all 0.3s ease;
-                                    display: flex;
-                                    align-items: center;
-
-                                    &:hover {
-                                        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-                                    }
-                                `}
-                            >
-                                <MapPin
-                                    css={css`
-                                        width: 1rem;
-                                        height: 1rem;
-                                        margin-right: 0.5rem;
-                                    `}
-                                />
-                                추억 선택하기
-                            </button>
-
-                            <div
-                                css={css`
-                                    position: absolute;
-                                    top: -0.5rem;
-                                    right: -0.5rem;
-                                    width: 1.25rem;
-                                    height: 1.25rem;
-                                    background-color: #ec4899;
-                                    border-radius: 9999px;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                                `}
-                            >
-                                <Heart
-                                    css={css`
-                                        width: 0.75rem;
-                                        height: 0.75rem;
-                                        color: white;
-                                    `}
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        css={css`
-                            margin-top: 1rem;
-                            text-align: center;
-                            font-size: 0.75rem;
-                            color: #6b7280;
-                            font-style: italic;
-                        `}
-                    >
-                        "사진은 언어보다 때로는 더 많은 이야기를 담습니다"
-                    </div>
+                    "사진은 언어보다 때로는 더 많은 이야기를 담습니다"
                 </div>
             </main>
+
             {isModalOpen && (
                 <ConfirmModal
                     title='더 나은 경험을 위한 안내'
@@ -444,9 +235,19 @@ const page = css`
 
 const mainStyle = css`
     flex: 1;
-    /* padding: 20px; */
+    height: 100%;
+    padding: 16px;
     display: flex;
     flex-direction: column;
+    background: ${COLORS.BACKGROUND.WHITE_SECONDARY};
+`;
+
+const titleStyle = css`
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: ${COLORS.TEXT.BLACK};
 `;
 
 const sectionStyle = css`
