@@ -167,9 +167,7 @@ const TripRoutePage = () => {
         const end = pinPoints[currentPinPointIndex + 1];
         setIsCharacterMoving(true);
         setIsMapInteractive(false);
-        console.time('calculate-distance');
         const distance = calculateDistance(start.latitude, start.longitude, end.latitude, end.longitude);
-        console.timeEnd('calculate-distance');
 
         const settings = getAnimationConfig(distance);
 
@@ -314,7 +312,7 @@ const TripRoutePage = () => {
         sessionStorage.setItem('recentPinPointId', recentPinPointId);
         sessionStorage.setItem('imageDates', JSON.stringify(imageDates));
 
-        navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(String(tripKey))}`);
+        navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(String(tripKey), imageDates[0])}`);
     }, [tripKey, tripRouteInfo, pinPoints, currentPinPointIndex, navigate]);
 
     const handlePinPointMarkClick = (position: PinPoint, index: number) => {

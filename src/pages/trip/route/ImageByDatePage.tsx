@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 
 import { css } from '@emotion/react';
 import { ArrowDown, ImageOff } from 'lucide-react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { useMediaByDate } from '@/domains/media/hooks/queries';
 import { useImageLocationObserver } from '@/domains/media/hooks/useImageLocationObserver';
@@ -23,31 +23,26 @@ import theme from '@/shared/styles/theme';
 import { Location } from '@/shared/types/map';
 
 const ImageByDatePage = () => {
-    const [selectedDate, setSelectedDate] = useState('');
     const [imageDates, setImageDates] = useState<string[]>([]);
     const [imageLocation, setImageLocation] = useState<Location | null>(null);
     const [isAllImageLoad, setIsAllImageLoad] = useState(false);
     const [images, setImages] = useState<MediaFile[]>([]);
 
-    console.log('imageLocation: ', imageLocation);
-
     const showToast = useToastStore((state) => state.showToast);
 
-    const { tripKey } = useParams();
+    const { tripKey, date } = useParams();
     const navigate = useNavigate();
-    const [searchParams, setSearchParams] = useSearchParams();
 
     const imageListRef = useRef<HTMLDivElement>(null);
     const loadedImagesCount = useRef<number>(0);
 
-    const { data: result, isLoading } = useMediaByDate(tripKey!, selectedDate);
+    const { data: result, isLoading } = useMediaByDate(tripKey!, date!);
     const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl(ZOOM_SCALE.DEFAULT.IMAGE_BY_DATE, DEFAULT_CENTER);
     const { isHintOverlayVisible, isFirstUser } = useScrollHint(imageListRef, isMapScriptLoaded, isAllImageLoad);
 
     useEffect(() => {
         const imageDates = JSON.parse(sessionStorage.getItem('imageDates') || '') as string[];
         setImageDates(imageDates);
-        setSelectedDate(imageDates[0]);
     }, []);
 
     useEffect(() => {
@@ -60,14 +55,6 @@ const ImageByDatePage = () => {
         }
         setImageLocation(null);
     }, [result]);
-
-    useEffect(() => {
-        if (selectedDate) {
-            const newSearchParams = new URLSearchParams(searchParams);
-            newSearchParams.set('date', selectedDate);
-            setSearchParams(newSearchParams);
-        }
-    }, [searchParams, selectedDate, setSearchParams]);
 
     const handleImageLocationChange = useCallback((location: Location) => {
         setImageLocation(location);
@@ -101,11 +88,7 @@ const ImageByDatePage = () => {
                 <BackButton onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`)} />
 
                 <SingleMarkerMap position={imageLocation} />
-                <DateSelector
-                    selectedDate={selectedDate}
-                    imageDates={imageDates}
-                    onDateSelect={(date: string) => setSelectedDate(date)}
-                />
+                <DateSelector selectedDate={date!} imageDates={imageDates} />
 
                 {!emptyImage ? (
                     <main ref={imageListRef} css={imageListStyle}>

@@ -105,7 +105,7 @@ const router = createBrowserRouter([
                                 element: <TripPages.ImageByPinpointPage />,
                             },
                             {
-                                path: 'by-date',
+                                path: 'by-date/:date',
                                 element: <TripPages.ImageByDatePage />,
                             },
                         ],

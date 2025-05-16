@@ -1,22 +1,24 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { css } from '@emotion/react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { getDays } from '@/domains/trip/utils';
 import { formatToKorean } from '@/libs/utils/date';
+import { ROUTES } from '@/shared/constants/route';
 import theme from '@/shared/styles/theme';
 
 interface DateSelectorProps {
     selectedDate: string;
     imageDates: string[];
-    onDateSelect: (date: string) => void;
 }
 
-const DateSelector = React.memo(({ selectedDate, imageDates, onDateSelect }: DateSelectorProps) => {
+const DateSelector = React.memo(({ selectedDate, imageDates }: DateSelectorProps) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const buttonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
-    const days = useMemo(() => getDays(imageDates), [imageDates]);
+    const { tripKey } = useParams();
+    const navigate = useNavigate();
 
     const scrollToCenter = useCallback((targetDate: string) => {
         const container = scrollContainerRef.current;
@@ -44,6 +46,12 @@ const DateSelector = React.memo(({ selectedDate, imageDates, onDateSelect }: Dat
         }
     }, [selectedDate, scrollToCenter]);
 
+    const days = useMemo(() => getDays(imageDates), [imageDates]);
+
+    const handleDateClick = (date: string) => {
+        navigate(ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(tripKey!, date), { replace: true });
+    };
+
     return (
         <div ref={scrollContainerRef} css={buttonGroup}>
             {days.map(({ date, dayNumber }) => (
@@ -57,7 +65,7 @@ const DateSelector = React.memo(({ selectedDate, imageDates, onDateSelect }: Dat
                         }
                     }}
                     css={dayButtonStyle(selectedDate === date)}
-                    onClick={() => onDateSelect(date)}
+                    onClick={() => handleDateClick(date)}
                 >
                     <h3>{dayNumber}</h3>
                     <p>{formatToKorean(date)}</p>
