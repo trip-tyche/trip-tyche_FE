@@ -8,11 +8,11 @@ import { useMediaByDate } from '@/domains/media/hooks/queries';
 import { useImagesLocationObserver } from '@/domains/media/hooks/useImagesLocationObserver';
 import { MediaFile } from '@/domains/media/types';
 import { filterValidLocationMediaFile } from '@/domains/media/utils';
-import DateMap from '@/domains/trip/components/DateMap';
 import DateSelector from '@/domains/trip/components/DateSelector';
 import ImageItem from '@/domains/trip/components/ImageItem';
 import BackButton from '@/shared/components/common/Button/BackButton';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
+import SingleMarkerMap from '@/shared/components/map/SingleMarkerMap';
 import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/map';
 import { ROUTES } from '@/shared/constants/route';
 import { COLORS } from '@/shared/constants/style';
@@ -25,14 +25,13 @@ import { Location } from '@/shared/types/map';
 const ImageByDatePage = () => {
     const [selectedDate, setSelectedDate] = useState('');
     const [imageDates, setImageDates] = useState<string[]>([]);
-    const [imageLocation, setImageLocation] = useState<Location>(DEFAULT_CENTER);
+    const [imageLocation, setImageLocation] = useState<Location | null>(null);
     const [isAllImageLoad, setIsAllImageLoad] = useState(false);
     const [images, setImages] = useState<MediaFile[]>([]);
 
     const showToast = useToastStore((state) => state.showToast);
 
     const { tripKey } = useParams();
-
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -57,6 +56,7 @@ const ImageByDatePage = () => {
                 setIsAllImageLoad(true);
             }
         }
+        setImageLocation(null);
     }, [result]);
 
     useEffect(() => {
@@ -85,24 +85,26 @@ const ImageByDatePage = () => {
 
     if (isMapScriptLoadError) {
         showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
-        navigate(-1);
+        navigate(ROUTES.PATH.MAIN);
     }
 
-    const emptyImage = images.length !== 0;
+    const emptyImage = images.length === 0;
 
     return (
         <>
             <div css={container}>
                 {(!result || isLoading || !isAllImageLoad) && <Indicator text='사진 불러오는 중...' />}
 
-                <DateMap imageLocation={imageLocation} />
+                <BackButton onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`)} />
+
+                <SingleMarkerMap position={imageLocation} />
                 <DateSelector
                     selectedDate={selectedDate}
                     imageDates={imageDates}
                     onDateSelect={(date: string) => setSelectedDate(date)}
                 />
 
-                {emptyImage ? (
+                {!emptyImage ? (
                     <main ref={imageListRef} css={imageListStyle}>
                         {images.map((image, index) => (
                             <ImageItem
@@ -154,7 +156,7 @@ const imageListStyle = css`
 `;
 
 const emptyImageList = css`
-    height: 50%;
+    height: 60%;
     display: flex;
     flex-direction: column;
     justify-content: center;

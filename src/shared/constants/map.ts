@@ -37,6 +37,7 @@ export const ZOOM_SCALE = {
     DEFAULT: {
         LOCATION_ADD: 12,
         IMAGE_BY_DATE: 13,
+        NO_DATE: 3,
         ROUTE: 14,
     },
     INDIVIDUAL_IMAGE_MARKERS_VISIBLE: 15,
