@@ -2,7 +2,7 @@ import { Marker } from '@react-google-maps/api';
 
 import characterImage from '/character.png';
 import planeImage from '/plane-icon.png';
-import carIon from '/car-icon.png';
+import carImage from '/car-icon.png';
 
 import { Location } from '@/shared/types/map';
 
@@ -21,7 +21,7 @@ const CharacterMarker = ({ position, isMapRendered, transportType = 'walking' }:
         switch (transportType) {
             case 'car':
                 return {
-                    url: carIon,
+                    url: carImage,
                     scaledSize: new window.google.maps.Size(60, 42),
                     anchor: new window.google.maps.Point(28, 28),
                 };
