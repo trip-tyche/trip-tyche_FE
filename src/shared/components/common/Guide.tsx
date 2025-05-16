@@ -23,7 +23,7 @@ const Guide = ({ title, texts }: GuideProps) => {
 };
 
 const container = css`
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     padding: 12px;
     background-color: ${COLORS.BACKGROUND.WHITE};
     border-radius: 8px;

@@ -3,7 +3,7 @@ export const MESSAGE = {
         TITLE: '새로운 닉네임을 입력해주세요 😀',
         PLACEHOLDER: '닉네임은 최대 10자까지 등록할 수 있습니다.',
     },
-
+    QUOTE: '"여행의 발자국마다 이야기가 있고, 그 이야기가 당신의 지도가 됩니다"',
     LOGOUT_MODAL: {
         TITLE: '로그아웃',
         MESSAGE: '정말 로그아웃 하시겠습니까?',
@@ -33,6 +33,14 @@ export const BUTTON = {
         GOOGLE: 'Google 계정으로 시작하기',
     },
 } as const;
+
+export const GUIDE_MESSAGE = {
+    IMAGE_UPLOAD: [
+        '중복된 사진들의 경우, 1장으로 등록됩니다',
+        '날짜 및 위치 정보가 없는 사진은 나중에 직접 등록하실 수 있습니다',
+        '여행 중 찍은 사진을 모두 선택하면 자동으로 여정이 생성됩니다',
+    ],
+};
 
 export const MAP = {
     PHOTO_CARD_SIZE: {

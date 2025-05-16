@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Progress } from '@mantine/core';
-import { Camera, Heart, ImageUp, MapPin, Upload } from 'lucide-react';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import MediaUploadSection from '@/domains/media/components/MediaUploadSection';
 import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
-import Button from '@/shared/components/common/Button';
 import Guide from '@/shared/components/common/Guide';
 import Header from '@/shared/components/common/Header';
 import AlertModal from '@/shared/components/common/Modal/AlertModal';
@@ -16,7 +13,7 @@ import ProgressHeader from '@/shared/components/common/ProgressHeader';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import { ROUTES } from '@/shared/constants/route';
 import { COLORS } from '@/shared/constants/style';
-import { MESSAGE } from '@/shared/constants/ui';
+import { GUIDE_MESSAGE, MESSAGE } from '@/shared/constants/ui';
 import useBrowserCheck from '@/shared/hooks/useBrowserCheck';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import { useUploadStatusStore } from '@/shared/stores/useUploadStatusStore';
@@ -31,7 +28,8 @@ const TripImageUploadPage = () => {
 
     const { isModalOpen, closeModal } = useBrowserCheck();
 
-    const { images, progress, isProcessing, extractMetaDataAndResizeImages, uploadImages } = useImageUpload();
+    const { images, extractMetaDataAndResizeImages, uploadImages } = useImageUpload();
+    // const { images, progress, isProcessing, extractMetaDataAndResizeImages, uploadImages } = useImageUpload();
 
     const { tripKey } = useParams();
     const [searchParams] = useSearchParams();
@@ -75,15 +73,16 @@ const TripImageUploadPage = () => {
         }
     };
 
+    const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files) {
+            await extractMetaDataAndResizeImages(event.target.files);
+            setIsUploadModalModalOpen(true);
+        }
+    };
+
     const imagesWithoutDateCount = images?.imagesWithoutDate.length || 0;
     const imagesWithoutLocation = images?.imagesWithoutLocation.length || 0;
     const hasInvalidImages = !!(imagesWithoutDateCount + imagesWithoutLocation);
-
-    const imagesUploadGuide = [
-        '중복된 사진들의 경우, 1장으로 등록됩니다',
-        '날짜 및 위치 정보가 없는 사진은 나중에 직접 등록하실 수 있습니다',
-        '여행 중 찍은 사진을 모두 선택하면 자동으로 여정이 생성됩니다',
-    ];
 
     return (
         <div css={page}>
@@ -146,21 +145,9 @@ const TripImageUploadPage = () => {
                 </section> */}
             <main css={mainStyle}>
                 <h2 css={titleStyle}>여행 사진 등록</h2>
-                <Guide title='사진 등록 가이드' texts={imagesUploadGuide} />
-
-                <MediaUploadSection />
-
-                <div
-                    css={css`
-                        margin-top: 1rem;
-                        text-align: center;
-                        font-size: 0.75rem;
-                        color: #6b7280;
-                        font-style: italic;
-                    `}
-                >
-                    "사진은 언어보다 때로는 더 많은 이야기를 담습니다"
-                </div>
+                <Guide title='사진 등록 가이드' texts={GUIDE_MESSAGE.IMAGE_UPLOAD} />
+                <MediaUploadSection onImageSelect={handleImageUpload} />
+                <p css={quoteText}>{MESSAGE.QUOTE}</p>
             </main>
 
             {isModalOpen && (
@@ -176,6 +163,7 @@ const TripImageUploadPage = () => {
                     closeModal={closeModal}
                 />
             )}
+
             {isUploadModalOpen && (
                 <AlertModal confirmText='등록하기' confirmModal={closeAlertModal}>
                     <div css={alertStyle}>
@@ -250,58 +238,12 @@ const titleStyle = css`
     color: ${COLORS.TEXT.BLACK};
 `;
 
-const sectionStyle = css`
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-
-    h2 {
-        font-size: 18px;
-        font-weight: bold;
-    }
-
-    h4 {
-        font-size: 14px;
-        color: ${theme.COLORS.TEXT.BLACK};
-        font-weight: 600;
-        margin-bottom: 14px;
-    }
-
-    p {
-        font-size: 12px;
-        color: ${theme.COLORS.TEXT.DESCRIPTION};
-        margin-bottom: 10px;
-        margin-left: 2px;
-    }
-`;
-
-const uploadAreaStyle = css`
-    height: 140px;
-    border: 2px dashed #ccc;
-    border-radius: 8px;
-    margin: 20px 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`;
-
-const fileInputStyle = css`
-    display: none;
-`;
-
-const uploadLabelStyle = css`
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-    color: ${theme.COLORS.TEXT.DESCRIPTION};
-`;
-
-const uploadedStyle = css`
-    font-size: 16px;
-    font-weight: bold;
+const quoteText = css`
+    margin-top: 16px;
+    text-align: center;
+    font-size: 12px;
+    color: #6b7280;
+    font-style: italic;
 `;
 
 export default TripImageUploadPage;

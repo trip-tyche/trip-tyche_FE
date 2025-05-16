@@ -9,7 +9,7 @@ import { COLORS } from '@/shared/constants/style';
 interface MediaUploadSectionProps {
     title?: string;
     description?: string;
-    onImageSelect?: () => void;
+    onImageSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const MediaUploadSection = ({
