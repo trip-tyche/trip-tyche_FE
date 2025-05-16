@@ -22,8 +22,8 @@ const CharacterMarker = ({ position, isMapRendered, transportType = 'walking' }:
             case 'car':
                 return {
                     url: carImage,
-                    scaledSize: new window.google.maps.Size(60, 42),
-                    anchor: new window.google.maps.Point(28, 28),
+                    scaledSize: new window.google.maps.Size(50, 44),
+                    anchor: new window.google.maps.Point(20, 36),
                 };
             case 'plane':
                 return {
@@ -32,10 +32,15 @@ const CharacterMarker = ({ position, isMapRendered, transportType = 'walking' }:
                     anchor: new window.google.maps.Point(28, 28),
                 };
             default:
+                // return {
+                //     url: characterImage,
+                //     scaledSize: new window.google.maps.Size(45, 60),
+                //     anchor: new window.google.maps.Point(28, 50),
+                // };
                 return {
-                    url: characterImage,
-                    scaledSize: new window.google.maps.Size(45, 60),
-                    anchor: new window.google.maps.Point(28, 50),
+                    url: carImage,
+                    scaledSize: new window.google.maps.Size(50, 44),
+                    anchor: new window.google.maps.Point(20, 36),
                 };
         }
     };
