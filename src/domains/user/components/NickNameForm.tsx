@@ -181,7 +181,7 @@ const inputIconStyle = css`
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    color: ${COLORS.ICON};
+    color: ${COLORS.ICON.DEFAULT};
 `;
 
 const inputStyle = css`

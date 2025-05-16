@@ -18,7 +18,7 @@ import {
     sortPinPointByDate,
 } from '@/domains/route/utils';
 import { addStartDateAndEndDateToImageDates } from '@/libs/utils/media';
-import Header from '@/shared/components/common/Header';
+import BackButton from '@/shared/components/common/Button/BackButton';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import CharacterMarker from '@/shared/components/map/CharacterMarker';
 import ClusterMarker from '@/shared/components/map/ClusterMarker';
@@ -336,7 +336,6 @@ const TripRoutePage = () => {
                 <>
                     {/* TODO: 컴포넌트 분리 및 useCallback, useMemo 사용 */}
                     {pinPoints.map((point, index) => {
-                        // console.log(point);
                         return (
                             <React.Fragment key={point.pinPointId}>
                                 <Marker
@@ -433,8 +432,7 @@ const TripRoutePage = () => {
 
     return (
         <div css={container}>
-            {/* {showIndicator && <Indicator text='장거리 이동 중...' />} */}
-            <Header title={tripRouteInfo?.title || ''} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
+            <BackButton onClick={() => navigate(`${ROUTES.PATH.MAIN}`)} />
 
             <Map
                 zoom={mapStatus.zoom}

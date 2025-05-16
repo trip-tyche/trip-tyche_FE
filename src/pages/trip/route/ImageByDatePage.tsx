@@ -95,7 +95,6 @@ const ImageByDatePage = () => {
             <div css={container}>
                 {(!result || isLoading || !isAllImageLoad) && <Indicator text='사진 불러오는 중...' />}
 
-                <BackButton onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`)} />
                 <DateMap imageLocation={imageLocation} />
                 <DateSelector
                     selectedDate={selectedDate}

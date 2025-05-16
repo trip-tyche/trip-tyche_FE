@@ -6,7 +6,7 @@ import { COLORS } from '@/shared/constants/style';
 const BackButton = ({ onClick }: { onClick: () => void }) => {
     return (
         <button css={buttonStyle} onClick={onClick}>
-            <ChevronLeft color={COLORS.TEXT.DESCRIPTION} size={24} strokeWidth={1.5} />
+            <ChevronLeft color={COLORS.TEXT.BLACK} size={24} strokeWidth={1.5} />
         </button>
     );
 };
@@ -18,7 +18,7 @@ const buttonStyle = css`
     z-index: 1;
     top: 8px;
     left: 8px;
-    border: 1px solid ${COLORS.TEXT.DESCRIPTION};
+    border: 1px solid ${COLORS.BORDER};
     border: none;
     box-shadow:
         rgba(50, 50, 93, 0.25) 13px 13px 30px -10px,

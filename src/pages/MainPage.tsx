@@ -140,7 +140,7 @@ const notificationContainer = css`
 const notificationIcon = css`
     width: 24px;
     height: 24px;
-    color: ${COLORS.ICON};
+    color: ${COLORS.ICON.DEFAULT};
     -webkit-tap-highlight-color: transparent;
 `;
 
@@ -164,7 +164,7 @@ const notificationBadge = css`
 const settingsIcon = css`
     width: 24px;
     height: 24px;
-    color: ${COLORS.ICON};
+    color: ${COLORS.ICON.DEFAULT};
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
 `;
