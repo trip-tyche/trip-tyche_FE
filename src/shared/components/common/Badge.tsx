@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import { COLORS } from '@/shared/constants/style';
+import { THEME_COLORS } from '@/shared/constants/style';
 
 type MessageType = 'SHARED_APPROVE' | 'SHARED_REJECTED';
 
@@ -16,8 +16,8 @@ const Badge = ({ message }: { message: MessageType }) => {
 
 const badge = (isSuccess: boolean) => css`
     padding: 2px 8px;
-    background-color: ${isSuccess ? COLORS.ALERT.SUCCESS.BACKGROUND : COLORS.ALERT.ERROR.BACKGROUND};
-    color: ${isSuccess ? COLORS.ALERT.SUCCESS.TEXT : COLORS.ALERT.ERROR.TEXT};
+    color: ${THEME_COLORS[isSuccess ? 'success' : 'error'].TEXT};
+    background-color: ${THEME_COLORS[isSuccess ? 'success' : 'error'].BACKGROUND};
     font-size: 12px;
     border-radius: 9999px;
 `;

@@ -1,5 +1,8 @@
 import { Location } from '@/shared/types/map';
 
+export type ImageUploadStepType = 'upload' | 'processing' | 'review';
+export type ImageProcessStatusType = 'metadata' | 'optimize' | 'upload';
+
 export interface MediaFile {
     mediaFileId: string;
     latitude: number;

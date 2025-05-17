@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from 'react';
+
 import imageCompression from 'browser-image-compression';
 
 import { COMPRESSION_OPTIONS } from '@/domains/media/constants';
@@ -43,7 +45,7 @@ export const extractMetadataFromImage = async (images: FileList | null): Promise
 // 이미지 리사이징
 export const resizeImages = async (
     images: ImageFile[] | null,
-    onProgress?: (progress: number) => void,
+    onProgress?: Dispatch<SetStateAction<{ metadata: number; optimize: number; upload: number }>>,
 ): Promise<ImageFile[]> => {
     if (!images || images.length === 0) return [];
 
@@ -68,7 +70,10 @@ export const resizeImages = async (
                     processedImages++;
                     if (onProgress) {
                         const progressPercent = Math.round((processedImages / totalImages) * 100);
-                        onProgress(progressPercent);
+                        onProgress((prev) => ({
+                            ...prev,
+                            optimize: progressPercent,
+                        }));
                     }
 
                     return {
@@ -80,7 +85,10 @@ export const resizeImages = async (
                     processedImages++;
                     if (onProgress) {
                         const progressPercent = Math.round((processedImages / totalImages) * 100);
-                        onProgress(progressPercent);
+                        onProgress((prev) => ({
+                            ...prev,
+                            optimize: progressPercent,
+                        }));
                     }
                     return image;
                 }

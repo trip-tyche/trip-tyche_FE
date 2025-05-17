@@ -1,4 +1,4 @@
-import { MediaFile } from '@/domains/media/types';
+import { ImageUploadStepType, MediaFile } from '@/domains/media/types';
 
 /**
  * 기본 위치{latitude: 0, longtitude: 0}가 아닌 유효한 위치를 가진 미디어 파일만 필터링
@@ -18,3 +18,14 @@ export const filterValidDatePinPoint = (mediaFiles: MediaFile[]) =>
 
 export const removeDuplicateDates = (datesString: string[]) =>
     [...new Set<string>([...datesString])].sort((a, b) => a.localeCompare(b));
+
+export const getTitleByStep = (step: ImageUploadStepType) => {
+    switch (step) {
+        case 'upload':
+            return '여행 사진 등록';
+        case 'processing':
+            return '사진 처리 중';
+        case 'review':
+            return '정보 확인';
+    }
+};
