@@ -67,6 +67,7 @@ const imageUploadSection = css`
     background-color: ${COLORS.BACKGROUND.WHITE};
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
+    user-select: none;
 `;
 
 const uploadIconWrapper = css`

@@ -28,15 +28,13 @@ const TripImageUploadPage = () => {
 
     const { isModalOpen, closeModal } = useBrowserCheck();
 
-    const { images, extractMetaDataAndResizeImages, uploadImages } = useImageUpload();
-    // const { images, progress, isProcessing, extractMetaDataAndResizeImages, uploadImages } = useImageUpload();
+    const { images, extractMetaData, uploadImages } = useImageUpload();
+    // const { images, progress, isProcessing, extractMetaData, uploadImages } = useImageUpload();
 
     const { tripKey } = useParams();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const location = useLocation();
 
-    const isFirstTicket = Boolean(location.state);
     const isEdit = searchParams.get('edit') !== null;
 
     useEffect(() => {
@@ -75,14 +73,14 @@ const TripImageUploadPage = () => {
 
     const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
-            await extractMetaDataAndResizeImages(event.target.files);
+            await extractMetaData(event.target.files);
             setIsUploadModalModalOpen(true);
         }
     };
 
-    const imagesWithoutDateCount = images?.imagesWithoutDate.length || 0;
-    const imagesWithoutLocation = images?.imagesWithoutLocation.length || 0;
-    const hasInvalidImages = !!(imagesWithoutDateCount + imagesWithoutLocation);
+    // const imagesWithoutDateCount = images?.imagesWithoutDate.length || 0;
+    // const imagesWithoutLocation = images?.imagesWithoutLocation.length || 0;
+    // const hasInvalidImages = !!(imagesWithoutDateCount + imagesWithoutLocation);
 
     return (
         <div css={page}>
@@ -92,11 +90,7 @@ const TripImageUploadPage = () => {
                 title={'사진 등록'}
                 isBackButton
                 onBack={() =>
-                    isFirstTicket
-                        ? navigate(ROUTES.PATH.MAIN)
-                        : isEdit
-                          ? navigate(ROUTES.PATH.TRIP.MANAGEMENT.IMAGES(tripKey!))
-                          : navigate(ROUTES.PATH.MAIN)
+                    isEdit ? navigate(ROUTES.PATH.TRIP.MANAGEMENT.IMAGES(tripKey!)) : navigate(ROUTES.PATH.MAIN)
                 }
             />
 
@@ -114,7 +108,7 @@ const TripImageUploadPage = () => {
                             accept='image/*,.heic'
                             multiple
                             onChange={async (event) => {
-                                await extractMetaDataAndResizeImages(event.target.files);
+                                await extractMetaData(event.target.files);
                                 setIsUploadModalModalOpen(true);
                             }}
                             css={fileInputStyle}
@@ -164,7 +158,7 @@ const TripImageUploadPage = () => {
                 />
             )}
 
-            {isUploadModalOpen && (
+            {/* {isUploadModalOpen && (
                 <AlertModal confirmText='등록하기' confirmModal={closeAlertModal}>
                     <div css={alertStyle}>
                         <h1>
@@ -180,40 +174,40 @@ const TripImageUploadPage = () => {
                         </div>
                     </div>
                 </AlertModal>
-            )}
+            )} */}
         </div>
     );
 };
 
-const alertStyle = css`
-    h1 {
-        text-align: center;
-        font-size: 18px;
-        font-weight: 600;
-        color: #181818;
-        margin-top: 24px;
-        margin-bottom: 20px;
-    }
+// const alertStyle = css`
+//     h1 {
+//         text-align: center;
+//         font-size: 18px;
+//         font-weight: 600;
+//         color: #181818;
+//         margin-top: 24px;
+//         margin-bottom: 20px;
+//     }
 
-    div {
-        font-size: 16px;
-        margin: 0 26px 34px 26px;
-        text-align: center;
-        color: ${theme.COLORS.TEXT.DESCRIPTION};
-        line-height: 20px;
-    }
+//     div {
+//         font-size: 16px;
+//         margin: 0 26px 34px 26px;
+//         text-align: center;
+//         color: ${theme.COLORS.TEXT.DESCRIPTION};
+//         line-height: 20px;
+//     }
 
-    p {
-        margin-top: 12px;
-    }
-`;
+//     p {
+//         margin-top: 12px;
+//     }
+// `;
 
-const countStyle = css`
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0 4px;
-    color: ${theme.COLORS.PRIMARY};
-`;
+// const countStyle = css`
+//     font-size: 18px;
+//     font-weight: 600;
+//     margin: 0 4px;
+//     color: ${theme.COLORS.PRIMARY};
+// `;
 
 const page = css`
     height: 100dvh;

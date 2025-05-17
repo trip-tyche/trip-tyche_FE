@@ -1,5 +1,7 @@
 import { css } from '@emotion/react';
 
+import { COLORS } from '@/shared/constants/style';
+
 interface ProgressHeaderProps {
     currentStep: string;
 }
@@ -62,7 +64,7 @@ const ProgressHeader = ({ currentStep }: ProgressHeaderProps) => {
                 <div css={[step, getStepStyle('input')]}>4</div>
             </div>
 
-            <div css={stepTable}>
+            <div css={stepText}>
                 <span>사진 등록</span>
                 <span>분석 중</span>
                 <span>정보 확인</span>
@@ -73,41 +75,45 @@ const ProgressHeader = ({ currentStep }: ProgressHeaderProps) => {
 };
 
 const container = css`
-    padding: 0.75rem 1rem;
-    background-color: white;
-    border-bottom: 1px solid #e5e7eb;
+    padding: 12px;
+    background-color: ${COLORS.BACKGROUND.WHITE};
+    border-bottom: 1px solid ${COLORS.BORDER};
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
 `;
 
 const stepAndLink = css`
+    width: 95%;
     display: flex;
     align-items: center;
 `;
 
 const step = css`
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 24px;
+    height: 24px;
     border-radius: 9999px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.875rem;
+    font-size: 14px;
 `;
 
 const link = css`
     flex: 1;
-    height: 0.25rem;
-    margin-left: 0.25rem;
-    margin-right: 0.25rem;
+    height: 4px;
+    margin-left: 4px;
+    margin-right: 4px;
 `;
 
-const stepTable = css`
+const stepText = css`
+    width: 100%;
     display: flex;
     justify-content: space-between;
-    font-size: 0.75rem;
+    font-size: 12px;
     color: #6b7280;
-    margin-top: 0.25rem;
-    padding-left: 0.25rem;
-    padding-right: 0.25rem;
+    margin-top: 8px;
 `;
 
 export default ProgressHeader;
