@@ -23,15 +23,28 @@ export const removeDuplicateImages = (images: FileList): FileList => {
     return dataTransfer.files;
 };
 
-export const extractMetadataFromImage = async (images: FileList | null): Promise<ImageFile[]> => {
-    if (!images || images.length === 0) {
-        return [];
-    }
+export const extractMetadataFromImage = async (
+    images: FileList,
+    onProgress?: Dispatch<SetStateAction<{ metadata: number; optimize: number; upload: number }>>,
+): Promise<ImageFile[]> => {
+    if (images.length === 0) return [];
+
+    let process = 0;
 
     return await Promise.all(
         Array.from(images).map(async (image) => {
             const location = await extractLocationFromImage(image);
             const date = await extractDateFromImage(image);
+
+            process++;
+
+            if (onProgress) {
+                const progressPercent = Math.round((process / images.length) * 100);
+                onProgress((prev) => ({
+                    ...prev,
+                    metadata: progressPercent,
+                }));
+            }
 
             return {
                 image,
@@ -44,15 +57,15 @@ export const extractMetadataFromImage = async (images: FileList | null): Promise
 
 // 이미지 리사이징
 export const resizeImages = async (
-    images: ImageFile[] | null,
+    images: ImageFile[],
     onProgress?: Dispatch<SetStateAction<{ metadata: number; optimize: number; upload: number }>>,
 ): Promise<ImageFile[]> => {
-    if (!images || images.length === 0) return [];
+    if (images.length === 0) return [];
 
     const BATCH_SIZE = 10;
     const resizedImages: ImageFile[] = [];
     const totalImages = images.length;
-    let processedImages = 0;
+    let process = 0;
 
     for (let i = 0; i < images.length; i += BATCH_SIZE) {
         const batch = images.slice(i, i + BATCH_SIZE);
@@ -67,9 +80,9 @@ export const resizeImages = async (
                     });
                     URL.revokeObjectURL(URL.createObjectURL(resizedBlob));
 
-                    processedImages++;
+                    process++;
                     if (onProgress) {
-                        const progressPercent = Math.round((processedImages / totalImages) * 100);
+                        const progressPercent = Math.round((process / totalImages) * 100);
                         onProgress((prev) => ({
                             ...prev,
                             optimize: progressPercent,
@@ -82,9 +95,9 @@ export const resizeImages = async (
                         location: image.location,
                     };
                 } catch (error) {
-                    processedImages++;
+                    process++;
                     if (onProgress) {
-                        const progressPercent = Math.round((processedImages / totalImages) * 100);
+                        const progressPercent = Math.round((process / totalImages) * 100);
                         onProgress((prev) => ({
                             ...prev,
                             optimize: progressPercent,

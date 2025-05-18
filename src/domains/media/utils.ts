@@ -26,6 +26,6 @@ export const getTitleByStep = (step: ImageUploadStepType) => {
         case 'processing':
             return '사진 처리 중';
         case 'review':
-            return '정보 확인';
+            return '처리된 사진 정보';
     }
 };

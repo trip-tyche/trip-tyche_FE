@@ -34,8 +34,8 @@ export const COLORS = {
 export const THEME_COLORS: Record<ThemeType, { TEXT: string; BACKGROUND: string }> = {
     default: { TEXT: '#4b5563', BACKGROUND: '#f9fafb' },
     primary: { TEXT: '#404040', BACKGROUND: '#eff6ff' },
-    success: { TEXT: '#065f46', BACKGROUND: '#d1fae5' },
-    warning: { TEXT: '#fff9db', BACKGROUND: '#f59f00' },
+    success: { TEXT: '#065f46', BACKGROUND: '#f0fdf4' },
+    warning: { TEXT: '#a16207', BACKGROUND: 'rgb(254, 252, 232)' },
     error: { TEXT: '#ef4444', BACKGROUND: '#fff5f5' },
 };
 

@@ -16,8 +16,8 @@ const AlertBox = ({ theme = 'default', title, description, icon }: AlertBoxProps
             <div css={iconWrapper}>{icon}</div>
 
             <div css={contentStyle}>
-                {title && <p css={titleStyle}>{title}</p>}
-                <p css={descriptionStyle}>{description}</p>
+                {title && <p css={titleStyle(theme)}>{title}</p>}
+                <p css={descriptionStyle(theme)}>{description}</p>
             </div>
         </div>
     );
@@ -29,12 +29,10 @@ const container = (theme: ThemeType) => css`
     border-radius: 8px;
     padding: 16px;
     display: flex;
-    align-items: center;
 `;
 
 const iconWrapper = () => css`
     margin-right: 12px;
-    align-self: flex-start;
 `;
 
 const contentStyle = css`
@@ -43,14 +41,15 @@ const contentStyle = css`
     gap: 6px;
 `;
 
-const titleStyle = css`
-    font-weight: 500;
+const titleStyle = (theme: ThemeType) => css`
+    font-size: ${(theme === 'warning' || theme === 'error') && '14px'};
+    font-weight: 600;
 `;
 
-const descriptionStyle = css`
+const descriptionStyle = (theme: ThemeType) => css`
     font-size: 14px;
-    color: #4b5563;
-    line-height: 1.2;
+    color: ${theme === 'warning' || theme === 'error' ? THEME_COLORS[theme].TEXT : '#4b5563'};
+    line-height: 1.3;
 `;
 
 export default AlertBox;

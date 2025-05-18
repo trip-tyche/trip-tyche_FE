@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from 'react';
+
 import axios from 'axios';
 
 import { PresignedUrlResponse, MediaFile, UnlocatedMediaFileList } from '@/domains/media/types';
@@ -46,11 +48,12 @@ export const mediaAPI = {
         }
     },
     // S3 스토리지로 미디어 파일 업로드
-    uploadToS3: async (presignedUrl: string, file: File) => {
+    uploadToS3: async (presignedUrl: string, file: File, onProgress?: () => void) => {
         await axios.put(presignedUrl, file, {
             headers: {
                 'Content-Type': file.type,
             },
+            onUploadProgress: onProgress,
         });
     },
     // 미디어 파일 메타데이터 등록 (mediaLink, latitude, longitude, recordDate)

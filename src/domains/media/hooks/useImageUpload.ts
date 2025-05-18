@@ -33,7 +33,7 @@ export const useImageUpload = () => {
         const uniqueImages = removeDuplicateImages(images);
 
         console.time(`extract metadata`);
-        const imagesWithMetadata = await extractMetadataFromImage(uniqueImages);
+        const imagesWithMetadata = await extractMetadataFromImage(uniqueImages, setProgress);
         console.timeEnd(`extract metadata`);
 
         return imagesWithMetadata;
@@ -65,10 +65,20 @@ export const useImageUpload = () => {
             const { data: presignedUrls } = result;
 
             console.time(`image upload to S3`);
+
+            let process = 0;
+
             await Promise.all(
-                presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) =>
-                    mediaAPI.uploadToS3(urlInfo.presignedPutUrl, images[index].image),
-                ),
+                presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) => {
+                    process++;
+                    const progressPercent = Math.round((process / images.length) * 100);
+                    return mediaAPI.uploadToS3(urlInfo.presignedPutUrl, images[index].image, () => {
+                        setProgress((prev) => ({
+                            ...prev,
+                            upload: progressPercent,
+                        }));
+                    });
+                }),
             );
             console.timeEnd(`image upload to S3`);
 

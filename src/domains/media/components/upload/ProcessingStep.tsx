@@ -18,9 +18,32 @@ const ProcessingStep = ({ currentProcess, progress }: ProcessingStepProps) => {
         } else if (currentProcess === 'optimize') {
             return 10 + Math.floor(progress.optimize * 0.75);
         } else if (currentProcess === 'upload') {
-            return 70 + Math.floor(progress.upload * 0.15);
+            return 85 + Math.floor(progress.upload * 0.15);
         }
         return 0;
+    };
+
+    const getAlertBoxMessage = (currentProcess: ImageProcessStatusType) => {
+        if (currentProcess === 'metadata') {
+            return {
+                title: '사진 정보 수집 중...',
+                description: '소중한 추억의 장소와 날짜를 기억하고 있어요.',
+            };
+        } else if (currentProcess === 'optimize') {
+            return {
+                title: '사진 최적화 중...',
+                description: '언제 어디서나 쉽게 볼 수 있도록 사진을 가볍게 만들고 있어요.',
+            };
+        } else if (currentProcess === 'upload') {
+            return {
+                title: '안전하게 저장 중...',
+                description: '소중한 사진을 안전하게 저장하고 있어요.',
+            };
+        }
+        return {
+            title: '문제가 발생했나요?',
+            description: '새로고침 및 서비스 종료 후 다시 이용해주세요.',
+        };
     };
 
     return (
@@ -31,8 +54,8 @@ const ProcessingStep = ({ currentProcess, progress }: ProcessingStepProps) => {
                 </div>
                 <AlertBox
                     theme='primary'
-                    title='메타데이터 추출 중...'
-                    description='사진에서 위치와 날짜 정보를 추출하고 있습니다.'
+                    title={getAlertBoxMessage(currentProcess).title}
+                    description={getAlertBoxMessage(currentProcess).description}
                     icon={<Loader size={16} color={COLORS.PRIMARY} style={{ animation: 'spin 1s linear infinite' }} />}
                 />
                 <div css={progressContainer}>
@@ -46,9 +69,9 @@ const ProcessingStep = ({ currentProcess, progress }: ProcessingStepProps) => {
             </main>
 
             <AlertBox
-                description='처리 중에는 화면을 나가지 마세요. 이 과정은 약 10초 정도 소요됩니다. 위치 및 날짜 정보가 없는
-                        사진은 후에 수동으로 정보를 추가할 수 있습니다.'
-                icon={<AlertCircle size={20} color={'#4b5563'} />}
+                description='처리 중에는 화면을 나가지 마세요. 약 10초 정도 소요됩니다. 위치 및 날짜 정보가 없는
+                        사진은 후에 정보를 직접 추가할 수 있습니다.'
+                icon={<AlertCircle size={16} color={'#4b5563'} />}
             />
         </div>
     );
