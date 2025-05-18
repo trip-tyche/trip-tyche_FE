@@ -7,24 +7,25 @@ import ProcessingStep from '@/domains/media/components/upload/ProcessingStep';
 import ReviewStep from '@/domains/media/components/upload/ReviewStep';
 import UploadStep from '@/domains/media/components/upload/UploadStep';
 import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
-import { ImageFile, ImagesFiles, ImageUploadStepType } from '@/domains/media/types';
-import { getTitleByStep, removeDuplicateDates } from '@/domains/media/utils';
-import { getAddressFromLocation } from '@/libs/utils/map';
+import { ImageUploadStepType, ImageWithAddress } from '@/domains/media/types';
+import { getAddressFromImageLocation, getImageDateFromImage, getTitleByStep } from '@/domains/media/utils';
+import { formatHyphenToDot } from '@/libs/utils/date';
 import Header from '@/shared/components/common/Header';
 import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
 import ProgressHeader from '@/shared/components/common/ProgressHeader';
 import { ROUTES } from '@/shared/constants/route';
 import { COLORS } from '@/shared/constants/style';
 import useBrowserCheck from '@/shared/hooks/useBrowserCheck';
-import { useMapControl } from '@/shared/hooks/useMapControl';
+import { useMapScript } from '@/shared/hooks/useMapScript';
 
 const TripImageUploadPage = () => {
     const [step, setStep] = useState<ImageUploadStepType>('upload');
-    const [location, setLocation] = useState<{ image: ImageFile; imageName: string; address: string }[]>([]);
+    const [imagesWithAddress, setImagesWithAddress] = useState<ImageWithAddress[]>([]);
 
     const { isModalOpen, closeModal } = useBrowserCheck();
-    const { images, currentProcess, progress, extractMetaData, optimizeImages, uploadImagesToS3 } = useImageUpload();
-    const { isMapScriptLoaded } = useMapControl(null, null);
+    const { images, imageCount, currentProcess, progress, extractMetaData, optimizeImages, uploadImagesToS3 } =
+        useImageUpload();
+    const { isMapScriptLoaded } = useMapScript();
     const { tripKey } = useParams();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -32,31 +33,42 @@ const TripImageUploadPage = () => {
     const isEdit = searchParams.get('edit') !== null;
 
     useEffect(() => {
-        const getLocation = async () => {
+        const getAddressFromLocation = async () => {
             if (images && isMapScriptLoaded) {
-                const promise = images.totalImages.map(async (image) => {
-                    const address = await getGeocoderFromImages(image);
+                const imagesWithAddress = await Promise.all(
+                    images.map(async (image) => {
+                        const address = image.location ? await getAddressFromImageLocation(image.location) : '';
+                        const formattedAddress = address ? `${address.split(' ')[0]}, ${address.split(' ')[1]}` : '';
+                        const blobUrl = URL.createObjectURL(image.image);
 
-                    return {
-                        image,
-                        imageName: image.image.name,
-                        address: address?.data || '',
-                    };
-                });
-                const result = await Promise.all(promise);
-                // console.log('result: ', result);
-                setLocation(result);
+                        return {
+                            imageUrl: blobUrl,
+                            recordDate: image.recordDate,
+                            address: formattedAddress,
+                        };
+                    }),
+                );
+                setImagesWithAddress(imagesWithAddress);
             }
         };
 
-        getLocation();
+        getAddressFromLocation();
     }, [images, isMapScriptLoaded]);
 
-    const getGeocoderFromImages = async (image: ImageFile | null) => {
-        if (images) {
-            return await getAddressFromLocation(image?.location?.latitude || 0, image?.location?.longitude || 0);
-        } else {
-            return null;
+    const renderMainSectionByStep = (step: ImageUploadStepType) => {
+        switch (step) {
+            case 'upload':
+                return <UploadStep onImageSelect={handleImageUpload} />;
+            case 'processing':
+                return <ProcessingStep currentProcess={currentProcess} progress={progress} />;
+            case 'review':
+                return (
+                    <ReviewStep
+                        imageCount={imageCount!}
+                        tripPeriod={[startDate, endDate]}
+                        imagesWithAddress={imagesWithAddress}
+                    />
+                );
         }
     };
 
@@ -71,32 +83,9 @@ const TripImageUploadPage = () => {
         }
     };
 
-    const renderMainSectionByStep = (step: ImageUploadStepType) => {
-        switch (step) {
-            case 'upload':
-                return <UploadStep onImageSelect={handleImageUpload} />;
-            case 'processing':
-                return <ProcessingStep currentProcess={currentProcess} progress={progress} />;
-            case 'review':
-                return (
-                    <ReviewStep
-                        images={images!}
-                        imageDates={getImageDates(images?.totalImages || null)}
-                        location={location.sort((a, b) => {
-                            return new Date(a.image.recordDate).getTime() - new Date(b.image.recordDate).getTime();
-                        })}
-                    />
-                );
-        }
-    };
-
-    const getImageDates = (images: ImageFile[] | null) => {
-        if (images?.length === 0) {
-            return null;
-        }
-        const imageDates = images?.map((image: ImageFile) => image.recordDate.split('T')[0]) || [];
-        return removeDuplicateDates(imageDates).filter((date) => date);
-    };
+    const imageDates = getImageDateFromImage(images || null);
+    const startDate = imageDates?.length ? formatHyphenToDot(imageDates[0]) : '';
+    const endDate = imageDates?.length ? formatHyphenToDot(imageDates[imageDates.length - 1]) : '';
 
     return (
         <div css={page}>

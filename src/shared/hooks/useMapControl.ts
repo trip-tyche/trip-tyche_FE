@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useLoadScript } from '@react-google-maps/api';
-
-import { GOOGLE_MAPS_CONFIG } from '@/shared/constants/map';
+import { useMapScript } from '@/shared/hooks/useMapScript';
 import { Location, MapType } from '@/shared/types/map';
 
-export const useMapControl = (initialZoom: number | null, initialCenter: Location | null) => {
-    const { isLoaded: isMapScriptLoaded, loadError: isMapScriptLoadError } = useLoadScript(GOOGLE_MAPS_CONFIG);
+export const useMapControl = (initialZoom: number, initialCenter: Location | null) => {
+    const { isMapScriptLoaded, isMapScriptLoadError } = useMapScript();
 
     const [isMapRendered, setIsMapRendered] = useState(false);
     const [zoom, setZoom] = useState(initialZoom);

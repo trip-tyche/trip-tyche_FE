@@ -1,4 +1,6 @@
-import { ImageProcessStatusType, ImageUploadStepType, MediaFile } from '@/domains/media/types';
+import { ImageFile, ImageProcessStatusType, ImageUploadStepType, MediaFile } from '@/domains/media/types';
+import { getAddressFromLocation } from '@/libs/utils/map';
+import { Location } from '@/shared/types/map';
 
 /**
  * 기본 위치{latitude: 0, longtitude: 0}가 아닌 유효한 위치를 가진 미디어 파일만 필터링
@@ -51,4 +53,21 @@ export const getAlertBoxMessage = (currentProcess: ImageProcessStatusType) => {
         title: '문제가 발생했나요?',
         description: '새로고침 및 서비스 종료 후 다시 이용해주세요.',
     };
+};
+
+export const getAddressFromImageLocation = async (location: Location): Promise<string> => {
+    const { latitude, longitude } = location;
+    const result = await getAddressFromLocation(latitude, longitude);
+    if (result.success) {
+        return result?.data as string;
+    }
+    return result.error as string;
+};
+
+export const getImageDateFromImage = (images: ImageFile[] | null) => {
+    if (!images || images?.length === 0) return null;
+    const imageDates = images?.map((image: ImageFile) => image.recordDate.split('T')[0]);
+    const validDates = imageDates.filter((date) => date);
+
+    return removeDuplicateDates(validDates);
 };

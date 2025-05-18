@@ -1,5 +1,3 @@
-import { Dispatch, SetStateAction } from 'react';
-
 import axios from 'axios';
 
 import { PresignedUrlResponse, MediaFile, UnlocatedMediaFileList } from '@/domains/media/types';

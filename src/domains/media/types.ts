@@ -17,11 +17,16 @@ export interface ImageFile {
     location: Location | null;
 }
 
-export interface ImagesFiles {
-    totalImages: ImageFile[];
-    completeImages: ImageFile[];
-    imagesWithoutDate: ImageFile[];
-    imagesWithoutLocation: ImageFile[];
+export interface ImageWithAddress {
+    imageUrl: string;
+    recordDate: string;
+    address: string;
+}
+
+export interface ImageCount {
+    total: number;
+    withoutDate: number;
+    withoutLocation: number;
 }
 
 export interface UnlocatedMediaFile {

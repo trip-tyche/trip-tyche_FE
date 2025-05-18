@@ -67,12 +67,13 @@ export const formatHyphenToDot = (dateString: string): string => {
 };
 
 // YYYY-MM-DDTHH:mm:ss => MM월 DD일
-export const formatKoreanDate = (dateString: string) => {
+export const formatKoreanDate = (dateString: string, hasYear = false) => {
     const date = new Date(dateString);
+    const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDate();
 
-    return `${month}월 ${day}일`;
+    return hasYear ? `${year}년 ${month}월 ${day}일` : `${month}월 ${day}일`;
 };
 
 // YYYY-MM-DDTHH:mm:ss => 오전(후) HH:MM
