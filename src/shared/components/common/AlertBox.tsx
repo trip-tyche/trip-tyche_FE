@@ -29,6 +29,7 @@ const container = (theme: ThemeType) => css`
     border-radius: 8px;
     padding: 16px;
     display: flex;
+    border: ${THEME_COLORS[theme].BORDER};
 `;
 
 const iconWrapper = () => css`
@@ -49,7 +50,7 @@ const titleStyle = (theme: ThemeType) => css`
 const descriptionStyle = (theme: ThemeType) => css`
     font-size: 14px;
     color: ${theme === 'warning' || theme === 'error' ? THEME_COLORS[theme].TEXT : '#4b5563'};
-    line-height: 1.3;
+    line-height: 1.2;
 `;
 
 export default AlertBox;

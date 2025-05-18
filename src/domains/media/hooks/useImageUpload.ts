@@ -32,18 +32,18 @@ export const useImageUpload = () => {
         setCurrentProcess('metadata');
         const uniqueImages = removeDuplicateImages(images);
 
-        console.time(`extract metadata`);
+        // console.time(`extract metadata`);
         const imagesWithMetadata = await extractMetadataFromImage(uniqueImages, setProgress);
-        console.timeEnd(`extract metadata`);
+        // console.timeEnd(`extract metadata`);
 
         return imagesWithMetadata;
     };
 
     const optimizeImages = async (images: ImageFile[]) => {
         setCurrentProcess('optimize');
-        console.time(`resize and convert to WebP`);
+        // console.time(`resize and convert to WebP`);
         const optimizedImages = await resizeImages(images, setProgress);
-        console.timeEnd(`resize and convert to WebP`);
+        // console.timeEnd(`resize and convert to WebP`);
 
         setImages({
             totalImages: optimizedImages,
@@ -64,7 +64,7 @@ export const useImageUpload = () => {
 
             const { data: presignedUrls } = result;
 
-            console.time(`image upload to S3`);
+            // console.time(`image upload to S3`);
 
             let process = 0;
 
@@ -80,7 +80,7 @@ export const useImageUpload = () => {
                     });
                 }),
             );
-            console.timeEnd(`image upload to S3`);
+            // console.timeEnd(`image upload to S3`);
 
             submitS3urlAndMetadata(images, presignedUrls);
         } catch (error) {
@@ -99,9 +99,9 @@ export const useImageUpload = () => {
             };
         });
 
-        console.time(`send metadata to server`);
+        // console.time(`send metadata to server`);
         await mediaAPI.createMediaFileMetadata(tripKey!, metaDatas);
-        console.timeEnd(`send metadata to server`);
+        // console.timeEnd(`send metadata to server`);
 
         // if (!isEdit) {
         //     const result = await toResult(async () => await mediaAPI.updateTripStatusToImagesUploaded(tripKey!));

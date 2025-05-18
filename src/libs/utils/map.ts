@@ -23,14 +23,16 @@ const addressCache = new Map();
  * @returns Result 패턴이 적용된 주소
  */
 export const getAddressFromLocation = async (latitude: number, longitude: number) => {
+    if (latitude === 0 && longitude === 0) return null;
+
     const cacheKey = `${latitude}-${longitude}`;
     if (addressCache.has(cacheKey)) {
         return addressCache.get(cacheKey);
     }
-
     try {
         return { success: true, data: await convertLocationToAddress(latitude, longitude) };
     } catch (error) {
+        console.error(error);
         return { success: false, error: '' };
     }
 };

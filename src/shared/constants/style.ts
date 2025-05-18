@@ -8,6 +8,7 @@ export const COLORS = {
         BLACK: '#404040',
         WHITE: '#F1F1F1',
         PLACEHOLDER: '#9ca3af',
+        SUCCESS: '#059669',
         ERROR: '#ef4444',
         DESCRIPTION: '#4b5563',
         DESCRIPTION_LIGHT: '#8B95A1',
@@ -31,11 +32,11 @@ export const COLORS = {
     },
 } as const;
 
-export const THEME_COLORS: Record<ThemeType, { TEXT: string; BACKGROUND: string }> = {
+export const THEME_COLORS: Record<ThemeType, { TEXT: string; BACKGROUND: string; BORDER?: string }> = {
     default: { TEXT: '#4b5563', BACKGROUND: '#f9fafb' },
     primary: { TEXT: '#404040', BACKGROUND: '#eff6ff' },
     success: { TEXT: '#065f46', BACKGROUND: '#f0fdf4' },
-    warning: { TEXT: '#a16207', BACKGROUND: 'rgb(254, 252, 232)' },
+    warning: { TEXT: '#a16207', BACKGROUND: '#fefce8', BORDER: '1px solid #fef08a' },
     error: { TEXT: '#ef4444', BACKGROUND: '#fff5f5' },
 };
 

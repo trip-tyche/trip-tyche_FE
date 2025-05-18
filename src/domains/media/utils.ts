@@ -1,4 +1,4 @@
-import { ImageUploadStepType, MediaFile } from '@/domains/media/types';
+import { ImageProcessStatusType, ImageUploadStepType, MediaFile } from '@/domains/media/types';
 
 /**
  * 기본 위치{latitude: 0, longtitude: 0}가 아닌 유효한 위치를 가진 미디어 파일만 필터링
@@ -28,4 +28,27 @@ export const getTitleByStep = (step: ImageUploadStepType) => {
         case 'review':
             return '처리된 사진 정보';
     }
+};
+
+export const getAlertBoxMessage = (currentProcess: ImageProcessStatusType) => {
+    if (currentProcess === 'metadata') {
+        return {
+            title: '사진 정보 수집 중...',
+            description: '소중한 추억의 장소와 날짜를 기억하고 있어요.',
+        };
+    } else if (currentProcess === 'optimize') {
+        return {
+            title: '사진 최적화 중...',
+            description: '언제 어디서나 쉽게 볼 수 있도록 사진을 가볍게 만들고 있어요.',
+        };
+    } else if (currentProcess === 'upload') {
+        return {
+            title: '안전하게 저장 중...',
+            description: '소중한 사진을 안전하게 저장하고 있어요.',
+        };
+    }
+    return {
+        title: '문제가 발생했나요?',
+        description: '새로고침 및 서비스 종료 후 다시 이용해주세요.',
+    };
 };

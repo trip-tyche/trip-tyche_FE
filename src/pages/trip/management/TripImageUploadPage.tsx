@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -7,58 +7,58 @@ import ProcessingStep from '@/domains/media/components/upload/ProcessingStep';
 import ReviewStep from '@/domains/media/components/upload/ReviewStep';
 import UploadStep from '@/domains/media/components/upload/UploadStep';
 import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
-import { ImageUploadStepType } from '@/domains/media/types';
-import { getTitleByStep } from '@/domains/media/utils';
+import { ImageFile, ImagesFiles, ImageUploadStepType } from '@/domains/media/types';
+import { getTitleByStep, removeDuplicateDates } from '@/domains/media/utils';
+import { getAddressFromLocation } from '@/libs/utils/map';
 import Header from '@/shared/components/common/Header';
 import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
 import ProgressHeader from '@/shared/components/common/ProgressHeader';
 import { ROUTES } from '@/shared/constants/route';
 import { COLORS } from '@/shared/constants/style';
 import useBrowserCheck from '@/shared/hooks/useBrowserCheck';
-import { useToastStore } from '@/shared/stores/useToastStore';
+import { useMapControl } from '@/shared/hooks/useMapControl';
 
 const TripImageUploadPage = () => {
     const [step, setStep] = useState<ImageUploadStepType>('upload');
-    const showToast = useToastStore((state) => state.showToast);
+    const [location, setLocation] = useState<{ image: ImageFile; imageName: string; address: string }[]>([]);
 
     const { isModalOpen, closeModal } = useBrowserCheck();
     const { images, currentProcess, progress, extractMetaData, optimizeImages, uploadImagesToS3 } = useImageUpload();
-    // const { images, progress, isProcessing, extractMetaData, uploadImages } = useImageUpload();
-
+    const { isMapScriptLoaded } = useMapControl(null, null);
     const { tripKey } = useParams();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
     const isEdit = searchParams.get('edit') !== null;
 
-    // const closeAlertModal = async () => {
-    //     if (images) {
-    //         setIsUploadModalModalOpen(false);
+    useEffect(() => {
+        const getLocation = async () => {
+            if (images && isMapScriptLoaded) {
+                const promise = images.totalImages.map(async (image) => {
+                    const address = await getGeocoderFromImages(image);
 
-    //         if (isEdit) {
-    //             setIsUploading(true);
-    //             await waitForCompletion();
-    //             setIsUploading(true);
+                    return {
+                        image,
+                        imageName: image.image.name,
+                        address: address?.data || '',
+                    };
+                });
+                const result = await Promise.all(promise);
+                // console.log('result: ', result);
+                setLocation(result);
+            }
+        };
 
-    //             navigate(`${ROUTES.PATH.MAIN}`);
-    //             showToast(`${images.totalImages.length}장의 사진이 등록되었습니다.`);
-    //             return;
-    //         }
+        getLocation();
+    }, [images, isMapScriptLoaded]);
 
-    //         const imageDates = [...images.completeImages, ...images.imagesWithoutDate].map(
-    //             (image) => image.recordDate.split('T')[0],
-    //         );
-    //         const uniqueDates = Array.from(new Set(imageDates)).sort(
-    //             (dateA, dateB) => new Date(dateA).getTime() - new Date(dateB).getTime(),
-    //         );
-
-    //         navigate(`${ROUTES.PATH.TRIP.MANAGEMENT.INFO(tripKey!)}`, { state: uniqueDates });
-    //         return;
-    //     } else {
-    //         setIsUploadModalModalOpen(false);
-    //         showToast('등록 가능한 사진이 없습니다.');
-    //     }
-    // };
+    const getGeocoderFromImages = async (image: ImageFile | null) => {
+        if (images) {
+            return await getAddressFromLocation(image?.location?.latitude || 0, image?.location?.longitude || 0);
+        } else {
+            return null;
+        }
+    };
 
     const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const selectedImages = event.target.files;
@@ -71,9 +71,6 @@ const TripImageUploadPage = () => {
         }
     };
 
-    const imagesWithoutDateCount = images?.imagesWithoutDate.length || 0;
-    const imagesWithoutLocation = images?.imagesWithoutLocation.length || 0;
-
     const renderMainSectionByStep = (step: ImageUploadStepType) => {
         switch (step) {
             case 'upload':
@@ -81,8 +78,24 @@ const TripImageUploadPage = () => {
             case 'processing':
                 return <ProcessingStep currentProcess={currentProcess} progress={progress} />;
             case 'review':
-                return <ReviewStep />;
+                return (
+                    <ReviewStep
+                        images={images!}
+                        imageDates={getImageDates(images?.totalImages || null)}
+                        location={location.sort((a, b) => {
+                            return new Date(a.image.recordDate).getTime() - new Date(b.image.recordDate).getTime();
+                        })}
+                    />
+                );
         }
+    };
+
+    const getImageDates = (images: ImageFile[] | null) => {
+        if (images?.length === 0) {
+            return null;
+        }
+        const imageDates = images?.map((image: ImageFile) => image.recordDate.split('T')[0]) || [];
+        return removeDuplicateDates(imageDates).filter((date) => date);
     };
 
     return (
@@ -98,7 +111,6 @@ const TripImageUploadPage = () => {
             <ProgressHeader currentStep={step} />
             <main css={mainStyle}>
                 <h2 css={titleStyle}>{getTitleByStep(step)}</h2>
-
                 {renderMainSectionByStep(step)}
             </main>
 
@@ -131,7 +143,7 @@ const mainStyle = css`
     padding: 16px;
     display: flex;
     flex-direction: column;
-    /* background: ${COLORS.BACKGROUND.WHITE_SECONDARY}; */
+    overflow-y: auto;
 `;
 
 const titleStyle = css`

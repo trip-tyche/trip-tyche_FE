@@ -5,7 +5,7 @@ import { useLoadScript } from '@react-google-maps/api';
 import { GOOGLE_MAPS_CONFIG } from '@/shared/constants/map';
 import { Location, MapType } from '@/shared/types/map';
 
-export const useMapControl = (initialZoom: number, initialCenter: Location | null) => {
+export const useMapControl = (initialZoom: number | null, initialCenter: Location | null) => {
     const { isLoaded: isMapScriptLoaded, loadError: isMapScriptLoadError } = useLoadScript(GOOGLE_MAPS_CONFIG);
 
     const [isMapRendered, setIsMapRendered] = useState(false);

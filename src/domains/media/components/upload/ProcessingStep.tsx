@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import { AlertCircle, Loader } from 'lucide-react';
 
 import { ImageProcessStatusType } from '@/domains/media/types';
+import { getAlertBoxMessage } from '@/domains/media/utils';
 import AlertBox from '@/shared/components/common/AlertBox';
 import Progress from '@/shared/components/common/Progress';
 import { COLORS } from '@/shared/constants/style';
@@ -21,29 +22,6 @@ const ProcessingStep = ({ currentProcess, progress }: ProcessingStepProps) => {
             return 85 + Math.floor(progress.upload * 0.15);
         }
         return 0;
-    };
-
-    const getAlertBoxMessage = (currentProcess: ImageProcessStatusType) => {
-        if (currentProcess === 'metadata') {
-            return {
-                title: '사진 정보 수집 중...',
-                description: '소중한 추억의 장소와 날짜를 기억하고 있어요.',
-            };
-        } else if (currentProcess === 'optimize') {
-            return {
-                title: '사진 최적화 중...',
-                description: '언제 어디서나 쉽게 볼 수 있도록 사진을 가볍게 만들고 있어요.',
-            };
-        } else if (currentProcess === 'upload') {
-            return {
-                title: '안전하게 저장 중...',
-                description: '소중한 사진을 안전하게 저장하고 있어요.',
-            };
-        }
-        return {
-            title: '문제가 발생했나요?',
-            description: '새로고침 및 서비스 종료 후 다시 이용해주세요.',
-        };
     };
 
     return (
