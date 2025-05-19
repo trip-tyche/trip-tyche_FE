@@ -58,6 +58,8 @@ const TripImageUploadPage = () => {
                         };
                     }),
                 );
+
+                console.log('zxcv', imagesWithAddress);
                 setImagesWithAddress(imagesWithAddress);
             }
         };
@@ -117,8 +119,6 @@ const TripImageUploadPage = () => {
                 return <TripCreateCompleteStep tripInfo={tripInfo} />;
         }
     };
-
-    console.log('imagesWithAddress', imagesWithAddress);
 
     const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const selectedImages = event.target.files;

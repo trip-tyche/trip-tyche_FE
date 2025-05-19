@@ -54,7 +54,7 @@ const content = css`
 `;
 
 const iconWrapper = css`
-    margin-bottom: 24px;
+    margin: 24px 0;
     background-color: #d1fae5;
     padding: 8px;
     border-radius: 9999px;
