@@ -99,7 +99,7 @@ const TripImageUploadPage = () => {
                 );
             case 'info':
                 return (
-                    <div>
+                    <div css={infoSectionContainer}>
                         <TripInfoForm tripInfo={tripInfo} onChangeTripInfo={setTripInfo} />
                         <div css={buttonWrapper}>
                             <Button
@@ -118,6 +118,8 @@ const TripImageUploadPage = () => {
         }
     };
 
+    console.log('imagesWithAddress', imagesWithAddress);
+
     const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const selectedImages = event.target.files;
         if (selectedImages) {
@@ -128,7 +130,6 @@ const TripImageUploadPage = () => {
             setStep('review');
         }
     };
-    // const imageDates = getImageDateFromImage(images || null);
 
     const estimatedStartDate = tripInfo.mediaFilesDates?.length ? formatHyphenToDot(tripInfo.mediaFilesDates[0]) : '';
     const estimatedEndDate = tripInfo.mediaFilesDates?.length
@@ -150,7 +151,7 @@ const TripImageUploadPage = () => {
 
             {!isCreateDone && <ProgressHeader currentStep={step} />}
             <main css={mainStyle}>
-                <h2 css={titleStyle}>{getTitleByStep(step)}</h2>
+                {getTitleByStep(step) && <h2 css={titleStyle}>{getTitleByStep(step)}</h2>}
                 {renderMainSectionByStep(step)}
             </main>
 
@@ -192,6 +193,12 @@ const titleStyle = css`
     align-items: center;
     font-weight: 600;
     color: ${COLORS.TEXT.BLACK};
+`;
+
+const infoSectionContainer = css`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 `;
 
 const buttonWrapper = css`

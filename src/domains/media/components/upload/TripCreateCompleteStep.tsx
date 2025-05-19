@@ -13,25 +13,28 @@ const TripCreateCompleteStep = ({ tripInfo }: { tripInfo: TripInfo }) => {
 
     return (
         <div css={container}>
-            <div css={iconWrapper}>
-                <Check size={32} color='#059669' />
+            <div css={content}>
+                <div css={iconWrapper}>
+                    <Check size={32} color='#059669' />
+                </div>
+                <h2 css={title}>여행 등록 완료!</h2>
+                <p css={description}>{`새로운 여행이 성공적으로 등록되었습니다.\n아래 티켓을 움직여보세요.`}</p>
+
+                <MovableTripTicket trip={tripInfo} />
             </div>
-            <h2 css={title}>여행 등록 완료!</h2>
-            <p css={description}>{`새로운 여행이 성공적으로 등록되었습니다.\n아래 티켓을 움직여보세요.`}</p>
 
-            <MovableTripTicket trip={tripInfo} />
-
-            {true && (
-                <AlertBox
-                    theme='warning'
-                    title='누락된 정보가 있습니다'
-                    description='위치나 날짜 정보가 없는 사진이 있습니다. 사진 관리 페이지에서 정보를 추가해 보세요'
-                    icon={<AlertCircle size={20} />}
-                />
-            )}
-
-            <div css={buttonWrapper}>
-                <Button text='여행 티켓 보러가기' onClick={() => navigate(ROUTES.PATH.MAIN)} />
+            <div>
+                {true && (
+                    <AlertBox
+                        theme='warning'
+                        title='누락된 정보가 있습니다'
+                        description='위치나 날짜 정보가 없는 사진이 있습니다. 사진 관리 페이지에서 정보를 추가해 보세요'
+                        icon={<AlertCircle size={20} />}
+                    />
+                )}
+                <div css={buttonWrapper}>
+                    <Button text='여행 티켓 보러가기' onClick={() => navigate(ROUTES.PATH.MAIN)} />
+                </div>
             </div>
         </div>
     );
@@ -39,6 +42,12 @@ const TripCreateCompleteStep = ({ tripInfo }: { tripInfo: TripInfo }) => {
 
 const container = css`
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+`;
+
+const content = css`
     display: flex;
     flex-direction: column;
     align-items: center;

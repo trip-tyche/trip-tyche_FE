@@ -103,7 +103,7 @@ const TripInfoForm = ({ isEditing = false, tripInfo, onChangeTripInfo }: TripInf
     }));
 
     return (
-        <div css={tripInfoFormContainer}>
+        <div css={container}>
             <section>
                 <div css={titleStyle}>
                     <h2>{FORM.TITLE.DATE}</h2>
@@ -229,11 +229,10 @@ const TripInfoForm = ({ isEditing = false, tripInfo, onChangeTripInfo }: TripInf
     );
 };
 
-const tripInfoFormContainer = css`
+const container = css`
     display: flex;
     flex-direction: column;
     gap: 28px;
-    overflow-y: auto;
 `;
 
 const titleStyle = css`

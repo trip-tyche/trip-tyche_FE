@@ -42,7 +42,7 @@ const ReviewStep = ({ imageCount, tripPeriod, imagesWithAddress }: ReviewStepPro
                 if (!image.address || !image.recordDate) return;
                 return <ImageCard key={image.imageUrl} image={image} />;
             });
-
+    console.log('tripPeriod', tripPeriod);
     const [startDate, endDate] = tripPeriod;
     const isSingleDate = startDate === endDate;
     const estimatedTripPeriod = isSingleDate ? `${startDate} (하루)` : `${startDate} ~ ${endDate}`;

@@ -29,6 +29,10 @@ export const getTitleByStep = (step: ImageUploadStepType) => {
             return '사진 처리 중';
         case 'review':
             return '처리된 사진 정보';
+        case 'info':
+            return '';
+        case 'done':
+            return '';
     }
 };
 

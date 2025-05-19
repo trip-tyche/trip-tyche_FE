@@ -90,6 +90,7 @@ const TripRoutePage = () => {
             const { tripTitle, startDate, endDate, pinPoints, mediaFiles: tripImages } = result.data;
 
             const validLocationPinPoints = sortPinPointByDate(filterValidLocationPinPoint(pinPoints));
+            console.log('validLocationPinPoints', validLocationPinPoints);
             const validLocationImages = filterValidLocationMediaFile(tripImages);
             const isValidTrip = tripTitle && startDate && endDate && tripImages.length !== 0;
             const imageDates = validLocationImages.map((image: MediaFile) => image.recordDate.split('T')[0]);
