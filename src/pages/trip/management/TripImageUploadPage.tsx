@@ -45,6 +45,7 @@ const TripImageUploadPage = () => {
     useEffect(() => {
         const getAddressFromLocation = async () => {
             if (images && isMapScriptLoaded) {
+                console.log('images', images);
                 const imagesWithAddress = await Promise.all(
                     images.map(async (image) => {
                         const address = image.location ? await getAddressFromImageLocation(image.location) : '';
