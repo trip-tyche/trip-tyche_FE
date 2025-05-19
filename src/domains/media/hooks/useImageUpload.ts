@@ -48,6 +48,10 @@ export const useImageUpload = () => {
 
         setImages(optimizedImages);
 
+        console.log('total: ', optimizedImages);
+        console.log('withoutDate: ', imagesWithoutDate(optimizedImages));
+        console.log('withoutLocation: ', imagesWithoutDate(optimizedImages));
+
         setImageCount({
             total: optimizedImages.length || 0,
             withoutDate: imagesWithoutDate(optimizedImages).length || 0,

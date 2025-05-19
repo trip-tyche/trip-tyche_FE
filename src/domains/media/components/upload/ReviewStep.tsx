@@ -45,8 +45,9 @@ const ReviewStep = ({ imageCount, tripPeriod, imagesWithAddress }: ReviewStepPro
     console.log('tripPeriod', tripPeriod);
     const [startDate, endDate] = tripPeriod;
     const isSingleDate = startDate === endDate;
-    const estimatedTripPeriod = isSingleDate ? `${startDate} (하루)` : `${startDate} ~ ${endDate}`;
-    const visitedPlace = getVisitedPlace(imagesWithAddress);
+    const estimatedTripPeriod =
+        startDate && endDate ? (isSingleDate ? `${startDate} (하루)` : `${startDate} ~ ${endDate}`) : null;
+    const visitedPlace = imagesWithAddress.length > 0 ? getVisitedPlace(imagesWithAddress) : null;
     const hasInvalidImage = !!imageCount.withoutLocation || !!imageCount.withoutDate;
 
     return (
@@ -81,33 +82,39 @@ const ReviewStep = ({ imageCount, tripPeriod, imagesWithAddress }: ReviewStepPro
                     />
                 </div>
 
-                <div css={periodAndVisitedPlaceContainer}>
-                    <div css={periodAndVisitedPlaceHeader}>
-                        <Calendar size={16} color={COLORS.ICON.DEFAULT} />
-                        <p css={periodAndVisitedPlaceTitle}>추정 여행 기간</p>
+                {estimatedTripPeriod && (
+                    <div css={periodAndVisitedPlaceContainer}>
+                        <div css={periodAndVisitedPlaceHeader}>
+                            <Calendar size={16} color={COLORS.ICON.DEFAULT} />
+                            <p css={periodAndVisitedPlaceTitle}>추정 여행 기간</p>
+                        </div>
+                        <p>{estimatedTripPeriod}</p>
                     </div>
-                    <p>{estimatedTripPeriod}</p>
-                </div>
+                )}
 
-                <div css={periodAndVisitedPlaceContainer}>
-                    <div css={periodAndVisitedPlaceHeader}>
-                        <MapIcon size={16} color={COLORS.ICON.DEFAULT} />
-                        <p css={periodAndVisitedPlaceTitle}>주요 방문 장소</p>
+                {visitedPlace && (
+                    <div css={periodAndVisitedPlaceContainer}>
+                        <div css={periodAndVisitedPlaceHeader}>
+                            <MapIcon size={16} color={COLORS.ICON.DEFAULT} />
+                            <p css={periodAndVisitedPlaceTitle}>주요 방문 장소</p>
+                        </div>
+                        <ul>
+                            {visitedPlace.map((location) => (
+                                <li key={location.place} css={placeListStyle}>
+                                    {location.place} ({location.count}장)
+                                </li>
+                            ))}
+                        </ul>
                     </div>
-                    <ul>
-                        {visitedPlace.map((location) => (
-                            <li key={location.place} css={placeListStyle}>
-                                {location.place} ({location.count}장)
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                )}
             </div>
 
-            <div>
-                <h3 css={imagePreviewTitle}>등록된 사진 미리보기</h3>
-                <div css={imagePreviewStyle}>{getImagePreviewComponent()}</div>
-            </div>
+            {getImagePreviewComponent() && (
+                <div>
+                    <h3 css={imagePreviewTitle}>등록된 사진 미리보기</h3>
+                    <div css={imagePreviewStyle}>{getImagePreviewComponent()}</div>
+                </div>
+            )}
 
             {hasInvalidImage && (
                 <AlertBox
