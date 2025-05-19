@@ -6,7 +6,6 @@ import ImageExtractionSummary from '@/domains/media/components/upload/ImageExtra
 import { ImageCount, ImageWithAddress } from '@/domains/media/types';
 import AlertBox from '@/shared/components/common/AlertBox';
 import Avatar from '@/shared/components/common/Avatar';
-import Button from '@/shared/components/common/Button';
 import { COLORS } from '@/shared/constants/style';
 
 interface ReviewStepProps {
@@ -118,10 +117,6 @@ const ReviewStep = ({ imageCount, tripPeriod, imagesWithAddress }: ReviewStepPro
                     icon={<AlertCircle size={20} color='#ca8a04' />}
                 />
             )}
-
-            <div css={buttonWrapper}>
-                <Button text='여행 정보 입력하기' />
-            </div>
         </div>
     );
 };
@@ -199,10 +194,6 @@ const placeListStyle = css`
     &:last-child {
         margin-bottom: 0;
     }
-`;
-
-const buttonWrapper = css`
-    margin-top: 24px;
 `;
 
 export default ReviewStep;

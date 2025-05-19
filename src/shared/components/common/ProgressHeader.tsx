@@ -8,7 +8,7 @@ interface ProgressHeaderProps {
 
 const ProgressHeader = ({ currentStep }: ProgressHeaderProps) => {
     const isActive = (step: string) => {
-        const steps = ['upload', 'processing', 'review', 'input'];
+        const steps = ['upload', 'processing', 'review', 'info'];
         const currentIndex = steps.indexOf(currentStep);
         const stepIndex = steps.indexOf(step);
         return currentIndex >= stepIndex;
@@ -59,9 +59,9 @@ const ProgressHeader = ({ currentStep }: ProgressHeaderProps) => {
                 <div css={[link, getConnectorStyle('review')]}></div>
 
                 <div css={[step, getStepStyle('review')]}>3</div>
-                <div css={[link, getConnectorStyle('input')]}></div>
+                <div css={[link, getConnectorStyle('info')]}></div>
 
-                <div css={[step, getStepStyle('input')]}>4</div>
+                <div css={[step, getStepStyle('info')]}>4</div>
             </div>
 
             <div css={stepText}>

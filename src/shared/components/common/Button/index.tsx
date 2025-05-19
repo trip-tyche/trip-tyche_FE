@@ -2,6 +2,7 @@ import React, { ComponentPropsWithoutRef } from 'react';
 
 import { css, SerializedStyles } from '@emotion/react';
 
+import { COLORS } from '@/shared/constants/style';
 import theme from '@/shared/styles/theme';
 
 type VariantType = 'primary' | 'white';
@@ -24,61 +25,82 @@ const Button = ({
     disabled,
     customStyle,
     ...props
-}: ButtonProps) => (
-    <button
-        css={[buttonStyles.base, buttonStyles.variants(variant), customStyle]}
-        disabled={disabled || isLoading}
-        {...props}
-    >
-        {isLoading ? (
-            <p css={loadingStyle}>{loadingText} </p>
-        ) : (
-            <React.Fragment>
-                {icon && <span css={buttonStyles.icon(!!text)}>{icon}</span>}
-                {text}
-            </React.Fragment>
-        )}
-    </button>
-);
+}: ButtonProps) => {
+    return (
+        <button
+            css={[baseStyles, buttonStlye[variant](!disabled), customStyle]}
+            disabled={disabled || isLoading}
+            {...props}
+        >
+            {isLoading ? (
+                <p css={loadingStyle}>{loadingText} </p>
+            ) : (
+                <React.Fragment>
+                    {icon && <span css={iconStlye(!!text)}>{icon}</span>}
+                    {text}
+                </React.Fragment>
+            )}
+        </button>
+    );
+};
 
-const buttonStyles = {
-    base: css`
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border: 0;
-        border-radius: 12px;
-        width: 100%;
-        height: 48px;
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
+const baseStyles = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+    border-radius: 12px;
+    width: 100%;
+    height: 48px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    &:active {
+        transform: scale(0.97);
+    }
+`;
+
+const buttonStlye = {
+    primary: (isActive: boolean) => css`
+        background-color: ${isActive ? COLORS.PRIMARY : COLORS.DISABLED};
+        color: ${isActive ? '#f2f4f9' : '#1010104d'};
+
+        @media (hover: hover) {
+            &:hover {
+                background-color: ${isActive ? COLORS.PRIMARY_HOVER : COLORS.DISABLED};
+            }
+        }
+
         &:active {
-            transform: scale(0.97);
+            background-color: ${COLORS.PRIMARY_HOVER};
         }
         &:disabled {
             cursor: not-allowed;
         }
     `,
-    variants: (variant: VariantType) => {
-        return css`
-            background-color: ${variant === 'primary' ? theme.COLORS.PRIMARY : '#f2f4f9'};
-            color: ${variant === 'primary' ? '#f2f4f9' : theme.COLORS.PRIMARY};
-            @media (hover: hover) {
-                &:hover {
-                    background-color: ${variant === 'primary' ? theme.COLORS.PRIMARY_HOVER : '#e5e8f0'};
-                }
+    white: (isActive: boolean) => css`
+        background-color: ${isActive ? '#f2f4f9' : COLORS.DISABLED};
+        color: ${isActive ? COLORS.PRIMARY : '#1010104d'};
+
+        @media (hover: hover) {
+            &:hover {
+                background-color: ${'#e5e8f0'};
             }
-            &:active {
-                background-color: ${variant === 'primary' ? theme.COLORS.PRIMARY_HOVER : '#e5e8f0'};
-            }
-        `;
-    },
-    icon: (isText: boolean) => css`
-        display: flex;
-        margin-right: ${isText ? '4px' : '0px'};
-        align-items: center;
+        }
+
+        &:active {
+            background-color: ${'#e5e8f0'};
+        }
+        &:disabled {
+            cursor: not-allowed;
+        }
     `,
 };
+
+const iconStlye = (isText: boolean) => css`
+    display: flex;
+    margin-right: ${isText ? '4px' : '0px'};
+    align-items: center;
+`;
 
 const loadingStyle = css`
     display: flex;

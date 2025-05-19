@@ -9,7 +9,12 @@ import UploadStep from '@/domains/media/components/upload/UploadStep';
 import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
 import { ImageUploadStepType, ImageWithAddress } from '@/domains/media/types';
 import { getAddressFromImageLocation, getImageDateFromImage, getTitleByStep } from '@/domains/media/utils';
+import TripInfoForm from '@/domains/trip/components/TripInfoForm';
+import { FORM } from '@/domains/trip/constants';
+import { TripInfo } from '@/domains/trip/types';
 import { formatHyphenToDot } from '@/libs/utils/date';
+import { validateFormComplete } from '@/libs/utils/validate';
+import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
 import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
 import ProgressHeader from '@/shared/components/common/ProgressHeader';
@@ -21,6 +26,7 @@ import { useMapScript } from '@/shared/hooks/useMapScript';
 const TripImageUploadPage = () => {
     const [step, setStep] = useState<ImageUploadStepType>('upload');
     const [imagesWithAddress, setImagesWithAddress] = useState<ImageWithAddress[]>([]);
+    const [tripInfo, setTripInfo] = useState<TripInfo>(FORM.INITIAL);
 
     const { isModalOpen, closeModal } = useBrowserCheck();
     const { images, imageCount, currentProcess, progress, extractMetaData, optimizeImages, uploadImagesToS3 } =
@@ -55,6 +61,19 @@ const TripImageUploadPage = () => {
         getAddressFromLocation();
     }, [images, isMapScriptLoaded]);
 
+    useEffect(() => {
+        const imageDates = getImageDateFromImage(images || null);
+
+        setTripInfo({
+            tripTitle: '',
+            country: '',
+            startDate: '',
+            endDate: '',
+            hashtags: [],
+            mediaFilesDates: imageDates ? imageDates : [],
+        });
+    }, [images]);
+
     const renderMainSectionByStep = (step: ImageUploadStepType) => {
         switch (step) {
             case 'upload':
@@ -63,11 +82,29 @@ const TripImageUploadPage = () => {
                 return <ProcessingStep currentProcess={currentProcess} progress={progress} />;
             case 'review':
                 return (
-                    <ReviewStep
-                        imageCount={imageCount!}
-                        tripPeriod={[startDate, endDate]}
-                        imagesWithAddress={imagesWithAddress}
-                    />
+                    <div>
+                        <ReviewStep
+                            imageCount={imageCount!}
+                            tripPeriod={[estimatedStartDate, estimatedEndDate]}
+                            imagesWithAddress={imagesWithAddress}
+                        />
+                        <div css={buttonWrapper}>
+                            <Button text='여행 정보 입력하기' onClick={() => setStep('info')} />
+                        </div>
+                    </div>
+                );
+            case 'info':
+                return (
+                    <div>
+                        <TripInfoForm tripInfo={tripInfo} onChangeTripInfo={setTripInfo} />
+                        <div css={buttonWrapper}>
+                            <Button
+                                text={`여행 등록하기`}
+                                // onClick={submitTripInfo}
+                                disabled={!isFormComplete}
+                            />
+                        </div>
+                    </div>
                 );
         }
     };
@@ -82,10 +119,14 @@ const TripImageUploadPage = () => {
             setStep('review');
         }
     };
+    // const imageDates = getImageDateFromImage(images || null);
 
-    const imageDates = getImageDateFromImage(images || null);
-    const startDate = imageDates?.length ? formatHyphenToDot(imageDates[0]) : '';
-    const endDate = imageDates?.length ? formatHyphenToDot(imageDates[imageDates.length - 1]) : '';
+    const estimatedStartDate = tripInfo.mediaFilesDates?.length ? formatHyphenToDot(tripInfo.mediaFilesDates[0]) : '';
+    const estimatedEndDate = tripInfo.mediaFilesDates?.length
+        ? formatHyphenToDot(tripInfo.mediaFilesDates[tripInfo.mediaFilesDates.length - 1])
+        : '';
+
+    const isFormComplete = validateFormComplete(tripInfo);
 
     return (
         <div css={page}>
@@ -141,6 +182,10 @@ const titleStyle = css`
     align-items: center;
     font-weight: 600;
     color: ${COLORS.TEXT.BLACK};
+`;
+
+const buttonWrapper = css`
+    margin-top: 36px;
 `;
 
 export default TripImageUploadPage;

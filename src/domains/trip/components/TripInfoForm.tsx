@@ -17,22 +17,22 @@ import theme from '@/shared/styles/theme';
 type DateSelectType = 'range' | 'single';
 type DateChangeHandler = (value: DateValue | DatesRangeValue) => void;
 interface TripInfoFormProps {
-    isEditing: boolean;
+    isEditing?: boolean;
     tripInfo: Trip;
-    setTripInfo: Dispatch<SetStateAction<Trip>>;
+    onChangeTripInfo: Dispatch<SetStateAction<Trip>>;
 }
 
-const TripInfoForm = ({ isEditing = false, tripInfo, setTripInfo }: TripInfoFormProps) => {
+const TripInfoForm = ({ isEditing = false, tripInfo, onChangeTripInfo }: TripInfoFormProps) => {
     const { tripTitle, country, startDate, endDate, hashtags, mediaFilesDates: imageDates = [] } = tripInfo;
     const [dateSelectType, setDateSelectType] = useState<DateSelectType>('range');
     const [isSelectRange, setIsSelectRange] = useState<boolean>(true);
-
+    console.log(tripInfo);
     const defaultStartDate = imageDates[0];
     const defaultEndDate = imageDates[imageDates.length - 1];
 
     const datePickerProps = useTripDateRange({
         imageDates,
-        setTripInfo,
+        onChangeTripInfo,
     });
 
     useEffect(() => {
@@ -49,7 +49,7 @@ const TripInfoForm = ({ isEditing = false, tripInfo, setTripInfo }: TripInfoForm
     }, [dateSelectType]);
 
     const handleHashtagSelect = (tag: string) => {
-        setTripInfo((prev: Trip) => {
+        onChangeTripInfo((prev: Trip) => {
             if (prev.hashtags.includes(tag)) {
                 return { ...prev, hashtags: prev.hashtags.filter((hashtag) => hashtag !== tag) };
             }
@@ -187,7 +187,7 @@ const TripInfoForm = ({ isEditing = false, tripInfo, setTripInfo }: TripInfoForm
                     placeholder={FORM.TITLE.COUNTRY_DEFAULT}
                     data={countryData}
                     value={country}
-                    onChange={(value) => setTripInfo({ ...tripInfo, country: value || '' })}
+                    onChange={(value) => onChangeTripInfo({ ...tripInfo, country: value || '' })}
                     checkIconPosition='right'
                     leftSection={<Globe size={16} />}
                     size='md'
@@ -201,7 +201,7 @@ const TripInfoForm = ({ isEditing = false, tripInfo, setTripInfo }: TripInfoForm
                 <h2 css={titleStyle}>{FORM.TITLE.TITLE}</h2>
                 <Input
                     value={tripTitle}
-                    onChange={(value) => setTripInfo({ ...tripInfo, tripTitle: value })}
+                    onChange={(value) => onChangeTripInfo({ ...tripInfo, tripTitle: value })}
                     placeholder='최대 12자까지 입력할 수 있습니다'
                     maxLength={12}
                     leftSection={<Plane size={16} />}
@@ -233,6 +233,7 @@ const tripInfoFormContainer = css`
     display: flex;
     flex-direction: column;
     gap: 28px;
+    overflow-y: auto;
 `;
 
 const titleStyle = css`
@@ -248,11 +249,11 @@ const titleStyle = css`
 const hashtagGroup = css`
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
 `;
 
 const buttonBaseStyle = css`
-    padding: 8px 12px;
+    padding: 6px 8px;
     border-radius: 4px;
     font-size: 12px;
     cursor: pointer;

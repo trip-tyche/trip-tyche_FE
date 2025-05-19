@@ -9,10 +9,10 @@ import theme from '@/shared/styles/theme';
 
 interface UseTripDateRangeProps {
     imageDates: string[];
-    setTripInfo: Dispatch<SetStateAction<Trip>>;
+    onChangeTripInfo: Dispatch<SetStateAction<Trip>>;
 }
 
-export const useTripDateRange = ({ imageDates, setTripInfo }: UseTripDateRangeProps) => {
+export const useTripDateRange = ({ imageDates, onChangeTripInfo }: UseTripDateRangeProps) => {
     const [dateRange, setDateRange] = useState<DatesRangeValue>([null, null]);
     const [selectedDate, setSelectedDate] = useState<DateValue>(null);
     const [isInitialized, setIsInitialized] = useState(true);
@@ -32,7 +32,7 @@ export const useTripDateRange = ({ imageDates, setTripInfo }: UseTripDateRangePr
         if (!isInitialized) {
             if (value[0] && !value[1]) {
                 const startDateString = dayjs(value[0]).format('YYYY-MM-DD');
-                setTripInfo((prev: Trip) => ({ ...prev, startDate: startDateString }));
+                onChangeTripInfo((prev: Trip) => ({ ...prev, startDate: startDateString }));
                 setIsSelectMode(true);
                 setIsError(false);
             } else if (value[0] && value[1]) {
@@ -42,7 +42,7 @@ export const useTripDateRange = ({ imageDates, setTripInfo }: UseTripDateRangePr
                 const startDateString = date1.isBefore(date2) ? date1.format('YYYY-MM-DD') : date2.format('YYYY-MM-DD');
                 const endDateString = date1.isBefore(date2) ? date2.format('YYYY-MM-DD') : date1.format('YYYY-MM-DD');
 
-                setTripInfo((prev: Trip) => ({
+                onChangeTripInfo((prev: Trip) => ({
                     ...prev,
                     startDate: startDateString,
                     endDate: endDateString,
@@ -63,7 +63,7 @@ export const useTripDateRange = ({ imageDates, setTripInfo }: UseTripDateRangePr
         const dateString = dayjs(value).format('YYYY-MM-DD');
 
         setSelectedDate(value);
-        setTripInfo((prev: Trip) => ({ ...prev, startDate: dateString, endDate: dateString }));
+        onChangeTripInfo((prev: Trip) => ({ ...prev, startDate: dateString, endDate: dateString }));
 
         const hasOutsideImages = imageDates.some((imageDate) => {
             const date = dayjs(imageDate);
@@ -160,7 +160,7 @@ export const useTripDateRange = ({ imageDates, setTripInfo }: UseTripDateRangePr
         setIsSelectMode(false);
         setIsError(false);
         setIsInitialized(true);
-        setTripInfo((prev: Trip) => ({
+        onChangeTripInfo((prev: Trip) => ({
             ...prev,
             startDate: '',
             endDate: '',
