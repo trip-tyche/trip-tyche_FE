@@ -26,7 +26,7 @@ const TripInfoForm = ({ isEditing = false, tripInfo, onChangeTripInfo }: TripInf
     const { tripTitle, country, startDate, endDate, hashtags, mediaFilesDates: imageDates = [] } = tripInfo;
     const [dateSelectType, setDateSelectType] = useState<DateSelectType>('range');
     const [isSelectRange, setIsSelectRange] = useState<boolean>(true);
-    console.log(tripInfo);
+
     const defaultStartDate = imageDates[0];
     const defaultEndDate = imageDates[imageDates.length - 1];
 

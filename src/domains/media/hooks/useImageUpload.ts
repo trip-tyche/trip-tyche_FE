@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { DEFAULT_METADATA } from '@/domains/media/constants';
 import { PresignedUrlResponse, ImageFile, ImageProcessStatusType, ImageCount } from '@/domains/media/types';
 import { mediaAPI } from '@/libs/apis';
+import { toResult } from '@/libs/apis/shared/utils';
 import {
     extractMetadataFromImage,
     imagesWithoutDate,
@@ -105,8 +106,8 @@ export const useImageUpload = () => {
         // console.timeEnd(`send metadata to server`);
 
         // if (!isEdit) {
-        //     const result = await toResult(async () => await mediaAPI.updateTripStatusToImagesUploaded(tripKey!));
-        //     if (!result.success) throw Error(result.error);
+        const result = await toResult(async () => await mediaAPI.updateTripStatusToImagesUploaded(tripKey!));
+        if (!result.success) throw Error(result.error);
         // }
     };
 

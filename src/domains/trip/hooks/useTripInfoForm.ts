@@ -11,18 +11,23 @@ import { validateFormComplete } from '@/libs/utils/validate';
 import { ROUTES } from '@/shared/constants/route';
 import { MESSAGE } from '@/shared/constants/ui';
 import { useToastStore } from '@/shared/stores/useToastStore';
-import { useUploadStatusStore } from '@/shared/stores/useUploadStatusStore';
 
-export const useTripInfoForm = (isEditing: boolean, form: TripInfo) => {
-    const [isImageSubmitting, setIsImageSubmitting] = useState(false);
+export const useTripInfoForm = (
+    isEditing: boolean,
+    form: TripInfo,
+    // callback?: {
+    //     onSuccess?: () => void;
+    //     onError?: (error: string) => void;
+    // },
+) => {
     const [isFormComplete, setIsFormComplete] = useState(false);
-    const { uploadStatus, waitForCompletion } = useUploadStatusStore();
     const showToast = useToastStore((state) => state.showToast);
 
     const navigate = useNavigate();
     const { tripKey } = useParams();
     const [searchParams] = useSearchParams();
 
+    // const { onError } = callback || {};
     const isUnCompletedTrip = searchParams.get('isUnCompleted') !== null;
 
     const queryClient = useQueryClient();
@@ -37,7 +42,7 @@ export const useTripInfoForm = (isEditing: boolean, form: TripInfo) => {
         setIsFormComplete(false);
     }, [form]);
 
-    const submitTripInfo = async () => {
+    const submitTripInfo = async (form: TripInfo) => {
         if (!tripKey || !form) return;
 
         try {
@@ -46,25 +51,20 @@ export const useTripInfoForm = (isEditing: boolean, form: TripInfo) => {
 
             if (isEditing) {
                 if (isUnCompletedTrip) {
-                    const finalizeResult = await toResult(() => tripAPI.finalizeTripTicket(tripKey));
-                    if (!finalizeResult.success) throw Error(finalizeResult.error);
+                    finalizeTrip();
+                    showToast('여행이 성공적으로 등록되었습니다');
+                    navigate(ROUTES.PATH.MAIN);
+                    queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
                 }
                 queryClient.invalidateQueries({ queryKey: ['ticket-info'] });
                 showToast('여행 정보가 성공적으로 수정되었습니다');
+                navigate(ROUTES.PATH.MAIN);
+                queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
             } else {
-                const finalizeResult = await toResult(() => tripAPI.finalizeTripTicket(tripKey));
-                if (!finalizeResult.success) throw Error(finalizeResult.error);
-
-                setIsImageSubmitting(true);
-                await waitForCompletion();
-                if (uploadStatus === 'error') throw Error('사진 등록이 실패했습니다. 다시 추가해 주세요');
-                setIsImageSubmitting(false);
-
+                finalizeTrip();
                 showToast('새로운 여행이 등록되었습니다');
+                queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
             }
-
-            queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
-            navigate(ROUTES.PATH.MAIN);
         } catch (error) {
             const errorMessage =
                 error instanceof Error
@@ -76,5 +76,18 @@ export const useTripInfoForm = (isEditing: boolean, form: TripInfo) => {
         }
     };
 
-    return { isImageSubmitting, isSubmitting, isFormComplete, submitTripInfo };
+    const finalizeTrip = async () => {
+        try {
+            const result = await toResult(() => tripAPI.finalizeTripTicket(tripKey!));
+            if (!result.success) throw Error(result.error);
+            return result.data;
+        } catch (error) {
+            if (error instanceof Error) {
+                // onError?.(error.message);
+                showToast(error.message);
+            }
+        }
+    };
+
+    return { isSubmitting, isFormComplete, submitTripInfo };
 };

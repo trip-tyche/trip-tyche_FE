@@ -28,7 +28,7 @@ const TripInfoFormPage = () => {
     const isEditing = pathname.includes('edit');
 
     const { data: beforeTripInfo, isLoading } = useTripInfo(tripKey!, isEditing);
-    const { isImageSubmitting, isSubmitting, isFormComplete, submitTripInfo } = useTripInfoForm(isEditing, tripInfo);
+    const { isSubmitting, isFormComplete, submitTripInfo } = useTripInfoForm(isEditing, tripInfo);
 
     useEffect(() => {
         if (isEditing) {
@@ -51,7 +51,7 @@ const TripInfoFormPage = () => {
 
     return (
         <div css={pageContainer}>
-            {(isLoading || isSubmitting || isImageSubmitting) && <Indicator text='여행 정보 불러오는 중...' />}
+            {(isLoading || isSubmitting) && <Indicator text='여행 정보 불러오는 중...' />}
 
             <Header
                 title={ROUTES.PATH_TITLE.TRIPS.NEW.INFO}
@@ -59,10 +59,10 @@ const TripInfoFormPage = () => {
                 onBack={() => navigate(ROUTES.PATH.MAIN)}
             />
             <main css={mainStyle}>
-                <TripInfoForm isEditing={isEditing} tripInfo={tripInfo} setTripInfo={setTripInfo} />
+                <TripInfoForm isEditing={isEditing} tripInfo={tripInfo} onChangeTripInfo={setTripInfo} />
                 <Button
                     text={`여행 ${isEditing ? '수정' : '등록'}하기`}
-                    onClick={submitTripInfo}
+                    onClick={() => submitTripInfo(tripInfo)}
                     disabled={!isFormComplete}
                 />
             </main>

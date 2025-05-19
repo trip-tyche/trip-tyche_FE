@@ -5,19 +5,21 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import ProcessingStep from '@/domains/media/components/upload/ProcessingStep';
 import ReviewStep from '@/domains/media/components/upload/ReviewStep';
+import TripCreateCompleteStep from '@/domains/media/components/upload/TripCreateCompleteStep';
 import UploadStep from '@/domains/media/components/upload/UploadStep';
 import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
 import { ImageUploadStepType, ImageWithAddress } from '@/domains/media/types';
 import { getAddressFromImageLocation, getImageDateFromImage, getTitleByStep } from '@/domains/media/utils';
 import TripInfoForm from '@/domains/trip/components/TripInfoForm';
 import { FORM } from '@/domains/trip/constants';
+import { useTripInfoForm } from '@/domains/trip/hooks/useTripInfoForm';
 import { TripInfo } from '@/domains/trip/types';
 import { formatHyphenToDot } from '@/libs/utils/date';
-import { validateFormComplete } from '@/libs/utils/validate';
 import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
 import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
 import ProgressHeader from '@/shared/components/common/ProgressHeader';
+import Indicator from '@/shared/components/common/Spinner/Indicator';
 import { ROUTES } from '@/shared/constants/route';
 import { COLORS } from '@/shared/constants/style';
 import useBrowserCheck from '@/shared/hooks/useBrowserCheck';
@@ -29,9 +31,11 @@ const TripImageUploadPage = () => {
     const [tripInfo, setTripInfo] = useState<TripInfo>(FORM.INITIAL);
 
     const { isModalOpen, closeModal } = useBrowserCheck();
+    const { isSubmitting, isFormComplete, submitTripInfo } = useTripInfoForm(false, tripInfo);
     const { images, imageCount, currentProcess, progress, extractMetaData, optimizeImages, uploadImagesToS3 } =
         useImageUpload();
     const { isMapScriptLoaded } = useMapScript();
+
     const { tripKey } = useParams();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -100,12 +104,17 @@ const TripImageUploadPage = () => {
                         <div css={buttonWrapper}>
                             <Button
                                 text={`여행 등록하기`}
-                                // onClick={submitTripInfo}
+                                onClick={async () => {
+                                    await submitTripInfo(tripInfo);
+                                    setStep('done');
+                                }}
                                 disabled={!isFormComplete}
                             />
                         </div>
                     </div>
                 );
+            case 'done':
+                return <TripCreateCompleteStep tripInfo={tripInfo} />;
         }
     };
 
@@ -126,10 +135,11 @@ const TripImageUploadPage = () => {
         ? formatHyphenToDot(tripInfo.mediaFilesDates[tripInfo.mediaFilesDates.length - 1])
         : '';
 
-    const isFormComplete = validateFormComplete(tripInfo);
+    const isCreateDone = step === 'done';
 
     return (
         <div css={page}>
+            {isSubmitting && <Indicator text='여행 등록 중...' />}
             <Header
                 title={`새로운 ${isEdit ? '사진' : '여행'} 등록`}
                 isBackButton
@@ -138,7 +148,7 @@ const TripImageUploadPage = () => {
                 }
             />
 
-            <ProgressHeader currentStep={step} />
+            {!isCreateDone && <ProgressHeader currentStep={step} />}
             <main css={mainStyle}>
                 <h2 css={titleStyle}>{getTitleByStep(step)}</h2>
                 {renderMainSectionByStep(step)}
