@@ -86,6 +86,7 @@ const subscribeToShareNotifications = (userId: string) => {
                 showToast('공유 요청이 거절되었습니다.');
             }
 
+            queryClient.invalidateQueries({ queryKey: ['summary'] });
             queryClient.invalidateQueries({ queryKey: ['notification'] });
         } catch (error) {
             console.error('메시지 처리 오류:', error);

@@ -10,6 +10,7 @@ export const useNotificationStatus = () => {
             toResult(() => notifiactionAPI.updateNotificationStatus(notificationId)),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['notification'] });
+            queryClient.invalidateQueries({ queryKey: ['summary'] });
         },
     });
 };
@@ -20,6 +21,7 @@ export const useNotificationDelete = () => {
         mutationFn: (notificationIds: number[]) => toResult(() => notifiactionAPI.deleteNotification(notificationIds)),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['notification'] });
+            queryClient.invalidateQueries({ queryKey: ['summary'] });
         },
     });
 };

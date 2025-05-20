@@ -1,42 +1,33 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-import { useLocation } from 'react-router-dom';
-
+import { useSummary } from '@/domains/user/hooks/queries';
 import useUserStore from '@/domains/user/stores/useUserStore';
-import { userAPI } from '@/libs/apis';
-import { toResult } from '@/libs/apis/shared/utils';
 
 export const useAuthCheck = () => {
-    const [isChecking, setIsChecking] = useState(true);
     const { login, logout, isAuthenticated } = useUserStore();
 
-    const location = useLocation();
+    const { data: result, isLoading: isChecking } = useSummary();
+    console.log('useAuthCheck render');
 
     useEffect(() => {
         const checkAuth = async () => {
             if (isAuthenticated) {
-                setIsChecking(false);
                 return;
             }
 
-            setIsChecking(true);
-            const result = await toResult(() => userAPI.fetchUserInfo(), {
-                onSuccess: () => {
-                    setIsChecking(false);
-                },
-            });
-            if (!result.success) {
-                logout();
-                return;
-            }
+            if (result) {
+                if (!result.success) {
+                    logout();
+                    return;
+                }
 
-            const userInfo = result.data;
-            login(userInfo);
-            setIsChecking(false);
+                const userInfo = result.data;
+                login(userInfo);
+            }
         };
 
         checkAuth();
-    }, [location.pathname, isAuthenticated, login, logout]);
+    }, [result, isAuthenticated, login, logout]);
 
     return { isChecking };
 };

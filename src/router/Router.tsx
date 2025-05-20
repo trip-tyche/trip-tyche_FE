@@ -26,6 +26,10 @@ const TripPages = {
 };
 
 const ProtectedRoute = () => {
+    /** TODO
+     * 메인 페이지로 진입 시, ProtectedRoute 함수 동작
+     * 메인 페이지에서 summary API 요청 방식으로 변경 후 발생
+     *  */
     const { isChecking } = useAuthCheck();
 
     if (isChecking) {

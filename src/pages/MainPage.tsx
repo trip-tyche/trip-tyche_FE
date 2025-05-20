@@ -4,10 +4,10 @@ import { css } from '@emotion/react';
 import { TouchpadOff, Bell, Settings, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import { useNotificationList } from '@/domains/notification/hooks/queries';
 import TripTicket from '@/domains/trip/components/TripTicket';
 import { useTripTicketList } from '@/domains/trip/hooks/queries';
 import { Trip } from '@/domains/trip/types';
+import { useSummary } from '@/domains/user/hooks/queries';
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { tripAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/shared/utils';
@@ -18,16 +18,27 @@ import { COLORS } from '@/shared/constants/style';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 const MainPage = () => {
-    const { userInfo } = useUserStore();
+    // const { userInfo } = useUserStore();
     const showToast = useToastStore((state) => state.showToast);
+    const { userInfo, login } = useUserStore();
 
     const { data: myTrips, isLoading: isTripsLoading } = useTripTicketList();
+    const { data: summaryResult, isLoading: isSummaryLoading } = useSummary();
 
     const navigate = useNavigate();
 
     useEffect(() => {
         sessionStorage.removeItem('recentPinPointId');
     }, []);
+
+    useEffect(() => {
+        if (!summaryResult || !summaryResult.success) {
+            return;
+        }
+
+        const userInfo = summaryResult.data;
+        login(userInfo);
+    }, [summaryResult]);
 
     const createNewTrip = async () => {
         const result = await toResult(() => tripAPI.createNewTrip());
@@ -45,7 +56,7 @@ const MainPage = () => {
 
     return (
         <div css={page}>
-            {isTripsLoading && <Indicator text='티켓 정보 불러오는 중...' />}
+            {(isTripsLoading || isSummaryLoading) && <Indicator text='티켓 정보 불러오는 중...' />}
 
             <header css={header}>
                 <div css={logo}>TRIPTYCHE</div>

@@ -32,19 +32,12 @@ const NotificationPage = () => {
         }
     }, [result]);
 
-    if (!result || !result.success) return null;
-
-    // if (!result) return null;
-    // if (!result?.success) {
-    //     navigate(ROUTES.PATH.MAIN);
-    //     showToast(result ? result?.error : MESSAGE.ERROR.UNKNOWN);
-    //     return;
-    // }
-
     // TODO: 안내 알림 추가 시, 각 API 요청으로 로직 변경
     const handleTabChange = (tabId: string) => {
         setActiveTab(tabId);
     };
+
+    if (!result || !result.success) return null;
 
     const notifications = [...result.data].sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
