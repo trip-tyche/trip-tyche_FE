@@ -23,7 +23,9 @@ export const useTicketHandler = (
     const { mutateAsync: unlinkSharedAsync, isPending: isUnLinking } = useShareUnlink();
 
     const handler = {
-        edit: (isDraft: boolean) => navigate(`${ROUTES.PATH.TRIP.EDIT.INFO(tripKey!)}`, { state: { isDraft } }),
+        edit: (isCompletedTrip: boolean) => {
+            navigate(`${ROUTES.PATH.TRIP.EDIT.INFO(tripKey!)}`, { state: { isDraft: !isCompletedTrip } });
+        },
         images: () => navigate(`${ROUTES.PATH.TRIP.EDIT.IMAGE(tripKey!)}`),
         delete: () => {
             setIsModalOpen(true);

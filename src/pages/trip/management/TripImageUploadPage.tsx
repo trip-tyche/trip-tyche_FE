@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import ProcessingStep from '@/domains/media/components/upload/ProcessingStep';
 import ReviewStep from '@/domains/media/components/upload/ReviewStep';
@@ -12,7 +13,8 @@ import { ImageUploadStepType, ImageWithAddress } from '@/domains/media/types';
 import { getAddressFromImageLocation, getImageDateFromImage, getTitleByStep } from '@/domains/media/utils';
 import TripInfoForm from '@/domains/trip/components/TripInfoForm';
 import { FORM } from '@/domains/trip/constants';
-import { useTripInfoForm } from '@/domains/trip/hooks/useTripInfoForm';
+import { useTripFormSubmit } from '@/domains/trip/hooks/mutations';
+import { useTripFormValidation } from '@/domains/trip/hooks/useTripFormValidation';
 import { TripInfo } from '@/domains/trip/types';
 import { formatHyphenToDot } from '@/libs/utils/date';
 import Button from '@/shared/components/common/Button';
@@ -24,28 +26,31 @@ import { ROUTES } from '@/shared/constants/route';
 import { COLORS } from '@/shared/constants/style';
 import useBrowserCheck from '@/shared/hooks/useBrowserCheck';
 import { useMapScript } from '@/shared/hooks/useMapScript';
+import { useToastStore } from '@/shared/stores/useToastStore';
 
 const TripImageUploadPage = () => {
     const [step, setStep] = useState<ImageUploadStepType>('upload');
     const [imagesWithAddress, setImagesWithAddress] = useState<ImageWithAddress[]>([]);
-    const [tripInfo, setTripInfo] = useState<TripInfo>(FORM.INITIAL);
+    const [tripForm, setTripInfo] = useState<TripInfo>(FORM.INITIAL);
 
     const { isModalOpen, closeModal } = useBrowserCheck();
-    const { isSubmitting, isFormComplete, submitTripInfo } = useTripInfoForm(false, tripInfo);
+    const { isFormComplete } = useTripFormValidation(tripForm);
+    // const { isSubmitting, isFormComplete, submitTripInfo } = useTripInfoForm(false, tripForm);
     const { images, imageCount, currentProcess, progress, extractMetaData, optimizeImages, uploadImagesToS3 } =
         useImageUpload();
     const { isMapScriptLoaded } = useMapScript();
+    const showToast = useToastStore((state) => state.showToast);
+
+    const queryClient = useQueryClient();
+    const { mutateAsync, isPending: isSubmitting } = useTripFormSubmit();
 
     const { tripKey } = useParams();
-    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-
-    const isEdit = searchParams.get('edit') !== null;
+    const { pathname } = useLocation();
 
     useEffect(() => {
         const getAddressFromLocation = async () => {
             if (images && isMapScriptLoaded) {
-                console.log('images', images);
                 const imagesWithAddress = await Promise.all(
                     images.map(async (image) => {
                         const address = image.location ? await getAddressFromImageLocation(image.location) : '';
@@ -60,7 +65,6 @@ const TripImageUploadPage = () => {
                     }),
                 );
 
-                console.log('zxcv', imagesWithAddress);
                 setImagesWithAddress(imagesWithAddress);
             }
         };
@@ -103,21 +107,14 @@ const TripImageUploadPage = () => {
             case 'info':
                 return (
                     <div css={infoSectionContainer}>
-                        <TripInfoForm tripInfo={tripInfo} onChangeTripInfo={setTripInfo} />
+                        <TripInfoForm tripForm={tripForm} onChangeTripInfo={setTripInfo} />
                         <div css={buttonWrapper}>
-                            <Button
-                                text={`여행 등록하기`}
-                                onClick={async () => {
-                                    await submitTripInfo(tripInfo);
-                                    setStep('done');
-                                }}
-                                disabled={!isFormComplete}
-                            />
+                            <Button text={`여행 등록하기`} onClick={handleTripFormSubmit} disabled={!isFormComplete} />
                         </div>
                     </div>
                 );
             case 'done':
-                return <TripCreateCompleteStep tripInfo={tripInfo} />;
+                return <TripCreateCompleteStep tripInfo={tripForm} />;
         }
     };
 
@@ -132,12 +129,28 @@ const TripImageUploadPage = () => {
         }
     };
 
-    const estimatedStartDate = tripInfo.mediaFilesDates?.length ? formatHyphenToDot(tripInfo.mediaFilesDates[0]) : '';
-    const estimatedEndDate = tripInfo.mediaFilesDates?.length
-        ? formatHyphenToDot(tripInfo.mediaFilesDates[tripInfo.mediaFilesDates.length - 1])
+    const handleTripFormSubmit = async () => {
+        if (!tripKey) return;
+
+        const result = await mutateAsync({ tripKey, tripForm });
+        if (result.success) {
+            queryClient.invalidateQueries({ queryKey: ['ticket-info'] });
+            showToast(result.data);
+            setStep('done');
+        } else {
+            showToast(result.error);
+        }
+
+        navigate(ROUTES.PATH.MAIN);
+    };
+
+    const estimatedStartDate = tripForm.mediaFilesDates?.length ? formatHyphenToDot(tripForm.mediaFilesDates[0]) : '';
+    const estimatedEndDate = tripForm.mediaFilesDates?.length
+        ? formatHyphenToDot(tripForm.mediaFilesDates[tripForm.mediaFilesDates.length - 1])
         : '';
 
     const isCreateDone = step === 'done';
+    const isEdit = pathname.includes('edit');
 
     return (
         <div css={page}>

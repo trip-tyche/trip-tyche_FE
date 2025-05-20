@@ -15,10 +15,15 @@ export const useTripDelete = () => {
     });
 };
 
-export const useTripUpdate = () => {
+export const useTripFormSubmit = () => {
+    const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ tripKey, tripInfo }: { tripKey: string; tripInfo: Trip }) =>
-            toResult(() => tripAPI.updateTripTicketInfo(tripKey, tripInfo)),
+        mutationFn: ({ tripKey, tripForm }: { tripKey: string; tripForm: Trip }) =>
+            toResult(() => tripAPI.updateTripForm(tripKey, tripForm), {
+                onSuccess: () => {
+                    queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
+                },
+            }),
     });
 };
 

@@ -18,7 +18,9 @@ export const validateUserNickName = (inputValue: string, minLength = 2, maxLengt
 
 // 폼의 모든 필드에 입력했는지 검사
 export const validateFormComplete = (form: TripInfo) =>
-    Object.entries(form).every(([_, value]) => (Array.isArray(value) ? value.length > 0 : Boolean(value)));
+    Object.entries(form).every(([_, value]) => {
+        return Array.isArray(value) ? value.length > 0 : Boolean(value);
+    });
 
 // 유효한 날짜인지 검사
 export const hasValidLocation = (location: Location | null): boolean => location !== null;

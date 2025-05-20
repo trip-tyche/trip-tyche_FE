@@ -6,9 +6,12 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import TripInfoForm from '@/domains/trip/components/TripInfoForm';
 import { FORM } from '@/domains/trip/constants';
+import { useTripFormSubmit } from '@/domains/trip/hooks/mutations';
 import { useTripInfo } from '@/domains/trip/hooks/queries';
-import { useTripInfoForm } from '@/domains/trip/hooks/useTripInfoForm';
+import { useTripFormValidation } from '@/domains/trip/hooks/useTripFormValidation';
 import { TripInfo } from '@/domains/trip/types';
+import { tripAPI } from '@/libs/apis';
+import { toResult } from '@/libs/apis/shared/utils';
 import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
@@ -16,54 +19,82 @@ import { ROUTES } from '@/shared/constants/route';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 const TripInfoEditPage = () => {
-    const [tripInfo, setTripInfo] = useState<TripInfo>(FORM.INITIAL);
+    const [tripForm, setTripForm] = useState<TripInfo>(FORM.INITIAL);
     const showToast = useToastStore((state) => state.showToast);
 
     const { tripKey } = useParams();
-    const {
-        pathname,
-        state: { isDraft },
-    } = useLocation();
+    const location = useLocation();
     const navigate = useNavigate();
 
+    const {
+        state: { isDraft },
+    } = location;
+
     const queryClient = useQueryClient();
-    const isEditing = pathname.includes('edit');
+    const { mutateAsync, isPending: isSubmitting } = useTripFormSubmit();
 
     const { data: tripInfoResult, isLoading } = useTripInfo(tripKey!);
-    const { isSubmitting, isFormComplete, submitTripInfo } = useTripInfoForm(isEditing, tripInfo);
+    const { isFormComplete } = useTripFormValidation(tripForm);
 
     useEffect(() => {
-        if (isEditing) {
-            if (!tripInfoResult || !tripInfoResult.success) {
-                navigate(-1);
-                showToast(tripInfoResult?.error as string);
+        if (tripInfoResult) {
+            if (!tripInfoResult.success) {
+                showToast(tripInfoResult?.error);
+                navigate(ROUTES.PATH.MAIN);
                 return;
             }
+            setTripForm((prev) => {
+                if (isDraft) {
+                    const mediaFileDates = tripInfoResult.data.mediaFilesDates || [];
+                    const validMediaFileDates = mediaFileDates.filter((mediaFile) => mediaFile !== '1980-01-01');
+                    return {
+                        ...prev,
+                        mediaFilesDates: validMediaFileDates,
+                    };
+                }
+                return tripInfoResult.data;
+            });
+        }
+    }, [tripInfoResult, isDraft]);
 
+    const finalizeTrip = async () => {
+        if (!tripKey) return;
+
+        const result = await toResult(() => tripAPI.finalizeTripTicket(tripKey));
+        if (result && !result.success) {
+            showToast(result.error);
+        }
+    };
+
+    const handleTripFormSubmit = async () => {
+        if (!tripKey) return;
+
+        const result = await mutateAsync({ tripKey, tripForm });
+        if (result.success) {
             queryClient.invalidateQueries({ queryKey: ['ticket-info'] });
-            setTripInfo(tripInfoResult.data);
+            queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
+            showToast(result.data);
+
+            if (isDraft) {
+                await finalizeTrip();
+            }
+        } else {
+            showToast(result.error);
         }
 
-        // setTripInfo(() => ({
-        //     ...tripInfo,
-        //     mediaFilesDates,
-        // }));
-    }, [tripInfoResult, isEditing]);
+        navigate(ROUTES.PATH.MAIN);
+    };
 
     return (
         <div css={pageContainer}>
             {(isLoading || isSubmitting) && <Indicator text='여행 정보 불러오는 중...' />}
 
-            <Header
-                title={ROUTES.PATH_TITLE.TRIPS.NEW.INFO}
-                isBackButton={isEditing}
-                onBack={() => navigate(ROUTES.PATH.MAIN)}
-            />
+            <Header title={ROUTES.PATH_TITLE.TRIPS.NEW.INFO} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
             <main css={mainStyle}>
-                <TripInfoForm isEditing={isEditing} tripInfo={tripInfo} onChangeTripInfo={setTripInfo} />
+                <TripInfoForm isEditing={true} tripForm={tripForm} onChangeTripInfo={setTripForm} />
                 <Button
-                    text={`여행 ${isEditing ? '수정' : '등록'}하기`}
-                    onClick={() => submitTripInfo(tripInfo)}
+                    text={`여행 ${isDraft ? '수정' : '등록'}하기`}
+                    onClick={handleTripFormSubmit}
                     disabled={!isFormComplete}
                 />
             </main>

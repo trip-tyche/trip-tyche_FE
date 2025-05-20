@@ -18,12 +18,12 @@ type DateSelectType = 'range' | 'single';
 type DateChangeHandler = (value: DateValue | DatesRangeValue) => void;
 interface TripInfoFormProps {
     isEditing?: boolean;
-    tripInfo: Trip;
+    tripForm: Trip;
     onChangeTripInfo: Dispatch<SetStateAction<Trip>>;
 }
 
-const TripInfoForm = ({ isEditing = false, tripInfo, onChangeTripInfo }: TripInfoFormProps) => {
-    const { tripTitle, country, startDate, endDate, hashtags, mediaFilesDates: imageDates = [] } = tripInfo;
+const TripInfoForm = ({ isEditing = false, tripForm, onChangeTripInfo }: TripInfoFormProps) => {
+    const { tripTitle, country, startDate, endDate, hashtags, mediaFilesDates: imageDates = [] } = tripForm;
     const [dateSelectType, setDateSelectType] = useState<DateSelectType>('range');
     const [isSelectRange, setIsSelectRange] = useState<boolean>(true);
 
@@ -41,7 +41,7 @@ const TripInfoForm = ({ isEditing = false, tripInfo, onChangeTripInfo }: TripInf
             setDateSelectType('single');
         }
     }, []);
-
+    console.log('tripForm: ', tripForm);
     useEffect(() => {
         if (!isEditing) {
             datePickerProps?.resetDates();
@@ -102,6 +102,8 @@ const TripInfoForm = ({ isEditing = false, tripInfo, onChangeTripInfo }: TripInf
         label: `${country.emoji} ${country.nameKo}`,
     }));
 
+    const defaultDateRange = `${formatToKorean(defaultStartDate, true)} ${formatToKorean(defaultEndDate, true) ? `~ ${formatToKorean(defaultEndDate, true)}` : ''}`;
+
     return (
         <div css={container}>
             <section>
@@ -131,9 +133,11 @@ const TripInfoForm = ({ isEditing = false, tripInfo, onChangeTripInfo }: TripInf
                 <DatePickerInput
                     type={isSelectRange ? 'range' : 'default'}
                     placeholder={
-                        isSelectRange
-                            ? `${formatToKorean(defaultStartDate, true)} ${formatToKorean(defaultEndDate, true) ? `~ ${formatToKorean(defaultEndDate, true)}` : ''}`
-                            : `${formatToKorean(defaultStartDate, true)}`
+                        !defaultStartDate || !defaultEndDate
+                            ? '여행 기간을 선택해주세요'
+                            : isSelectRange
+                              ? `${formatToKorean(defaultStartDate, true)} ${formatToKorean(defaultEndDate, true) ? `~ ${formatToKorean(defaultEndDate, true)}` : ''}`
+                              : `${formatToKorean(defaultStartDate, true)}`
                     }
                     value={
                         datePickerProps.isInitialized
@@ -187,7 +191,7 @@ const TripInfoForm = ({ isEditing = false, tripInfo, onChangeTripInfo }: TripInf
                     placeholder={FORM.TITLE.COUNTRY_DEFAULT}
                     data={countryData}
                     value={country}
-                    onChange={(value) => onChangeTripInfo({ ...tripInfo, country: value || '' })}
+                    onChange={(value) => onChangeTripInfo({ ...tripForm, country: value || '' })}
                     checkIconPosition='right'
                     leftSection={<Globe size={16} />}
                     size='md'
@@ -201,7 +205,7 @@ const TripInfoForm = ({ isEditing = false, tripInfo, onChangeTripInfo }: TripInf
                 <h2 css={titleStyle}>{FORM.TITLE.TITLE}</h2>
                 <Input
                     value={tripTitle}
-                    onChange={(value) => onChangeTripInfo({ ...tripInfo, tripTitle: value })}
+                    onChange={(value) => onChangeTripInfo({ ...tripForm, tripTitle: value })}
                     placeholder='최대 12자까지 입력할 수 있습니다'
                     maxLength={12}
                     leftSection={<Plane size={16} />}

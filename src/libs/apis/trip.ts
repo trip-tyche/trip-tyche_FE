@@ -14,7 +14,7 @@ export const tripAPI = {
     // 새 여행 등록을 위한 tripKey 생성
     createNewTrip: async (): Promise<ApiResponse<{ tripKey: string }>> => await apiClient.post(`/v1/trips`),
     // 기존 여행 티켓 정보 수정
-    updateTripTicketInfo: async (tripKey: string, tripInfo: Trip): Promise<ApiResponse<string>> =>
+    updateTripForm: async (tripKey: string, tripInfo: Trip): Promise<ApiResponse<string>> =>
         await apiClient.put(`/v1/trips/${tripKey}`, tripInfo),
     // 여행 티켓 삭제
     deleteTripTicket: async (tripKey: string): Promise<ApiResponse<string>> =>
