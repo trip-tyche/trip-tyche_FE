@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -25,12 +25,22 @@ const NotificationPage = () => {
 
     const { data: result, isLoading } = useNotificationList(Number(userId));
 
-    if (!result) return null;
-    if (!result?.success) {
-        showToast(result ? result?.error : MESSAGE.ERROR.UNKNOWN);
-        navigate(ROUTES.PATH.MAIN);
-        return null;
-    }
+    useEffect(() => {
+        if (result && !result.success) {
+            navigate(ROUTES.PATH.MAIN);
+            showToast(result.error || MESSAGE.ERROR.UNKNOWN);
+        }
+    }, [result]);
+
+    if (!result || !result.success) return null;
+
+    // if (!result) return null;
+    // if (!result?.success) {
+    //     navigate(ROUTES.PATH.MAIN);
+    //     showToast(result ? result?.error : MESSAGE.ERROR.UNKNOWN);
+    //     return;
+    // }
+
     // TODO: 안내 알림 추가 시, 각 API 요청으로 로직 변경
     const handleTabChange = (tabId: string) => {
         setActiveTab(tabId);

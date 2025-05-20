@@ -15,7 +15,6 @@ import Button from '@/shared/components/common/Button';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import { ROUTES } from '@/shared/constants/route';
 import { COLORS } from '@/shared/constants/style';
-import { MESSAGE } from '@/shared/constants/ui';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 const MainPage = () => {
@@ -23,19 +22,12 @@ const MainPage = () => {
     const showToast = useToastStore((state) => state.showToast);
 
     const { data: myTrips, isLoading: isTripsLoading } = useTripTicketList();
-    const { data: notifications, isLoading: isNotificationsLoading } = useNotificationList(Number(userInfo?.userId));
 
     const navigate = useNavigate();
 
     useEffect(() => {
         sessionStorage.removeItem('recentPinPointId');
     }, []);
-
-    if (!notifications) return null;
-    if (!notifications?.success) {
-        showToast(notifications ? notifications?.error : MESSAGE.ERROR.UNKNOWN);
-        return null;
-    }
 
     const createNewTrip = async () => {
         const result = await toResult(() => tripAPI.createNewTrip());
@@ -47,15 +39,13 @@ const MainPage = () => {
         }
     };
 
-    const unreadNotificationCount = notifications?.data.filter(
-        (notification) => notification.status === 'UNREAD',
-    ).length;
+    const { unreadNotificationsCount } = userInfo || {};
     const sortedTrips = myTrips && myTrips?.success ? [...myTrips.data].reverse() : [];
     const tripCount = sortedTrips.length;
 
     return (
         <div css={page}>
-            {(isTripsLoading || isNotificationsLoading) && <Indicator text='티켓 정보 불러오는 중...' />}
+            {isTripsLoading && <Indicator text='티켓 정보 불러오는 중...' />}
 
             <header css={header}>
                 <div css={logo}>TRIPTYCHE</div>
@@ -65,7 +55,7 @@ const MainPage = () => {
                         onClick={() => userInfo?.userId && navigate(ROUTES.PATH.NOTIFICATION(userInfo?.userId))}
                     >
                         <Bell css={notificationIcon} />
-                        {unreadNotificationCount > 0 && <span css={notificationBadge}>{unreadNotificationCount}</span>}
+                        {!!unreadNotificationsCount && <span css={notificationBadge}>{unreadNotificationsCount}</span>}
                     </div>
                     <Settings css={settingsIcon} onClick={() => navigate(ROUTES.PATH.SETTING)} />
                 </div>
