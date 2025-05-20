@@ -313,7 +313,7 @@ const TripRoutePage = () => {
         sessionStorage.setItem('recentPinPointId', recentPinPointId);
         sessionStorage.setItem('imageDates', JSON.stringify(imageDates));
 
-        navigate(`${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(String(tripKey), imageDates[0])}`);
+        navigate(`${ROUTES.PATH.TRIP.IMAGE.BY_DATE(String(tripKey), imageDates[0])}`);
     }, [tripKey, tripRouteInfo, pinPoints, currentPinPointIndex, navigate]);
 
     const handlePinPointMarkClick = (position: PinPoint, index: number) => {
@@ -355,9 +355,7 @@ const TripRoutePage = () => {
                                     heightOffset={65}
                                     isVisible={isPhotoCardVisible(index)}
                                     onClick={() =>
-                                        navigate(
-                                            `${ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_PINPOINT(tripKey!, point.pinPointId)}`,
-                                        )
+                                        navigate(`${ROUTES.PATH.TRIP.IMAGE.BY_PINPOINT(tripKey!, point.pinPointId)}`)
                                     }
                                 />
                             </React.Fragment>

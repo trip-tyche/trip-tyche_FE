@@ -33,7 +33,7 @@ const ImageByPinpointPage = () => {
                     size={28}
                     color={COLORS.BACKGROUND.WHITE}
                     onClick={() =>
-                        navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey!)}`, {
+                        navigate(`${ROUTES.PATH.TRIP.ROOT(tripKey!)}`, {
                             state: { lastLoactedPinPointId: pinPointId },
                         })
                     }

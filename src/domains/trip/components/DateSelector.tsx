@@ -49,7 +49,7 @@ const DateSelector = React.memo(({ selectedDate, imageDates }: DateSelectorProps
     const days = useMemo(() => getDays(imageDates), [imageDates]);
 
     const handleDateClick = (date: string) => {
-        navigate(ROUTES.PATH.TRIP.ROUTE.IMAGE.BY_DATE(tripKey!, date), { replace: true });
+        navigate(ROUTES.PATH.TRIP.IMAGE.BY_DATE(tripKey!, date), { replace: true });
     };
 
     return (

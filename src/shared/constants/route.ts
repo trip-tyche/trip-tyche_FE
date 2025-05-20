@@ -10,19 +10,16 @@ export const ROUTES = {
         SETTING: '/setting',
         NOTIFICATION: (userId: UserId) => `notification/${userId}`,
         TRIP: {
-            MANAGEMENT: {
-                IMAGES: (tripKey: TripKey) => `/${tripKey}/images`,
-                UPLOAD: (tripKey: TripKey) => `/${tripKey}/images/upload`,
-                INFO: (tripKey: TripKey) => `/${tripKey}/info`,
-                EDIT: (tripKey: TripKey) => `/${tripKey}/edit`,
+            ROOT: (tripKey: TripKey) => `/trip/${tripKey}`,
+            NEW: (tripKey: TripKey) => `/trip/${tripKey}/new`,
+            EDIT: {
+                IMAGE: (tripKey: TripKey) => `/trip/${tripKey}/edit/image`,
+                INFO: (tripKey: TripKey) => `/trip/${tripKey}/edit/info`,
             },
-            ROUTE: {
-                ROOT: (tripKey: TripKey) => `/${tripKey}/route`,
-
-                IMAGE: {
-                    BY_PINPOINT: (tripKey: TripKey, pinPointId: PinPointId) => `/${tripKey}/by-pinpoint/${pinPointId}`,
-                    BY_DATE: (tripKey: TripKey, date: string) => `/${tripKey}/by-date/${date}`,
-                },
+            IMAGE: {
+                BY_PINPOINT: (tripKey: TripKey, pinPointId: PinPointId) =>
+                    `/trip/${tripKey}/image/by-pinpoint/${pinPointId}`,
+                BY_DATE: (tripKey: TripKey, date: string) => `/trip/${tripKey}/image/by-date/${date}`,
             },
         },
     },

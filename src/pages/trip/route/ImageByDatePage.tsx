@@ -85,7 +85,7 @@ const ImageByDatePage = () => {
             <div css={container}>
                 {(!result || isLoading || !isAllImageLoad) && <Indicator text='사진 불러오는 중...' />}
 
-                <BackButton onClick={() => navigate(`${ROUTES.PATH.TRIP.ROUTE.ROOT(tripKey as string)}`)} />
+                <BackButton onClick={() => navigate(`${ROUTES.PATH.TRIP.ROOT(tripKey as string)}`)} />
 
                 <SingleMarkerMap position={imageLocation} />
                 <DateSelector selectedDate={date!} imageDates={imageDates} />

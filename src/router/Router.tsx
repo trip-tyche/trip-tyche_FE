@@ -77,40 +77,37 @@ const router = createBrowserRouter([
                         element: <NotificationPage />,
                     },
                     {
-                        path: ':tripKey',
+                        path: 'trip/:tripKey/',
                         children: [
                             {
-                                path: 'images',
-                                element: <TripPages.TripImageManagePage />,
+                                index: true,
+                                element: <TripPages.TripRoutePage />,
                             },
                             {
-                                path: 'images/unlocated',
-                                element: <UnlocatedImagePage />,
-                            },
-                            {
-                                path: 'images/upload',
+                                path: 'new',
                                 element: <TripImageUploadPage />,
                             },
                             {
-                                path: 'info',
-                                element: <TripInfoFormPage />,
+                                path: 'edit/image',
+                                element: <TripPages.TripImageManagePage />,
                             },
                             {
-                                path: 'edit',
+                                path: 'edit/info',
                                 element: <TripInfoFormPage />,
                             },
 
                             {
-                                path: 'route',
-                                element: <TripPages.TripRoutePage />,
-                            },
-                            {
-                                path: 'by-pinpoint/:pinPointId',
-                                element: <TripPages.ImageByPinpointPage />,
-                            },
-                            {
-                                path: 'by-date/:date',
-                                element: <TripPages.ImageByDatePage />,
+                                path: 'image',
+                                children: [
+                                    {
+                                        path: 'by-pinpoint/:pinPointId',
+                                        element: <TripPages.ImageByPinpointPage />,
+                                    },
+                                    {
+                                        path: 'by-date/:date',
+                                        element: <TripPages.ImageByDatePage />,
+                                    },
+                                ],
                             },
                         ],
                     },

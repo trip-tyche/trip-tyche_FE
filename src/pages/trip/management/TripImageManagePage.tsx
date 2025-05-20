@@ -281,7 +281,7 @@ const TripImageManagePage = () => {
                         <Button text='사진 선택' variant='white' onClick={() => setIsSelectionMode(true)} />
                         <Button
                             text='새로운 사진 등록하기'
-                            onClick={() => navigate(`${ROUTES.PATH.TRIP.MANAGEMENT.UPLOAD(tripKey!)}?edit`)}
+                            onClick={() => navigate(`${ROUTES.PATH.TRIP.NEW(tripKey!)}?edit`)}
                         />
                     </>
                 )}

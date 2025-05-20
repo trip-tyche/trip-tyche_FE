@@ -44,7 +44,7 @@ const MainPage = () => {
         const result = await toResult(() => tripAPI.createNewTrip());
         if (result.success) {
             const { tripKey } = result.data;
-            navigate(`${ROUTES.PATH.TRIP.MANAGEMENT.UPLOAD(tripKey!)}`);
+            navigate(`${ROUTES.PATH.TRIP.NEW(tripKey!)}`);
         } else {
             showToast(result.error);
         }
