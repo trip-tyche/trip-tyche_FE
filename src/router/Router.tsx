@@ -11,8 +11,8 @@ import PageNotFound from '@/pages/PageNotFound';
 import SettingPage from '@/pages/SettingPage';
 import SigninPage from '@/pages/SigninPage';
 import TripImageUploadPage from '@/pages/trip/management/TripImageUploadPage';
-import TripInfoFormPage from '@/pages/trip/management/TripInfoFormPage';
-import UnlocatedImagePage from '@/pages/trip/management/UnlocatedImagePage';
+import TripInfoEditPage from '@/pages/trip/management/TripInfoEditPage';
+// import UnlocatedImagePage from '@/pages/trip/management/UnlocatedImagePage';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import { ROUTES } from '@/shared/constants/route';
 
@@ -93,7 +93,7 @@ const router = createBrowserRouter([
                             },
                             {
                                 path: 'edit/info',
-                                element: <TripInfoFormPage />,
+                                element: <TripInfoEditPage />,
                             },
 
                             {

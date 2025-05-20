@@ -17,8 +17,8 @@ export const useTripDelete = () => {
 
 export const useTripUpdate = () => {
     return useMutation({
-        mutationFn: ({ tripKey, form }: { tripKey: string; form: Trip }) =>
-            toResult(() => tripAPI.updateTripTicketInfo(tripKey, form)),
+        mutationFn: ({ tripKey, tripInfo }: { tripKey: string; tripInfo: Trip }) =>
+            toResult(() => tripAPI.updateTripTicketInfo(tripKey, tripInfo)),
     });
 };
 

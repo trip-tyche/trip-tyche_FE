@@ -15,39 +15,40 @@ import Indicator from '@/shared/components/common/Spinner/Indicator';
 import { ROUTES } from '@/shared/constants/route';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
-const TripInfoFormPage = () => {
+const TripInfoEditPage = () => {
     const [tripInfo, setTripInfo] = useState<TripInfo>(FORM.INITIAL);
     const showToast = useToastStore((state) => state.showToast);
 
     const { tripKey } = useParams();
-    const { pathname, state: mediaFilesDates } = useLocation();
+    const {
+        pathname,
+        state: { isDraft },
+    } = useLocation();
     const navigate = useNavigate();
 
     const queryClient = useQueryClient();
-
     const isEditing = pathname.includes('edit');
 
-    const { data: beforeTripInfo, isLoading } = useTripInfo(tripKey!, isEditing);
+    const { data: tripInfoResult, isLoading } = useTripInfo(tripKey!);
     const { isSubmitting, isFormComplete, submitTripInfo } = useTripInfoForm(isEditing, tripInfo);
 
     useEffect(() => {
         if (isEditing) {
-            if (!beforeTripInfo) return;
-            if (!beforeTripInfo.success) {
-                showToast(beforeTripInfo?.error as string);
+            if (!tripInfoResult || !tripInfoResult.success) {
                 navigate(-1);
-                queryClient.invalidateQueries({ queryKey: ['ticket-info'] });
+                showToast(tripInfoResult?.error as string);
                 return;
             }
-            setTripInfo(beforeTripInfo.data);
-            return;
+
+            queryClient.invalidateQueries({ queryKey: ['ticket-info'] });
+            setTripInfo(tripInfoResult.data);
         }
 
-        setTripInfo(() => ({
-            ...tripInfo,
-            mediaFilesDates,
-        }));
-    }, [beforeTripInfo, isEditing, mediaFilesDates]);
+        // setTripInfo(() => ({
+        //     ...tripInfo,
+        //     mediaFilesDates,
+        // }));
+    }, [tripInfoResult, isEditing]);
 
     return (
         <div css={pageContainer}>
@@ -84,4 +85,4 @@ const mainStyle = css`
     padding: 16px;
 `;
 
-export default TripInfoFormPage;
+export default TripInfoEditPage;
