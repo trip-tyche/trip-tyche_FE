@@ -1,21 +1,22 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { useQueryClient } from '@tanstack/react-query';
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import ProcessingStep from '@/domains/media/components/upload/ProcessingStep';
 import ReviewStep from '@/domains/media/components/upload/ReviewStep';
 import TripCreateCompleteStep from '@/domains/media/components/upload/TripCreateCompleteStep';
 import UploadStep from '@/domains/media/components/upload/UploadStep';
 import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
-import { ImageUploadStepType, ImageWithAddress } from '@/domains/media/types';
+import { ImageFile, ImageUploadStepType, ImageWithAddress } from '@/domains/media/types';
 import { getAddressFromImageLocation, getImageDateFromImage, getTitleByStep } from '@/domains/media/utils';
 import TripInfoForm from '@/domains/trip/components/TripInfoForm';
 import { FORM } from '@/domains/trip/constants';
 import { useTripFormSubmit } from '@/domains/trip/hooks/mutations';
 import { useTripFormValidation } from '@/domains/trip/hooks/useTripFormValidation';
 import { TripInfo } from '@/domains/trip/types';
+import { mediaAPI, tripAPI } from '@/libs/apis';
+import { toResult } from '@/libs/apis/shared/utils';
 import { formatHyphenToDot } from '@/libs/utils/date';
 import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
@@ -31,7 +32,7 @@ import { useToastStore } from '@/shared/stores/useToastStore';
 const TripImageUploadPage = () => {
     const [step, setStep] = useState<ImageUploadStepType>('upload');
     const [imagesWithAddress, setImagesWithAddress] = useState<ImageWithAddress[]>([]);
-    const [tripForm, setTripInfo] = useState<TripInfo>(FORM.INITIAL);
+    const [tripForm, setTripForm] = useState<TripInfo>(FORM.INITIAL);
 
     const { isModalOpen, closeModal } = useBrowserCheck();
     const { isFormComplete } = useTripFormValidation(tripForm);
@@ -41,18 +42,20 @@ const TripImageUploadPage = () => {
     const { isMapScriptLoaded } = useMapScript();
     const showToast = useToastStore((state) => state.showToast);
 
-    const queryClient = useQueryClient();
     const { mutateAsync, isPending: isSubmitting } = useTripFormSubmit();
 
     const { tripKey } = useParams();
-    const navigate = useNavigate();
     const { pathname } = useLocation();
+    const navigate = useNavigate();
 
+    // 이미지 메타데이터 기반 역지오코딩을 활용한 좌표정보 주소 반환
     useEffect(() => {
         const getAddressFromLocation = async () => {
             if (images && isMapScriptLoaded) {
                 const imagesWithAddress = await Promise.all(
-                    images.map(async (image) => {
+                    images.map(async (image: ImageFile) => {
+                        // console.log('location: ', image.location);
+                        // console.log('recordDate: ', image.recordDate);
                         const address = image.location ? await getAddressFromImageLocation(image.location) : '';
                         const formattedAddress = address ? `${address.split(' ')[0]}, ${address.split(' ')[1]}` : '';
                         const blobUrl = URL.createObjectURL(image.image);
@@ -72,10 +75,11 @@ const TripImageUploadPage = () => {
         getAddressFromLocation();
     }, [images, isMapScriptLoaded]);
 
+    // tripInfo에 업로드한 이미지에서 추출한 mediaFilesDates 추가
     useEffect(() => {
         const imageDates = getImageDateFromImage(images || null);
 
-        setTripInfo({
+        setTripForm({
             tripTitle: '',
             country: '',
             startDate: '',
@@ -107,7 +111,7 @@ const TripImageUploadPage = () => {
             case 'info':
                 return (
                     <div css={infoSectionContainer}>
-                        <TripInfoForm tripForm={tripForm} onChangeTripInfo={setTripInfo} />
+                        <TripInfoForm tripForm={tripForm} onChangeTripInfo={setTripForm} />
                         <div css={buttonWrapper}>
                             <Button text={`여행 등록하기`} onClick={handleTripFormSubmit} disabled={!isFormComplete} />
                         </div>
@@ -115,6 +119,16 @@ const TripImageUploadPage = () => {
                 );
             case 'done':
                 return <TripCreateCompleteStep tripInfo={tripForm} />;
+        }
+    };
+
+    // 여행 확정
+    const finalizeTrip = async () => {
+        if (!tripKey) return;
+
+        const result = await toResult(() => tripAPI.finalizeTripTicket(tripKey));
+        if (result && !result.success) {
+            showToast(result.error);
         }
     };
 
@@ -126,6 +140,13 @@ const TripImageUploadPage = () => {
             const optimizedImages = await optimizeImages(imagesWithMetadata);
             await uploadImagesToS3(optimizedImages);
             setStep('review');
+
+            if (!isEdit) {
+                const result = await toResult(async () => await mediaAPI.updateTripStatusToImagesUploaded(tripKey!));
+                if (!result.success) {
+                    showToast(result.error);
+                }
+            }
         }
     };
 
@@ -134,14 +155,11 @@ const TripImageUploadPage = () => {
 
         const result = await mutateAsync({ tripKey, tripForm });
         if (result.success) {
-            queryClient.invalidateQueries({ queryKey: ['ticket-info'] });
-            showToast(result.data);
+            await finalizeTrip();
             setStep('done');
         } else {
             showToast(result.error);
         }
-
-        navigate(ROUTES.PATH.MAIN);
     };
 
     const estimatedStartDate = tripForm.mediaFilesDates?.length ? formatHyphenToDot(tripForm.mediaFilesDates[0]) : '';

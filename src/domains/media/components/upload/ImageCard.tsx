@@ -11,7 +11,7 @@ const ImageCard = ({ image }: { image: ImageWithAddress }) => {
     const hasAddress = !!image.address;
     const hasDate = !!image.recordDate;
 
-    if (!hasAddress || !hasDate) return null;
+    if (!hasAddress && !hasDate) return null;
 
     return (
         <div key={image.imageUrl} css={container}>

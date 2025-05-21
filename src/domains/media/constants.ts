@@ -15,9 +15,15 @@ export const COMPRESSION_OPTIONS = {
     },
 } as const;
 
-// 메타데이터 없는 이미지의 경우,
-// (위치) latitude, longitude 0으로 초기화
-// (날짜) '1980-01-01T00:00:00'로 초기화 (''로 전송 시, 에러 발생)
+export const MEDIA_FORMAT = {
+    CURRENT_MEDIA_FORMAT: /\.[^/.]+$/,
+    WEBP_FORMAT: '.webp',
+};
+
+/** 메타데이터 없는 이미지의 경우,
+ * (위치) latitude, longitude 0으로 초기화
+ * (날짜) '1980-01-01T00:00:00'로 초기화 (''로 전송 시, 에러 발생)
+ */
 export const DEFAULT_METADATA = {
     LOCATION: 0,
     DATE: '1980-01-01T00:00:00',

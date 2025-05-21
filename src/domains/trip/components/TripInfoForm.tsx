@@ -41,7 +41,7 @@ const TripInfoForm = ({ isEditing = false, tripForm, onChangeTripInfo }: TripInf
             setDateSelectType('single');
         }
     }, []);
-    console.log('tripForm: ', tripForm);
+
     useEffect(() => {
         if (!isEditing) {
             datePickerProps?.resetDates();
@@ -101,8 +101,6 @@ const TripInfoForm = ({ isEditing = false, tripForm, onChangeTripInfo }: TripInf
         value: `${country.value}`,
         label: `${country.emoji} ${country.nameKo}`,
     }));
-
-    const defaultDateRange = `${formatToKorean(defaultStartDate, true)} ${formatToKorean(defaultEndDate, true) ? `~ ${formatToKorean(defaultEndDate, true)}` : ''}`;
 
     return (
         <div css={container}>

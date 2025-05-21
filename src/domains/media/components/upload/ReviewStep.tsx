@@ -36,13 +36,10 @@ const ReviewStep = ({ imageCount, tripPeriod, imagesWithAddress }: ReviewStepPro
 
     const getImagePreviewComponent = () =>
         imagesWithAddress
-            .filter((image) => image.address && image.recordDate)
+            .filter((image) => image.address || image.recordDate)
             .slice(0, 4)
-            .map((image) => {
-                if (!image.address || !image.recordDate) return;
-                return <ImageCard key={image.imageUrl} image={image} />;
-            });
-    console.log('tripPeriod', tripPeriod);
+            .map((image) => <ImageCard key={image.imageUrl} image={image} />);
+
     const [startDate, endDate] = tripPeriod;
     const isSingleDate = startDate === endDate;
     const estimatedTripPeriod =

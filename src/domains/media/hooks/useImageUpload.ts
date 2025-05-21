@@ -5,7 +5,6 @@ import { useParams } from 'react-router-dom';
 import { DEFAULT_METADATA } from '@/domains/media/constants';
 import { PresignedUrlResponse, ImageFile, ImageProcessStatusType, ImageCount } from '@/domains/media/types';
 import { mediaAPI } from '@/libs/apis';
-import { toResult } from '@/libs/apis/shared/utils';
 import {
     extractMetadataFromImage,
     imagesWithoutDate,
@@ -25,9 +24,6 @@ export const useImageUpload = () => {
     });
 
     const { tripKey } = useParams();
-    // const [searchParams] = useSearchParams();
-
-    // const isEdit = searchParams.get('edit') !== null;
 
     const extractMetaData = async (images: FileList) => {
         setCurrentProcess('metadata');
@@ -48,9 +44,9 @@ export const useImageUpload = () => {
 
         setImages(optimizedImages);
 
-        console.log('total: ', optimizedImages);
-        console.log('withoutDate: ', imagesWithoutDate(optimizedImages));
-        console.log('withoutLocation: ', imagesWithoutDate(optimizedImages));
+        // console.log('total: ', optimizedImages);
+        // console.log('withoutDate: ', imagesWithoutDate(optimizedImages));
+        // console.log('withoutLocation: ', imagesWithoutLocation(optimizedImages));
 
         setImageCount({
             total: optimizedImages.length || 0,
@@ -108,11 +104,6 @@ export const useImageUpload = () => {
         // console.time(`send metadata to server`);
         await mediaAPI.createMediaFileMetadata(tripKey!, metaDatas);
         // console.timeEnd(`send metadata to server`);
-
-        // if (!isEdit) {
-        const result = await toResult(async () => await mediaAPI.updateTripStatusToImagesUploaded(tripKey!));
-        if (!result.success) throw Error(result.error);
-        // }
     };
 
     return {

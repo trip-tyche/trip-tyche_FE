@@ -71,17 +71,12 @@ const TripInfoEditPage = () => {
 
         const result = await mutateAsync({ tripKey, tripForm });
         if (result.success) {
-            queryClient.invalidateQueries({ queryKey: ['ticket-info'] });
-            queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
-            showToast(result.data);
-
+            queryClient.invalidateQueries({ queryKey: ['ticket-info', tripKey] });
             if (isDraft) {
                 await finalizeTrip();
             }
-        } else {
-            showToast(result.error);
         }
-
+        showToast(result.success ? result.data : result.error);
         navigate(ROUTES.PATH.MAIN);
     };
 
@@ -93,7 +88,7 @@ const TripInfoEditPage = () => {
             <main css={mainStyle}>
                 <TripInfoForm isEditing={true} tripForm={tripForm} onChangeTripInfo={setTripForm} />
                 <Button
-                    text={`여행 ${isDraft ? '수정' : '등록'}하기`}
+                    text={`여행 ${isDraft ? '등록' : '수정'}하기`}
                     onClick={handleTripFormSubmit}
                     disabled={!isFormComplete}
                 />

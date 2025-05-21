@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react';
 
 import imageCompression from 'browser-image-compression';
 
-import { COMPRESSION_OPTIONS } from '@/domains/media/constants';
+import { COMPRESSION_OPTIONS, MEDIA_FORMAT } from '@/domains/media/constants';
 import { ImageFile } from '@/domains/media/types';
 import { formatToISOLocal } from '@/libs/utils/date';
 import { extractDateFromImage, extractLocationFromImage } from '@/libs/utils/exif';
@@ -62,55 +62,37 @@ export const resizeImages = async (
 ): Promise<ImageFile[]> => {
     if (images.length === 0) return [];
 
-    const BATCH_SIZE = 10;
-    const resizedImages: ImageFile[] = [];
     const totalImages = images.length;
     let process = 0;
-
-    for (let i = 0; i < images.length; i += BATCH_SIZE) {
-        const batch = images.slice(i, i + BATCH_SIZE);
-
-        const batchResult = await Promise.all(
-            batch.map(async (image: ImageFile) => {
-                try {
-                    const resizedBlob = await imageCompression(image.image, COMPRESSION_OPTIONS);
-                    const resizedFile = new File([resizedBlob], image.image.name.replace(/\.[^/.]+$/, '.webp'), {
-                        type: COMPRESSION_OPTIONS.fileType,
-                        lastModified: image.image.lastModified,
-                    });
-                    URL.revokeObjectURL(URL.createObjectURL(resizedBlob));
-
-                    process++;
-                    if (onProgress) {
-                        const progressPercent = Math.round((process / totalImages) * 100);
-                        onProgress((prev) => ({
-                            ...prev,
-                            optimize: progressPercent,
-                        }));
-                    }
-
-                    return {
-                        image: resizedFile,
-                        recordDate: image.recordDate,
-                        location: image.location,
-                    };
-                } catch (error) {
-                    process++;
-                    if (onProgress) {
-                        const progressPercent = Math.round((process / totalImages) * 100);
-                        onProgress((prev) => ({
-                            ...prev,
-                            optimize: progressPercent,
-                        }));
-                    }
-                    return image;
+    const promise = await Promise.all(
+        images.map(async (image: ImageFile) => {
+            try {
+                const resizedBlob = await imageCompression(image.image, COMPRESSION_OPTIONS);
+                const resizedFile = new File(
+                    [resizedBlob],
+                    image.image.name.replace(MEDIA_FORMAT.CURRENT_MEDIA_FORMAT, MEDIA_FORMAT.WEBP_FORMAT),
+                );
+                return {
+                    image: resizedFile,
+                    recordDate: image.recordDate,
+                    location: image.location,
+                };
+            } catch (error) {
+                return { image: image.image, recordDate: image.recordDate, location: image.location };
+            } finally {
+                process++;
+                if (onProgress) {
+                    const progressPercent = Math.round((process / totalImages) * 100);
+                    onProgress((prev) => ({
+                        ...prev,
+                        optimize: progressPercent,
+                    }));
                 }
-            }),
-        );
-        resizedImages.push(...batchResult);
-    }
+            }
+        }),
+    );
 
-    return resizedImages;
+    return promise;
 };
 
 // 위치, 날짜 모두 존재하는 이미지
@@ -119,7 +101,7 @@ export const completeImages = (metadatas: ImageFile[]) =>
 
 // 위치 없는 이미지 (날짜만 존재)
 export const imagesWithoutLocation = (metadatas: ImageFile[]) =>
-    metadatas.filter((metadata) => metadata.recordDate && !hasValidLocation(metadata.location));
+    metadatas.filter((metadata) => !hasValidLocation(metadata.location));
 
 // 날짜 없는 이미지 (위치만 존재)
 export const imagesWithoutDate = (metadatas: ImageFile[]) => metadatas.filter((metadata) => !metadata.recordDate);

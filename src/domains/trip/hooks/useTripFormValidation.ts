@@ -7,17 +7,8 @@ export const useTripFormValidation = (tripInfo: TripInfo) => {
     const [isFormComplete, setIsFormComplete] = useState(false);
 
     useEffect(() => {
-        const { tripTitle, country, startDate, endDate, hashtags } = tripInfo;
-        const exceptMediaFileImages = {
-            tripTitle,
-            country,
-            startDate,
-            endDate,
-            hashtags,
-        };
-
-        console.log('exceptMediaFileImages', exceptMediaFileImages);
-
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+        const { mediaFilesDates, ...exceptMediaFileImages } = tripInfo;
         if (validateFormComplete(exceptMediaFileImages)) {
             setIsFormComplete(true);
             return;
