@@ -7,44 +7,50 @@ import theme from '@/shared/styles/theme';
 interface HeaderProps {
     title: string;
     isBackButton?: boolean;
+    children?: React.ReactNode;
     onBack?: () => void;
 }
-const Header = ({ title, isBackButton, onBack }: HeaderProps) => {
+const Header = ({ title, isBackButton, children, onBack }: HeaderProps) => {
     const navigate = useNavigate();
 
     const navigateBeforePage = () => (onBack ? onBack() : navigate(-1));
 
     return (
         <div css={headerStyle}>
-            {isBackButton && (
-                <ChevronLeft size={24} strokeWidth={1.5} css={backButtonStyle} onClick={navigateBeforePage} />
-            )}
-            <h1 css={titleStyle}>{title}</h1>
+            <div css={defaultStyle}>
+                {isBackButton && (
+                    <ChevronLeft size={20} strokeWidth={1.5} css={backButtonStyle} onClick={navigateBeforePage} />
+                )}
+                <h1 css={titleStyle}>{title}</h1>
+            </div>
+            {children}
         </div>
     );
 };
 
 const headerStyle = css`
+    padding: 8px 12px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    min-height: 48px;
-    position: relative;
+    min-height: 54px;
     border-bottom: 1px solid ${theme.COLORS.BORDER};
     background-color: ${theme.COLORS.BACKGROUND.WHITE};
     z-index: 30;
     user-select: none;
 `;
 
+const defaultStyle = css`
+    display: flex;
+    align-items: center;
+    gap: 14px;
+`;
+
 const titleStyle = css`
-    font-size: 18px;
-    /* font-size: ${theme.FONT_SIZES.LG}; */
     font-weight: 600;
 `;
 
 const backButtonStyle = css`
-    position: absolute;
-    left: 12px;
     cursor: pointer;
 `;
 

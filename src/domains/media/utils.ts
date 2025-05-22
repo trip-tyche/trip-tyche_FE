@@ -1,4 +1,10 @@
-import { ImageFile, ImageProcessStatusType, ImageUploadStepType, MediaFile } from '@/domains/media/types';
+import {
+    ImageFile,
+    ImageProcessStatusType,
+    ImageUploadStepType,
+    MediaFile,
+    MediaFileWithDate,
+} from '@/domains/media/types';
 import { getAddressFromLocation } from '@/libs/utils/map';
 import { Location } from '@/shared/types/map';
 
@@ -74,4 +80,23 @@ export const getImageDateFromImage = (images: ImageFile[] | null) => {
     const validDates = imageDates.filter((date) => date);
 
     return removeDuplicateDates(validDates);
+};
+
+export const getImageGroupByDate = (images: MediaFile[]) => {
+    const group = images.reduce<Record<string, MediaFileWithDate>>((acc, curr) => {
+        const date = curr.recordDate.split('T')[0];
+
+        if (!acc[date]) {
+            acc[date] = { recordDate: date, images: [curr] };
+        } else {
+            acc[date].images = [...acc[date].images, curr];
+        }
+
+        return acc;
+    }, {});
+
+    return Object.values(group).sort(
+        (dateA: MediaFileWithDate, dateB: MediaFileWithDate) =>
+            new Date(dateA.recordDate).getTime() - new Date(dateB.recordDate).getTime(),
+    );
 };

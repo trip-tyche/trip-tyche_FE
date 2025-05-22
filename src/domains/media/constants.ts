@@ -1,3 +1,5 @@
+import { TabItem } from '@/shared/types';
+
 export const COMPRESSION_OPTIONS = {
     maxWidthOrHeight: 1280,
 
@@ -28,3 +30,9 @@ export const DEFAULT_METADATA = {
     LOCATION: 0,
     DATE: '1980-01-01T00:00:00',
 };
+
+export const IMAGE_MANAGEMENT_TABS: TabItem[] = [
+    { id: 'all', title: '전체' },
+    { id: 'no-locatoin', title: '위치 없음' },
+    { id: 'no-date', title: '날짜 없음' },
+];

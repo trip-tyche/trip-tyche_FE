@@ -5,7 +5,7 @@ import { BellOff, Trash2 } from 'lucide-react';
 import { FaPencilAlt } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import MediaImageGrid from '@/domains/media/components/MediaImageGrid';
+import MediaImageGrid from '@/domains/media/components/view/MediaImageGrid';
 import { MediaFileMetaData } from '@/domains/media/types';
 import LocationAddMap from '@/domains/trip/components/LocationAddMap';
 import { useMediaDelete } from '@/domains/trip/hooks/mutations';
