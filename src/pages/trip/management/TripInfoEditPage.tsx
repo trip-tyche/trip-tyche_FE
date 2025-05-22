@@ -20,6 +20,7 @@ import { useToastStore } from '@/shared/stores/useToastStore';
 
 const TripInfoEditPage = () => {
     const [tripForm, setTripForm] = useState<TripInfo>(FORM.INITIAL);
+    const [isTripFinalizing, setIsTripFinalizing] = useState(false);
     const showToast = useToastStore((state) => state.showToast);
 
     const { tripKey } = useParams();
@@ -73,7 +74,9 @@ const TripInfoEditPage = () => {
         if (result.success) {
             queryClient.invalidateQueries({ queryKey: ['ticket-info', tripKey] });
             if (isDraft) {
+                setIsTripFinalizing(true);
                 await finalizeTrip();
+                setIsTripFinalizing(false);
             }
         }
         showToast(result.success ? result.data : result.error);
@@ -82,7 +85,7 @@ const TripInfoEditPage = () => {
 
     return (
         <div css={pageContainer}>
-            {(isLoading || isSubmitting) && <Indicator text='여행 정보 불러오는 중...' />}
+            {(isLoading || isSubmitting || isTripFinalizing) && <Indicator text='여행 정보 불러오는 중...' />}
 
             <Header title={ROUTES.PATH_TITLE.TRIPS.NEW.INFO} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
             <main css={mainStyle}>

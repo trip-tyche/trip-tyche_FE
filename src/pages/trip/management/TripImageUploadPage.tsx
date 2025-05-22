@@ -33,6 +33,7 @@ const TripImageUploadPage = () => {
     const [step, setStep] = useState<ImageUploadStepType>('upload');
     const [imagesWithAddress, setImagesWithAddress] = useState<ImageWithAddress[]>([]);
     const [tripForm, setTripForm] = useState<TripInfo>(FORM.INITIAL);
+    const [isTripFinalizing, setIsTripFinalizing] = useState(false);
 
     const { isModalOpen, closeModal } = useBrowserCheck();
     const { isFormComplete } = useTripFormValidation(tripForm);
@@ -155,7 +156,9 @@ const TripImageUploadPage = () => {
 
         const result = await mutateAsync({ tripKey, tripForm });
         if (result.success) {
+            setIsTripFinalizing(true);
             await finalizeTrip();
+            setIsTripFinalizing(false);
             setStep('done');
         } else {
             showToast(result.error);
@@ -172,7 +175,7 @@ const TripImageUploadPage = () => {
 
     return (
         <div css={page}>
-            {isSubmitting && <Indicator text='여행 등록 중...' />}
+            {(isSubmitting || isTripFinalizing) && <Indicator text='여행 등록 중...' />}
             <Header
                 title={`새로운 ${isEdit ? '사진' : '여행'} 등록`}
                 isBackButton
