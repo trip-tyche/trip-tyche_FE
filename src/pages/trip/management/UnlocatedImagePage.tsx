@@ -6,7 +6,7 @@ import { FaPencilAlt } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import MediaImageGrid from '@/domains/media/components/view/MediaImageGrid';
-import { MediaFileMetaData } from '@/domains/media/types';
+import { MediaFile } from '@/domains/media/types';
 import LocationAddMap from '@/domains/trip/components/LocationAddMap';
 import { useMediaDelete } from '@/domains/trip/hooks/mutations';
 import { mediaAPI } from '@/libs/apis';
@@ -41,7 +41,7 @@ interface ApiResponse {
 const UnlocatedImagePage = () => {
     const [isSelectionMode, setIsSelectionMode] = useState(false);
     const [unlocatedImageGroups, setUnlocatedImageGroups] = useState<UnlocatedMediaGroup[]>([]);
-    const [selectedImages, setSelectedImages] = useState<MediaFileMetaData[]>([]);
+    const [selectedImages, setSelectedImages] = useState<MediaFile[]>([]);
     const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -88,8 +88,8 @@ const UnlocatedImagePage = () => {
         }
     }, [isMapVisible]);
 
-    // MediaFileMetaData 형식으로 변환
-    const convertToMediaFileMetaData = (media: Media, recordDate: string): MediaFileMetaData => {
+    // MediaFile 형식으로 변환
+    const convertToMediaFileMetaData = (media: Media, recordDate: string): MediaFile => {
         return {
             mediaFileId: String(media.mediaFileId),
             mediaLink: media.mediaLink,
@@ -99,7 +99,7 @@ const UnlocatedImagePage = () => {
         };
     };
 
-    const handleImageToggle = (selectedImage: MediaFileMetaData) => {
+    const handleImageToggle = (selectedImage: MediaFile) => {
         const isAlreadySelected = selectedImages.some((image) => image.mediaFileId === selectedImage.mediaFileId);
 
         if (isAlreadySelected) {
@@ -113,7 +113,7 @@ const UnlocatedImagePage = () => {
         setSelectedLocation({ latitude, longitude });
     };
 
-    const deleteImages = (selectedImages: MediaFileMetaData[]) => {
+    const deleteImages = (selectedImages: MediaFile[]) => {
         if (!tripKey) return;
         mutate(
             {
@@ -148,7 +148,7 @@ const UnlocatedImagePage = () => {
         }
     };
 
-    const updateImagesLocation = async (selectedImages: MediaFileMetaData[], location: Location | null) => {
+    const updateImagesLocation = async (selectedImages: MediaFile[], location: Location | null) => {
         if (!location || !tripKey) return;
 
         const imagesWithUpdatedLocation = selectedImages.map((image) => {

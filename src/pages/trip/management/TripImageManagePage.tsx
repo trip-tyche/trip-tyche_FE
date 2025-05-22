@@ -1,23 +1,21 @@
-import { useState, useEffect, Fragment, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 import { css } from '@emotion/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Calendar, CalendarRange, Trash2 } from 'lucide-react';
-import { FaPencilAlt } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import ImageGroupByDate from '@/domains/media/components/view/ImageGroupByDate';
-import MediaImageGrid from '@/domains/media/components/view/MediaImageGrid';
-import { IMAGE_MANAGEMENT_TABS } from '@/domains/media/constants';
-import { MediaFileMetaData, MediaFileWithDate } from '@/domains/media/types';
-import { getImageGroupByDate } from '@/domains/media/utils';
-import EditDate from '@/domains/trip/components/EditDate';
-import LocationAddMap from '@/domains/trip/components/LocationAddMap';
+import { IMAGE_MANAGEMENT_TABS, MediaFileCategoryKey } from '@/domains/media/constants';
+import { MediaFile, MediaFileCategories } from '@/domains/media/types';
+import {
+    filterValidMediaFile,
+    filterWithoutDateMediaFile,
+    filterWithoutLocationMediaFile,
+    getImageGroupByDate,
+} from '@/domains/media/utils';
 import { useMediaDelete } from '@/domains/trip/hooks/mutations';
-import { mediaAPI } from '@/libs/apis';
-import { formatToISOLocal, formatToKorean } from '@/libs/utils/date';
+import { hasValidLocation } from '@/libs/utils/validate';
 import Button from '@/shared/components/common/Button';
-import BackButton from '@/shared/components/common/Button/BackButton';
 import Header from '@/shared/components/common/Header';
 import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
@@ -25,39 +23,58 @@ import TabNavigation from '@/shared/components/common/Tab/TabNavigation';
 import { ROUTES } from '@/shared/constants/route';
 import { COLORS } from '@/shared/constants/style';
 import { useTripImages } from '@/shared/hooks/queries/useImage';
+import { useMapScript } from '@/shared/hooks/useMapScript';
 import { useToastStore } from '@/shared/stores/useToastStore';
-import theme from '@/shared/styles/theme';
 import { Location } from '@/shared/types/map';
 
 const TripImageManagePage = () => {
-    const [isSelectionMode, setIsSelectionMode] = useState(false);
-    const [selectedImages, setSelectedImages] = useState<MediaFileMetaData[]>([]);
+    const [selectedImages, setSelectedImages] = useState<MediaFile[]>([]);
     const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    // const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [activeTab, setActiveTab] = useState(IMAGE_MANAGEMENT_TABS[0].id);
+    const [isSelectionMode, setIsSelectionMode] = useState(false);
 
     const [isVisibleEditList, setIsVisibleEditList] = useState(false);
     const [isMapVisible, setIsMapVisible] = useState(false);
     const [isDateVisible, setIsDateVisible] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
+    const { isMapScriptLoaded } = useMapScript();
 
+    const [imageCategories, setImageCategories] = useState<MediaFileCategories>();
     const { showToast } = useToastStore.getState();
 
     const { mutate } = useMediaDelete();
 
     const navigate = useNavigate();
     const { tripKey } = useParams();
-    const queryClient = useQueryClient();
+    // const queryClient = useQueryClient();
 
-    const { data: tripImages = [], isLoading, isError, error } = useTripImages(tripKey!);
+    const { data: result, isLoading } = useTripImages(tripKey!);
 
+    console.log(imageCategories?.withoutDate);
     useEffect(() => {
-        if (isError) {
-            navigate(-1);
-            showToast(error.message || '사진을 불러오는데 실패하였습니다.');
+        if (!result) return;
+
+        if (!result.success) {
+            showToast(result.error);
+            return;
+        } else {
+            const images = result.data;
+
+            setImageCategories({
+                withAll: { count: images.length || 0, images: (filterValidMediaFile(images) as MediaFile[]) || [] },
+                withoutLocation: {
+                    count: filterWithoutLocationMediaFile(images).length || 0,
+                    images: (filterWithoutLocationMediaFile(images) as MediaFile[]) || [],
+                },
+                withoutDate: {
+                    count: filterWithoutDateMediaFile(images).length || 0,
+                    images: (filterWithoutDateMediaFile(images) as MediaFile[]) || [],
+                },
+            });
         }
-    }, [isError, error]);
+    }, [result]);
 
     useEffect(() => {
         setIsVisibleEditList(false);
@@ -69,28 +86,15 @@ const TripImageManagePage = () => {
         }
     }, [selectedLocation, isMapVisible]);
 
-    // const imageGroupByDate = useMemo(() => {
-    //     const group = tripImages.reduce<Record<string, MediaFileWithDate>>((acc, curr) => {
-    //         const date = curr.recordDate.split('T')[0];
+    const imageGroupByDate = useMemo(() => {
+        if (!imageCategories) return;
+        const activeImage = imageCategories[activeTab];
+        if (!activeImage.images) return;
+        return getImageGroupByDate(activeImage.images);
+    }, [imageCategories, activeTab]);
 
-    //         if (!acc[date]) {
-    //             acc[date] = { recordDate: date, images: [curr] };
-    //         } else {
-    //             acc[date].images = [...acc[date].images, curr];
-    //         }
-
-    //         return acc;
-    //     }, {});
-
-    //     return Object.values(group).sort(
-    //         (dateA: MediaFileWithDate, dateB: MediaFileWithDate) =>
-    //             new Date(dateA.recordDate).getTime() - new Date(dateB.recordDate).getTime(),
-    //     );
-    // }, [tripImages]);
-
-    const imageGroupByDate = useMemo(() => getImageGroupByDate(tripImages), [tripImages]);
-    console.log(tripImages, imageGroupByDate);
-    const deleteImages = (selectedImages: MediaFileMetaData[]) => {
+    // console.log(tripImages, imageGroupByDate);
+    const deleteImages = (selectedImages: MediaFile[]) => {
         if (!tripKey) return;
         mutate(
             {
@@ -111,60 +115,60 @@ const TripImageManagePage = () => {
         );
     };
 
-    const updateImagesLocation = async (selectedImages: MediaFileMetaData[], location: Location | null) => {
-        if (!location || !tripKey) return;
+    // const updateImagesLocation = async (selectedImages: MediaFile[], location: Location | null) => {
+    //     if (!location || !tripKey) return;
 
-        const imagesWithUpdatedLocation = selectedImages.map((image) => {
-            return {
-                ...image,
-                latitude: location.latitude,
-                longitude: location.longitude,
-            };
-        });
+    //     const imagesWithUpdatedLocation = selectedImages.map((image) => {
+    //         return {
+    //             ...image,
+    //             latitude: location.latitude,
+    //             longitude: location.longitude,
+    //         };
+    //     });
 
-        try {
-            setIsUploading(true);
-            await mediaAPI.updateImages(tripKey, imagesWithUpdatedLocation);
+    //     try {
+    //         setIsUploading(true);
+    //         await mediaAPI.updateImages(tripKey, imagesWithUpdatedLocation);
 
-            setIsMapVisible(false);
-            showToast(`${selectedImages.length}의 사진이 수정되었습니다`);
-            setSelectedImages([]);
-            setIsSelectionMode(false);
-            setSelectedDate(null);
-        } catch (error) {
-            console.error('여행 이미지 삭제 실패', error);
-        } finally {
-            setIsUploading(false);
-        }
-    };
+    //         setIsMapVisible(false);
+    //         showToast(`${selectedImages.length}의 사진이 수정되었습니다`);
+    //         setSelectedImages([]);
+    //         setIsSelectionMode(false);
+    //         setSelectedDate(null);
+    //     } catch (error) {
+    //         console.error('여행 이미지 삭제 실패', error);
+    //     } finally {
+    //         setIsUploading(false);
+    //     }
+    // };
 
-    const updateImagesDate = async (selectedImages: MediaFileMetaData[], date: Date | null) => {
-        if (!date || !tripKey) return;
+    // const updateImagesDate = async (selectedImages: MediaFile[], date: Date | null) => {
+    //     if (!date || !tripKey) return;
 
-        const imagesWithUpdatedDate = selectedImages.map((image) => {
-            return {
-                ...image,
-                recordDate: formatToISOLocal(date),
-            };
-        });
+    //     const imagesWithUpdatedDate = selectedImages.map((image) => {
+    //         return {
+    //             ...image,
+    //             recordDate: formatToISOLocal(date),
+    //         };
+    //     });
 
-        try {
-            setIsUploading(true);
-            await mediaAPI.updateImages(tripKey, imagesWithUpdatedDate);
+    //     try {
+    //         setIsUploading(true);
+    //         await mediaAPI.updateImages(tripKey, imagesWithUpdatedDate);
 
-            setIsDateVisible(false);
-            showToast(`${selectedImages.length}장의 사진이 수정되었습니다`);
-            setSelectedImages([]);
-            setIsSelectionMode(false);
-            queryClient.invalidateQueries({ queryKey: ['trip-images'] });
-        } catch (error) {
-            console.error('여행 이미지 삭제 실패', error);
-        } finally {
-            setIsUploading(false);
-        }
-    };
+    //         setIsDateVisible(false);
+    //         showToast(`${selectedImages.length}장의 사진이 수정되었습니다`);
+    //         setSelectedImages([]);
+    //         setIsSelectionMode(false);
+    //         queryClient.invalidateQueries({ queryKey: ['trip-images'] });
+    //     } catch (error) {
+    //         console.error('여행 이미지 삭제 실패', error);
+    //     } finally {
+    //         setIsUploading(false);
+    //     }
+    // };
 
-    const handleImageToggle = (selectedImage: MediaFileMetaData) => {
+    const handleImageToggle = (selectedImage: MediaFile) => {
         const isAlreadySelected = selectedImages.some((image) => image.mediaFileId === selectedImage.mediaFileId);
 
         if (isAlreadySelected) {
@@ -174,15 +178,15 @@ const TripImageManagePage = () => {
         }
     };
 
-    const handleMapLocationSelect = (latitude: number, longitude: number) => {
-        setSelectedLocation({ latitude, longitude });
-    };
+    // const handleMapLocationSelect = (latitude: number, longitude: number) => {
+    //     setSelectedLocation({ latitude, longitude });
+    // };
 
     const handleTabChange = (tabId: string) => {
-        setActiveTab(tabId);
+        setActiveTab(tabId as MediaFileCategoryKey);
     };
 
-    const isSelectedImage = selectedImages.length > 0;
+    // const isSelectedImage = selectedImages.length > 0;
 
     if (isLoading) {
         return <Indicator />;
@@ -212,7 +216,7 @@ const TripImageManagePage = () => {
             {
                 <Button
                     text={`위치 없는 사진 관리`}
-                    onClick={() => navigate(`/${tripKey}/images/unlocated`)}
+                    onClick={() => navigate(`/${tripKey}/imageCategories/unlocated`)}
                     css={css`
                         width: auto;
                         height: 34px;
@@ -269,16 +273,23 @@ const TripImageManagePage = () => {
             </Header>
             <TabNavigation tabs={IMAGE_MANAGEMENT_TABS} activeTab={activeTab} onActiveChange={handleTabChange} />
 
-            <main css={mainStyle}>
-                {imageGroupByDate?.map((imageGroup) => (
-                    <ImageGroupByDate
-                        key={imageGroup.recordDate}
-                        imageGroup={imageGroup}
-                        selectedImages={selectedImages}
-                        onImageClick={() => (isSelectionMode ? handleImageToggle : null)}
-                    />
-                ))}
-            </main>
+            {isMapScriptLoaded && (
+                <main css={mainStyle}>
+                    {imageGroupByDate?.map((imageGroup) => (
+                        <ImageGroupByDate
+                            key={imageGroup.recordDate}
+                            imageGroup={imageGroup}
+                            selectedImages={selectedImages}
+                            onImageClick={() => (isSelectionMode ? handleImageToggle : null)}
+                        />
+                    ))}
+                </main>
+            )}
+            {/* <MediaImageGrid */}
+            {/* //         imageCategories={image.imageCategories}
+                    //         selectedImages={selectedImages}
+                    //         onImageClick={isSelectionMode ? handleImageToggle : () => null}
+                    //     /> */}
 
             {/* <div>
                 {isSelectionMode ? (
@@ -371,64 +382,64 @@ const mainStyle = css`
     overflow: auto;
 `;
 
-const selectedStyle = css`
-    width: 100%;
-    padding: 2px 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-`;
+// const selectedStyle = css`
+//     width: 100%;
+//     padding: 2px 4px;
+//     display: flex;
+//     justify-content: space-between;
+//     align-items: center;
+// `;
 
-const bottomSheet = css`
-    max-width: 428px;
-    width: 100%;
-    position: fixed;
-    background-color: ${COLORS.BACKGROUND.WHITE};
-    border-radius: 10px 10px 0 0;
-    bottom: 0;
-    padding: 12px;
-    z-index: 10;
-    display: flex;
-    gap: 8px;
-`;
+// const bottomSheet = css`
+//     max-width: 428px;
+//     width: 100%;
+//     position: fixed;
+//     background-color: ${COLORS.BACKGROUND.WHITE};
+//     border-radius: 10px 10px 0 0;
+//     bottom: 0;
+//     padding: 12px;
+//     z-index: 10;
+//     display: flex;
+//     gap: 8px;
+// `;
 
-const selectedText = css`
-    font-weight: 600;
-    color: ${COLORS.TEXT.BLACK};
-`;
+// const selectedText = css`
+//     font-weight: 600;
+//     color: ${COLORS.TEXT.BLACK};
+// `;
 
-const optionIcon = css`
-    position: relative;
-    display: flex;
-    gap: 14px;
-    align-items: center;
-`;
+// const optionIcon = css`
+//     position: relative;
+//     display: flex;
+//     gap: 14px;
+//     align-items: center;
+// `;
 
-const editList = css`
-    width: max-content;
-    padding: 12px;
-    position: absolute;
-    top: -88px;
-    right: -12px;
-    display: flex;
-    /* gap: 16px; */
-    flex-direction: column;
-    background-color: ${COLORS.BACKGROUND.WHITE};
-    border-radius: 8px;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    cursor: pointer;
-`;
+// const editList = css`
+//     width: max-content;
+//     padding: 12px;
+//     position: absolute;
+//     top: -88px;
+//     right: -12px;
+//     display: flex;
+//     /* gap: 16px; */
+//     flex-direction: column;
+//     background-color: ${COLORS.BACKGROUND.WHITE};
+//     border-radius: 8px;
+//     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+//     cursor: pointer;
+// `;
 
-const dateStyle = css`
-    font-weight: 700;
-    /* padding: 12px; */
-`;
+// const dateStyle = css`
+//     font-weight: 700;
+//     /* padding: 12px; */
+// `;
 
-const buttonContainer = css`
-    width: 100%;
-    padding: 12px;
-    display: flex;
-    gap: 12px;
-    background-color: ${COLORS.BACKGROUND.WHITE};
-`;
+// const buttonContainer = css`
+//     width: 100%;
+//     padding: 12px;
+//     display: flex;
+//     gap: 12px;
+//     background-color: ${COLORS.BACKGROUND.WHITE};
+// `;
 export default TripImageManagePage;

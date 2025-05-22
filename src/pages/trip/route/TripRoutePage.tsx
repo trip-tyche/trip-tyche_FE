@@ -4,19 +4,14 @@ import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { MediaFile } from '@/domains/media/types';
-import { filterValidLocationMediaFile, removeDuplicateDates } from '@/domains/media/utils';
+import { removeDuplicateDates } from '@/domains/media/utils';
 import MapControlButtons from '@/domains/route/components/MapControlButtons';
 import PhotoCard from '@/domains/route/components/PhotoCard';
 import Polyline from '@/domains/route/components/Polyline';
 import { DURATION } from '@/domains/route/constants';
 import { useRoute } from '@/domains/route/hooks/queries';
 import { PinPoint } from '@/domains/route/types';
-import {
-    calculateDistance,
-    filterValidLocationPinPoint,
-    getAnimationConfig,
-    sortPinPointByDate,
-} from '@/domains/route/utils';
+import { calculateDistance, getAnimationConfig, sortPinPointByDate } from '@/domains/route/utils';
 import { addStartDateAndEndDateToImageDates } from '@/libs/utils/media';
 import BackButton from '@/shared/components/common/Button/BackButton';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
@@ -89,11 +84,9 @@ const TripRoutePage = () => {
 
             const { tripTitle, startDate, endDate, pinPoints, mediaFiles: tripImages } = result.data;
 
-            const validLocationPinPoints = sortPinPointByDate(filterValidLocationPinPoint(pinPoints));
-            console.log('validLocationPinPoints', validLocationPinPoints);
-            const validLocationImages = filterValidLocationMediaFile(tripImages);
+            const validLocationPinPoints = sortPinPointByDate(pinPoints);
             const isValidTrip = tripTitle && startDate && endDate && tripImages.length !== 0;
-            const imageDates = validLocationImages.map((image: MediaFile) => image.recordDate.split('T')[0]);
+            const imageDates = tripImages.map((image: MediaFile) => image.recordDate.split('T')[0]);
 
             if (validLocationPinPoints.length === 0) {
                 showToast('여행 경로를 표시할 수 있는 사진이 없습니다');
@@ -119,7 +112,7 @@ const TripRoutePage = () => {
                 startDate,
                 endDate,
                 imageDates: removeDuplicateDates(imageDates),
-                tripImages: validLocationImages,
+                tripImages,
             });
         }
     }, [result]);

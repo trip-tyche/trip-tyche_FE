@@ -1,28 +1,35 @@
-import {
-    ImageFile,
-    ImageProcessStatusType,
-    ImageUploadStepType,
-    MediaFile,
-    MediaFileWithDate,
-} from '@/domains/media/types';
+import { ClientImageFile, ImageProcessStatusType, ImageUploadStepType, MediaFile } from '@/domains/media/types';
 import { getAddressFromLocation } from '@/libs/utils/map';
+import { hasValidDate, hasValidLocation } from '@/libs/utils/validate';
 import { Location } from '@/shared/types/map';
 
 /**
- * 기본 위치{latitude: 0, longtitude: 0}가 아닌 유효한 위치를 가진 미디어 파일만 필터링
+ * 위치, 날짜 모두 유효한 미디어 파일 필터링
  * @param mediaFiles 필터링할 미디어 파일 배열
- * @returns 유효한 위치를 가진 미디어 파일 배열
+ * @returns 위치, 날짜 모두 유효한 미디어 파일 배열
  */
-export const filterValidLocationMediaFile = (mediaFiles: MediaFile[]) =>
-    mediaFiles.filter((mediaFile: MediaFile) => mediaFile.latitude !== 0 && mediaFile.longitude !== 0);
+export const filterValidMediaFile = (metadatas: ClientImageFile[] | MediaFile[]) =>
+    metadatas.filter(
+        (metadata) =>
+            hasValidLocation({ latitude: metadata.latitude, longitude: metadata.longitude }) &&
+            hasValidDate(metadata.recordDate),
+    );
 
 /**
- * 기본 날짜(1980-01-01)가 아닌 유효한 날짜를 가진 미디어 파일만 필터링
+ * 유효하지 않은 위치(기본위치: {latitude: 0, longtitude: 0})를 가진 이미지 파일만 필터링
  * @param mediaFiles 필터링할 미디어 파일 배열
- * @returns 유효한 날짜를 가진 미디어 파일 배열
+ * @returns 위치 없는 미디어 파일 배열
  */
-export const filterValidDatePinPoint = (mediaFiles: MediaFile[]) =>
-    mediaFiles.filter((mediaFile) => !mediaFile.recordDate.startsWith('1980-01-01'));
+export const filterWithoutLocationMediaFile = (metadatas: ClientImageFile[] | MediaFile[]) =>
+    metadatas.filter((metadata) => !hasValidLocation({ latitude: metadata.latitude, longitude: metadata.longitude }));
+
+/**
+ * 유효하지 않은 날짜(기본날짜: 1980-01-01)를 가진 미디어 파일만 필터링
+ * @param mediaFiles 필터링할 미디어 파일 배열
+ * @returns 날짜 없는 미디어 파일 배열
+ */
+export const filterWithoutDateMediaFile = (metadatas: ClientImageFile[] | MediaFile[]) =>
+    metadatas.filter((metadata) => !hasValidDate(metadata.recordDate));
 
 export const removeDuplicateDates = (datesString: string[]) =>
     [...new Set<string>([...datesString])].sort((a, b) => a.localeCompare(b));
@@ -74,16 +81,24 @@ export const getAddressFromImageLocation = async (location: Location): Promise<s
     return result.error as string;
 };
 
-export const getImageDateFromImage = (images: ImageFile[] | null) => {
+export const getImageDateFromImage = (images: ClientImageFile[] | null) => {
     if (!images || images?.length === 0) return null;
-    const imageDates = images?.map((image: ImageFile) => image.recordDate.split('T')[0]);
+    const imageDates = images?.map((image: ClientImageFile) => image.recordDate.split('T')[0]);
     const validDates = imageDates.filter((date) => date);
 
     return removeDuplicateDates(validDates);
 };
 
 export const getImageGroupByDate = (images: MediaFile[]) => {
-    const group = images.reduce<Record<string, MediaFileWithDate>>((acc, curr) => {
+    const group = images.reduce<
+        Record<
+            string,
+            {
+                recordDate: string;
+                images: MediaFile[];
+            }
+        >
+    >((acc, curr) => {
         const date = curr.recordDate.split('T')[0];
 
         if (!acc[date]) {
@@ -96,7 +111,15 @@ export const getImageGroupByDate = (images: MediaFile[]) => {
     }, {});
 
     return Object.values(group).sort(
-        (dateA: MediaFileWithDate, dateB: MediaFileWithDate) =>
-            new Date(dateA.recordDate).getTime() - new Date(dateB.recordDate).getTime(),
+        (
+            dateA: {
+                recordDate: string;
+                images: MediaFile[];
+            },
+            dateB: {
+                recordDate: string;
+                images: MediaFile[];
+            },
+        ) => new Date(dateA.recordDate).getTime() - new Date(dateB.recordDate).getTime(),
     );
 };

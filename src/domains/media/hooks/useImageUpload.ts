@@ -3,19 +3,19 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { DEFAULT_METADATA } from '@/domains/media/constants';
-import { PresignedUrlResponse, ImageFile, ImageProcessStatusType, ImageCount } from '@/domains/media/types';
-import { mediaAPI } from '@/libs/apis';
 import {
-    extractMetadataFromImage,
-    imagesWithoutDate,
-    imagesWithoutLocation,
-    removeDuplicateImages,
-    resizeImages,
-} from '@/libs/utils/image';
+    PresignedUrlResponse,
+    ClientImageFile,
+    ImageProcessStatusType,
+    MediaFileCategories,
+} from '@/domains/media/types';
+import { filterWithoutDateMediaFile, filterWithoutLocationMediaFile } from '@/domains/media/utils';
+import { mediaAPI } from '@/libs/apis';
+import { extractMetadataFromImage, removeDuplicateImages, resizeImages } from '@/libs/utils/image';
 
 export const useImageUpload = () => {
-    const [images, setImages] = useState<ImageFile[]>();
-    const [imageCount, setImageCount] = useState<ImageCount>();
+    const [images, setImages] = useState<ClientImageFile[]>();
+    const [imageCategories, setImageCategories] = useState<MediaFileCategories>();
     const [currentProcess, setCurrentProcess] = useState<ImageProcessStatusType>('metadata');
     const [progress, setProgress] = useState({
         metadata: 0,
@@ -36,7 +36,7 @@ export const useImageUpload = () => {
         return imagesWithMetadata;
     };
 
-    const optimizeImages = async (images: ImageFile[]) => {
+    const optimizeImages = async (images: ClientImageFile[]) => {
         setCurrentProcess('optimize');
         // console.time(`resize and convert to WebP`);
         const optimizedImages = await resizeImages(images, setProgress);
@@ -48,16 +48,16 @@ export const useImageUpload = () => {
         // console.log('withoutDate: ', imagesWithoutDate(optimizedImages));
         // console.log('withoutLocation: ', imagesWithoutLocation(optimizedImages));
 
-        setImageCount({
-            total: optimizedImages.length || 0,
-            withoutDate: imagesWithoutDate(optimizedImages).length || 0,
-            withoutLocation: imagesWithoutLocation(optimizedImages).length || 0,
+        setImageCategories({
+            withAll: { count: optimizedImages.length || 0 },
+            withoutLocation: { count: filterWithoutLocationMediaFile(optimizedImages).length || 0 },
+            withoutDate: { count: filterWithoutDateMediaFile(optimizedImages).length || 0 },
         });
 
         return optimizedImages;
     };
 
-    const uploadImagesToS3 = async (images: ImageFile[]) => {
+    const uploadImagesToS3 = async (images: ClientImageFile[]) => {
         setCurrentProcess('upload');
         try {
             const imageNames = images.map((image) => ({ fileName: image.image.name }));
@@ -90,13 +90,13 @@ export const useImageUpload = () => {
         }
     };
 
-    const submitS3urlAndMetadata = async (images: ImageFile[], presignedUrls: PresignedUrlResponse[]) => {
+    const submitS3urlAndMetadata = async (images: ClientImageFile[], presignedUrls: PresignedUrlResponse[]) => {
         const metaDatas = presignedUrls.map((url: PresignedUrlResponse, index: number) => {
-            const { recordDate, location } = images[index];
+            const { recordDate, latitude, longitude } = images[index];
             return {
                 mediaLink: url.presignedPutUrl.split('?')[0],
-                latitude: location?.latitude || DEFAULT_METADATA.LOCATION,
-                longitude: location?.longitude || DEFAULT_METADATA.LOCATION,
+                latitude: latitude || DEFAULT_METADATA.LOCATION,
+                longitude: longitude || DEFAULT_METADATA.LOCATION,
                 recordDate: recordDate || DEFAULT_METADATA.DATE,
             };
         });
@@ -108,7 +108,7 @@ export const useImageUpload = () => {
 
     return {
         images,
-        imageCount,
+        imageCategories,
         currentProcess,
         progress,
         extractMetaData,

@@ -1,4 +1,4 @@
-import { TabItem } from '@/shared/types';
+import { MediaFileCategories } from '@/domains/media/types';
 
 export const COMPRESSION_OPTIONS = {
     maxWidthOrHeight: 1280,
@@ -31,8 +31,9 @@ export const DEFAULT_METADATA = {
     DATE: '1980-01-01T00:00:00',
 };
 
-export const IMAGE_MANAGEMENT_TABS: TabItem[] = [
-    { id: 'all', title: '전체' },
-    { id: 'no-locatoin', title: '위치 없음' },
-    { id: 'no-date', title: '날짜 없음' },
+export type MediaFileCategoryKey = keyof MediaFileCategories;
+export const IMAGE_MANAGEMENT_TABS: { id: MediaFileCategoryKey; title: string }[] = [
+    { id: 'withAll', title: '전체' },
+    { id: 'withoutLocation', title: '위치 없음' },
+    { id: 'withoutDate', title: '날짜 없음' },
 ];

@@ -1,3 +1,4 @@
+import { DEFAULT_METADATA } from '@/domains/media/constants';
 import { TripInfo } from '@/domains/trip/types';
 import { Location } from '@/shared/types/map';
 
@@ -22,5 +23,9 @@ export const validateFormComplete = (form: TripInfo) =>
         return Array.isArray(value) ? value.length > 0 : Boolean(value);
     });
 
+// 유효한 위치인지 검사
+export const hasValidLocation = (location: Location | null): boolean =>
+    location !== null && !!(location?.latitude && location?.longitude);
+
 // 유효한 날짜인지 검사
-export const hasValidLocation = (location: Location | null): boolean => location !== null;
+export const hasValidDate = (date: string): boolean => !!date && date.startsWith(DEFAULT_METADATA.DATE.split('T')[0]);

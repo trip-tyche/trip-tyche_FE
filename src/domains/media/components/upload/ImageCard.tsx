@@ -1,20 +1,25 @@
 import { css } from '@emotion/react';
 import { Calendar, Map } from 'lucide-react';
 
-import { ImageWithAddress } from '@/domains/media/types';
+import { ImageFileWithAddress } from '@/domains/media/types';
 import { formatKoreanDate } from '@/libs/utils/date';
+import { hasValidDate } from '@/libs/utils/validate';
 import { COLORS } from '@/shared/constants/style';
 
-const ImageCard = ({ image }: { image: ImageWithAddress }) => {
-    const address = image.address || '위치 정보 없음';
-    const date = image.recordDate ? formatKoreanDate(image.recordDate, true) : '날짜 정보 없음';
-    const hasAddress = !!image.address;
-    const hasDate = !!image.recordDate;
+interface ImageCardProps {
+    image: ImageFileWithAddress;
+    isSelected?: boolean;
+    onClick?: () => void;
+}
 
-    if (!hasAddress && !hasDate) return null;
+const ImageCard = ({ image, isSelected, onClick }: ImageCardProps) => {
+    const address = image.address || '위치 정보 없음';
+    const date = hasValidDate(image.recordDate) ? formatKoreanDate(image.recordDate, true) : '날짜 정보 없음';
+    const hasAddress = !!image.address;
+    const hasDate = hasValidDate(image.recordDate);
 
     return (
-        <div key={image.imageUrl} css={container}>
+        <div key={image.imageUrl} css={container} onClick={onClick}>
             <img src={image.imageUrl} alt='여행 사진 카드' css={imageStyle} />
             <div css={infoContainer}>
                 <div css={iconStyle}>

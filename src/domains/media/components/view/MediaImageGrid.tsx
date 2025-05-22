@@ -3,18 +3,18 @@ import { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 import { GoCheckCircleFill } from 'react-icons/go';
 
-import { MediaFileMetaData } from '@/domains/media/types';
+import { MediaFile } from '@/domains/media/types';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import { COLORS } from '@/shared/constants/style';
 
 interface MediaImageGridProps {
-    images: MediaFileMetaData[];
-    selectedImages?: MediaFileMetaData[];
-    onImageClick?: (image: MediaFileMetaData) => void;
+    images: MediaFile[];
+    selectedImages?: MediaFile[];
+    onImageClick?: (image: MediaFile) => void;
 }
 
 const MediaImageGrid = ({ images, selectedImages, onImageClick }: MediaImageGridProps) => {
-    const [displayedImages, setDisplayedImagesmages] = useState<MediaFileMetaData[]>([]);
+    const [displayedImages, setDisplayedImagesmages] = useState<MediaFile[]>([]);
     const [allImagesLoaded, setAllImagesLoaded] = useState(false);
     const [loadedImages, setLoadedImages] = useState<boolean[]>([]);
 

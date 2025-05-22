@@ -7,7 +7,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useMediaByDate } from '@/domains/media/hooks/queries';
 import { useImageLocationObserver } from '@/domains/media/hooks/useImageLocationObserver';
 import { MediaFile } from '@/domains/media/types';
-import { filterValidLocationMediaFile } from '@/domains/media/utils';
 import DateSelector from '@/domains/trip/components/DateSelector';
 import ImageItem from '@/domains/trip/components/ImageItem';
 import BackButton from '@/shared/components/common/Button/BackButton';
@@ -48,7 +47,7 @@ const ImageByDatePage = () => {
     useEffect(() => {
         if (result) {
             const images = result.success ? result.data : [];
-            setImages(filterValidLocationMediaFile(images));
+            setImages(images);
             if (images.length === 0) {
                 setIsAllImageLoad(true);
             }

@@ -3,19 +3,19 @@ import { AlertCircle, Check, Image, MapPin, Calendar, Map as MapIcon } from 'luc
 
 import ImageCard from '@/domains/media/components/upload/ImageCard';
 import ImageExtractionSummary from '@/domains/media/components/upload/ImageExtractionSummary';
-import { ImageCount, ImageWithAddress } from '@/domains/media/types';
+import { ImageFileWithAddress, MediaFileCategories } from '@/domains/media/types';
 import AlertBox from '@/shared/components/common/AlertBox';
 import Avatar from '@/shared/components/common/Avatar';
 import { COLORS } from '@/shared/constants/style';
 
 interface ReviewStepProps {
-    imageCount: ImageCount;
+    imageCategories: MediaFileCategories;
     tripPeriod: string[];
-    imagesWithAddress: ImageWithAddress[];
+    imagesWithAddress: ImageFileWithAddress[];
 }
 
-const ReviewStep = ({ imageCount, tripPeriod, imagesWithAddress }: ReviewStepProps) => {
-    const getVisitedPlace = (imagesWithAddress: ImageWithAddress[]) => {
+const ReviewStep = ({ imageCategories, tripPeriod, imagesWithAddress }: ReviewStepProps) => {
+    const getVisitedPlace = (imagesWithAddress: ImageFileWithAddress[]) => {
         const map = new Map();
         imagesWithAddress.forEach((image) => {
             const { address } = image;
@@ -45,14 +45,14 @@ const ReviewStep = ({ imageCount, tripPeriod, imagesWithAddress }: ReviewStepPro
     const estimatedTripPeriod =
         startDate && endDate ? (isSingleDate ? `${startDate} (하루)` : `${startDate} ~ ${endDate}`) : null;
     const visitedPlace = imagesWithAddress.length > 0 ? getVisitedPlace(imagesWithAddress) : null;
-    const hasInvalidImage = !!imageCount.withoutLocation || !!imageCount.withoutDate;
+    const hasInvalidImage = !!imageCategories.withoutLocation.count || !!imageCategories.withoutDate.count;
 
     return (
         <div css={container}>
             <AlertBox
                 theme='success'
                 title='사진 처리 완료'
-                description={`${imageCount.total}장의 사진이 성공적으로 처리되었습니다`}
+                description={`${imageCategories.withAll.count}장의 사진이 성공적으로 처리되었습니다`}
                 icon={<Check size={16} />}
             />
             <div css={uploadSummary}>
@@ -60,7 +60,7 @@ const ReviewStep = ({ imageCount, tripPeriod, imagesWithAddress }: ReviewStepPro
                     <Avatar size='sm' shape='circle' icon={<Image size={20} color={COLORS.PRIMARY} />} />
                     <div css={headerContent}>
                         <h3 css={headerTitle}>처리된 사진</h3>
-                        <p css={headerImageCount}>총 {imageCount.total}장</p>
+                        <p css={headerImageCount}>총 {imageCategories.withAll.count}장</p>
                     </div>
                 </div>
 
@@ -68,14 +68,14 @@ const ReviewStep = ({ imageCount, tripPeriod, imagesWithAddress }: ReviewStepPro
                     <ImageExtractionSummary
                         title='위치 정보'
                         icon={<MapPin size={16} color={COLORS.ICON.DEFAULT} />}
-                        extractSuccessCount={imageCount.total - imageCount.withoutLocation}
-                        extractFailCount={imageCount.withoutLocation}
+                        extractSuccessCount={imageCategories.withAll.count - imageCategories.withoutLocation.count}
+                        extractFailCount={imageCategories.withoutLocation.count}
                     />
                     <ImageExtractionSummary
                         title='날짜 정보'
                         icon={<Calendar size={16} color={COLORS.ICON.DEFAULT} />}
-                        extractSuccessCount={imageCount.total - imageCount.withoutDate}
-                        extractFailCount={imageCount.withoutDate}
+                        extractSuccessCount={imageCategories.withAll.count - imageCategories.withoutDate.count}
+                        extractFailCount={imageCategories.withoutDate.count}
                     />
                 </div>
 
@@ -117,7 +117,7 @@ const ReviewStep = ({ imageCount, tripPeriod, imagesWithAddress }: ReviewStepPro
                 <AlertBox
                     theme='warning'
                     title='일부 사진에 정보가 누락되었습니다'
-                    description={`위치 정보가 없는 사진 ${imageCount.withoutLocation}장, 날짜 정보가 없는 사진 ${imageCount.withoutDate}장이 있습니다. 걱정 마세요! 여행을 등록한 후 사진 관리 화면에서 직접 정보를 추가할 수 있습니다.`}
+                    description={`위치 정보가 없는 사진 ${imageCategories.withoutLocation.count}장, 날짜 정보가 없는 사진 ${imageCategories.withoutDate.count}장이 있습니다. 걱정 마세요! 여행을 등록한 후 사진 관리 화면에서 직접 정보를 추가할 수 있습니다.`}
                     icon={<AlertCircle size={20} color='#ca8a04' />}
                 />
             )}

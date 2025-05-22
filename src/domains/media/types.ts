@@ -3,30 +3,69 @@ import { Location } from '@/shared/types/map';
 export type ImageUploadStepType = 'upload' | 'processing' | 'review' | 'info' | 'done';
 export type ImageProcessStatusType = 'metadata' | 'optimize' | 'upload';
 
-export interface MediaFile {
+interface MetaData extends Location {
+    recordDate: string;
+}
+
+export interface MediaFile extends MetaData {
     mediaFileId: string;
-    latitude: number;
-    longitude: number;
     mediaLink: string;
-    recordDate: string;
 }
 
-export interface ImageFile {
+export interface MediaFileCategories {
+    withAll: {
+        count: number;
+        images?: MediaFile[];
+    };
+    withoutLocation: {
+        count: number;
+        images?: MediaFile[];
+    };
+    withoutDate: {
+        count: number;
+        images?: MediaFile[];
+    };
+}
+
+export interface ClientImageFile extends MetaData {
     image: File;
-    recordDate: string;
-    location: Location | null;
 }
 
-export interface ImageWithAddress {
+export interface ImageFileWithAddress extends MetaData {
     imageUrl: string;
-    recordDate: string;
     address: string;
 }
 
-export interface ImageCount {
-    total: number;
-    withoutDate: number;
-    withoutLocation: number;
+// export interface ClientImageFile {
+//     image: File;
+//     recordDate: string;
+//     location: Location | null;
+// }
+
+// export interface ImageFile {
+//     image: File;
+//     recordDate: string;
+//     location: Location | null;
+// }
+
+// export type MediaFileWithAddress = MediaFile;
+
+// export interface ImageWithAddress {
+//     id: string;
+//     imageUrl: string;
+//     recordDate: string;
+//     address: string;
+// }
+
+// export interface ImageCount {
+//     withAll: number;
+//     withoutDate: number;
+//     withoutLocation: number;
+// }
+
+export interface PresignedUrlResponse {
+    fileKey: string;
+    presignedPutUrl: string;
 }
 
 export interface UnlocatedMediaFile {
@@ -37,27 +76,4 @@ export interface UnlocatedMediaFile {
 export interface UnlocatedMediaFileList {
     recordDate: string;
     media: UnlocatedMediaFile[];
-}
-
-// export type ImageGroupByDate = Record<string, UnlocatedMediaFileList[]>;
-
-export interface PresignedUrlResponse {
-    fileKey: string;
-    presignedPutUrl: string;
-}
-
-//----------------------------------
-
-export interface MediaFileWithDate {
-    recordDate: string;
-    images: MediaFileMetaData[];
-}
-
-// TODO: API 수정 후, 위 MediaFileModel, MediaFile 삭제하기
-export interface MediaFileMetaData {
-    mediaFileId: string;
-    recordDate: string;
-    latitude: number;
-    longitude: number;
-    mediaLink: string;
 }

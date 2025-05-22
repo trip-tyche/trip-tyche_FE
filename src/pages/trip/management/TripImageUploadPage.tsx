@@ -8,7 +8,7 @@ import ReviewStep from '@/domains/media/components/upload/ReviewStep';
 import TripCreateCompleteStep from '@/domains/media/components/upload/TripCreateCompleteStep';
 import UploadStep from '@/domains/media/components/upload/UploadStep';
 import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
-import { ImageFile, ImageUploadStepType, ImageWithAddress } from '@/domains/media/types';
+import { ClientImageFile, ImageFileWithAddress, ImageUploadStepType } from '@/domains/media/types';
 import { getAddressFromImageLocation, getImageDateFromImage, getTitleByStep } from '@/domains/media/utils';
 import TripInfoForm from '@/domains/trip/components/TripInfoForm';
 import { FORM } from '@/domains/trip/constants';
@@ -31,14 +31,14 @@ import { useToastStore } from '@/shared/stores/useToastStore';
 
 const TripImageUploadPage = () => {
     const [step, setStep] = useState<ImageUploadStepType>('upload');
-    const [imagesWithAddress, setImagesWithAddress] = useState<ImageWithAddress[]>([]);
+    const [imagesWithAddress, setImagesWithAddress] = useState<ImageFileWithAddress[]>([]);
     const [tripForm, setTripForm] = useState<TripInfo>(FORM.INITIAL);
     const [isTripFinalizing, setIsTripFinalizing] = useState(false);
 
     const { isModalOpen, closeModal } = useBrowserCheck();
     const { isFormComplete } = useTripFormValidation(tripForm);
     // const { isSubmitting, isFormComplete, submitTripInfo } = useTripInfoForm(false, tripForm);
-    const { images, imageCount, currentProcess, progress, extractMetaData, optimizeImages, uploadImagesToS3 } =
+    const { images, imageCategories, currentProcess, progress, extractMetaData, optimizeImages, uploadImagesToS3 } =
         useImageUpload();
     const { isMapScriptLoaded } = useMapScript();
     const showToast = useToastStore((state) => state.showToast);
@@ -54,16 +54,20 @@ const TripImageUploadPage = () => {
         const getAddressFromLocation = async () => {
             if (images && isMapScriptLoaded) {
                 const imagesWithAddress = await Promise.all(
-                    images.map(async (image: ImageFile) => {
-                        // console.log('location: ', image.location);
-                        // console.log('recordDate: ', image.recordDate);
-                        const address = image.location ? await getAddressFromImageLocation(image.location) : '';
+                    images.map(async (image: ClientImageFile) => {
+                        const address =
+                            image.latitude && image.longitude
+                                ? await getAddressFromImageLocation({
+                                      latitude: image.latitude,
+                                      longitude: image.longitude,
+                                  })
+                                : '';
                         const formattedAddress = address ? `${address.split(' ')[0]}, ${address.split(' ')[1]}` : '';
                         const blobUrl = URL.createObjectURL(image.image);
 
                         return {
+                            ...image,
                             imageUrl: blobUrl,
-                            recordDate: image.recordDate,
                             address: formattedAddress,
                         };
                     }),
@@ -100,7 +104,7 @@ const TripImageUploadPage = () => {
                 return (
                     <div>
                         <ReviewStep
-                            imageCount={imageCount!}
+                            imageCategories={imageCategories!}
                             tripPeriod={[estimatedStartDate, estimatedEndDate]}
                             imagesWithAddress={imagesWithAddress}
                         />
