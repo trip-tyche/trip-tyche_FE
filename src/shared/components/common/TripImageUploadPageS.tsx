@@ -18,7 +18,6 @@ import { formatHyphenToDot } from '@/libs/utils/date';
 import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
 import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
-import { ROUTES } from '@/shared/constants/route';
 import { COLORS } from '@/shared/constants/style';
 import useBrowserCheck from '@/shared/hooks/useBrowserCheck';
 import { useMapScript } from '@/shared/hooks/useMapScript';
