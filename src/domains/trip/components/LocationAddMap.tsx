@@ -30,6 +30,8 @@ const LocationAddMap = ({
 }: LocationAddMapProps) => {
     const { latitude: lat, longitude: lng } = defaultLocation;
 
+    console.log('defaultLocation, defaultLocation', defaultLocation);
+
     const [center, setCenter] = useState<LatLng>({ lat, lng });
     const [selectedLocation, setSelectedLocation] = useState<LatLng | null>(null);
 

@@ -14,6 +14,8 @@ import {
     filterWithoutLocationMediaFile,
     getImageGroupByDate,
 } from '@/domains/media/utils';
+import LocationAddMap from '@/domains/trip/components/LocationAddMap';
+import { mediaAPI } from '@/libs/apis';
 import Button from '@/shared/components/common/Button';
 import EmptyItem from '@/shared/components/common/EmptyItem';
 import Header from '@/shared/components/common/Header';
@@ -115,32 +117,32 @@ const TripImageManagePage = () => {
         );
     };
 
-    // const updateImagesLocation = async (selectedImages: MediaFile[], location: Location | null) => {
-    //     if (!location || !tripKey) return;
+    const updateImagesLocation = async (selectedImages: MediaFile[], location: Location | null) => {
+        if (!location || !tripKey) return;
 
-    //     const imagesWithUpdatedLocation = selectedImages.map((image) => {
-    //         return {
-    //             ...image,
-    //             latitude: location.latitude,
-    //             longitude: location.longitude,
-    //         };
-    //     });
+        const imagesWithUpdatedLocation = selectedImages.map((image) => {
+            return {
+                ...image,
+                latitude: location.latitude,
+                longitude: location.longitude,
+            };
+        });
 
-    //     try {
-    //         setIsUploading(true);
-    //         await mediaAPI.updateImages(tripKey, imagesWithUpdatedLocation);
+        try {
+            setIsUploading(true);
+            await mediaAPI.updateImages(tripKey, imagesWithUpdatedLocation);
 
-    //         setIsMapVisible(false);
-    //         showToast(`${selectedImages.length}의 사진이 수정되었습니다`);
-    //         setSelectedImages([]);
-    //         setIsSelectionMode(false);
-    //         setUpdatedDate(null);
-    //     } catch (error) {
-    //         console.error('여행 이미지 삭제 실패', error);
-    //     } finally {
-    //         setIsUploading(false);
-    //     }
-    // };
+            setIsMapVisible(false);
+            showToast(`${selectedImages.length}의 사진이 수정되었습니다`);
+            setSelectedImages([]);
+            setIsSelectionMode(false);
+            setUpdatedDate(null);
+        } catch (error) {
+            console.error('여행 이미지 삭제 실패', error);
+        } finally {
+            setIsUploading(false);
+        }
+    };
 
     // const updateImagesDate = async (selectedImages: MediaFile[], date: Date | null) => {
     //     if (!date || !tripKey) return;
@@ -170,15 +172,15 @@ const TripImageManagePage = () => {
     const handleImageToggle = (selectedImage: MediaFile) => {
         const isAlreadySelected = selectedImages.some((image) => image.mediaFileId === selectedImage.mediaFileId);
         if (isAlreadySelected) {
-            setSelectedImages((prev) => prev.filter((image) => image.mediaFileId !== selectedImage.mediaFileId));
+            setSelectedImages(selectedImages.filter((image) => image.mediaFileId !== selectedImage.mediaFileId));
         } else {
             setSelectedImages((prev) => [...prev, selectedImage]);
         }
     };
 
-    // const handleMapLocationSelect = (latitude: number, longitude: number) => {
-    //     setUpdatedLocation({ latitude, longitude });
-    // };
+    const handleMapLocationSelect = (latitude: number, longitude: number) => {
+        setUpdatedLocation({ latitude, longitude });
+    };
 
     const handleTabChange = (tabId: string) => {
         setActiveTab(tabId as MediaFileCategoryKey);
@@ -210,6 +212,20 @@ const TripImageManagePage = () => {
         }
     };
 
+    const renderMap = () => {
+        if (isMapVisible) {
+            return (
+                <LocationAddMap
+                    defaultLocation={{ latitude: selectedImages[0].latitude, longitude: selectedImages[0].longitude }}
+                    onLocationSelect={handleMapLocationSelect}
+                    setIsMapVisible={setIsMapVisible}
+                    isUploading={isUploading}
+                    uploadImagesWithLocation={() => updateImagesLocation(selectedImages, updatedLocation)}
+                />
+            );
+        }
+    };
+
     // return isDateVisible ? (
     //     <EditDate
     //         defaultDate={selectedImages[0].recordDate}
@@ -219,15 +235,6 @@ const TripImageManagePage = () => {
     //         uploadImagesWithDate={() => updateImagesDate(selectedImages, updatedDate)}
     //         setIsDateVisible={setIsDateVisible}
     //     />
-    // ) : isMapVisible ? (
-    //     <LocationAddMap
-    //         defaultLocation={{ latitude: tripImages[0].latitude, longitude: tripImages[0].longitude }}
-    //         onLocationSelect={handleMapLocationSelect}
-    //         setIsMapVisible={setIsMapVisible}
-    //         isUploading={isUploading}
-    //         uploadImagesWithLocation={() => updateImagesLocation(selectedImages, updatedLocation)}
-    //     />
-    // ) : (
 
     /* <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             {
@@ -246,9 +253,11 @@ const TripImageManagePage = () => {
                         }
                         </div> */
 
+    const hasImages = imageGroupByDate && imageGroupByDate?.length > 0;
+    console.log('sesle', selectedImages);
     return (
         <div css={container}>
-            {isLoading && <Indicator text='사진 불러오는 중...' />}
+            {isMapScriptLoaded && isLoading && <Indicator text='사진 불러오는 중...' />}
             {isImageDeleting && <Indicator text='사진 삭제 중...' />}
 
             <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)}>
@@ -321,41 +330,37 @@ const TripImageManagePage = () => {
                 />
             </div>
 
-            {isMapScriptLoaded &&
-                (imageGroupByDate && imageGroupByDate?.length > 0 ? (
-                    <main css={mainStyle}>
-                        {imageGroupByDate?.map((imageGroup) => (
-                            <ImageGroupByDate
-                                key={imageGroup.recordDate}
-                                imageGroup={imageGroup}
-                                selectedImages={selectedImages}
-                                onImageClick={(image) => {
-                                    isSelectionMode ? handleImageToggle(image) : null;
-                                }}
-                            />
-                        ))}
-                    </main>
-                ) : (
-                    <EmptyItem
-                        title={renderEmptyImage(activeTab)?.title || ''}
-                        description={renderEmptyImage(activeTab)?.description || ''}
-                        icon={<ImageOff />}
-                    />
-                ))}
-            {/* <MediaImageGrid */}
-            {/* //         imageCategories={image.imageCategories}
-                    //         selectedImages={selectedImages}
-                    //         onImageClick={isSelectionMode ? handleImageToggle : () => null}
-                    //     /> */}
+            {/* 이미지 그리드 */}
+            {hasImages ? (
+                <main css={mainStyle}>
+                    {imageGroupByDate?.map((imageGroup) => (
+                        <ImageGroupByDate
+                            key={imageGroup.recordDate}
+                            imageGroup={imageGroup}
+                            selectedImages={selectedImages}
+                            onImageClick={(image) => {
+                                isSelectionMode ? handleImageToggle(image) : null;
+                            }}
+                        />
+                    ))}
+                </main>
+            ) : (
+                <EmptyItem
+                    title={renderEmptyImage(activeTab)?.title || ''}
+                    description={renderEmptyImage(activeTab)?.description || ''}
+                    icon={<ImageOff />}
+                />
+            )}
 
             {isSelectedImage && (
                 <div css={buttonContainer}>
-                    <Button text='위치 수정' variant='white' onClick={() => {}} />
+                    <Button text='위치 수정' variant='white' onClick={() => setIsMapVisible(true)} />
                     <Button text='날짜 수정' variant='white' />
                     <Button variant='error' text='삭제' onClick={() => setIsDeleteModalOpen(true)} />
                 </div>
             )}
 
+            {renderMap()}
             {isDeleteModalOpen && (
                 <ConfirmModal
                     title={`${selectedImages.length}장의 사진 삭제`}
