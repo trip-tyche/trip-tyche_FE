@@ -13,12 +13,11 @@ import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
 import { ROUTES } from '@/shared/constants/route';
 import { COLORS } from '@/shared/constants/style';
 import { MESSAGE } from '@/shared/constants/ui';
-import { useModalStore } from '@/shared/stores/useModalStore';
 import theme from '@/shared/styles/theme';
 
 const SettingPage = () => {
     const [isEditing, setIsEditing] = useState(false);
-    const { isModalOpen, openModal, closeModal } = useModalStore();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const nickname = useUserStore((state) => state.userInfo?.nickname);
     const logout = useUserStore((state) => state.logout);
@@ -28,7 +27,7 @@ const SettingPage = () => {
     const navigateBeforePage = () => (isEditing ? setIsEditing(false) : navigate(ROUTES.PATH.MAIN));
 
     const confirmLogoutModal = () => {
-        closeModal();
+        setIsModalOpen(false);
         logout();
     };
 
@@ -77,7 +76,7 @@ const SettingPage = () => {
                         <SettingButton
                             text='로그아웃'
                             icon={<LogOut size={20} color={theme.COLORS.TEXT.BLACK} />}
-                            onClick={() => openModal()}
+                            onClick={() => setIsModalOpen(true)}
                         />
                     </ul>
                 </main>
@@ -90,7 +89,7 @@ const SettingPage = () => {
                     confirmText={MESSAGE.LOGOUT_MODAL.CONFIRM_TEXT}
                     cancelText={MESSAGE.LOGOUT_MODAL.CANCEL_TEXT}
                     confirmModal={confirmLogoutModal}
-                    closeModal={closeModal}
+                    closeModal={() => setIsModalOpen(false)}
                 />
             )}
         </div>

@@ -8,6 +8,7 @@ import NotificationMessage from '@/domains/notification/components/NotificationM
 import { useNotificationDelete, useNotificationStatus } from '@/domains/notification/hooks/mutations';
 import { Notification } from '@/domains/notification/types';
 import ShareNotification from '@/domains/share/components/ShareNotification';
+import ShareShortNotification from '@/domains/share/components/ShareShortNotification';
 import { formatKoreanDate, formatKoreanTime } from '@/libs/utils/date';
 import Avatar from '@/shared/components/common/Avatar';
 import Badge from '@/shared/components/common/Badge';
@@ -21,8 +22,8 @@ interface NotificationProps {
 
 const NotificationItem = ({ notificationInfo }: NotificationProps) => {
     const { notificationId, referenceId, message, status, senderNickname, createdAt } = notificationInfo;
-
     const [isShowNotificationContent, setIsShowNotificationContent] = useState(false);
+    const [isShowNotificationDetail, setIsShowNotificationDetail] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const showToast = useToastStore((state) => state.showToast);
 
@@ -35,6 +36,10 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
             if (!result.success) showToast(result.error);
         }
 
+        if (message.startsWith('MEDIA_') || message.startsWith('TRIP_')) {
+            setIsShowNotificationDetail(true);
+            return;
+        }
         setIsShowNotificationContent(true);
     };
 
@@ -106,6 +111,14 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
 
             {isShowNotificationContent && (
                 <ShareNotification referenceId={referenceId} onClose={closeNotificationContent} />
+            )}
+
+            {isShowNotificationDetail && (
+                <ShareShortNotification
+                    message={message}
+                    referenceId={notificationId}
+                    onClose={() => setIsShowNotificationDetail(false)}
+                />
             )}
         </>
     );

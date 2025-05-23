@@ -9,3 +9,10 @@ export const useNotificationList = (userId: number) => {
         queryFn: () => toResult(() => notifiactionAPI.fetchNotificationList(userId)),
     });
 };
+
+export const useNotificationDetail = (notificationId: number) => {
+    return useQuery({
+        queryKey: ['notificationId-detail', notificationId],
+        queryFn: () => toResult(() => notifiactionAPI.fetchNotificationDetail(notificationId)),
+    });
+};

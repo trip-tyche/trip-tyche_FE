@@ -2,6 +2,7 @@ import { Client } from '@stomp/stompjs';
 
 import { SOCKET_URL } from '@/shared/constants/socket';
 import { queryClient } from '@/shared/providers/TanStackProvider';
+import { useModalStore } from '@/shared/stores/useModalStore';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 const state = {
@@ -71,19 +72,48 @@ const subscribeToShareNotifications = (userId: string) => {
 
     state.client.subscribe(SOCKET_URL.TOPIC.REQUEST(userId), (message) => {
         const { showToast } = useToastStore.getState();
+        const { openModal } = useModalStore.getState();
 
         try {
             const subscribedMessage = JSON.parse(JSON.parse(message.body));
+            console.log(subscribedMessage);
             const messageType = subscribedMessage.type;
 
             if (messageType === 'SHARED_REQUEST') {
-                showToast('새로운 공유 요청이 도착했습니다.');
                 // requestUnReadNotificationCount(userId);
+                openModal(subscribedMessage.senderNickname, `${subscribedMessage.tripTitle} 여행에 초대합니다!`);
             } else if (messageType === 'SHARED_APPROVE') {
-                showToast('공유 요청이 승인되었습니다.');
+                showToast('공유 요청이 승인되었습니다');
                 queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
             } else if (messageType === 'SHARED_REJECTED') {
-                showToast('공유 요청이 거절되었습니다.');
+                showToast('공유 요청이 거절되었습니다');
+            } else if (messageType === 'TRIP_UPDATED') {
+                openModal(
+                    subscribedMessage.senderNickname,
+                    `${subscribedMessage.tripTitle} 여행의 정보를 수정했습니다!`,
+                );
+                queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
+            } else if (messageType === 'TRIP_DELETED') {
+                openModal(subscribedMessage.senderNickname, `${subscribedMessage.tripTitle} 여행을 삭제했습니다!`);
+                queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
+            } else if (messageType === 'MEDIA_FILE_UPDATED') {
+                openModal(
+                    subscribedMessage.senderNickname,
+                    `${subscribedMessage.tripTitle} 여행의 사진을 수정했습니다!`,
+                );
+                queryClient.invalidateQueries({ queryKey: ['trip-images', subscribedMessage.tripKey] });
+            } else if (messageType === 'MEDIA_FILE_ADDED') {
+                openModal(
+                    subscribedMessage.senderNickname,
+                    `${subscribedMessage.tripTitle} 여행에 사진을 추가했습니다!`,
+                );
+                queryClient.invalidateQueries({ queryKey: ['trip-images', subscribedMessage.tripKey] });
+            } else if (messageType === 'MEDIA_FILE_DELETE') {
+                openModal(
+                    subscribedMessage.senderNickname,
+                    `${subscribedMessage.tripTitle} 여행의 사진을 삭제했습니다!`,
+                );
+                queryClient.invalidateQueries({ queryKey: ['trip-images', subscribedMessage.tripKey] });
             }
 
             queryClient.invalidateQueries({ queryKey: ['summary'] });

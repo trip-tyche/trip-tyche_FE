@@ -2,8 +2,8 @@ import { ThemeProvider } from '@emotion/react';
 import { MantineProvider } from '@mantine/core';
 import { RouterProvider } from 'react-router-dom';
 
-import TanStackProvider from '@/shared/providers/TanStackProvider';
 import router from '@/router/Router';
+import TanStackProvider from '@/shared/providers/TanStackProvider';
 import GlobalStyle from '@/shared/styles/GlobalStyle';
 import GoogleAutoCompleteStyle from '@/shared/styles/GoogleAutoCompleteStyle';
 import theme from '@/shared/styles/theme';
