@@ -23,6 +23,7 @@ import Header from '@/shared/components/common/Header';
 import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import TabNavigation from '@/shared/components/common/Tab/TabNavigation';
+import TripImageUploadPageS from '@/shared/components/common/TripImageUploadPageS';
 import SearchPlaceInput from '@/shared/components/map/SearchPlaceInput';
 import SingleMarkerMap from '@/shared/components/map/SingleMarkerMap';
 import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/map';
@@ -44,6 +45,8 @@ const TripImageManagePage = () => {
     const [isLocationEditing, setIsLocationEditing] = useState(false);
     const [isDateEditing, setIsDateEditing] = useState(false);
 
+    const [isNewImage, setIsNewImage] = useState(false);
+    console.log(isNewImage);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const { showToast } = useToastStore();
@@ -165,6 +168,8 @@ const TripImageManagePage = () => {
     const renderEditMode = () => {
         return (
             <div css={editContainer}>
+                {isNewImage && <TripImageUploadPageS onClose={() => setIsNewImage(false)} />}
+
                 {isLocationEditing && (
                     <>
                         <SearchPlaceInput
@@ -285,7 +290,7 @@ const TripImageManagePage = () => {
                     variant='white'
                     text='새로운 사진 추가'
                     icon={<Plus size={20} />}
-                    onClick={() => {}}
+                    onClick={() => setIsNewImage(true)}
                     customStyle={css`
                         width: 160px;
                         height: 38px;
@@ -330,7 +335,7 @@ const TripImageManagePage = () => {
                 </div>
             )}
 
-            {(isLocationEditing || isDateEditing) && renderEditMode()}
+            {(isLocationEditing || isDateEditing || isNewImage) && renderEditMode()}
 
             {isDeleteModalOpen && (
                 <ConfirmModal
