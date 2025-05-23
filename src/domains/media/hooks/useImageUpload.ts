@@ -72,9 +72,9 @@ export const useImageUpload = () => {
 
             await Promise.all(
                 presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) => {
-                    process++;
-                    const progressPercent = Math.round((process / images.length) * 100);
                     return mediaAPI.uploadToS3(urlInfo.presignedPutUrl, images[index].image, () => {
+                        process++;
+                        const progressPercent = Math.round((process / images.length) * 100);
                         setProgress((prev) => ({
                             ...prev,
                             upload: progressPercent,
