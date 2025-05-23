@@ -61,7 +61,7 @@ const TripRoutePage = () => {
         handleMapZoomChanged,
         updateMapCenter,
         updateMapZoom,
-    } = useMapControl(ZOOM_SCALE.DEFAULT.ROUTE, characterPosition);
+    } = useMapControl(ZOOM_SCALE.DEFAULT, characterPosition);
 
     const animationRef = useRef<number | null>(null);
     const startTimeRef = useRef<number | null>(null);
@@ -206,7 +206,7 @@ const TripRoutePage = () => {
 
                 // 이동 완료 후 기본 줌 레벨로 복원
                 setTimeout(() => {
-                    updateMapZoom(ZOOM_SCALE.DEFAULT.ROUTE);
+                    updateMapZoom(ZOOM_SCALE.DEFAULT);
                 }, 300);
 
                 // 자동 재생 중이면 다음 위치로 이동
@@ -251,7 +251,7 @@ const TripRoutePage = () => {
             if (characterPosition) {
                 updateMapCenter({ latitude: characterPosition.latitude, longitude: characterPosition.longitude });
             }
-            updateMapZoom(ZOOM_SCALE.DEFAULT.ROUTE);
+            updateMapZoom(ZOOM_SCALE.DEFAULT);
         }
     }, [mapRef, characterPosition, updateMapCenter, updateMapZoom]);
 
@@ -411,7 +411,7 @@ const TripRoutePage = () => {
 
     const isPinPointOnCharacter = (pinPoint: PinPoint) =>
         characterPosition?.latitude === pinPoint.latitude && characterPosition?.longitude === pinPoint.longitude;
-    const isCharacterVisible = isCharacterMoving || mapStatus.zoom === ZOOM_SCALE.DEFAULT.ROUTE;
+    const isCharacterVisible = isCharacterMoving || mapStatus.zoom === ZOOM_SCALE.DEFAULT;
     const isIndividualImageMarkersVisible = mapStatus.zoom >= ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE;
     const isPhotoCardVisible = (photoCardIndex: number) =>
         !!(photoCardIndex === currentPinPointIndex && !isCharacterMoving);

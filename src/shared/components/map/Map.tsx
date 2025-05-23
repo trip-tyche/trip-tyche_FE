@@ -11,7 +11,7 @@ interface MapProps {
     isInteractive?: boolean;
     onLoad: (map: MapType) => void;
     onZoomChanged?: () => void;
-    onClick?: () => void;
+    onClick?: (event?: google.maps.MapMouseEvent) => void;
 }
 
 const Map = ({ zoom, center, children, isInteractive = true, onLoad, onZoomChanged, onClick }: MapProps) => {

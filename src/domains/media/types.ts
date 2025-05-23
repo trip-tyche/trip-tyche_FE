@@ -35,44 +35,7 @@ export interface ImageFileWithAddress extends MediaFile {
     address: string;
 }
 
-// export interface ClientImageFile {
-//     image: File;
-//     recordDate: string;
-//     location: Location | null;
-// }
-
-// export interface ImageFile {
-//     image: File;
-//     recordDate: string;
-//     location: Location | null;
-// }
-
-// export type MediaFileWithAddress = MediaFile;
-
-// export interface ImageWithAddress {
-//     id: string;
-//     imageUrl: string;
-//     recordDate: string;
-//     address: string;
-// }
-
-// export interface ImageCount {
-//     withAll: number;
-//     withoutDate: number;
-//     withoutLocation: number;
-// }
-
 export interface PresignedUrlResponse {
     fileKey: string;
     presignedPutUrl: string;
-}
-
-export interface UnlocatedMediaFile {
-    mediaFileId: number;
-    mediaLink: string;
-}
-
-export interface UnlocatedMediaFileList {
-    recordDate: string;
-    media: UnlocatedMediaFile[];
 }

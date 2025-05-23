@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 import { css } from '@emotion/react';
 import { GoogleMap, Autocomplete } from '@react-google-maps/api';
@@ -11,7 +11,7 @@ import { ZOOM_SCALE, MAPS_OPTIONS, DEFAULT_CENTER } from '@/shared/constants/map
 import { useMapControl } from '@/shared/hooks/useMapControl';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
-import { Location, LatLng, MapMouseEvent, PlacesAutocomplete } from '@/shared/types/map';
+import { Location, LatLng, MapMouseEvent, PlacesAutocomplete, MapType } from '@/shared/types/map';
 
 interface LocationAddMapProps {
     defaultLocation: Location;
@@ -30,16 +30,19 @@ const LocationAddMap = ({
 }: LocationAddMapProps) => {
     const { latitude: lat, longitude: lng } = defaultLocation;
 
-    console.log('defaultLocation, defaultLocation', defaultLocation);
-
     const [center, setCenter] = useState<LatLng>({ lat, lng });
     const [selectedLocation, setSelectedLocation] = useState<LatLng | null>(null);
 
     const showToast = useToastStore((state) => state.showToast);
 
-    const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl(ZOOM_SCALE.DEFAULT.LOCATION_ADD, DEFAULT_CENTER);
+    const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl(ZOOM_SCALE.LOCATION_ADD, DEFAULT_CENTER);
+
+    useEffect(() => {
+        setSelectedLocation({ lat, lng });
+    }, []);
 
     const autocompleteRef = useRef<PlacesAutocomplete>(null);
+    const mapRef = useRef<MapType | null>(null);
 
     const handleMapClick = (event: MapMouseEvent) => {
         if (event.latLng) {
@@ -91,8 +94,9 @@ const LocationAddMap = ({
                     <input type='text' placeholder='장소를 검색해주세요' css={inputStyle} />
                 </Autocomplete>
             </div>
+
             <GoogleMap
-                zoom={ZOOM_SCALE.DEFAULT.LOCATION_ADD}
+                zoom={ZOOM_SCALE.LOCATION_ADD}
                 center={center}
                 options={MAPS_OPTIONS}
                 mapContainerStyle={{ height: 'calc(100vh + 30px)' }}
@@ -100,7 +104,10 @@ const LocationAddMap = ({
             >
                 {/* {selectedLocation && <Marker position={selectedLocation} icon={markerIcon || undefined} />} */}
                 {selectedLocation && (
-                    <Marker position={{ latitude: selectedLocation.lat, longitude: selectedLocation.lng }} />
+                    <Marker
+                        mapRef={mapRef}
+                        position={{ latitude: selectedLocation.lat, longitude: selectedLocation.lng }}
+                    />
                 )}
             </GoogleMap>
             <div css={buttonWrapper}>

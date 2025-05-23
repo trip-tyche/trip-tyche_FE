@@ -45,38 +45,38 @@ export const getAnimationConfig = (distance: number) => {
     if (distance < 0.5) {
         return {
             transportType: 'walking',
-            zoomLevel: ZOOM_SCALE.DEFAULT.ROUTE,
+            zoomLevel: ZOOM_SCALE.DEFAULT,
             duration: 1000,
         };
     } else if (distance < 2) {
         return {
             transportType: 'walking',
-            zoomLevel: ZOOM_SCALE.DEFAULT.ROUTE,
+            zoomLevel: ZOOM_SCALE.DEFAULT,
             duration: 2000,
         };
     } else if (distance < 5) {
         return {
             transportType: 'walking',
-            zoomLevel: ZOOM_SCALE.DEFAULT.ROUTE,
+            zoomLevel: ZOOM_SCALE.DEFAULT,
             duration: 3000,
         };
     } else if (distance < 10) {
         return {
             transportType: 'walking',
-            zoomLevel: ZOOM_SCALE.DEFAULT.ROUTE,
+            zoomLevel: ZOOM_SCALE.DEFAULT,
             duration: 3500,
         };
     } else if (distance < 20) {
         return {
-            transportType: 'car',
-            zoomLevel: ZOOM_SCALE.DEFAULT.ROUTE - 1,
+            transportType: 'walking',
+            zoomLevel: ZOOM_SCALE.DEFAULT - 1,
             duration: 4000,
         };
     } else if (distance < 50) {
         return {
-            transportType: 'car',
-            zoomLevel: ZOOM_SCALE.DEFAULT.ROUTE - 2,
-            duration: 5000,
+            transportType: 'walking',
+            zoomLevel: ZOOM_SCALE.DEFAULT - 2,
+            duration: 6500,
         };
     } else if (distance < 200) {
         return {

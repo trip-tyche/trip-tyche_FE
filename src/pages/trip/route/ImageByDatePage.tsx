@@ -36,7 +36,7 @@ const ImageByDatePage = () => {
     const loadedImagesCount = useRef<number>(0);
 
     const { data: result, isLoading } = useMediaByDate(tripKey!, date!);
-    const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl(ZOOM_SCALE.DEFAULT.IMAGE_BY_DATE, DEFAULT_CENTER);
+    const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl(ZOOM_SCALE.IMAGE_BY_DATE, DEFAULT_CENTER);
     const { isHintOverlayVisible, isFirstUser } = useScrollHint(imageListRef, isMapScriptLoaded, isAllImageLoad);
 
     useEffect(() => {

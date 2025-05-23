@@ -16,7 +16,6 @@ import {
     getImageGroupByDate,
 } from '@/domains/media/utils';
 import EditDate from '@/domains/trip/components/EditDate';
-import LocationAddMap from '@/domains/trip/components/LocationAddMap';
 import { formatToISOLocal } from '@/libs/utils/date';
 import Button from '@/shared/components/common/Button';
 import EmptyItem from '@/shared/components/common/EmptyItem';
@@ -24,13 +23,16 @@ import Header from '@/shared/components/common/Header';
 import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import TabNavigation from '@/shared/components/common/Tab/TabNavigation';
+import SearchPlaceInput from '@/shared/components/map/SearchPlaceInput';
+import SingleMarkerMap from '@/shared/components/map/SingleMarkerMap';
+import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/map';
 import { ROUTES } from '@/shared/constants/route';
 import { COLORS } from '@/shared/constants/style';
 import { EMPTY_ITEM } from '@/shared/constants/ui';
 import { useImageSelection } from '@/shared/hooks/useImageSelection';
-import { useMapScript } from '@/shared/hooks/useMapScript';
+import { useMapControl } from '@/shared/hooks/useMapControl';
 import { useToastStore } from '@/shared/stores/useToastStore';
-import { Location } from '@/shared/types/map';
+import { Location, MapMouseEvent } from '@/shared/types/map';
 
 const TripImageManagePage = () => {
     const [activeTab, setActiveTab] = useState(IMAGE_MANAGEMENT_TABS[0].id);
@@ -43,9 +45,7 @@ const TripImageManagePage = () => {
     const [isDateEditing, setIsDateEditing] = useState(false);
 
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [isUploading, setIsUploading] = useState(false);
 
-    const { isMapScriptLoaded } = useMapScript();
     const { showToast } = useToastStore();
     const {
         selectedImages,
@@ -53,9 +53,10 @@ const TripImageManagePage = () => {
         handlers: { toggleImage, onSelectionMode, offSelectionMode },
     } = useImageSelection();
 
+    const { mapRef, isMapScriptLoaded, updateMapCenter } = useMapControl(ZOOM_SCALE.DEFAULT, DEFAULT_CENTER);
+
     const { tripKey } = useParams();
     const navigate = useNavigate();
-    // const queryClient = useQueryClient();
     const { mutate: deleteImagesMutate, isPending: isImageDeleting } = useMediaDelete();
     const { mutate: updateImageMetadataMutate, isPending: isImageUpdating } = useMetadataUpdate();
 
@@ -105,17 +106,15 @@ const TripImageManagePage = () => {
             { tripKey: tripKey!, images },
             {
                 onSuccess: (result) => {
-                    if (!result.success) {
-                        showToast(result.error);
-                    }
-                    offSelectionMode();
+                    showToast(result.success ? result.data : result.error);
                 },
             },
         );
+        offSelectionMode();
     };
 
-    const updateImages = async (images: MediaFile[], location: Location | null, date: Date | null) => {
-        const updatedImages = images.map((image) => {
+    const updateImages = async (location: Location | null, date: Date | null) => {
+        const updatedImages = selectedImages.map((image) => {
             return {
                 ...image,
                 latitude: location ? location.latitude : image.latitude,
@@ -128,70 +127,92 @@ const TripImageManagePage = () => {
             { tripKey: tripKey!, images: updatedImages },
             {
                 onSuccess: (result) => {
-                    showToast(result.success ? `${selectedImages.length} 장의 사진이 수정되었습니다` : result.error);
+                    showToast(result.success ? `${selectedImages.length}장의 사진이 수정되었습니다` : result.error);
+                    setIsLocationEditing(false);
+                    setIsDateEditing(false);
+                    offSelectionMode();
+                    setUpdatedDate(null);
+                    setUpdatedLocation(null);
                 },
             },
         );
-        setIsLocationEditing(false);
-        setIsDateEditing(false);
-        offSelectionMode();
-        setUpdatedDate(null);
-        setUpdatedLocation(null);
     };
 
     const handleMapLocationSelect = (latitude: number, longitude: number) => {
+        updateMapCenter({ latitude, longitude });
         setUpdatedLocation({ latitude, longitude });
     };
 
+    const handleMapClick = (event: MapMouseEvent | undefined) => {
+        if (event && event.latLng) {
+            const newLocation = {
+                latitude: event.latLng.lat(),
+                longitude: event.latLng.lng(),
+            };
+
+            setUpdatedLocation(newLocation);
+            updateMapCenter(newLocation);
+        }
+    };
+
     const isSelectedImage = selectedImages.length > 0;
+    const defaultLocation = updatedLocation
+        ? updatedLocation
+        : selectedImages[0]
+          ? { latitude: selectedImages[0].latitude, longitude: selectedImages[0].longitude }
+          : null;
 
     const renderEditMode = () => {
         return (
             <div css={editContainer}>
                 {isLocationEditing && (
-                    <LocationAddMap
-                        defaultLocation={{
-                            latitude: selectedImages[0].latitude,
-                            longitude: selectedImages[0].longitude,
-                        }}
-                        onLocationSelect={handleMapLocationSelect}
-                        setIsMapVisible={setIsLocationEditing}
-                        isUploading={isUploading}
-                        uploadImagesWithLocation={() => updateImages(selectedImages, updatedLocation, null)}
-                    />
+                    <>
+                        <SearchPlaceInput
+                            isMapScriptLoaded={isMapScriptLoaded}
+                            isBackButtonDisable={isImageUpdating}
+                            onLocationChange={handleMapLocationSelect}
+                            onBack={() => setIsLocationEditing(false)}
+                        />
+                        <SingleMarkerMap
+                            mapRef={mapRef}
+                            position={defaultLocation}
+                            onMapClick={handleMapClick}
+                            mapHeight='100dvh'
+                        />
+                        <div
+                            css={css`
+                                width: 100%;
+                                position: absolute;
+                                bottom: 0;
+                                padding: 16px;
+                                z-index: 999;
+                                background-color: ${COLORS.BACKGROUND.WHITE};
+                            `}
+                        >
+                            <Button
+                                text='위치 등록하기'
+                                onClick={() => updateImages(updatedLocation, null)}
+                                disabled={!updatedLocation}
+                                isLoading={isImageUpdating}
+                                loadingText='위치 등록중...'
+                            ></Button>
+                        </div>
+                    </>
                 )}
 
-                {/* {isDateEditing && (
+                {isDateEditing && (
                     <EditDate
                         defaultDate={selectedImages[0].recordDate}
                         updatedDate={updatedDate}
                         setUpdatedDate={setUpdatedDate}
-                        isUploading={isUploading}
-                        uploadImagesWithDate={() => null}
-                        // uploadImagesWithDate={() => updateImagesDate(selectedImages, updatedDate)}
+                        isUploading={isImageUpdating}
+                        uploadImagesWithDate={() => updateImages(null, updatedDate)}
                         setIsDateEditing={setIsDateEditing}
                     />
-                )} */}
+                )}
             </div>
         );
     };
-
-    /* <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            {
-                <Button
-                    text={`위치 없는 사진 관리`}
-                    onClick={() => navigate(`/${tripKey}/imageCategories/unlocated`)}
-                    css={css`
-                        width: auto;
-                        height: 34px;
-                        padding: 0 24px;
-                        margin: 12px 12px 0 0;
-                        border-radius: 12px;
-                        font-size: ${theme.FONT_SIZES.SM};
-                        `}
-                        />
-                        }
-                        </div> */
 
     const hasImages = imageGroupsByDate && imageGroupsByDate?.length > 0;
 
@@ -199,6 +220,7 @@ const TripImageManagePage = () => {
         <div css={container}>
             {isMapScriptLoaded && isLoading && <Indicator text='사진 불러오는 중...' />}
             {isImageDeleting && <Indicator text='사진 삭제 중...' />}
+            {isImageUpdating && <Indicator text='사진 수정 중...' />}
 
             <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)}>
                 <div>
@@ -298,8 +320,12 @@ const TripImageManagePage = () => {
 
             {isSelectedImage && (
                 <div css={buttonContainer}>
-                    <Button text='위치 수정' variant='white' onClick={() => setIsLocationEditing(true)} />
-                    <Button text='날짜 수정' variant='white' />
+                    {activeTab !== 'withoutDate' && (
+                        <Button text='위치 수정' variant='white' onClick={() => setIsLocationEditing(true)} />
+                    )}
+                    {activeTab !== 'withoutLocation' && (
+                        <Button text='날짜 수정' variant='white' onClick={() => setIsDateEditing(true)} />
+                    )}
                     <Button variant='error' text='삭제' onClick={() => setIsDeleteModalOpen(true)} />
                 </div>
             )}
@@ -336,59 +362,6 @@ const mainStyle = css`
     overflow: auto;
 `;
 
-const selectedStyle = css`
-    width: 100%;
-    padding: 2px 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-`;
-
-const bottomSheet = css`
-    max-width: 428px;
-    width: 100%;
-    position: fixed;
-    background-color: ${COLORS.BACKGROUND.WHITE};
-    border-radius: 10px 10px 0 0;
-    bottom: 0;
-    padding: 12px;
-    z-index: 10;
-    display: flex;
-    gap: 8px;
-`;
-
-const selectedText = css`
-    font-weight: 600;
-    color: ${COLORS.TEXT.BLACK};
-`;
-
-const optionIcon = css`
-    position: relative;
-    display: flex;
-    gap: 14px;
-    align-items: center;
-`;
-
-const editList = css`
-    width: max-content;
-    padding: 12px;
-    position: absolute;
-    top: -88px;
-    right: -12px;
-    display: flex;
-    /* gap: 16px; */
-    flex-direction: column;
-    background-color: ${COLORS.BACKGROUND.WHITE};
-    border-radius: 8px;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    cursor: pointer;
-`;
-
-const dateStyle = css`
-    font-weight: 700;
-    /* padding: 12px; */
-`;
-
 const buttonContainer = css`
     width: 100%;
     padding: 12px;
@@ -402,7 +375,7 @@ const editContainer = css`
     height: 100dvh;
     position: absolute;
     inset: 0;
-    z-index: 9999;
+    z-index: 995;
 `;
 
 export default TripImageManagePage;

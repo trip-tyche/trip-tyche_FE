@@ -1,71 +1,106 @@
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { DatePickerInput, TimeInput } from '@mantine/dates';
-import { Calendar, Clock } from 'lucide-react';
+import { Calendar, Clock, X } from 'lucide-react';
+import 'dayjs/locale/ko';
 
+import { hasValidDate } from '@/libs/utils/validate';
 import Button from '@/shared/components/common/Button';
-import Header from '@/shared/components/common/Header';
 import { COLORS } from '@/shared/constants/style';
 
 interface EditDateProps {
     defaultDate: string;
-    selectedDate: Date | null;
-    setSelectedDate: Dispatch<SetStateAction<Date | null>>;
+    updatedDate: Date | null;
+    setUpdatedDate: Dispatch<SetStateAction<Date | null>>;
     isUploading?: boolean;
     uploadImagesWithDate: () => void;
-    setIsDateVisible: (isDateVisible: boolean) => void;
+    setIsDateEditing: (isDateVisible: boolean) => void;
 }
 
 const EditDate = ({
     defaultDate,
-    selectedDate,
-    setSelectedDate,
+    setUpdatedDate,
     isUploading,
     uploadImagesWithDate,
-    setIsDateVisible,
+    setIsDateEditing,
 }: EditDateProps) => {
-    useEffect(() => {
-        if (!selectedDate) {
-            setSelectedDate(new Date(defaultDate));
-        }
-    }, [defaultDate, selectedDate, setSelectedDate]);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [timeValue, setTimeValue] = useState('');
 
-    const handleTimeChange = (hours: number, minutes: number) => {
-        if (selectedDate) {
-            const newDate = new Date(selectedDate);
-            newDate.setHours(hours);
-            newDate.setMinutes(minutes);
-            setSelectedDate(newDate);
+    useEffect(() => {
+        if (defaultDate && hasValidDate(defaultDate)) {
+            const initialDate = new Date(defaultDate);
+            setSelectedDate(initialDate);
+            setUpdatedDate(initialDate);
+
+            const hours = initialDate.getHours().toString().padStart(2, '0');
+            const minutes = initialDate.getMinutes().toString().padStart(2, '0');
+            setTimeValue(`${hours}:${minutes}`);
         }
+    }, [defaultDate, setUpdatedDate]);
+
+    const handleDateChange = (value: Date | null) => {
+        if (value) {
+            const newDate = new Date(value);
+            if (selectedDate) {
+                newDate.setHours(selectedDate.getHours());
+                newDate.setMinutes(selectedDate.getMinutes());
+            }
+            setSelectedDate(newDate);
+            setUpdatedDate(newDate);
+        }
+    };
+
+    const handleTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = event.target;
+        setTimeValue(value);
+
+        if (value && selectedDate) {
+            const [hours, minutes] = value.split(':').map(Number);
+
+            if (!isNaN(hours) && !isNaN(minutes) && hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60) {
+                const newDate = new Date(selectedDate);
+                newDate.setHours(hours);
+                newDate.setMinutes(minutes);
+                setSelectedDate(newDate);
+                setUpdatedDate(newDate);
+            }
+        }
+    };
+
+    const handleClose = () => {
+        setIsDateEditing(false);
+        setUpdatedDate(null);
     };
 
     return (
         <div css={container}>
-            <Header
-                title='날짜 및 시간 수정'
-                isBackButton
-                onBack={() => {
-                    setIsDateVisible(false);
-                    setSelectedDate(null);
-                }}
-            />
-            <main css={mainStyle}>
-                <div css={sectionStyle}>
+            <div css={xIconWrapper} onClick={handleClose}>
+                <X />
+            </div>
+
+            <main css={content}>
+                <div>
                     <h2 css={sectionTitle}>사진 날짜 수정</h2>
-                    <p css={sectionDescription}>이미지가 촬영된 날짜를 수정합니다</p>
+                    <p css={sectionDescription}>촬영한 날짜와 시간을 수정할 수 있습니다.</p>
 
                     <div css={inputContainer}>
                         <label css={labelStyle}>날짜</label>
                         <DatePickerInput
                             type='default'
+                            placeholder='날짜를 선택해주세요'
                             value={selectedDate}
                             leftSection={<Calendar size={18} color={COLORS.PRIMARY} />}
                             locale='ko'
                             size='md'
                             radius='md'
                             valueFormat='YYYY년 MM월 DD일'
-                            onChange={(value) => setSelectedDate(value)}
+                            onChange={handleDateChange}
+                            popoverProps={{
+                                position: 'bottom',
+                                withinPortal: true,
+                            }}
                             css={datePickerStyle}
                         />
                     </div>
@@ -73,26 +108,18 @@ const EditDate = ({
                     <div css={inputContainer}>
                         <label css={labelStyle}>시간</label>
                         <TimeInput
-                            value={
-                                selectedDate
-                                    ? `${selectedDate.getHours().toString().padStart(2, '0')}:${selectedDate.getMinutes().toString().padStart(2, '0')}`
-                                    : ''
-                            }
+                            value={timeValue}
                             leftSection={<Clock size={18} color={COLORS.PRIMARY} />}
-                            onChange={(event) => {
-                                if (event.target.value && selectedDate) {
-                                    const [hours, minutes] = event.target.value.split(':').map(Number);
-                                    handleTimeChange(hours, minutes);
-                                }
-                            }}
+                            onChange={handleTimeChange}
                             size='md'
                             radius='md'
                             css={datePickerStyle}
+                            disabled={!selectedDate}
                         />
                     </div>
                 </div>
 
-                <div css={previewSection}>
+                <div>
                     <h3 css={previewTitle}>변경 후 날짜 및 시간</h3>
                     <p css={datePreview}>
                         {selectedDate
@@ -109,46 +136,52 @@ const EditDate = ({
                 </div>
             </main>
 
-            <div css={bottomSheet}>
-                <Button
-                    text='수정하기'
-                    onClick={uploadImagesWithDate}
-                    isLoading={isUploading}
-                    loadingText='위치를 등록하고 있습니다'
-                />
-            </div>
+            <Button
+                text='수정하기'
+                disabled={!selectedDate || isUploading}
+                onClick={uploadImagesWithDate}
+                isLoading={isUploading}
+                loadingText='날짜 수정 중...'
+            />
         </div>
     );
 };
 
 const container = css`
-    height: 100dvh;
+    padding: 20px 16px;
+    height: 100%;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    background-color: ${COLORS.BACKGROUND.WHITE};
     overflow: auto;
     position: relative;
 `;
 
-const mainStyle = css`
+const xIconWrapper = css`
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    cursor: pointer;
+    z-index: 10;
+    padding: 4px;
+
+    &:hover {
+        opacity: 0.7;
+    }
+`;
+
+const content = css`
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 20px 16px;
-    padding-bottom: 108px;
     gap: 24px;
-`;
-
-const sectionStyle = css`
-    background-color: ${COLORS.BACKGROUND.WHITE};
-    padding: 20px 16px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 `;
 
 const sectionTitle = css`
     font-size: 18px;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     color: ${COLORS.TEXT.BLACK};
 `;
 
@@ -172,19 +205,16 @@ const labelStyle = css`
 
 const datePickerStyle = css`
     width: 100%;
-`;
 
-const previewSection = css`
-    background-color: ${COLORS.BACKGROUND.WHITE};
-    padding: 20px 16px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    input {
+        cursor: pointer;
+    }
 `;
 
 const previewTitle = css`
     font-size: 16px;
     font-weight: 500;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     color: ${COLORS.TEXT.BLACK};
 `;
 
@@ -196,15 +226,6 @@ const datePreview = css`
     border: 1px solid ${COLORS.TEXT.DESCRIPTION_LIGHT}60;
     border-radius: 8px;
     text-align: center;
-`;
-
-const bottomSheet = css`
-    width: 100vw;
-    max-width: 428px;
-    position: fixed;
-    bottom: 0;
-    padding: 16px;
-    z-index: 1;
 `;
 
 export default EditDate;

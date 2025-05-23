@@ -34,11 +34,9 @@ export const DEFAULT_CENTER = {
 
 // 지도 줌레벨(zoom)
 export const ZOOM_SCALE = {
-    DEFAULT: {
-        LOCATION_ADD: 12,
-        IMAGE_BY_DATE: 13,
-        NO_DATE: 3,
-        ROUTE: 14,
-    },
+    LOCATION_ADD: 12,
+    IMAGE_BY_DATE: 13,
+    UNLOCATION: 3,
+    DEFAULT: 14,
     INDIVIDUAL_IMAGE_MARKERS_VISIBLE: 15,
 };
