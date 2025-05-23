@@ -20,6 +20,17 @@ interface CustomRequestConfing extends InternalAxiosRequestConfig {
 export const setupRequestInterceptor = (instance: AxiosInstance) => {
     instance.interceptors.request.use(
         (config: InternalAxiosRequestConfig) => {
+            const { isLoggingOut } = useUserStore.getState();
+
+            if (isLoggingOut && !config.url?.includes('/auth/logout')) {
+                const controller = new AbortController();
+                controller.abort();
+                return {
+                    ...config,
+                    signal: controller.signal,
+                };
+            }
+
             return config;
         },
         (error: AxiosError) => {

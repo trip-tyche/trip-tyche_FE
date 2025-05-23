@@ -6,6 +6,7 @@ import { queryClient } from '@/shared/providers/TanStackProvider';
 
 interface UserState {
     isAuthenticated: boolean;
+    isLoggingOut: boolean;
     userInfo: UserInfo | null;
     updateNickname: (nickname: string) => void;
     login: (userInfo: UserInfo) => void;
@@ -14,6 +15,7 @@ interface UserState {
 
 const useUserStore = create<UserState>()((set, get) => ({
     isAuthenticated: false,
+    isLoggingOut: false,
     userInfo: null,
     updateNickname: (nickname: string) => {
         const { userInfo } = get();
@@ -33,13 +35,18 @@ const useUserStore = create<UserState>()((set, get) => ({
         }));
     },
     logout: async () => {
+        set(() => ({
+            isLoggingOut: true,
+        }));
+
         await userAPI.requestLogout();
         queryClient.clear();
-        window.location.href = '/signin';
         set(() => ({
             isAuthenticated: false,
             userInfo: null,
+            isLoggingOut: false,
         }));
+        window.location.replace('/signin');
     },
 }));
 

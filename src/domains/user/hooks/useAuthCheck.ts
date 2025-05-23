@@ -4,14 +4,14 @@ import { useSummary } from '@/domains/user/hooks/queries';
 import useUserStore from '@/domains/user/stores/useUserStore';
 
 export const useAuthCheck = () => {
-    const { login, logout, isAuthenticated } = useUserStore();
+    const { login, logout, isAuthenticated, isLoggingOut } = useUserStore();
 
     const { data: result, isLoading: isChecking } = useSummary();
     console.log('useAuthCheck render');
 
     useEffect(() => {
         const checkAuth = async () => {
-            if (isAuthenticated) {
+            if (isAuthenticated || isLoggingOut) {
                 return;
             }
 
@@ -27,7 +27,7 @@ export const useAuthCheck = () => {
         };
 
         checkAuth();
-    }, [result, isAuthenticated, login, logout]);
+    }, [result, isAuthenticated, isLoggingOut, login, logout]);
 
     return { isChecking };
 };
