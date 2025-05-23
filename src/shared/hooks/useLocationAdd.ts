@@ -5,8 +5,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { UnlocatedMediaFile, UnlocatedMediaFileList } from '@/domains/media/types';
 import { mediaAPI } from '@/libs/apis';
+import { DEFAULT_CENTER } from '@/shared/constants/map';
 import { ROUTES } from '@/shared/constants/route';
-import { useTripDefaultLocation } from '@/shared/hooks/queries/useTripImage';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import { Location } from '@/shared/types/map';
 
@@ -22,7 +22,7 @@ export const useLocationAdd = () => {
     const navigate = useNavigate();
     const { tripKey } = useParams();
 
-    const { data: defaultLocation } = useTripDefaultLocation(tripKey as string);
+    // const { data: defaultLocation } = useTripDefaultLocation(tripKey as string);
     const queryClient = useQueryClient();
 
     useEffect(() => {
@@ -105,7 +105,7 @@ export const useLocationAdd = () => {
         tripKey,
         imageGroupByDate,
         selectedImages,
-        defaultLocation,
+        defaultLocation: DEFAULT_CENTER,
         selectedLocation,
         isMapVisible,
         isUploading,

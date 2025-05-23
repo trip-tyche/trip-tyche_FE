@@ -1,12 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { MediaFile } from '@/domains/media/types';
 
 export const useImageSelection = () => {
     const [selectedImages, setSelectedImages] = useState<MediaFile[]>([]);
+    const [isSelectionMode, setIsSelectionMode] = useState(false);
 
-    const handler = {
-        toggle: (newImage: MediaFile) => {
+    useEffect(() => {
+        if (!isSelectionMode) {
+            handlers.clearImages();
+        }
+    }, [isSelectionMode]);
+
+    const handlers = {
+        toggleImage: (newImage: MediaFile) => {
             const isAlreadySelected = selectedImages?.some((image) => image.mediaFileId === newImage.mediaFileId);
 
             if (isAlreadySelected) {
@@ -15,7 +22,17 @@ export const useImageSelection = () => {
                 setSelectedImages((prev) => [...prev, newImage]);
             }
         },
+        clearImages: () => setSelectedImages([]),
+        onSelectionMode: () => setIsSelectionMode(true),
+        offSelectionMode: () => {
+            setIsSelectionMode(false);
+            setSelectedImages([]);
+        },
     };
 
-    return handler;
+    return {
+        handlers,
+        selectedImages,
+        isSelectionMode,
+    };
 };

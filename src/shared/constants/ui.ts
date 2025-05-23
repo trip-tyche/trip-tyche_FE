@@ -54,3 +54,30 @@ export const IMAGE_CAROUSEL_STATE = {
     PAUSED: 'paused',
     ZOOMED: 'zoomed',
 } as const;
+
+export const EMPTY_ITEM = {
+    IMAGE: (category: string) => {
+        switch (category) {
+            case 'withAll':
+                return {
+                    title: '등록된 사진이 없어요',
+                    description: '티켓 속 사진 관리에서\n새로운 사진을 등록해주세요',
+                };
+            case 'withoutLocation':
+                return {
+                    title: '위치 정보가 없는 사진이 없어요',
+                    description: '모든 사진에 위치 정보가 포함되어 있습니다',
+                };
+            case 'withoutDate':
+                return {
+                    title: '날짜 정보가 없는 사진이 없어요',
+                    description: '모든 사진에 촬영 날짜가 포함되어 있습니다',
+                };
+            default:
+                return {
+                    title: '등록된 사진이 없어요',
+                    description: '티켓 속 사진 관리에서\n새로운 사진을 등록해주세요',
+                };
+        }
+    },
+};

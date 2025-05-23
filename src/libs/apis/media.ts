@@ -95,21 +95,25 @@ export const mediaAPI = {
         }
     },
     // 선택한 여행 이미지 수정
-    updateImages: async (tripKey: string, images: MediaFile[]) => {
-        try {
-            const response = await apiClient.patch(`/v1/trips/${tripKey}/media-files`, {
-                mediaFiles: images,
-            });
-            if (response.status !== 200 || !response.data) {
-                return { success: false, error: `사진 삭제에 실패하였습니다.` };
-            } else {
-                return { success: true, data: `${images.length}장의 사진이 성공적으로 삭제되었습니다.` };
-            }
-        } catch (error) {
-            console.error(error);
-            return { success: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
-        }
-    },
+    // updateImages: async (tripKey: string, images: MediaFile[]) => {
+    //     try {
+    //         const response = await apiClient.patch(`/v1/trips/${tripKey}/media-files`, {
+    //             mediaFiles: images,
+    //         });
+    //         if (response.status !== 200 || !response.data) {
+    //             return { success: false, error: `사진 삭제에 실패하였습니다.` };
+    //         } else {
+    //             return { success: true, data: `${images.length}장의 사진이 성공적으로 삭제되었습니다.` };
+    //         }
+    //     } catch (error) {
+    //         console.error(error);
+    //         return { success: false, error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' };
+    //     }
+    // },
+    updateMediaFileMetadata: async (tripKey: string, images: MediaFile[]): Promise<ApiResponse<string>> =>
+        await apiClient.patch(`/v1/trips/${tripKey}/media-files`, {
+            mediaFiles: images,
+        }),
     updateTripStatusToImagesUploaded: async (tripKey: string): Promise<ApiResponse<string>> =>
         await apiClient.patch(`/v1/trips/${tripKey}/images-uploaded`),
 };
