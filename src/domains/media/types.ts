@@ -31,8 +31,7 @@ export interface ClientImageFile extends MetaData {
     image: File;
 }
 
-export interface ImageFileWithAddress extends MetaData {
-    imageUrl: string;
+export interface ImageFileWithAddress extends MediaFile {
     address: string;
 }
 

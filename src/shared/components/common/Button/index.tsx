@@ -2,10 +2,10 @@ import React, { ComponentPropsWithoutRef } from 'react';
 
 import { css, SerializedStyles } from '@emotion/react';
 
-import { COLORS } from '@/shared/constants/style';
+import { COLORS, THEME_COLORS } from '@/shared/constants/style';
 import theme from '@/shared/styles/theme';
 
-type VariantType = 'primary' | 'white';
+type VariantType = 'primary' | 'white' | 'error';
 
 interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
     variant?: VariantType;
@@ -89,6 +89,17 @@ const buttonStlye = {
 
         &:active {
             background-color: ${'#e5e8f0'};
+        }
+        &:disabled {
+            cursor: not-allowed;
+        }
+    `,
+    error: (isActive: boolean) => css`
+        background-color: ${isActive ? THEME_COLORS.error.BACKGROUND : COLORS.DISABLED};
+        color: ${isActive ? THEME_COLORS.error.TEXT : COLORS.DISABLED};
+
+        &:hover {
+            background-color: ${isActive ? '#ffe8e8' : COLORS.DISABLED};
         }
         &:disabled {
             cursor: not-allowed;

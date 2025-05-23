@@ -1,11 +1,12 @@
 import { useState, useEffect, useMemo } from 'react';
 
 import { css } from '@emotion/react';
-import { useQueryClient } from '@tanstack/react-query';
+import { ImageOff, Plus } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import ImageGroupByDate from '@/domains/media/components/view/ImageGroupByDate';
 import { IMAGE_MANAGEMENT_TABS, MediaFileCategoryKey } from '@/domains/media/constants';
+import { useMediaDelete } from '@/domains/media/hooks/mutations';
 import { MediaFile, MediaFileCategories } from '@/domains/media/types';
 import {
     filterValidMediaFile,
@@ -13,9 +14,8 @@ import {
     filterWithoutLocationMediaFile,
     getImageGroupByDate,
 } from '@/domains/media/utils';
-import { useMediaDelete } from '@/domains/trip/hooks/mutations';
-import { hasValidLocation } from '@/libs/utils/validate';
 import Button from '@/shared/components/common/Button';
+import EmptyItem from '@/shared/components/common/EmptyItem';
 import Header from '@/shared/components/common/Header';
 import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
@@ -28,31 +28,27 @@ import { useToastStore } from '@/shared/stores/useToastStore';
 import { Location } from '@/shared/types/map';
 
 const TripImageManagePage = () => {
-    const [selectedImages, setSelectedImages] = useState<MediaFile[]>([]);
-    const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
-    // const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [activeTab, setActiveTab] = useState(IMAGE_MANAGEMENT_TABS[0].id);
     const [isSelectionMode, setIsSelectionMode] = useState(false);
-
-    const [isVisibleEditList, setIsVisibleEditList] = useState(false);
+    const [imageCategories, setImageCategories] = useState<MediaFileCategories>();
+    const [selectedImages, setSelectedImages] = useState<MediaFile[]>([]);
+    const [updatedLocation, setUpdatedLocation] = useState<Location | null>(null);
+    const [updatedDate, setUpdatedDate] = useState<Date | null>(null);
     const [isMapVisible, setIsMapVisible] = useState(false);
     const [isDateVisible, setIsDateVisible] = useState(false);
+
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
-    const { isMapScriptLoaded } = useMapScript();
 
-    const [imageCategories, setImageCategories] = useState<MediaFileCategories>();
+    const { isMapScriptLoaded } = useMapScript();
     const { showToast } = useToastStore.getState();
 
-    const { mutate } = useMediaDelete();
-
-    const navigate = useNavigate();
     const { tripKey } = useParams();
+    const navigate = useNavigate();
     // const queryClient = useQueryClient();
-
+    const { mutate, isPending: isImageDeleting } = useMediaDelete();
     const { data: result, isLoading } = useTripImages(tripKey!);
 
-    console.log(imageCategories?.withoutDate);
     useEffect(() => {
         if (!result) return;
 
@@ -77,14 +73,20 @@ const TripImageManagePage = () => {
     }, [result]);
 
     useEffect(() => {
-        setIsVisibleEditList(false);
-    }, [selectedImages.length]);
+        setIsSelectionMode(false);
+    }, [activeTab]);
+
+    useEffect(() => {
+        if (!isSelectionMode) {
+            setSelectedImages([]);
+        }
+    }, [isSelectionMode]);
 
     useEffect(() => {
         if (!isMapVisible) {
-            setSelectedLocation(null);
+            setUpdatedLocation(null);
         }
-    }, [selectedLocation, isMapVisible]);
+    }, [updatedLocation, isMapVisible]);
 
     const imageGroupByDate = useMemo(() => {
         if (!imageCategories) return;
@@ -93,24 +95,22 @@ const TripImageManagePage = () => {
         return getImageGroupByDate(activeImage.images);
     }, [imageCategories, activeTab]);
 
-    // console.log(tripImages, imageGroupByDate);
     const deleteImages = (selectedImages: MediaFile[]) => {
-        if (!tripKey) return;
+        setIsDeleteModalOpen(false);
         mutate(
             {
-                tripKey,
-                images: selectedImages.map((image) => image.mediaFileId),
+                tripKey: tripKey!,
+                images: selectedImages.map((image) => image.mediaFileId!),
             },
             {
                 onSuccess: () => {
-                    setIsDeleteModalOpen(false);
                     setSelectedImages([]);
                     setIsSelectionMode(false);
                 },
-                onError: () => {
-                    setIsDeleteModalOpen(false);
-                    showToast(`사진을 삭제하는데 실패하였습니다.`);
-                },
+                // onError: () => {
+                //     setIsDeleteModalOpen(false);
+                //     showToast(`사진을 삭제하는데 실패하였습니다`);
+                // },
             },
         );
     };
@@ -134,7 +134,7 @@ const TripImageManagePage = () => {
     //         showToast(`${selectedImages.length}의 사진이 수정되었습니다`);
     //         setSelectedImages([]);
     //         setIsSelectionMode(false);
-    //         setSelectedDate(null);
+    //         setUpdatedDate(null);
     //     } catch (error) {
     //         console.error('여행 이미지 삭제 실패', error);
     //     } finally {
@@ -167,10 +167,8 @@ const TripImageManagePage = () => {
     //         setIsUploading(false);
     //     }
     // };
-
     const handleImageToggle = (selectedImage: MediaFile) => {
         const isAlreadySelected = selectedImages.some((image) => image.mediaFileId === selectedImage.mediaFileId);
-
         if (isAlreadySelected) {
             setSelectedImages((prev) => prev.filter((image) => image.mediaFileId !== selectedImage.mediaFileId));
         } else {
@@ -179,26 +177,46 @@ const TripImageManagePage = () => {
     };
 
     // const handleMapLocationSelect = (latitude: number, longitude: number) => {
-    //     setSelectedLocation({ latitude, longitude });
+    //     setUpdatedLocation({ latitude, longitude });
     // };
 
     const handleTabChange = (tabId: string) => {
         setActiveTab(tabId as MediaFileCategoryKey);
     };
+    const isSelectedImage = selectedImages.length > 0;
 
-    // const isSelectedImage = selectedImages.length > 0;
-
-    if (isLoading) {
-        return <Indicator />;
-    }
+    const renderEmptyImage = (tabId: string) => {
+        switch (tabId) {
+            case 'withAll':
+                return {
+                    title: '등록된 사진이 없어요',
+                    description: '티켓 속 사진 관리에서\n새로운 사진을 등록해주세요',
+                };
+            case 'withoutLocation':
+                return {
+                    title: '위치 정보가 없는 사진이 없어요',
+                    description: '모든 사진에 위치 정보가 포함되어 있습니다',
+                };
+            case 'withoutDate':
+                return {
+                    title: '날짜 정보가 없는 사진이 없어요',
+                    description: '모든 사진에 촬영 날짜가 포함되어 있습니다',
+                };
+            default:
+                return {
+                    title: '등록된 사진이 없어요',
+                    description: '티켓 속 사진 관리에서\n새로운 사진을 등록해주세요',
+                };
+        }
+    };
 
     // return isDateVisible ? (
     //     <EditDate
     //         defaultDate={selectedImages[0].recordDate}
-    //         selectedDate={selectedDate}
-    //         setSelectedDate={setSelectedDate}
+    //         updatedDate={updatedDate}
+    //         setUpdatedDate={setUpdatedDate}
     //         isUploading={isUploading}
-    //         uploadImagesWithDate={() => updateImagesDate(selectedImages, selectedDate)}
+    //         uploadImagesWithDate={() => updateImagesDate(selectedImages, updatedDate)}
     //         setIsDateVisible={setIsDateVisible}
     //     />
     // ) : isMapVisible ? (
@@ -207,12 +225,11 @@ const TripImageManagePage = () => {
     //         onLocationSelect={handleMapLocationSelect}
     //         setIsMapVisible={setIsMapVisible}
     //         isUploading={isUploading}
-    //         uploadImagesWithLocation={() => updateImagesLocation(selectedImages, selectedLocation)}
+    //         uploadImagesWithLocation={() => updateImagesLocation(selectedImages, updatedLocation)}
     //     />
     // ) : (
 
-    {
-        /* <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+    /* <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             {
                 <Button
                     text={`위치 없는 사진 관리`}
@@ -224,42 +241,52 @@ const TripImageManagePage = () => {
                         margin: 12px 12px 0 0;
                         border-radius: 12px;
                         font-size: ${theme.FONT_SIZES.SM};
-                    `}
-                />
-            }
-        </div> */
-    }
+                        `}
+                        />
+                        }
+                        </div> */
+
     return (
         <div css={container}>
+            {isLoading && <Indicator text='사진 불러오는 중...' />}
+            {isImageDeleting && <Indicator text='사진 삭제 중...' />}
+
             <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)}>
                 <div>
-                    <Button
-                        text='선택'
-                        customStyle={css`
-                            width: 60px;
-                            height: 34px;
-                            padding: 8px 16px;
-                            font-size: 14px;
-                            border-radius: 8px;
-                        `}
-                    />
-                    {/* <div
-                        css={css`
-                            display: flex;
-                            align-items: center;
-                            gap: 12px;
-                        `}
-                    >
-                        <p
+                    {isSelectionMode ? (
+                        <div
                             css={css`
-                                font-size: 14px;
+                                display: flex;
+                                align-items: center;
+                                gap: 12px;
                             `}
                         >
-                            0장 선택
-                        </p>
+                            <p
+                                css={css`
+                                    font-size: 14px;
+                                    font-weight: 500;
+                                    color: #6b7280;
+                                `}
+                            >
+                                {selectedImages.length}장 선택
+                            </p>
+                            <Button
+                                variant='white'
+                                text='취소'
+                                onClick={() => setIsSelectionMode(false)}
+                                customStyle={css`
+                                    width: 60px;
+                                    height: 34px;
+                                    padding: 8px 16px;
+                                    font-size: 14px;
+                                    border-radius: 8px;
+                                `}
+                            />
+                        </div>
+                    ) : (
                         <Button
-                            variant='white'
-                            text='취소'
+                            text='선택'
+                            onClick={() => setIsSelectionMode(true)}
                             customStyle={css`
                                 width: 60px;
                                 height: 34px;
@@ -268,94 +295,71 @@ const TripImageManagePage = () => {
                                 border-radius: 8px;
                             `}
                         />
-                    </div> */}
+                    )}
                 </div>
             </Header>
             <TabNavigation tabs={IMAGE_MANAGEMENT_TABS} activeTab={activeTab} onActiveChange={handleTabChange} />
+            <div
+                css={css`
+                    padding: 12px 16px;
+                    display: flex;
+                    justify-content: end;
+                `}
+            >
+                <Button
+                    variant='white'
+                    text='새로운 사진 추가'
+                    icon={<Plus size={20} />}
+                    onClick={() => {}}
+                    customStyle={css`
+                        width: 160px;
+                        height: 38px;
+                        padding: 8px 16px;
+                        font-size: 14px;
+                        border-radius: 8px;
+                    `}
+                />
+            </div>
 
-            {isMapScriptLoaded && (
-                <main css={mainStyle}>
-                    {imageGroupByDate?.map((imageGroup) => (
-                        <ImageGroupByDate
-                            key={imageGroup.recordDate}
-                            imageGroup={imageGroup}
-                            selectedImages={selectedImages}
-                            onImageClick={() => (isSelectionMode ? handleImageToggle : null)}
-                        />
-                    ))}
-                </main>
-            )}
+            {isMapScriptLoaded &&
+                (imageGroupByDate && imageGroupByDate?.length > 0 ? (
+                    <main css={mainStyle}>
+                        {imageGroupByDate?.map((imageGroup) => (
+                            <ImageGroupByDate
+                                key={imageGroup.recordDate}
+                                imageGroup={imageGroup}
+                                selectedImages={selectedImages}
+                                onImageClick={(image) => {
+                                    isSelectionMode ? handleImageToggle(image) : null;
+                                }}
+                            />
+                        ))}
+                    </main>
+                ) : (
+                    <EmptyItem
+                        title={renderEmptyImage(activeTab)?.title || ''}
+                        description={renderEmptyImage(activeTab)?.description || ''}
+                        icon={<ImageOff />}
+                    />
+                ))}
             {/* <MediaImageGrid */}
             {/* //         imageCategories={image.imageCategories}
                     //         selectedImages={selectedImages}
                     //         onImageClick={isSelectionMode ? handleImageToggle : () => null}
                     //     /> */}
 
-            {/* <div>
-                {isSelectionMode ? (
-                    <div css={selectedStyle}>
-                        <p
-                            css={selectedText}
-                            onClick={() => {
-                                setIsSelectionMode(false);
-                                setSelectedImages([]);
-                            }}
-                            style={{ cursor: 'pointer' }}
-                        >
-                            선택취소
-                        </p>
-                        <p css={selectedText}>
-                            {isSelectedImage ? `${selectedImages.length}장의 사진이 선택됨` : '항목 선택'}
-                        </p>
-                        <div css={optionIcon}>
-                            <Trash2
-                                size={20}
-                                color={isSelectedImage ? COLORS.PRIMARY : COLORS.TEXT.DESCRIPTION_LIGHT}
-                                onClick={isSelectedImage ? () => setIsDeleteModalOpen(true) : () => null}
-                                style={{
-                                    cursor: isSelectedImage ? 'pointer' : 'default',
-                                }}
-                            />
-                            <FaPencilAlt
-                                size={16}
-                                color={isSelectedImage ? COLORS.PRIMARY : COLORS.TEXT.DESCRIPTION_LIGHT}
-                                onClick={isSelectedImage ? () => setIsVisibleEditList(!isVisibleEditList) : () => null}
-                                style={{
-                                    cursor: isSelectedImage ? 'pointer' : 'default',
-                                }}
-                            />
-                            {isSelectedImage && isVisibleEditList && (
-                                <div css={editList}>
-                                    <h3 onClick={() => setIsMapVisible(true)}>위치 수정</h3>
-                                    <div
-                                        style={{
-                                            width: 'calc(100% + 8px)',
-                                            height: '1px',
-                                            backgroundColor: `${COLORS.TEXT.DESCRIPTION_LIGHT}30`,
-                                            margin: '12px 0',
-                                            transform: 'translateX(-4px)',
-                                        }}
-                                    />
-                                    <h3 onClick={() => setIsDateVisible(true)}>날짜 및 시간 수정</h3>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                ) : (
-                    <div css={buttonContainer}>
-                        <Button text='사진 선택' variant='white' onClick={() => setIsSelectionMode(true)} />
-                        <Button
-                            text='새로운 사진 등록하기'
-                            onClick={() => navigate(`${ROUTES.PATH.TRIP.NEW(tripKey!)}?edit`)}
-                        />
-                    </div>
-                )}
-            </div> */}
+            {isSelectedImage && (
+                <div css={buttonContainer}>
+                    <Button text='위치 수정' variant='white' onClick={() => {}} />
+                    <Button text='날짜 수정' variant='white' />
+                    <Button variant='error' text='삭제' onClick={() => setIsDeleteModalOpen(true)} />
+                </div>
+            )}
 
             {isDeleteModalOpen && (
                 <ConfirmModal
                     title={`${selectedImages.length}장의 사진 삭제`}
-                    description='삭제한 여행 사진은 다시 복구할 수 없습니다. 그래도 삭제하시겠습니까?'
+                    description={`삭제한 여행 사진은 다시 복구할 수 없습니다.\n그래도 삭제하시겠습니까?`}
                     confirmText='삭제'
                     cancelText='취소'
                     confirmModal={() => deleteImages(selectedImages)}
@@ -382,64 +386,64 @@ const mainStyle = css`
     overflow: auto;
 `;
 
-// const selectedStyle = css`
-//     width: 100%;
-//     padding: 2px 4px;
-//     display: flex;
-//     justify-content: space-between;
-//     align-items: center;
-// `;
+const selectedStyle = css`
+    width: 100%;
+    padding: 2px 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+`;
 
-// const bottomSheet = css`
-//     max-width: 428px;
-//     width: 100%;
-//     position: fixed;
-//     background-color: ${COLORS.BACKGROUND.WHITE};
-//     border-radius: 10px 10px 0 0;
-//     bottom: 0;
-//     padding: 12px;
-//     z-index: 10;
-//     display: flex;
-//     gap: 8px;
-// `;
+const bottomSheet = css`
+    max-width: 428px;
+    width: 100%;
+    position: fixed;
+    background-color: ${COLORS.BACKGROUND.WHITE};
+    border-radius: 10px 10px 0 0;
+    bottom: 0;
+    padding: 12px;
+    z-index: 10;
+    display: flex;
+    gap: 8px;
+`;
 
-// const selectedText = css`
-//     font-weight: 600;
-//     color: ${COLORS.TEXT.BLACK};
-// `;
+const selectedText = css`
+    font-weight: 600;
+    color: ${COLORS.TEXT.BLACK};
+`;
 
-// const optionIcon = css`
-//     position: relative;
-//     display: flex;
-//     gap: 14px;
-//     align-items: center;
-// `;
+const optionIcon = css`
+    position: relative;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+`;
 
-// const editList = css`
-//     width: max-content;
-//     padding: 12px;
-//     position: absolute;
-//     top: -88px;
-//     right: -12px;
-//     display: flex;
-//     /* gap: 16px; */
-//     flex-direction: column;
-//     background-color: ${COLORS.BACKGROUND.WHITE};
-//     border-radius: 8px;
-//     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-//     cursor: pointer;
-// `;
+const editList = css`
+    width: max-content;
+    padding: 12px;
+    position: absolute;
+    top: -88px;
+    right: -12px;
+    display: flex;
+    /* gap: 16px; */
+    flex-direction: column;
+    background-color: ${COLORS.BACKGROUND.WHITE};
+    border-radius: 8px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    cursor: pointer;
+`;
 
-// const dateStyle = css`
-//     font-weight: 700;
-//     /* padding: 12px; */
-// `;
+const dateStyle = css`
+    font-weight: 700;
+    /* padding: 12px; */
+`;
 
-// const buttonContainer = css`
-//     width: 100%;
-//     padding: 12px;
-//     display: flex;
-//     gap: 12px;
-//     background-color: ${COLORS.BACKGROUND.WHITE};
-// `;
+const buttonContainer = css`
+    width: 100%;
+    padding: 12px;
+    display: flex;
+    gap: 12px;
+    background-color: ${COLORS.BACKGROUND.WHITE};
+`;
 export default TripImageManagePage;

@@ -38,7 +38,7 @@ const ReviewStep = ({ imageCategories, tripPeriod, imagesWithAddress }: ReviewSt
         imagesWithAddress
             .filter((image) => image.address || image.recordDate)
             .slice(0, 4)
-            .map((image) => <ImageCard key={image.imageUrl} image={image} />);
+            .map((image) => <ImageCard key={image.mediaFileId} image={image} />);
 
     const [startDate, endDate] = tripPeriod;
     const isSingleDate = startDate === endDate;

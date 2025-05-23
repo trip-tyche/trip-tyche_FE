@@ -28,4 +28,4 @@ export const hasValidLocation = (location: Location | null): boolean =>
     location !== null && !!(location?.latitude && location?.longitude);
 
 // 유효한 날짜인지 검사
-export const hasValidDate = (date: string): boolean => !!date && date.startsWith(DEFAULT_METADATA.DATE.split('T')[0]);
+export const hasValidDate = (date: string): boolean => !!date && !date.startsWith(DEFAULT_METADATA.DATE.split('T')[0]);

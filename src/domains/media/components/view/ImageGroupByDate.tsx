@@ -15,7 +15,7 @@ interface ImageGroupByDateProps {
         images: MediaFile[];
     };
     selectedImages: MediaFile[];
-    onImageClick: () => void;
+    onImageClick: (selectedImage: MediaFile) => void;
 }
 
 const ImageGroupByDate = ({ imageGroup, selectedImages, onImageClick }: ImageGroupByDateProps) => {
@@ -38,7 +38,6 @@ const ImageGroupByDate = ({ imageGroup, selectedImages, onImageClick }: ImageGro
                         const formattedAddress = address ? `${address.split(' ')[0]}, ${address.split(' ')[1]}` : '';
                         return {
                             ...image,
-                            imageUrl: image.mediaLink,
                             address: formattedAddress,
                         };
                     }),
@@ -52,8 +51,6 @@ const ImageGroupByDate = ({ imageGroup, selectedImages, onImageClick }: ImageGro
 
     const hasDate = hasValidDate(imageGroup.recordDate);
 
-    console.log(imageGroup.recordDate);
-
     return (
         <div css={container}>
             {hasDate && (
@@ -63,9 +60,23 @@ const ImageGroupByDate = ({ imageGroup, selectedImages, onImageClick }: ImageGro
                 </div>
             )}
             <div css={mainStyle}>
-                {imagesWithAddress.map((image) => (
-                    <ImageCard key={image.imageUrl} image={image} onClick={onImageClick} />
-                ))}
+                {imagesWithAddress.map((image) => {
+                    const isSelected = selectedImages.some(
+                        (selectedImage) => selectedImage.mediaFileId === image.mediaFileId,
+                    );
+
+                    return (
+                        <div
+                            key={image.mediaFileId}
+                            onClick={() => onImageClick(image)}
+                            css={css`
+                                cursor: pointer;
+                            `}
+                        >
+                            <ImageCard image={image} isSelected={isSelected} />
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

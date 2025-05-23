@@ -67,7 +67,8 @@ const TripImageUploadPage = () => {
 
                         return {
                             ...image,
-                            imageUrl: blobUrl,
+                            mediaFileId: image.image.name,
+                            mediaLink: blobUrl,
                             address: formattedAddress,
                         };
                     }),

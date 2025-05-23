@@ -39,6 +39,7 @@ const descriptionStyle = css`
     text-align: center;
     color: #5e5e5e;
     line-height: 20px;
+    white-space: pre-line;
 `;
 
 const buttonGroup = css`

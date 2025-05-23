@@ -21,7 +21,11 @@ export const filterValidMediaFile = (metadatas: ClientImageFile[] | MediaFile[])
  * @returns 위치 없는 미디어 파일 배열
  */
 export const filterWithoutLocationMediaFile = (metadatas: ClientImageFile[] | MediaFile[]) =>
-    metadatas.filter((metadata) => !hasValidLocation({ latitude: metadata.latitude, longitude: metadata.longitude }));
+    metadatas.filter(
+        (metadata) =>
+            !hasValidLocation({ latitude: metadata.latitude, longitude: metadata.longitude }) &&
+            hasValidDate(metadata.recordDate),
+    );
 
 /**
  * 유효하지 않은 날짜(기본날짜: 1980-01-01)를 가진 미디어 파일만 필터링
