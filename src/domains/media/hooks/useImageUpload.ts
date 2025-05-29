@@ -59,6 +59,7 @@ export const useImageUpload = () => {
 
     const uploadImagesToS3 = async (images: ClientImageFile[]) => {
         setCurrentProcess('upload');
+
         try {
             const imageNames = images.map((image) => ({ fileName: image.image.name }));
             const result = await mediaAPI.requestPresignedUrls(tripKey!, imageNames);
@@ -66,27 +67,25 @@ export const useImageUpload = () => {
 
             const { data: presignedUrls } = result;
 
-            // console.time(`image upload to S3`);
-
+            const total = images.length;
             let process = 0;
 
             await Promise.all(
-                presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) => {
-                    return mediaAPI.uploadToS3(urlInfo.presignedPutUrl, images[index].image, () => {
+                presignedUrls.map((urlInfo, i) =>
+                    mediaAPI.uploadToS3(urlInfo.presignedPutUrl, images[i].image).finally(() => {
                         process++;
-                        const progressPercent = Math.round((process / images.length) * 100);
+                        const progressPercent = Math.round((process / total) * 100);
                         setProgress((prev) => ({
                             ...prev,
                             upload: progressPercent,
                         }));
-                    });
-                }),
+                    }),
+                ),
             );
-            // console.timeEnd(`image upload to S3`);
 
             submitS3urlAndMetadata(images, presignedUrls);
-        } catch (error) {
-            console.error(error);
+        } catch (err) {
+            console.error(err);
         }
     };
 

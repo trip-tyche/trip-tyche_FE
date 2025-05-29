@@ -3,20 +3,24 @@ import { Calendar, Map } from 'lucide-react';
 import { GoCheckCircleFill } from 'react-icons/go';
 
 import { ImageFileWithAddress } from '@/domains/media/types';
-import { formatKoreanDate } from '@/libs/utils/date';
+import { formatKoreanDate, formatKoreanTime } from '@/libs/utils/date';
 import { hasValidDate } from '@/libs/utils/validate';
 import { COLORS } from '@/shared/constants/style';
 
 interface ImageCardProps {
     image: ImageFileWithAddress;
     isSelected?: boolean;
-    isDateInclude?: boolean;
+    isTimeView?: boolean;
     onClick?: () => void;
 }
 
-const ImageCard = ({ image, isSelected = false, isDateInclude = true, onClick }: ImageCardProps) => {
+const ImageCard = ({ image, isSelected = false, isTimeView = false, onClick }: ImageCardProps) => {
     const address = image.address || '위치 정보 없음';
-    const date = hasValidDate(image.recordDate) ? formatKoreanDate(image.recordDate, true) : '날짜 정보 없음';
+    const date = hasValidDate(image.recordDate)
+        ? isTimeView
+            ? formatKoreanTime(image.recordDate)
+            : formatKoreanDate(image.recordDate, true)
+        : '날짜 정보 없음';
     const hasAddress = !!image.address;
     const hasDate = hasValidDate(image.recordDate);
 
@@ -28,12 +32,10 @@ const ImageCard = ({ image, isSelected = false, isDateInclude = true, onClick }:
                     <Map size={12} />
                     <p css={textStyle(hasAddress)}>{address}</p>
                 </div>
-                {isDateInclude && (
-                    <div css={iconStyle}>
-                        <Calendar size={12} />
-                        <p css={textStyle(hasDate)}>{date}</p>
-                    </div>
-                )}
+                <div css={iconStyle}>
+                    <Calendar size={12} />
+                    <p css={textStyle(hasDate)}>{date}</p>
+                </div>
             </div>
 
             {isSelected && (

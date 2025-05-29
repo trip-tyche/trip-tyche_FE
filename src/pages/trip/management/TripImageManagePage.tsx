@@ -153,7 +153,7 @@ const TripImageManagePage = () => {
             };
 
             setUpdatedLocation(newLocation);
-            updateMapCenter(newLocation);
+            // updateMapCenter(newLocation);
         }
     };
 

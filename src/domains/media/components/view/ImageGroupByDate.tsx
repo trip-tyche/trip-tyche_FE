@@ -78,7 +78,7 @@ const ImageGroupByDate = ({ imageGroup, selectedImages, onImageClick }: ImageGro
                                 cursor: pointer;
                             `}
                         >
-                            <ImageCard image={image} isSelected={isSelected} isDateInclude={false} />
+                            <ImageCard image={image} isSelected={isSelected} isTimeView />
                         </div>
                     );
                 })}

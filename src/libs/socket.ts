@@ -76,7 +76,7 @@ const subscribeToShareNotifications = (userId: string) => {
 
         try {
             const subscribedMessage = JSON.parse(JSON.parse(message.body));
-            console.log(subscribedMessage);
+            // console.log(subscribedMessage);
             const messageType = subscribedMessage.type;
 
             if (messageType === 'SHARED_REQUEST') {
@@ -102,12 +102,10 @@ const subscribeToShareNotifications = (userId: string) => {
             queryClient.invalidateQueries({ queryKey: ['notification'] });
 
             if (messageType.startsWith('TRIP')) {
-                console.log('TRIP');
                 queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
             }
 
             if (messageType.startsWith('MEDIA')) {
-                console.log('MEDIA');
                 queryClient.invalidateQueries({ queryKey: ['trip-images', subscribedMessage.tripKey] });
             }
         } catch (error) {

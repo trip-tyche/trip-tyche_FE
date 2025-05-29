@@ -37,7 +37,6 @@ const TripImageUploadPage = () => {
 
     const { isModalOpen, closeModal } = useBrowserCheck();
     const { isFormComplete } = useTripFormValidation(tripForm);
-    // const { isSubmitting, isFormComplete, submitTripInfo } = useTripInfoForm(false, tripForm);
     const { images, imageCategories, currentProcess, progress, extractMetaData, optimizeImages, uploadImagesToS3 } =
         useImageUpload();
     const { isMapScriptLoaded } = useMapScript();
@@ -49,7 +48,6 @@ const TripImageUploadPage = () => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
 
-    // 이미지 메타데이터 기반 역지오코딩을 활용한 좌표정보 주소 반환
     useEffect(() => {
         const getAddressFromLocation = async () => {
             if (images && isMapScriptLoaded) {
@@ -81,7 +79,6 @@ const TripImageUploadPage = () => {
         getAddressFromLocation();
     }, [images, isMapScriptLoaded]);
 
-    // tripInfo에 업로드한 이미지에서 추출한 mediaFilesDates 추가
     useEffect(() => {
         const imageDates = getImageDateFromImage(images || null);
 
@@ -128,7 +125,6 @@ const TripImageUploadPage = () => {
         }
     };
 
-    // 여행 확정
     const finalizeTrip = async () => {
         if (!tripKey) return;
 
