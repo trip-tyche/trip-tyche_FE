@@ -35,7 +35,12 @@ const ImageGroupByDate = ({ imageGroup, selectedImages, onImageClick }: ImageGro
                                       longitude: image.longitude,
                                   })
                                 : '';
-                        const formattedAddress = address ? `${address.split(' ')[0]}, ${address.split(' ')[1]}` : '';
+
+                        const formattedAddress = address
+                            ? address.startsWith('주소를')
+                                ? address
+                                : `${address.split(' ')[0]}, ${address.split(' ').slice(1).join(' ')}`
+                            : '';
                         return {
                             ...image,
                             address: formattedAddress,
@@ -73,7 +78,7 @@ const ImageGroupByDate = ({ imageGroup, selectedImages, onImageClick }: ImageGro
                                 cursor: pointer;
                             `}
                         >
-                            <ImageCard image={image} isSelected={isSelected} />
+                            <ImageCard image={image} isSelected={isSelected} isDateInclude={false} />
                         </div>
                     );
                 })}

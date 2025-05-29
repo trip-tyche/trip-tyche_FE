@@ -15,7 +15,6 @@ export const getPixelPositionOffset = (height: number) => {
 };
 
 const addressCache = new Map();
-
 /**
  * 주소 변환 성공 여부에 따라 Result 패턴 적용
  * @param latitude 위도
@@ -27,12 +26,15 @@ export const getAddressFromLocation = async (
     longitude: number,
 ): Promise<{ success: boolean; data?: string; error?: string }> => {
     const cacheKey = `${latitude}-${longitude}`;
-    if (addressCache.has(cacheKey)) {
+
+    if (addressCache.has(cacheKey) && cacheKey !== '0-0') {
         return addressCache.get(cacheKey);
     }
+
     try {
-        addressCache.set(cacheKey, `${latitude}-${longitude}`);
-        return { success: true, data: (await convertLocationToAddress(latitude, longitude)) as string };
+        const address = await convertLocationToAddress(latitude, longitude);
+        addressCache.set(cacheKey, address);
+        return { success: true, data: address };
     } catch (error) {
         console.error(error);
         return { success: false, error: '' };
@@ -52,7 +54,11 @@ const convertLocationToAddress = (latitude: number, longitude: number): Promise<
         geocoder.geocode({ location: { lat: latitude, lng: longitude } }, (result, status) => {
             if (result && status === 'OK') {
                 const CITY_INDEX = result?.length - 2;
-                resolve(String(result[CITY_INDEX].formatted_address));
+                if (CITY_INDEX === -1) {
+                    resolve('주소 특정할 불가 지역');
+                } else {
+                    resolve(String(result[CITY_INDEX].formatted_address));
+                }
             } else {
                 reject('geocoder convert error');
             }
