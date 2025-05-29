@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 
 import { css } from '@emotion/react';
-import { TouchpadOff, Bell, Settings, Plus } from 'lucide-react';
+import { Bell, Settings, Plus, Hand } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import MovableTripTicket from '@/domains/trip/components/MovableTripTicket';
 import TripTicket from '@/domains/trip/components/TripTicket';
+import { DEFAULT_TICKET } from '@/domains/trip/constants';
 import { useTripTicketList } from '@/domains/trip/hooks/queries';
 import { Trip } from '@/domains/trip/types';
 import { useSummary } from '@/domains/user/hooks/queries';
@@ -18,9 +20,8 @@ import { COLORS } from '@/shared/constants/style';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 const MainPage = () => {
-    // const { userInfo } = useUserStore();
-    const showToast = useToastStore((state) => state.showToast);
     const { userInfo, login } = useUserStore();
+    const showToast = useToastStore((state) => state.showToast);
 
     const { data: myTrips, isLoading: isTripsLoading } = useTripTicketList();
     const { data: summaryResult, isLoading: isSummaryLoading } = useSummary();
@@ -38,7 +39,7 @@ const MainPage = () => {
 
         const userInfo = summaryResult.data;
         login(userInfo);
-    }, [summaryResult]);
+    }, [summaryResult, login]);
 
     const createNewTrip = async () => {
         const result = await toResult(() => tripAPI.createNewTrip());
@@ -89,13 +90,10 @@ const MainPage = () => {
                 ) : (
                     !isTripsLoading && (
                         <div css={emptyTripList}>
-                            <div css={emptyIcon}>
-                                <TouchpadOff color='white' />
-                            </div>
-                            <h3 css={emptyTripListHeading}>등록된 여행이 없어요</h3>
-                            <p css={emptyTripListDescription}>
-                                {`새로운 여행을 등록하고\n특별한 여행 경험을 시작해보세요`}
+                            <p css={touchGuideText}>
+                                <Hand size={14} /> 아래 티켓을 움직여보세요!
                             </p>
+                            <MovableTripTicket trip={DEFAULT_TICKET} />
                         </div>
                     )
                 )}
@@ -215,37 +213,21 @@ const tripListContent = css`
 `;
 
 const emptyTripList = css`
-    height: 80%;
+    flex: 0.8;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 16px;
 `;
 
-const emptyTripListHeading = css`
-    margin-top: 18px;
-    color: #303038;
-    font-size: 18px;
-    font-weight: bold;
-`;
-
-const emptyTripListDescription = css`
-    margin-top: 8px;
-    color: #767678;
-    font-size: 15px;
-    line-height: 21px;
-    text-align: center;
-    white-space: pre-line;
-`;
-
-const emptyIcon = css`
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
+const touchGuideText = css`
+    font-size: 12px;
+    font-weight: 600;
+    color: #666666;
     display: flex;
-    justify-content: center;
     align-items: center;
-    background-color: ${COLORS.TEXT.DESCRIPTION_LIGHT};
+    gap: 4px;
 `;
 
 export default MainPage;

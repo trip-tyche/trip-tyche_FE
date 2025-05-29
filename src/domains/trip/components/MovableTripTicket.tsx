@@ -58,7 +58,6 @@ const MovableTripTicket = ({ trip }: IntroTicketProps) => {
                             <p css={titleLabelStyle}>Title</p>
                             <p css={titleValueStyle}>{tripTitle}</p>
                         </div>
-                        <p css={flagStyle}>{country.split('/')[0]}</p>
                     </div>
                     <div css={hashtagGroup}>
                         {hashtags.map((tag, index) => (
@@ -101,6 +100,7 @@ const ticketContainer = css`
     cursor: pointer;
     transition: all 0.3s ease;
     background: transparent;
+    user-select: none;
 `;
 
 const leftContent = css`
