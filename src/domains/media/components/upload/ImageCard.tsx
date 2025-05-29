@@ -55,6 +55,7 @@ const container = css`
     position: relative;
     pointer-events: none;
     user-select: none;
+    box-shadow: rgba(0, 0, 0, 0.3) 8px 8px 16px -12px;
 `;
 
 const imageStyle = css`
