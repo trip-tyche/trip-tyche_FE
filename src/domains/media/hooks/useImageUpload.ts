@@ -44,10 +44,6 @@ export const useImageUpload = () => {
 
         setImages(optimizedImages);
 
-        // console.log('total: ', optimizedImages);
-        // console.log('withoutDate: ', imagesWithoutDate(optimizedImages));
-        // console.log('withoutLocation: ', imagesWithoutLocation(optimizedImages));
-
         setImageCategories({
             withAll: { count: optimizedImages.length || 0 },
             withoutLocation: { count: filterWithoutLocationMediaFile(optimizedImages).length || 0 },
@@ -59,7 +55,6 @@ export const useImageUpload = () => {
 
     const uploadImagesToS3 = async (images: ClientImageFile[]) => {
         setCurrentProcess('upload');
-
         try {
             const imageNames = images.map((image) => ({ fileName: image.image.name }));
             const result = await mediaAPI.requestPresignedUrls(tripKey!, imageNames);
@@ -67,25 +62,32 @@ export const useImageUpload = () => {
 
             const { data: presignedUrls } = result;
 
-            const total = images.length;
+            // console.time(`image upload to S3`);
+
             let process = 0;
 
             await Promise.all(
-                presignedUrls.map((urlInfo, i) =>
-                    mediaAPI.uploadToS3(urlInfo.presignedPutUrl, images[i].image).finally(() => {
-                        process++;
-                        const progressPercent = Math.round((process / total) * 100);
-                        setProgress((prev) => ({
-                            ...prev,
-                            upload: progressPercent,
-                        }));
-                    }),
-                ),
+                presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) => {
+                    return mediaAPI
+                        .uploadToS3(urlInfo.presignedPutUrl, images[index].image)
+                        .catch((err) => {
+                            console.error(err);
+                        })
+                        .finally(() => {
+                            process++;
+                            const progressPercent = Math.round((process / images.length) * 100);
+                            setProgress((prev) => ({
+                                ...prev,
+                                upload: progressPercent,
+                            }));
+                        });
+                }),
             );
+            // console.timeEnd(`image upload to S3`);
 
             submitS3urlAndMetadata(images, presignedUrls);
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            console.error(error);
         }
     };
 

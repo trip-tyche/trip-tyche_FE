@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 
 import { css } from '@emotion/react';
+import { useQueryClient } from '@tanstack/react-query';
 import { ImageOff, Plus } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -63,6 +64,7 @@ const TripImageManagePage = () => {
     const { mutate: updateImageMetadataMutate, isPending: isImageUpdating } = useMetadataUpdate();
 
     const { data: result, isLoading } = useTripImages(tripKey!);
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         if (!result) return;
@@ -135,6 +137,7 @@ const TripImageManagePage = () => {
                     offSelectionMode();
                     setUpdatedDate(null);
                     setUpdatedLocation(null);
+                    queryClient.invalidateQueries({ queryKey: ['route', tripKey] });
                 },
             },
         );

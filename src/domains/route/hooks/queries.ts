@@ -5,7 +5,7 @@ import { toResult } from '@/libs/apis/shared/utils';
 
 export const useRoute = (tripKey: string) => {
     return useQuery({
-        queryKey: ['trip', 'route', tripKey],
+        queryKey: ['route', tripKey],
         queryFn: () => toResult(() => routeAPI.fetchTripRoute(tripKey)),
         select: (result) => {
             return result.success

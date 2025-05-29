@@ -166,13 +166,17 @@ const TripRoutePage = () => {
         const settings = getAnimationConfig(distance);
 
         updateMapZoom(settings.zoomLevel);
+        updateMapCenter(start);
+
         setCurrentTransportType(settings.transportType);
         setShowTravelMessage(
             distance >= 1 ? `${Math.round(distance).toLocaleString()}km 이동 중...` : '짧은 거리 이동 중...',
         );
 
         const animate = (time: number) => {
-            if (!startTimeRef.current) startTimeRef.current = time;
+            if (!startTimeRef.current) {
+                startTimeRef.current = time;
+            }
 
             // 단순 선형 진행 (가속/감속 없음)
             const progress = Math.min((time - startTimeRef.current) / settings.duration, 1);
@@ -182,34 +186,20 @@ const TripRoutePage = () => {
             const newLng = start.longitude + (end.longitude - start.longitude) * progress;
             const newPosition = { latitude: newLat, longitude: newLng };
 
-            // 캐릭터 위치 업데이트
             setCharacterPosition(newPosition);
 
-            // 지도 중심 업데이트 - 캐릭터 따라가기
-            if (mapRef.current) {
-                updateMapCenter({ latitude: newPosition.latitude, longitude: newPosition.longitude });
-            }
-
             if (progress < 1) {
-                // 애니메이션 계속
                 animationRef.current = requestAnimationFrame(animate);
             } else {
-                // 애니메이션 종료
                 startTimeRef.current = null;
                 setCurrentPinPointIndex((prev) => prev + 1);
                 setIsCharacterMoving(false);
                 setIsMapInteractive(true);
                 setShowTravelMessage('');
 
-                // 기본 이동 수단으로 복귀
                 setCurrentTransportType('walking');
+                updateMapZoom(ZOOM_SCALE.DEFAULT);
 
-                // 이동 완료 후 기본 줌 레벨로 복원
-                setTimeout(() => {
-                    updateMapZoom(ZOOM_SCALE.DEFAULT);
-                }, 300);
-
-                // 자동 재생 중이면 다음 위치로 이동
                 autoPlayTimeoutRef.current = setTimeout(() => {
                     if (isPlayingAnimation) {
                         moveCharacter();
@@ -218,9 +208,12 @@ const TripRoutePage = () => {
             }
         };
 
-        // 애니메이션 시작
-        animationRef.current = requestAnimationFrame(animate);
-    }, [mapRef, currentPinPointIndex, pinPoints, isPlayingAnimation, isLastPinPoint, updateMapCenter, updateMapZoom]);
+        const delay = distance > 10 && distance < 100 ? 1000 : 50;
+        setTimeout(() => {
+            setCharacterPosition(start);
+            animationRef.current = requestAnimationFrame(animate);
+        }, delay);
+    }, [currentPinPointIndex, pinPoints, isPlayingAnimation, isLastPinPoint, updateMapCenter, updateMapZoom]);
 
     useEffect(() => {
         if (isPlayingAnimation && !isCharacterMoving) {

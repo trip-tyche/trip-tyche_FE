@@ -41,65 +41,135 @@ export const calculateDistance = (
     return R * c;
 };
 
+// export const getAnimationConfig = (distance: number) => {
+//     if (distance < 0.5) {
+//         return {
+//             transportType: 'walking',
+//             zoomLevel: ZOOM_SCALE.DEFAULT,
+//             duration: 1000,
+//         };
+//     } else if (distance < 2) {
+//         return {
+//             transportType: 'walking',
+//             zoomLevel: ZOOM_SCALE.DEFAULT,
+//             duration: 2000,
+//         };
+//     } else if (distance < 5) {
+//         return {
+//             transportType: 'walking',
+//             zoomLevel: ZOOM_SCALE.DEFAULT,
+//             duration: 3000,
+//         };
+//     } else if (distance < 10) {
+//         return {
+//             transportType: 'walking',
+//             zoomLevel: ZOOM_SCALE.DEFAULT,
+//             duration: 3500,
+//         };
+//     } else if (distance < 20) {
+//         return {
+//             transportType: 'car',
+//             zoomLevel: ZOOM_SCALE.DEFAULT - 1,
+//             duration: 8000,
+//         };
+//     } else if (distance < 50) {
+//         return {
+//             transportType: 'car',
+//             zoomLevel: ZOOM_SCALE.DEFAULT - 1,
+//             duration: 8000,
+//         };
+//     } else if (distance < 200) {
+//         return {
+//             transportType: 'plane',
+//             zoomLevel: 9,
+//             duration: 6000,
+//         };
+//     } else if (distance < 500) {
+//         return {
+//             transportType: 'plane',
+//             zoomLevel: 8,
+//             duration: 7000,
+//         };
+//     } else if (distance < 1000) {
+//         return {
+//             transportType: 'plane',
+//             zoomLevel: 7,
+//             duration: 8000,
+//         };
+//     } else {
+//         return {
+//             transportType: 'plane',
+//             zoomLevel: 3,
+//             duration: 8000,
+//         };
+//     }
+// };
+
 export const getAnimationConfig = (distance: number) => {
-    if (distance < 0.5) {
+    if (distance < 1) {
         return {
             transportType: 'walking',
             zoomLevel: ZOOM_SCALE.DEFAULT,
-            duration: 1000,
-        };
-    } else if (distance < 2) {
-        return {
-            transportType: 'walking',
-            zoomLevel: ZOOM_SCALE.DEFAULT,
-            duration: 2000,
-        };
-    } else if (distance < 5) {
-        return {
-            transportType: 'walking',
-            zoomLevel: ZOOM_SCALE.DEFAULT,
-            duration: 3000,
+            duration: 1500,
         };
     } else if (distance < 10) {
         return {
             transportType: 'walking',
             zoomLevel: ZOOM_SCALE.DEFAULT,
-            duration: 3500,
+            duration: 3000,
         };
-    } else if (distance < 20) {
+    } else if (distance < 5) {
         return {
-            transportType: 'walking',
+            transportType: 'car',
             zoomLevel: ZOOM_SCALE.DEFAULT - 1,
-            duration: 4000,
+            duration: 5000,
         };
     } else if (distance < 50) {
         return {
-            transportType: 'walking',
-            zoomLevel: ZOOM_SCALE.DEFAULT - 2,
-            duration: 6500,
+            transportType: 'car',
+            zoomLevel: ZOOM_SCALE.DEFAULT - 1,
+            duration: 6000,
         };
-    } else if (distance < 200) {
+    } else if (distance < 70) {
+        return {
+            transportType: 'car',
+            zoomLevel: ZOOM_SCALE.DEFAULT - 1,
+            duration: 7000,
+        };
+    } else if (distance < 100) {
+        return {
+            transportType: 'car',
+            zoomLevel: ZOOM_SCALE.DEFAULT - 1,
+            duration: 8000,
+        };
+    } else if (distance < 300) {
         return {
             transportType: 'plane',
-            zoomLevel: 9,
-            duration: 6000,
+            zoomLevel: 7,
+            duration: 5000,
         };
     } else if (distance < 500) {
         return {
             transportType: 'plane',
-            zoomLevel: 8,
-            duration: 7000,
+            zoomLevel: 7,
+            duration: 6000,
         };
     } else if (distance < 1000) {
         return {
             transportType: 'plane',
-            zoomLevel: 7,
-            duration: 8000,
+            zoomLevel: 6,
+            duration: 7000,
+        };
+    } else if (distance < 7000) {
+        return {
+            transportType: 'plane',
+            zoomLevel: 4,
+            duration: 7000,
         };
     } else {
         return {
             transportType: 'plane',
-            zoomLevel: 3,
+            zoomLevel: 4,
             duration: 8000,
         };
     }
