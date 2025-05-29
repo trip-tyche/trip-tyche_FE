@@ -46,7 +46,6 @@ const TripImageManagePage = () => {
     const [isDateEditing, setIsDateEditing] = useState(false);
 
     const [isNewImage, setIsNewImage] = useState(false);
-    console.log(isNewImage);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const { showToast } = useToastStore();

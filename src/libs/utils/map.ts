@@ -31,6 +31,7 @@ export const getAddressFromLocation = async (
         return addressCache.get(cacheKey);
     }
     try {
+        addressCache.set(cacheKey, `${latitude}-${longitude}`);
         return { success: true, data: (await convertLocationToAddress(latitude, longitude)) as string };
     } catch (error) {
         console.error(error);
