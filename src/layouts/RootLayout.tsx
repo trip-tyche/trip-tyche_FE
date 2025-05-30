@@ -11,25 +11,19 @@ import { useModalStore } from '@/shared/stores/useModalStore';
 import theme from '@/shared/styles/theme';
 
 const RootLayout = () => {
-    const { userInfo } = useUserStore();
+    const userId = useUserStore((state) => state.userInfo?.userId);
     const { senderNickname, description } = useModalStore();
-    const { connect, disconnect } = socket;
-    /** TODO: 소켓 연결 상태
-     * 메인 페이지로 진입 시, 의존성 배열의 isConnected 변경으로 클린업 함수 동작
-     * 콘솔에 진입 할 때마다, isConnected: true, false, true... 로그
-     * 이로 인해 isConnected: false일 때, 소켓 연결이 끊기는 치명적 에러 발생
-     *  */
+    const { isConnected, connect, disconnect } = socket;
 
     useEffect(() => {
-        // if (!isConnected && userInfo?.userId) {
-        if (userInfo?.userId) {
-            connect(String(userInfo?.userId));
+        if (!isConnected && userId) {
+            connect(String(userId));
         }
 
         return () => {
             disconnect();
         };
-    }, [userInfo?.userId, connect, disconnect]);
+    }, [userId, isConnected, connect, disconnect]);
 
     return (
         <div css={container}>

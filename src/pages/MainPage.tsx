@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { Bell, Settings, Plus, Hand } from 'lucide-react';
@@ -17,29 +17,35 @@ import Button from '@/shared/components/common/Button';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import { ROUTES } from '@/shared/constants/route';
 import { COLORS } from '@/shared/constants/style';
+import { MESSAGE } from '@/shared/constants/ui';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 const MainPage = () => {
-    const { userInfo, login } = useUserStore();
+    const login = useUserStore((state) => state.login);
+    const logout = useUserStore((state) => state.logout);
     const showToast = useToastStore((state) => state.showToast);
 
     const { data: myTrips, isLoading: isTripsLoading } = useTripTicketList();
-    const { data: summaryResult, isLoading: isSummaryLoading } = useSummary();
+    const { data: userInfoResult, isLoading: isSummaryLoading } = useSummary();
 
     const navigate = useNavigate();
 
     useEffect(() => {
         sessionStorage.removeItem('recentPinPointId');
+        sessionStorage.removeItem('imageDates');
     }, []);
 
     useEffect(() => {
-        if (!summaryResult || !summaryResult.success) {
-            return;
+        if (userInfoResult) {
+            if (userInfoResult.success) {
+                const userInfo = userInfoResult.data;
+                login(userInfo);
+            } else {
+                logout();
+                showToast(userInfoResult.error || MESSAGE.ERROR.UNKNOWN);
+            }
         }
-
-        const userInfo = summaryResult.data;
-        login(userInfo);
-    }, [summaryResult, login]);
+    }, [userInfoResult, login, logout, showToast]);
 
     const createNewTrip = async () => {
         const result = await toResult(() => tripAPI.createNewTrip());
@@ -51,8 +57,10 @@ const MainPage = () => {
         }
     };
 
-    const { unreadNotificationsCount } = userInfo || {};
-    const sortedTrips = myTrips && myTrips?.success ? [...myTrips.data].reverse() : [];
+    if (!userInfoResult || !userInfoResult.success) return null;
+
+    const { userId, unreadNotificationsCount } = userInfoResult.data;
+    const sortedTrips = myTrips && myTrips.success ? [...myTrips.data].reverse() : [];
     const tripCount = sortedTrips.length;
 
     return (
@@ -64,7 +72,7 @@ const MainPage = () => {
                 <div css={headerIcons}>
                     <div
                         css={notificationContainer}
-                        onClick={() => userInfo?.userId && navigate(ROUTES.PATH.NOTIFICATION(userInfo?.userId))}
+                        onClick={() => userId && navigate(ROUTES.PATH.NOTIFICATION(userId))}
                     >
                         <Bell css={notificationIcon} />
                         {!!unreadNotificationsCount && <span css={notificationBadge}>{unreadNotificationsCount}</span>}

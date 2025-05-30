@@ -5,7 +5,6 @@ import { userAPI } from '@/libs/apis';
 import { queryClient } from '@/shared/providers/TanStackProvider';
 
 interface UserState {
-    isAuthenticated: boolean;
     isLoggingOut: boolean;
     userInfo: UserInfo | null;
     updateNickname: (nickname: string) => void;
@@ -14,7 +13,6 @@ interface UserState {
 }
 
 const useUserStore = create<UserState>()((set, get) => ({
-    isAuthenticated: false,
     isLoggingOut: false,
     userInfo: null,
     updateNickname: (nickname: string) => {
@@ -30,7 +28,6 @@ const useUserStore = create<UserState>()((set, get) => ({
     },
     login: (userInfo: UserInfo) => {
         set(() => ({
-            isAuthenticated: true,
             userInfo,
         }));
     },
@@ -42,7 +39,6 @@ const useUserStore = create<UserState>()((set, get) => ({
         await userAPI.requestLogout();
         queryClient.clear();
         set(() => ({
-            isAuthenticated: false,
             userInfo: null,
             isLoggingOut: false,
         }));
