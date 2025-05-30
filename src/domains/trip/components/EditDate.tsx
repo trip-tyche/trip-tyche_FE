@@ -1,7 +1,8 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { DatePickerInput, TimeInput } from '@mantine/dates';
+import { ActionIcon } from '@mantine/core';
+import { DatePickerInput, DateTimePicker, TimeInput } from '@mantine/dates';
 import { Calendar, Clock, X } from 'lucide-react';
 import 'dayjs/locale/ko';
 
@@ -91,7 +92,7 @@ const EditDate = ({
                             type='default'
                             placeholder='날짜를 선택해주세요'
                             value={selectedDate}
-                            leftSection={<Calendar size={18} color={COLORS.PRIMARY} />}
+                            leftSection={<Calendar size={16} color={COLORS.PRIMARY} />}
                             locale='ko'
                             size='md'
                             radius='md'
@@ -99,7 +100,7 @@ const EditDate = ({
                             onChange={handleDateChange}
                             popoverProps={{
                                 position: 'bottom',
-                                withinPortal: true,
+                                zIndex: 9999,
                             }}
                             css={datePickerStyle}
                         />
@@ -109,7 +110,7 @@ const EditDate = ({
                         <label css={labelStyle}>시간</label>
                         <TimeInput
                             value={timeValue}
-                            leftSection={<Clock size={18} color={COLORS.PRIMARY} />}
+                            leftSection={<Clock size={16} color={COLORS.PRIMARY} />}
                             onChange={handleTimeChange}
                             size='md'
                             radius='md'
