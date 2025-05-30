@@ -58,9 +58,36 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
             {isUnLinking && <Indicator text='공유 티켓 삭제 중...' />}
             {!isCompletedTrip && (
                 <div css={isUncompletedTripOverlayStyle}>
-                    <button css={isUncompletedTripButtonStyle} onClick={() => handler.edit(isCompletedTrip)}>
-                        <Plus size={20} /> 여행 정보 이어서 작성하기
-                    </button>
+                    <div css={isUncompletedTripButtonStyle}>
+                        <div
+                            css={css`
+                                padding: 10px 12px;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                gap: 6px;
+                                color: ${COLORS.TEXT.DESCRIPTION};
+                            `}
+                            onClick={() => handler.edit(isCompletedTrip)}
+                        >
+                            <Plus size={14} /> 여행 정보 이어서 작성하기
+                        </div>
+
+                        <div
+                            css={css`
+                                padding: 10px 12px;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                gap: 6px;
+                                border-left: 2px solid ${COLORS.BORDER};
+                                color: ${COLORS.TEXT.ERROR};
+                            `}
+                            onClick={() => handler.delete()}
+                        >
+                            <Trash size={14} /> 삭제하기
+                        </div>
+                    </div>
                 </div>
             )}
 
@@ -190,7 +217,7 @@ const container = css`
     user-select: none;
 `;
 
-const isUncompletedTripOverlayStyle = () => css`
+const isUncompletedTripOverlayStyle = css`
     width: 100%;
     height: 100%;
     position: absolute;
@@ -204,8 +231,7 @@ const isUncompletedTripOverlayStyle = () => css`
     cursor: pointer;
 `;
 
-const isUncompletedTripButtonStyle = () => css`
-    padding: 10px 16px;
+const isUncompletedTripButtonStyle = css`
     display: flex;
     align-items: center;
     gap: 6px;
@@ -217,6 +243,8 @@ const isUncompletedTripButtonStyle = () => css`
     box-shadow:
         0 4px 6px -1px rgba(0, 0, 0, 0.06),
         0 2px 4px -1px rgba(0, 0, 0, 0.08);
+    font-size: 14px;
+    font-weight: 600;
 `;
 
 const mainStyle = css`
