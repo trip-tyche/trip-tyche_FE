@@ -4,7 +4,7 @@ import { tripAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/shared/utils';
 
 // 여행 티켓 목록 조회
-export const useTripTicketList = () => {
+export const useTripTicketList = (isEnable: boolean) => {
     return useQuery({
         queryKey: ['ticket-list'],
         queryFn: () => toResult(() => tripAPI.fetchTripTicketList()),
@@ -16,6 +16,7 @@ export const useTripTicketList = () => {
                   }
                 : result;
         },
+        enabled: isEnable,
     });
 };
 

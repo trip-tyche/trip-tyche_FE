@@ -25,8 +25,9 @@ const MainPage = () => {
     const logout = useUserStore((state) => state.logout);
     const showToast = useToastStore((state) => state.showToast);
 
-    const { data: myTrips, isLoading: isTripsLoading } = useTripTicketList();
     const { data: userInfoResult, isLoading: isSummaryLoading } = useSummary();
+    const shouldFetchTrips = userInfoResult?.success && userInfoResult.data ? true : false;
+    const { data: myTrips, isLoading: isTripsLoading } = useTripTicketList(shouldFetchTrips);
 
     const navigate = useNavigate();
 
@@ -57,9 +58,9 @@ const MainPage = () => {
         }
     };
 
-    if (!userInfoResult || !userInfoResult.success) return null;
+    if (!userInfoResult || !userInfoResult.success || !userInfoResult.data) return null;
 
-    const { userId, unreadNotificationsCount } = userInfoResult.data;
+    const { userId, unreadNotificationsCount } = userInfoResult.data || {};
     const sortedTrips = myTrips && myTrips.success ? [...myTrips.data].reverse() : [];
     const tripCount = sortedTrips.length;
 
