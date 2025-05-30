@@ -227,7 +227,7 @@ const TripImageManagePage = () => {
 
     return (
         <div css={container}>
-            {(!isMapScriptLoaded || isLoading || isPageLoading) && <Indicator text='사진 불러오는 중...' />}
+            {(!isMapScriptLoaded || isLoading || isPageLoading) && <Indicator />}
             {isImageDeleting && <Indicator text='사진 삭제 중...' />}
             {isImageUpdating && <Indicator text='사진 수정 중...' />}
 

@@ -82,7 +82,7 @@ const ImageByDatePage = () => {
     return (
         <>
             <div css={container}>
-                {(!result || isLoading || !isAllImageLoad) && <Indicator text='사진 불러오는 중...' />}
+                {(!result || isLoading || !isAllImageLoad) && <Indicator />}
 
                 <BackButton onClick={() => navigate(`${ROUTES.PATH.TRIP.ROOT(tripKey as string)}`)} />
 
