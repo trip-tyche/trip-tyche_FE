@@ -79,6 +79,7 @@ export const getAlertBoxMessage = (currentProcess: ImageProcessStatusType) => {
 export const getAddressFromImageLocation = async (location: Location): Promise<string> => {
     const { latitude, longitude } = location;
     const result = await getAddressFromLocation(latitude, longitude);
+
     if (result.success) {
         return result?.data as string;
     }

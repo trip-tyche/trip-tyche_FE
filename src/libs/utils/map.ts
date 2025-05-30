@@ -28,7 +28,7 @@ export const getAddressFromLocation = async (
     const cacheKey = `${latitude}-${longitude}`;
 
     if (addressCache.has(cacheKey) && cacheKey !== '0-0') {
-        return addressCache.get(cacheKey);
+        return { success: true, data: addressCache.get(cacheKey) };
     }
 
     try {
