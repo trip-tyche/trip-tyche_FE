@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { css } from '@emotion/react';
 import { Bell, Settings, Plus, Hand } from 'lucide-react';
