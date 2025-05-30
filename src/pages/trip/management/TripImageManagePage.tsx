@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 
 import { css } from '@emotion/react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -48,6 +48,11 @@ const TripImageManagePage = () => {
 
     const [isNewImage, setIsNewImage] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isPageLoading, setIsPageLoading] = useState(true);
+
+    const handlePageLoaded = useCallback(() => {
+        setIsPageLoading(false);
+    }, []);
 
     const { showToast } = useToastStore();
     const {
@@ -220,11 +225,9 @@ const TripImageManagePage = () => {
         );
     };
 
-    const hasImages = imageGroupsByDate && imageGroupsByDate?.length > 0;
-
     return (
         <div css={container}>
-            {isMapScriptLoaded && isLoading && <Indicator text='사진 불러오는 중...' />}
+            {(!isMapScriptLoaded || isLoading || isPageLoading) && <Indicator text='사진 불러오는 중...' />}
             {isImageDeleting && <Indicator text='사진 삭제 중...' />}
             {isImageUpdating && <Indicator text='사진 수정 중...' />}
 
@@ -302,27 +305,28 @@ const TripImageManagePage = () => {
                 />
             </div>
 
-            {/* 이미지 그리드 */}
-            {hasImages ? (
-                <main css={mainStyle}>
-                    {imageGroupsByDate?.map((imageGroup) => (
-                        <ImageGroupByDate
-                            key={imageGroup.recordDate}
-                            imageGroup={imageGroup}
-                            selectedImages={selectedImages}
-                            onImageClick={(image) => {
-                                isSelectionMode ? toggleImage(image) : null;
-                            }}
-                        />
-                    ))}
-                </main>
-            ) : (
-                <EmptyItem
-                    title={EMPTY_ITEM.IMAGE(activeTab)?.title || ''}
-                    description={EMPTY_ITEM.IMAGE(activeTab)?.description || ''}
-                    icon={<ImageOff />}
-                />
-            )}
+            {imageGroupsByDate &&
+                (imageGroupsByDate.length > 0 ? (
+                    <main css={mainStyle(isPageLoading || !imageGroupsByDate)}>
+                        {imageGroupsByDate?.map((imageGroup) => (
+                            <ImageGroupByDate
+                                key={imageGroup.recordDate}
+                                imageGroup={imageGroup}
+                                selectedImages={selectedImages}
+                                onImageClick={(image) => {
+                                    isSelectionMode ? toggleImage(image) : null;
+                                }}
+                                onLoad={handlePageLoaded}
+                            />
+                        ))}
+                    </main>
+                ) : (
+                    <EmptyItem
+                        title={EMPTY_ITEM.IMAGE(activeTab)?.title || ''}
+                        description={EMPTY_ITEM.IMAGE(activeTab)?.description || ''}
+                        icon={<ImageOff />}
+                    />
+                ))}
 
             {isSelectedImage && (
                 <div css={buttonContainer}>
@@ -359,10 +363,10 @@ const container = css`
     position: relative;
 `;
 
-const mainStyle = css`
+const mainStyle = (isLoading: boolean) => css`
     flex: 1;
     padding: 0 12px 12px 12px;
-    display: flex;
+    display: ${isLoading ? 'none' : 'flex'};
     flex-direction: column;
     background-color: ${COLORS.BACKGROUND.WHITE_SECONDARY};
     overflow: auto;

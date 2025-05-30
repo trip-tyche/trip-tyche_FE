@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { Calendar } from 'lucide-react';
@@ -16,16 +16,28 @@ interface ImageGroupByDateProps {
     };
     selectedImages: MediaFile[];
     onImageClick: (selectedImage: MediaFile) => void;
+    onLoad: () => void;
 }
 
-const ImageGroupByDate = ({ imageGroup, selectedImages, onImageClick }: ImageGroupByDateProps) => {
+const ImageGroupByDate = ({ imageGroup, selectedImages, onImageClick, onLoad }: ImageGroupByDateProps) => {
     const [imagesWithAddress, setImagesWithAddress] = useState<ImageFileWithAddress[]>([]);
+    const [isAddressConverting, setIsAddressCoverting] = useState(false);
+    const [isImagesLoaded, setIsImagesLoaded] = useState(false);
+
+    const loadedImageCount = useRef(0);
+
+    useEffect(() => {
+        if (!isAddressConverting && isImagesLoaded) {
+            onLoad();
+        }
+    }, [isAddressConverting, isImagesLoaded, onLoad]);
 
     useEffect(() => {
         const getAddressFromLocation = async () => {
             if (imageGroup.images) {
                 const { images } = imageGroup;
 
+                setIsAddressCoverting(true);
                 const imagesWithAddress = await Promise.all(
                     images.map(async (image: MediaFile) => {
                         const address =
@@ -48,11 +60,19 @@ const ImageGroupByDate = ({ imageGroup, selectedImages, onImageClick }: ImageGro
                     }),
                 );
 
+                setIsAddressCoverting(false);
                 setImagesWithAddress(imagesWithAddress);
             }
         };
         getAddressFromLocation();
     }, [imageGroup]);
+
+    const handleAllImagesLoad = () => {
+        loadedImageCount.current += 1;
+        if (loadedImageCount.current === imageGroup.images.length) {
+            setIsImagesLoaded(true);
+        }
+    };
 
     const hasDate = hasValidDate(imageGroup.recordDate);
 
@@ -78,7 +98,7 @@ const ImageGroupByDate = ({ imageGroup, selectedImages, onImageClick }: ImageGro
                                 cursor: pointer;
                             `}
                         >
-                            <ImageCard image={image} isSelected={isSelected} isTimeView />
+                            <ImageCard image={image} isSelected={isSelected} isTimeView onLoad={handleAllImagesLoad} />
                         </div>
                     );
                 })}

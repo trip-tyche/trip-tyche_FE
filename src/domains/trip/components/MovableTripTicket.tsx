@@ -160,13 +160,6 @@ const titleValueStyle = css`
     font-weight: bold;
 `;
 
-const flagStyle = css`
-    display: flex;
-    align-items: center;
-    margin-right: 4px;
-    font-size: ${theme.FONT_SIZES.XL};
-`;
-
 const hashtagGroup = css`
     display: flex;
     flex-wrap: wrap;

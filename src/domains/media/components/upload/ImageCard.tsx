@@ -12,9 +12,10 @@ interface ImageCardProps {
     isSelected?: boolean;
     isTimeView?: boolean;
     onClick?: () => void;
+    onLoad?: () => void;
 }
 
-const ImageCard = ({ image, isSelected = false, isTimeView = false, onClick }: ImageCardProps) => {
+const ImageCard = ({ image, isSelected = false, isTimeView = false, onClick, onLoad }: ImageCardProps) => {
     const address = image.address || '위치 정보 없음';
     const date = hasValidDate(image.recordDate)
         ? isTimeView
@@ -26,7 +27,7 @@ const ImageCard = ({ image, isSelected = false, isTimeView = false, onClick }: I
 
     return (
         <div key={image.mediaFileId} css={container} onClick={onClick}>
-            <img src={image.mediaLink} alt='여행 사진 카드' css={imageStyle} />
+            <img src={image.mediaLink} alt='여행 사진 카드' css={imageStyle} onLoad={onLoad} />
             <div css={infoContainer}>
                 <div css={iconStyle}>
                     <Map size={12} />

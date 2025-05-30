@@ -1,8 +1,7 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { ActionIcon } from '@mantine/core';
-import { DatePickerInput, DateTimePicker, TimeInput } from '@mantine/dates';
+import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { Calendar, Clock, X } from 'lucide-react';
 import 'dayjs/locale/ko';
 
