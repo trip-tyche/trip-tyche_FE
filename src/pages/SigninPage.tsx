@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Tooltip } from '@mantine/core';
 
 import backgroundImage from '@/assets/images/background-mobile-3.webp';
 import LoginButton from '@/domains/user/components/LoginButton';
@@ -34,7 +33,7 @@ const SigninPage = () => {
             <div css={buttonGroup}>
                 <LoginButton provider='kakao' onClick={() => handleLoginButtonClick('KAKAO')} />
                 <LoginButton provider='google' onClick={() => handleLoginButtonClick('GOOGLE')} />
-                <Tooltip
+                {/* <Tooltip
                     label='준비 중인 기능입니다.'
                     color={COLORS.PRIMARY}
                     opened={isTooltipOpen}
@@ -48,7 +47,7 @@ const SigninPage = () => {
                     <p css={pStyle} onClick={() => setIsTooltipOpen(true)}>
                         비회원으로 둘러보기
                     </p>
-                </Tooltip>
+                </Tooltip> */}
             </div>
 
             <div css={overlay} />
@@ -112,28 +111,19 @@ const buttonGroup = css`
     z-index: 20;
 `;
 
-const pStyle = css`
-    width: max-content;
-    margin: 24px 0 0 14px;
-    color: #dddddd;
-    font-size: 12px;
-    text-align: start;
-    text-decoration: underline;
-    cursor: pointer;
-    transition: color 0.5s;
+// const pStyle = css`
+//     width: max-content;
+//     margin: 24px 0 0 14px;
+//     color: #dddddd;
+//     font-size: 12px;
+//     text-align: start;
+//     text-decoration: underline;
+//     cursor: pointer;
+//     transition: color 0.5s;
 
-    :hover {
-        color: ${COLORS.TEXT.WHITE};
-    }
-`;
-
-// const companyNameStyle = css`
-//     position: absolute;
-//     bottom: 16px;
-//     text-align: center;
-//     font-size: ${theme.FONT_SIZES.SM};
-//     color: ${COLORS.TEXT.DESCRIPTION_LIGHT};
-//     z-index: 20;
+//     :hover {
+//         color: ${COLORS.TEXT.WHITE};
+//     }
 // `;
 
 export default SigninPage;
