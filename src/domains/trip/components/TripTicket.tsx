@@ -56,6 +56,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
         <div css={container}>
             {isDeleting && <Indicator text='여행 티켓 삭제 중...' />}
             {isUnLinking && <Indicator text='공유 티켓 삭제 중...' />}
+
             {!isCompletedTrip && (
                 <div css={isUncompletedTripOverlayStyle}>
                     <div css={isUncompletedTripButtonStyle}>

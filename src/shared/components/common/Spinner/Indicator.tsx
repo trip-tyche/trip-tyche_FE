@@ -16,7 +16,7 @@ const Indicator = ({ text = '불러오는 중...' }: { text?: string }) => (
 const spinner = css`
     width: 200px;
     height: 120px;
-    position: absolute;
+    position: fixed;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
