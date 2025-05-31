@@ -45,7 +45,12 @@ const ReviewStep = ({ imageCategories, tripPeriod, imagesWithAddress }: ReviewSt
     const estimatedTripPeriod =
         startDate && endDate ? (isSingleDate ? `${startDate} (하루)` : `${startDate} ~ ${endDate}`) : null;
     const visitedPlace = imagesWithAddress.length > 0 ? getVisitedPlace(imagesWithAddress) : null;
-    const hasInvalidImage = !!imageCategories.withoutLocation.count || !!imageCategories.withoutDate.count;
+
+    const imagesWithoutLocationCount = imageCategories.withoutLocation.count;
+    const imagesWithoutDateCount = imageCategories.withoutDate.count;
+    const hasInvalidImage = !!imagesWithoutLocationCount || !!imagesWithoutDateCount;
+
+    const guideOfWithoutImage = `${imagesWithoutLocationCount ? `위치 정보가 없는 사진 ${imagesWithoutLocationCount}장` : ''}${imagesWithoutLocationCount && imagesWithoutDateCount ? `, ` : ''}${imagesWithoutDateCount ? `날짜 정보가 없는 사진 ${imagesWithoutDateCount}장` : ''}이 있습니다. 걱정 마세요! 여행을 등록한 후 사진 관리 화면에서 직접 정보를 추가할 수 있습니다.`;
 
     return (
         <div css={container}>
@@ -68,14 +73,14 @@ const ReviewStep = ({ imageCategories, tripPeriod, imagesWithAddress }: ReviewSt
                     <ImageExtractionSummary
                         title='위치 정보'
                         icon={<MapPin size={16} color={COLORS.ICON.DEFAULT} />}
-                        extractSuccessCount={imageCategories.withAll.count - imageCategories.withoutLocation.count}
-                        extractFailCount={imageCategories.withoutLocation.count}
+                        extractSuccessCount={imageCategories.withAll.count - imagesWithoutLocationCount}
+                        extractFailCount={imagesWithoutLocationCount}
                     />
                     <ImageExtractionSummary
                         title='날짜 정보'
                         icon={<Calendar size={16} color={COLORS.ICON.DEFAULT} />}
-                        extractSuccessCount={imageCategories.withAll.count - imageCategories.withoutDate.count}
-                        extractFailCount={imageCategories.withoutDate.count}
+                        extractSuccessCount={imageCategories.withAll.count - imagesWithoutDateCount}
+                        extractFailCount={imagesWithoutDateCount}
                     />
                 </div>
 
@@ -89,7 +94,7 @@ const ReviewStep = ({ imageCategories, tripPeriod, imagesWithAddress }: ReviewSt
                     </div>
                 )}
 
-                {visitedPlace && (
+                {visitedPlace && visitedPlace?.length > 0 && (
                     <div css={periodAndVisitedPlaceContainer}>
                         <div css={periodAndVisitedPlaceHeader}>
                             <MapIcon size={16} color={COLORS.ICON.DEFAULT} />
@@ -106,7 +111,7 @@ const ReviewStep = ({ imageCategories, tripPeriod, imagesWithAddress }: ReviewSt
                 )}
             </div>
 
-            {getImagePreviewComponent() && (
+            {getImagePreviewComponent() && getImagePreviewComponent().length > 0 && (
                 <div>
                     <h3 css={imagePreviewTitle}>등록된 사진 미리보기</h3>
                     <div css={imagePreviewStyle}>{getImagePreviewComponent()}</div>
@@ -117,7 +122,7 @@ const ReviewStep = ({ imageCategories, tripPeriod, imagesWithAddress }: ReviewSt
                 <AlertBox
                     theme='warning'
                     title='일부 사진에 정보가 누락되었습니다'
-                    description={`위치 정보가 없는 사진 ${imageCategories.withoutLocation.count}장, 날짜 정보가 없는 사진 ${imageCategories.withoutDate.count}장이 있습니다. 걱정 마세요! 여행을 등록한 후 사진 관리 화면에서 직접 정보를 추가할 수 있습니다.`}
+                    description={guideOfWithoutImage}
                     icon={<AlertCircle size={20} color='#ca8a04' />}
                 />
             )}

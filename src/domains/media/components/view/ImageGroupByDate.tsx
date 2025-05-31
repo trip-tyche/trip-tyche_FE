@@ -64,6 +64,7 @@ const ImageGroupByDate = ({ imageGroup, selectedImages, onImageClick, onLoad }: 
                 setImagesWithAddress(imagesWithAddress);
             }
         };
+
         getAddressFromLocation();
     }, [imageGroup]);
 

@@ -11,7 +11,7 @@ import {
 } from '@/domains/media/types';
 import { filterWithoutDateMediaFile, filterWithoutLocationMediaFile } from '@/domains/media/utils';
 import { mediaAPI } from '@/libs/apis';
-import { extractMetadataFromImage, removeDuplicateImages, resizeImages } from '@/libs/utils/image';
+import { convertHeicToJpg, extractMetadataFromImage, removeDuplicateImages, resizeImages } from '@/libs/utils/image';
 
 export const useImageUpload = () => {
     const [images, setImages] = useState<ClientImageFile[]>();
@@ -27,7 +27,8 @@ export const useImageUpload = () => {
 
     const extractMetaData = async (images: FileList) => {
         setCurrentProcess('metadata');
-        const uniqueImages = removeDuplicateImages(images);
+        const imagesWithoutHeic = await convertHeicToJpg(images);
+        const uniqueImages = removeDuplicateImages(imagesWithoutHeic);
 
         // console.time(`extract metadata`);
         const imagesWithMetadata = await extractMetadataFromImage(uniqueImages, setProgress);

@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { Check, AlertCircle } from 'lucide-react';
+import { Check, AlertCircle, Hand } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import MovableTripTicket from '@/domains/trip/components/MovableTripTicket';
@@ -28,7 +28,7 @@ const TripCreateCompleteStep = ({ tripInfo }: { tripInfo: TripInfo }) => {
                     <AlertBox
                         theme='warning'
                         title='누락된 정보가 있습니다'
-                        description='위치나 날짜 정보가 없는 사진이 있습니다. 사진 관리 페이지에서 정보를 추가해 보세요'
+                        description='위치 또는 날짜 정보가 없는 사진이 있습니다. 사진 관리 페이지에서 정보를 추가해 보세요'
                         icon={<AlertCircle size={20} />}
                     />
                 )}
@@ -67,8 +67,10 @@ const title = css`
 `;
 
 const description = css`
+    font-size: 14px;
+    font-weight: 500;
     margin-bottom: 24px;
-    color: #4b5563;
+    color: #666666;
     text-align: center;
     line-height: 1.3;
     white-space: pre-line;

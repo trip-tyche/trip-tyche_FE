@@ -20,6 +20,7 @@ export const COMPRESSION_OPTIONS = {
 export const MEDIA_FORMAT = {
     CURRENT_MEDIA_FORMAT: /\.[^/.]+$/,
     WEBP_FORMAT: '.webp',
+    JPG_FORMAT: '.jpg',
 };
 
 /** 메타데이터 없는 이미지의 경우,

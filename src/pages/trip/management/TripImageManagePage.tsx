@@ -78,7 +78,6 @@ const TripImageManagePage = () => {
             return;
         } else {
             const images = result.data;
-            console.log('zxcvzxcvxcv', filterWithoutDateMediaFile(images).length);
             setImageCategories({
                 withAll: { count: images.length || 0, images: (filterValidMediaFile(images) as MediaFile[]) || [] },
                 withoutLocation: {
@@ -95,6 +94,7 @@ const TripImageManagePage = () => {
 
     useEffect(() => {
         offSelectionMode();
+        // setIsPageLoading(true);
     }, [activeTab]);
 
     useEffect(() => {

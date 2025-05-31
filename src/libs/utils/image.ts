@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 
 import imageCompression from 'browser-image-compression';
+import heic2any from 'heic2any';
 
 import { COMPRESSION_OPTIONS, MEDIA_FORMAT } from '@/domains/media/constants';
 import { ClientImageFile } from '@/domains/media/types';
@@ -8,7 +9,7 @@ import { formatToISOLocal } from '@/libs/utils/date';
 import { extractDateFromImage, extractLocationFromImage } from '@/libs/utils/exif';
 
 // 중복 이미지 제거
-export const removeDuplicateImages = (images: FileList): FileList => {
+export const removeDuplicateImages = (images: File[]): FileList => {
     const imageMap = new Map();
     Array.from(images).forEach((image) => {
         imageMap.set(image.name, image);
@@ -22,6 +23,7 @@ export const removeDuplicateImages = (images: FileList): FileList => {
     return dataTransfer.files;
 };
 
+// 이미지 메타데이터 추출
 export const extractMetadataFromImage = async (
     images: FileList,
     onProgress?: Dispatch<SetStateAction<{ metadata: number; optimize: number; upload: number }>>,
@@ -71,6 +73,7 @@ export const resizeImages = async (
                 const resizedFile = new File(
                     [resizedBlob],
                     image.image.name.replace(MEDIA_FORMAT.CURRENT_MEDIA_FORMAT, MEDIA_FORMAT.WEBP_FORMAT),
+                    { type: 'image/webp' },
                 );
                 return {
                     ...image,
@@ -94,21 +97,49 @@ export const resizeImages = async (
     return promise;
 };
 
-// 위치, 날짜 모두 존재하는 이미지
-// export const completeImages = (metadatas: ClientImageFile[] | MediaFile[]) =>
-//     metadatas.filter((metadata) => metadata.recordDate && hasValidLocation(metadata.location));
+// Heic -> jpeg 확장자 변경
+export const convertHeicToJpg = async (images: FileList) => {
+    const convertedImages = await Promise.all(
+        Array.from(images).map(async (image) => {
+            const actualType = await getActualFileType(image);
+            if (actualType === 'image/heic') {
+                const convertedBlob = await heic2any({
+                    blob: image,
+                    toType: 'image/jpeg',
+                });
+                const convertedFile = new File(
+                    [convertedBlob as Blob],
+                    image.name.replace(MEDIA_FORMAT.CURRENT_MEDIA_FORMAT, MEDIA_FORMAT.JPG_FORMAT),
+                    { type: 'image/jpeg' },
+                );
+                return convertedFile;
+            } else {
+                return image;
+            }
+        }),
+    );
 
-/**
- * 기본 위치{latitude: 0, longtitude: 0}가 아닌 유효한 위치를 가진 미디어 파일만 필터링
- * @param mediaFiles 필터링할 미디어 파일 배열
- * @returns 유효한 위치를 가진 미디어 파일 배열
- */
-// export const imagesWithoutLocation = (metadatas: ClientImageFile[] | MediaFile[]) =>
-//     metadatas.filter((metadata) => !hasValidLocation(metadata.location));
-// /**
-//  * 기본 날짜(1980-01-01)가 아닌 유효한 날짜를 가진 미디어 파일만 필터링
-//  * @param mediaFiles 필터링할 미디어 파일 배열
-//  * @returns 유효한 날짜를 가진 미디어 파일 배열
-//  */
-// export const imagesWithoutDate = (metadatas: ClientImageFile[] | MediaFile[]) =>
-//     metadatas.filter((metadata) => !hasValidDate(metadata.recordDate));
+    return convertedImages;
+};
+
+// 이미지 실제 타입 반환
+const getActualFileType = async (file: File): Promise<string> => {
+    const buffer = await file.slice(0, 12).arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+
+    if (bytes.length >= 12) {
+        const ftyp = String.fromCharCode(...bytes.slice(4, 8));
+        if (ftyp === 'ftyp') {
+            const brand = String.fromCharCode(...bytes.slice(8, 12));
+            if (brand === 'heic' || brand === 'mif1' || brand === 'msf1') {
+                return 'image/heic';
+            }
+        }
+    }
+
+    if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
+        return 'image/jpeg';
+    }
+
+    return file.type;
+};
