@@ -78,6 +78,7 @@ const TripImageManagePage = () => {
             return;
         } else {
             const images = result.data;
+            console.log('zxcvzxcvxcv', filterWithoutDateMediaFile(images).length);
             setImageCategories({
                 withAll: { count: images.length || 0, images: (filterValidMediaFile(images) as MediaFile[]) || [] },
                 withoutLocation: {
@@ -225,9 +226,11 @@ const TripImageManagePage = () => {
         );
     };
 
+    const isImageAndAddressLoading = imageGroupsByDate && imageGroupsByDate?.length > 0 ? isPageLoading : false;
+
     return (
         <div css={container}>
-            {(!isMapScriptLoaded || isLoading || isPageLoading) && <Indicator />}
+            {(!isMapScriptLoaded || isLoading || isImageAndAddressLoading) && <Indicator />}
             {isImageDeleting && <Indicator text='사진 삭제 중...' />}
             {isImageUpdating && <Indicator text='사진 수정 중...' />}
 
