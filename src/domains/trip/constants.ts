@@ -36,11 +36,11 @@ export const FORM = {
 };
 
 export const DEFAULT_TICKET = {
-    tripTitle: '새로운 티켓을 등록해주세요',
+    tripTitle: '나만의 특별한 여행 이야기를 시작해보세요',
     country: '🇰🇷/대한민국/SOUTH KOREA',
     startDate: String(new Date()),
     endDate: String(new Date()),
-    hashtags: ['트립트케', '추억', '즐거운'],
+    hashtags: ['첫여행', '새로운시작', '설렘가득'],
 };
 
 export const WELCOME_TICKET_DATA = {

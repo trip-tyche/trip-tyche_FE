@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { Check, AlertCircle, Hand } from 'lucide-react';
+import { Check, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import MovableTripTicket from '@/domains/trip/components/MovableTripTicket';
