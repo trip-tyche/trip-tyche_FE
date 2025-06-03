@@ -30,7 +30,7 @@ const MediaUploadSection = ({
             <input
                 ref={inputRef}
                 type='file'
-                accept='image/*,.heic'
+                accept='image/*, text/plain'
                 multiple
                 onChange={onImageSelect}
                 css={inputStyle}
