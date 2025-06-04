@@ -60,8 +60,12 @@ const ImageGroupByDate = ({ imageGroup, selectedImages, onImageClick, onLoad }: 
                     }),
                 );
 
+                const sortedImages = imagesWithAddress.sort((a, b) => {
+                    return new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime();
+                });
+
                 setIsAddressCoverting(false);
-                setImagesWithAddress(imagesWithAddress);
+                setImagesWithAddress(sortedImages);
             }
         };
 

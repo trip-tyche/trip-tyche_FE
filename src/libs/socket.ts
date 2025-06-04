@@ -26,7 +26,7 @@ const connect = (userId: string) => {
     });
 
     client.onConnect = () => {
-        console.log('ws-conneted');
+        // console.log('ws-conneted');
         state.isConnected = true;
 
         subscribeToShareNotifications(userId);
@@ -54,7 +54,7 @@ const reconnect = () => {
 };
 
 const disconnect = (): void => {
-    console.log('ws-disconneted');
+    // console.log('ws-disconneted');
     if (state.client && state.isConnected) {
         if (state.client.active) {
             state.client.deactivate();
@@ -76,7 +76,7 @@ const subscribeToShareNotifications = (userId: string) => {
 
         try {
             const subscribedMessage = JSON.parse(JSON.parse(message.body));
-            console.log(subscribedMessage);
+            // console.log(subscribedMessage);
             const messageType = subscribedMessage.type;
 
             if (messageType === 'SHARED_REQUEST') {
