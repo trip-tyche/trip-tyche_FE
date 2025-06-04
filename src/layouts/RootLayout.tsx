@@ -13,17 +13,17 @@ import theme from '@/shared/styles/theme';
 const RootLayout = () => {
     const userId = useUserStore((state) => state.userInfo?.userId);
     const { senderNickname, description } = useModalStore();
-    const { isConnected, connect, disconnect } = socket;
+    const { connect, disconnect } = socket;
 
     useEffect(() => {
-        if (!isConnected && userId) {
+        if (userId) {
             connect(String(userId));
         }
 
         return () => {
             disconnect();
         };
-    }, [userId, isConnected, connect, disconnect]);
+    }, [userId, connect, disconnect]);
 
     return (
         <div css={container}>

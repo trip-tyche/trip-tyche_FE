@@ -101,7 +101,13 @@ const TripImageUploadPageS = ({ onClose }: { onClose: () => void }) => {
                             imagesWithAddress={imagesWithAddress}
                         />
                         <div css={buttonWrapper}>
-                            <Button text='사진 관리로 돌아가기' onClick={() => onClose()} />
+                            <Button
+                                text='사진 관리로 돌아가기'
+                                onClick={() => {
+                                    queryClient.invalidateQueries({ queryKey: ['trip-images', tripKey] });
+                                    onClose();
+                                }}
+                            />
                         </div>
                     </div>
                 );
@@ -115,7 +121,7 @@ const TripImageUploadPageS = ({ onClose }: { onClose: () => void }) => {
             const imagesWithMetadata = await extractMetaData(selectedImages);
             const optimizedImages = await optimizeImages(imagesWithMetadata);
             await uploadImagesToS3(optimizedImages);
-            queryClient.invalidateQueries({ queryKey: ['trip-images', tripKey] });
+            await queryClient.invalidateQueries({ queryKey: ['trip-images', tripKey] });
             setStep('review');
 
             if (!isEdit) {
