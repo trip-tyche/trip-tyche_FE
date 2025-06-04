@@ -103,7 +103,6 @@ export const convertHeicToJpg = async (images: FileList) => {
         Array.from(images).map(async (image) => {
             const actualType = await getActualFileType(image);
             if (actualType === 'image/heic') {
-                console.log('heic!!');
                 const convertedBlob = await heic2any({
                     blob: image,
                     toType: 'image/jpeg',
@@ -115,7 +114,6 @@ export const convertHeicToJpg = async (images: FileList) => {
                 );
                 return convertedFile;
             } else {
-                console.log('jpg!!');
                 return image;
             }
         }),

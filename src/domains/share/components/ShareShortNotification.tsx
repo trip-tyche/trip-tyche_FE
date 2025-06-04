@@ -41,7 +41,7 @@ const ShareShortNotification = ({ message, referenceId, onClose }: ShareShortNot
                 return '여행에 사진을 추가했습니다';
             case 'MEDIA_FILE_UPDATED':
                 return '여행의 사진을 수정했습니다';
-            case 'MEDIA_FILE_DELETE':
+            case 'MEDIA_FILE_DELETED':
                 return '여행의 사진을 삭제했습니다';
         }
     };

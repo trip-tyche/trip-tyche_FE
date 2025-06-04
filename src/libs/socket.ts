@@ -76,7 +76,7 @@ const subscribeToShareNotifications = (userId: string) => {
 
         try {
             const subscribedMessage = JSON.parse(JSON.parse(message.body));
-            // console.log(subscribedMessage);
+            console.log(subscribedMessage);
             const messageType = subscribedMessage.type;
 
             if (messageType === 'SHARED_REQUEST') {
@@ -94,7 +94,7 @@ const subscribeToShareNotifications = (userId: string) => {
                 showToast('친구가 여행의 사진을 수정했어요 📷');
             } else if (messageType === 'MEDIA_FILE_ADDED') {
                 showToast('친구가 여행의 사진을 추가했어요 📷');
-            } else if (messageType === 'MEDIA_FILE_DELETE') {
+            } else if (messageType === 'MEDIA_FILE_DELETED') {
                 showToast('친구가 여행의 사진을 삭제했어요 📷');
             }
 
