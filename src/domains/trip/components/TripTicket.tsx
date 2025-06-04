@@ -25,6 +25,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
         endDate,
         hashtags,
         ownerNickname,
+        sharedUsersNicknames,
         shareId,
         confirmed: isCompletedTrip,
     } = tripInfo;
@@ -51,6 +52,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     const formattedStartDate = isCompletedTrip ? formatToDot(startDate) : '2000-01-01';
     const formattedEndDate = isCompletedTrip ? formatToDot(endDate) : '2000-01-01';
     const formattedTitle = isCompletedTrip ? tripTitle : '여행이 아직 완성되지 않았어요';
+    const sharedPeople = [ownerNickname || '', ...(sharedUsersNicknames || [])];
 
     return (
         <div css={container}>
@@ -162,7 +164,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
                         <Share2 size={16} /> 티켓 공유
                     </button>
                 ) : (
-                    <button css={buttonStyle} onClick={() => console.log('공유 정보')}>
+                    <button css={buttonStyle} onClick={() => setIsShareModalOpen(true)}>
                         <Info size={16} /> 공유 정보
                     </button>
                 )}
@@ -196,6 +198,8 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
                 <ShareModal
                     tripKey={tripKey!}
                     tripTitle={tripTitle}
+                    isOwner={isOwner}
+                    sharedPeople={sharedPeople}
                     startDate={formatHyphenToDot(startDate)}
                     endDate={formatHyphenToDot(endDate)}
                     onClose={() => setIsShareModalOpen(false)}
