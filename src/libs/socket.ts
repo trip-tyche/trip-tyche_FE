@@ -70,13 +70,12 @@ const subscribeToShareNotifications = (userId: string) => {
         return null;
     }
 
-    state.client.subscribe(SOCKET_URL.TOPIC.REQUEST(userId), (message) => {
+    state.client.subscribe(SOCKET_URL.TOPIC.REQUEST(userId), async (message) => {
         const { showToast } = useToastStore.getState();
         const { openModal } = useModalStore.getState();
 
         try {
             const subscribedMessage = JSON.parse(JSON.parse(message.body));
-            // console.log(subscribedMessage);
             const messageType = subscribedMessage.type;
 
             if (messageType === 'SHARED_REQUEST') {
@@ -102,7 +101,8 @@ const subscribeToShareNotifications = (userId: string) => {
             queryClient.invalidateQueries({ queryKey: ['notification'] });
 
             if (messageType.startsWith('TRIP')) {
-                queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
+                await queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
+                await queryClient.invalidateQueries({ queryKey: ['ticket-info'] });
             }
 
             if (messageType.startsWith('MEDIA')) {
