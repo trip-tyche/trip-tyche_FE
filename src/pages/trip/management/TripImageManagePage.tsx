@@ -311,17 +311,18 @@ const TripImageManagePage = () => {
             {imageGroupsByDate &&
                 (imageGroupsByDate.length > 0 ? (
                     <main css={mainStyle(isPageLoading || !imageGroupsByDate)}>
-                        {imageGroupsByDate?.map((imageGroup) => (
-                            <ImageGroupByDate
-                                key={imageGroup.recordDate}
-                                imageGroup={imageGroup}
-                                selectedImages={selectedImages}
-                                onImageClick={(image) => {
-                                    isSelectionMode ? toggleImage(image) : null;
-                                }}
-                                onLoad={handlePageLoaded}
-                            />
-                        ))}
+                        {isMapScriptLoaded &&
+                            imageGroupsByDate?.map((imageGroup) => (
+                                <ImageGroupByDate
+                                    key={imageGroup.recordDate}
+                                    imageGroup={imageGroup}
+                                    selectedImages={selectedImages}
+                                    onImageClick={(image) => {
+                                        isSelectionMode ? toggleImage(image) : null;
+                                    }}
+                                    onLoad={handlePageLoaded}
+                                />
+                            ))}
                     </main>
                 ) : (
                     <EmptyItem
