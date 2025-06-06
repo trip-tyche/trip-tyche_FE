@@ -19,6 +19,8 @@ interface ImageCarouselProps {
 const ImageCarousel = ({ images, carouselState, setCarouselState }: ImageCarouselProps) => {
     const [currentSlide, setCurrentSlide] = useState(0);
 
+    const SliderComponent = Slider as any;
+
     const sliderRef = useRef<Slider | null>(null);
     const touchStartTimeRef = useRef<number | null>(null);
     const zoomTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -111,7 +113,7 @@ const ImageCarousel = ({ images, carouselState, setCarouselState }: ImageCarouse
     );
 
     return (
-        <Slider {...carouselOptions} ref={sliderRef} css={carouselStyle}>
+        <SliderComponent {...carouselOptions} css={carouselStyle}>
             {images.map((image, index) => (
                 <div
                     key={image.mediaFileId}
@@ -126,7 +128,7 @@ const ImageCarousel = ({ images, carouselState, setCarouselState }: ImageCarouse
                     />
                 </div>
             ))}
-        </Slider>
+        </SliderComponent>
     );
 };
 
