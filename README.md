@@ -35,21 +35,25 @@
 
 ## 🛠️ 기술 스택
 
-### 프론트엔드
+### Frontend
 
-React, TypeScript, Zustand, Tanstack-Query, Emotion
+React 18, TypeScript, Zustand, Tanstack Query (React Query), Emotion, StompJS (WebSocket)
 
-### 백엔드
+### Backend
 
-Spring Boot Spring Data JPA, JUnit5, MySQL, JWT, OAuth2
+Spring Boot, JPA, MySQL, Redis, JWT, OAuth2, JUnit5
 
-### 인프라
+### Infrastructure
 
-Nginx, Docker, AWS EC2, AWS S3, Github Actions
+Nginx, Docker, AWS EC2, AWS S3, GitHub Actions, Grafana, K6
 
-### 외부 API
+### External API
 
-Google Maps
+Google Maps API
+
+---
+
+## 폴더 구조
 
 ---
 
