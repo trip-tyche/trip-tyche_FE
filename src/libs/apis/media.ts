@@ -34,13 +34,6 @@ export const mediaAPI = {
         }
     },
     // S3 스토리지로 미디어 파일 업로드
-    // uploadToS3: async (presignedUrl: string, file: File) => {
-    //     await axios.put(presignedUrl, file, {
-    //         headers: {
-    //             'Content-Type': file.type,
-    //         },
-    //     });
-    // },
     uploadToS3: async (presignedUrl: string, file: File) => {
         await axios.put(presignedUrl, file, {
             headers: {
