@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import characterImg from '@/assets/images/character-ogami-1.png';
+import characterImg from '@/assets/images/character-icon.png';
 import { TICKET } from '@/domains/trip/constants';
 import { Trip } from '@/domains/trip/types';
 import useUserStore from '@/domains/user/stores/useUserStore';

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 
-import backgroundImage from '@/assets/images/background-mobile-3.webp';
+import backgroundImage from '@/assets/images/background-mobile.webp';
 import LoginButton from '@/domains/user/components/LoginButton';
 import { OAUTH_CONFIG } from '@/libs/apis/shared/constants';
 import { COLORS } from '@/shared/constants/style';

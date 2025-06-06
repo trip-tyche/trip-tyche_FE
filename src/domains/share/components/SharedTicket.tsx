@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 
-import characterImg from '@/assets/images/character-ogami-1.png';
+import characterImg from '@/assets/images/character-icon.png';
 import { SharedTripDetail } from '@/domains/share/types';
 import { TICKET } from '@/domains/trip/constants';
 import { formatToDot } from '@/libs/utils/date';
