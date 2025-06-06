@@ -1,8 +1,8 @@
 import { Client } from '@stomp/stompjs';
 
+import { useShareModalStore } from '@/domains/share/stores/useShareModalStore';
 import { SOCKET_URL } from '@/shared/constants/socket';
 import { queryClient } from '@/shared/providers/TanStackProvider';
-import { useModalStore } from '@/shared/stores/useModalStore';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 const state = {
@@ -72,7 +72,7 @@ const subscribeToShareNotifications = (userId: string) => {
 
     state.client.subscribe(SOCKET_URL.TOPIC.REQUEST(userId), async (message) => {
         const { showToast } = useToastStore.getState();
-        const { openModal } = useModalStore.getState();
+        const { openModal } = useShareModalStore.getState();
 
         try {
             const subscribedMessage = JSON.parse(JSON.parse(message.body));

@@ -1,20 +1,6 @@
-// import { create } from 'zustand';
-
-// interface ModalProps {
-//     isModalOpen: boolean;
-//     openModal: (referenceId: number) => void;
-//     closeModal: () => void;
-// }
-
-// export const useModalStore = create<ModalProps>((set) => ({
-//     isModalOpen: false,
-//     openModal: () => set({ isModalOpen: true }),
-//     closeModal: () => set({ isModalOpen: false }),
-// }));
-
 import { create } from 'zustand';
 
-interface ModalProps {
+interface ShareModalProps {
     isModalOpen: boolean;
     senderNickname: string;
     description: string;
@@ -22,7 +8,7 @@ interface ModalProps {
     closeModal: () => void;
 }
 
-export const useModalStore = create<ModalProps>((set) => ({
+export const useShareModalStore = create<ShareModalProps>((set) => ({
     isModalOpen: false,
     senderNickname: '',
     description: '',

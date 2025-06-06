@@ -2,12 +2,12 @@ import { css } from '@emotion/react';
 import { X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import { useShareModalStore } from '@/domains/share/stores/useShareModalStore';
 import useUserStore from '@/domains/user/stores/useUserStore';
 import Avatar from '@/shared/components/common/Avatar';
 import Modal from '@/shared/components/common/Modal/Modal';
 import { ROUTES } from '@/shared/constants/route';
 import { COLORS } from '@/shared/constants/style';
-import { useModalStore } from '@/shared/stores/useModalStore';
 
 interface GlobalShareModalProps {
     senderNickname: string;
@@ -16,7 +16,7 @@ interface GlobalShareModalProps {
 
 const GlobalShareModal = ({ senderNickname, description }: GlobalShareModalProps) => {
     const { userInfo } = useUserStore();
-    const { isModalOpen, closeModal } = useModalStore();
+    const { isModalOpen, closeModal } = useShareModalStore();
 
     const navigate = useNavigate();
 

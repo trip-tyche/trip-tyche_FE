@@ -4,15 +4,15 @@ import { css } from '@emotion/react';
 import { Outlet } from 'react-router-dom';
 
 import GlobalShareModal from '@/domains/share/components/GlobalShareModal';
+import { useShareModalStore } from '@/domains/share/stores/useShareModalStore';
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { socket } from '@/libs/socket';
 import Toast from '@/shared/components/common/Toast';
-import { useModalStore } from '@/shared/stores/useModalStore';
 import theme from '@/shared/styles/theme';
 
 const RootLayout = () => {
     const userId = useUserStore((state) => state.userInfo?.userId);
-    const { senderNickname, description } = useModalStore();
+    const { senderNickname, description } = useShareModalStore();
     const { connect, disconnect } = socket;
 
     useEffect(() => {
