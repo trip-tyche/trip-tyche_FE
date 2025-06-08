@@ -1,11 +1,18 @@
 # 레이어 기반 프론트엔드 아키텍처 설계
 
-프로젝트 초기에는 일반적인 방식으로 API 호출과 상태 관리를 했지만, 기능이 추가될수록 몇 가지 문제가 생겼습니다.
+초기에는 컴포넌트에서 API 호출과 상태 관리를 직접 처리하는 일반적인 방식으로 개발했습니다. 하지만 프로젝트 규모가 커지면서 다음과 같은 문제들이 발생했습니다.
 
-1. **컴포넌트에 비즈니스 로직이 뒤섞임** - UI 렌더링과 데이터 처리가 한 곳에 몰려있음
-2. **에러 처리 방식이 컴포넌트마다 제각각** - 일관성 없는 사용자 경험
-3. **API 엔드포인트가 여기저기 흩어져 있음** - 수정할 때 찾기 어려움
-4. **같은 API 호출 로직을 여러 곳에서 중복 작성** - 유지보수성 저하
+### 1. 컴포넌트의 과도한 책임
+
+UI 렌더링, API 호출, 에러 처리 등 모든 로직이 한 파일에 집중되어 코드가 복잡해지고 유지보수성이 크게 저하되었습니다. 문제 발생 시 원인을 찾기 어려웠고, 하나의 수정이 연쇄적으로 여러 부분에 영향을 미치는 상황이 자주 발생했습니다.
+
+### 2. 재사용성 부족
+
+컴포넌트가 너무 많은 책임을 지게 되어 다른 곳에서 재사용하기 어려웠습니다. 비슷한 로직이 필요할 때마다 새로 작성하게 되었고, 이미 구현된 로직을 중복으로 작성하는 경우도 빈번했습니다.
+
+### 3. 일관성 없는 에러 처리
+
+컴포넌트마다 서로 다른 에러 처리 방식을 사용하여 동일한 에러 처리 로직이 여러 곳에서 중복되는 경우가 종종 발생했습니다.
 
 ```tsx
 // 기존 방식 - 컴포넌트에 모든 게 뒤섞여 있음
@@ -18,10 +25,10 @@ const TripList = () => {
         const fetchTrips = async () => {
             setLoading(true);
             try {
-                const response = await axios.get('/v1/trips'); // API 호출이 컴포넌트에
+                const response = await tripAPI.fetchTripTicketList();
                 setTrips(response.data.trips);
             } catch (err) {
-                setError('여행 목록을 불러오는데 실패했습니다'); // 에러 처리도 컴포넌트에
+                setError('여행 목록을 불러오는데 실패했습니다');
             } finally {
                 setLoading(false);
             }
@@ -31,7 +38,8 @@ const TripList = () => {
 
     if (loading) return <div>로딩중...</div>;
     if (error) return <div>{error}</div>;
-    return <div>{/* UI 렌더링 */}</div>;
+
+    return <div>{/* JSX */}</div>;
 };
 ```
 
@@ -41,19 +49,27 @@ const TripList = () => {
 
 관심사 분리와 단일 책임 원칙을 적용해서 **5개 레이어**로 구조를 나눴습니다.
 
+초기에는 UseCase 레이어까지 고려해봤으나, 현재 서비스 규모에서는 불필요하다고 판단해 서비스 레이어(API 모듈) 수준에서의 레이어 분리를 타협점으로 선택하여, 현재 상황에 적합한 구조를 설계했습니다.
+
 ```
 HTTP 클라이언트 → 도메인 API → Result 변환 유틸함수 → TanStack Query 훅 → UI 컴포넌트
 ```
 
-### 1. API 클라이언트
+## ![alt text](image.png)
 
-기본 HTTP 요청 및 응답 처리만 담당하는 레이어입니다.
+### 1. HTTP 클라이언트 레이어
 
-인터셉터를 통한 토큰 관리(Acces-Token 재발급), 에러 처리(`401`, `403`, `500`) 등의 공통 로직 처리를 합니다.
+기본 HTTP 통신 및 공통 로직 처리 레이어
+
+- 인터셉터를 통한 토큰 관리(Acces-Token 재발급)
+- 공통 에러 처리(`401`, `403`, `500`)
+- 요청/응답 변환
 
 ### 2. 도메인별 API 모듈
 
-비즈니스 도메인별로 API 엔드포인트를 그룹화한 레이어입니다. 여행 관련은 `tripAPI`, 미디어 관련은 `mediaAPI` 등으로 모듈화되어있습니다.
+비즈니스 도메인별 API 엔드포인트 관리
+
+도메인별로 API를 그룹화하여 관리합니다. (예: `tripAPI`, `mediaAPI`)
 
 ```ts
 export const tripAPI = {
@@ -64,15 +80,17 @@ export const tripAPI = {
     fetchTripTicketInfo: async (tripKey: string): Promise<ApiResponse<Trip>> =>
         await apiClient.get(`/v1/trips/${tripKey}`),
 
-    // 여행 티켓 최종 등록
-    finalizeTripTicket: async (tripKey: string): Promise<ApiResponse<string>> =>
-        await apiClient.patch(`/v1/trips/${tripKey}/finalize`),
+    // 여행 티켓 삭제
+    deleteTripTicket: async (tripKey: string): Promise<ApiResponse<string>> =>
+        await apiClient.delete(`/v1/trips/${tripKey}`),
 };
 ```
 
 ### 3. Result 패턴 변환 레이어
 
-API 응답을 일관된 `Result<T>` 타입으로 변환. 성공/실패를 명시적으로 처리
+API 응답을 일관된 Result<T> 타입으로 변환
+
+성공/실패를 명시적으로 처리하여 에러 핸들링의 일관성을 보장합니다.
 
 ```ts
 export const toResult = async <T>(
@@ -102,9 +120,13 @@ export const toResult = async <T>(
 };
 ```
 
-### 4. React Query 훅 레이어
+### 4. TanStack Query 훅 레이어 (선택적 적용)
 
-데이터 페칭, 캐싱, 재시도, 백그라운드 갱신을 담당. 컴포넌트는 이 훅만 사용.
+데이터 페칭, 캐싱, 요청 재시도 및 백그라운드 데이터 갱신 등을 담당
+
+UI 컴포넌트에서는 이 훅만 사용합니다.
+
+이 레이어는 모든 API 요청에 적용되지 않습니다. **캐싱이 필요한 조회성 데이터**에만 선택적으로 사용하며, 일회성 요청은 이 레이어를 생략하고 Result 변환 레이어를 직접 사용합니다.
 
 ```ts
 export const useTripTicketList = () => {
@@ -120,12 +142,14 @@ export const useTripTicketList = () => {
 
 ### 5. UI 컴포넌트 레이어
 
-순수하게 데이터 표시와 사용자 인터랙션만 처리. 비즈니스 로직은 전혀 모름.
+순수하게 데이터 표시와 사용자 인터랙션을 처리
+
+**비즈니스 로직을 최대한 커스텀훅에서 처리**하되, UI 요소는 직접 받지 않고 **콜백 함수를 통해** 받아 훅이 UI와 독립적으로 동작하도록 설계했습니다.
 
 ```ts
 const TripList = () => {
-    const showToast = useToastStore((state) => state.showToast);
     const { data: result, isLoading } = useTripTicketList();
+    const showToast = useToastStore((state) => state.showToast);
 
     // 로딩 중 처리
     if (!result) return <LoadingSpinner />;
@@ -138,7 +162,7 @@ const TripList = () => {
 
     // 데이터 사용
     const tripList = [...result.data].reverse();
-    return <TripListUI trips={tripList} />;
+    return <TripList trips={tripList} />;
 };
 ```
 
@@ -146,64 +170,30 @@ const TripList = () => {
 
 ## 각 레이어의 책임
 
-```markdown
-| 레이어          | 책임                    | 알고 있는 것                | 모르는 것                     |
-| --------------- | ----------------------- | --------------------------- | ----------------------------- |
-| UI 컴포넌트     | 렌더링, 사용자 인터랙션 | React, 상태                 | API 엔드포인트, 비즈니스 로직 |
-| React Query 훅  | 데이터 페칭, 캐싱       | TanStack Query, Result 타입 | HTTP 통신, 서버 구조          |
-| Result 변환     | 에러 처리, 타입 변환    | Result 패턴, 에러 타입      | 비즈니스 로직                 |
-| 도메인 API      | 엔드포인트 정의         | REST API, 도메인 지식       | UI 상태, 캐싱                 |
-| HTTP 클라이언트 | 네트워크 통신           | HTTP, 인증                  | 비즈니스 도메인               |
-```
+| 레이어          | 담당 영역                | 관심 내용             | 관심 없는 내용     |
+| --------------- | ------------------------ | --------------------- | ------------------ |
+| UI 컴포넌트     | React, UI 상태           | 렌더링, 사용자 이벤트 | 비즈니스 로직, API |
+| TanStack Query  | 쿼리 관리, 비즈니스 로직 | 데이터 흐름, 캐싱     | HTTP 통신, UI 요소 |
+| Result 변환     | 에러 타입, 변환 로직     | 성공/실패 처리        | 도메인 지식        |
+| 도메인 API      | REST API, 도메인         | 엔드포인트, 비즈니스  | UI 상태, 캐싱 전략 |
+| HTTP 클라이언트 | HTTP 통신, 인증          | 네트워크, 보안        | 비즈니스 로직      |
 
 ---
 
-## 장점
+## 결과
 
-### 관심사 분리
+### 코드가 예측 가능해짐
 
-- 각 레이어가 하나의 책임만 가짐
-- 수정할 때 해당 레이어만 건드리면 됨
-- 테스트하기 쉬운 구조
+각 레이어가 명확한 역할을 가지니까 문제가 생겨도 어디를 봐야 할지 바로 알 수 있게 되었습니다. API 문제면 도메인 API 레이어, UI 문제면 컴포넌트 레이어를 확인하면 되니까 디버깅 시간이 많이 줄었어요.
 
-### 재사용성
+### 재사용이 쉬워짐
 
-- 같은 API를 여러 컴포넌트에서 쉽게 사용
-- 비즈니스 로직 변경 시 한 곳만 수정
-- 새로운 기능 추가할 때 기존 레이어 활용
+커스텀훅이 UI와 독립적이라서 같은 비즈니스 로직을 다른 화면에서도 그대로 사용할 수 있게 되었습니다. 비슷한 기능을 또 만들 필요가 없어졌고요.
 
-### 팀 협업
+### 유지보수가 수월해짐
 
-- 레이어별로 작업 분담 가능
-- 신규 투입 개발자도 레이어 구조만 이해하면 바로 개발 가능
-- 코드 리뷰할 때 해당 레이어의 책임에만 집중
+API 스펙이 바뀌어도 도메인 API 레이어만 수정하면 되고, 새로운 기능을 추가할 때도 **정해진 패턴을 따라서 개발 속도가 빨라졌습니다.**
 
-### 유지보수성
+<br>
 
-- 버그 발생 시 어느 레이어에서 문제인지 빠르게 파악
-- API 스펙 변경 시 도메인 API 레이어만 수정
-- UI 변경 시 컴포넌트 레이어만 수정
-
----
-
-## 데이터 플로우
-
-```text
-서버 API
-    ↓
-HTTP 클라이언트 (axios, 인터셉터)
-    ↓
-도메인 API 모듈 (tripAPI.fetchTripTicketList)
-    ↓
-Result 변환 레이어 (toResult)
-    ↓
-React Query 훅 (useTripTicketList)
-    ↓
-UI 컴포넌트 (TripList)
-```
-
-## 결과와 학습
-
-레이어 구조 도입 후 코드의 예측 가능성이 크게 향상됐습니다. 어떤 기능을 수정해야 할 때 어느 파일을 봐야 하는지 바로 알 수 있게 됐고, 새로운 API를 추가할 때도 패턴이 정해져 있어서 개발 속도가 빨라졌습니다.
-특히 팀원들과의 협업에서 큰 효과를 봤는데, 각자 담당 레이어에서 작업하다 보니 코드 충돌도 줄고, 코드 리뷰할 때도 해당 레이어의 책임에만 집중할 수 있어서 리뷰 품질이 올라갔습니다.
-이 경험을 통해 단순히 기능을 구현하는 것을 넘어, 확장 가능하고 유지보수하기 쉬운 구조를 설계하는 것의 중요성을 배울 수 있었습니다.
+결과적으로 단순히 기능만 구현하는 것이 아니라, **확장 가능하고 관리하기 쉬운 구조**를 만드는 것이 얼마나 중요한지 경험할 수 있었습니다.

@@ -123,8 +123,6 @@ const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => 
 서버 → API 클라이언트 → 도메인 API 모듈 → Result 패턴 변환 → TanStack Query 훅 → UI 컴포넌트
 ```
 
-## ![alt text](image.png)
-
 ---
 
 ## 결과
