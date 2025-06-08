@@ -3,15 +3,8 @@ import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'ax
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { apiClient } from '@/libs/apis/shared/client';
 import { API_BASE_URL } from '@/libs/apis/shared/constants';
+import { ApiResponse } from '@/libs/apis/shared/types';
 import { useToastStore } from '@/shared/stores/useToastStore';
-
-interface ErrorResponse<T> {
-    status: number;
-    code: string;
-    message: string;
-    data: T;
-    httpStatus: string;
-}
 
 interface CustomRequestConfing extends InternalAxiosRequestConfig {
     isAlreadyRequest?: boolean;
@@ -44,7 +37,7 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
         (response) => {
             return response.data;
         },
-        async (error: AxiosError<ErrorResponse<null>>) => {
+        async (error: AxiosError<ApiResponse<null>>) => {
             const { logout } = useUserStore.getState();
             const { showToast } = useToastStore.getState();
 
