@@ -55,7 +55,7 @@ const TripList = () => {
 HTTP 클라이언트 → 도메인 API → Result 변환 유틸함수 → TanStack Query 훅 → UI 컴포넌트
 ```
 
-## ![alt text](image.png)
+## ![alt text](architecture.png)
 
 ### 1. HTTP 클라이언트 레이어
 
