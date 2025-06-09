@@ -2,6 +2,7 @@
   <img src="docs/images/mock.png" alt="트립티케 메인 이미지" width="100%">
   
   <br/>
+  <br/>
 
 🔗 [트립티케 바로가기](https://triptyche.world)
 
@@ -149,7 +150,7 @@ src/
 
 ### 🖼️ 다형식 이미지 처리 파이프라인
 
-- 바이너리 헤더 분석으로 정확한 형식 판별 (`file.type`이 JPG로 표시되지만 실제론 HEIC인 문제)
+- 바이너리 헤더 분석으로 정확한 형식 판별 (`file.type`이 JPG로 표시되지만 실제로는 HEIC인 문제)
 - Safari/iOS HEIC 지원 및 3단계 이미지 최적화
 - **94% 용량 감소 (4MB→250KB), 90% 업로드 시간 단축**
 
@@ -161,7 +162,7 @@ src/
 - **LTE 네트워크 제약** 고려한 이미지 최적화 전략
 - 모바일 퍼스트 반응형 디자인
 
-> 📖 **[실제 모바일 환경에서 겪은 문제와 해결 과정](https://velog.io/@now-kwon/모바일-환경-최적화)**
+> 📖 **[실제 모바일 환경에서 겪은 문제와 해결 과정](https://velog.io/@now-kwon/%EC%A7%84%EC%A7%9C-%EB%AA%A8%EB%B0%94%EC%9D%BC%EC%97%90%EC%84%9C-%EB%82%B4-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%EA%B0%80-%EC%A0%9C%EB%8C%80%EB%A1%9C-%EC%9E%91%EB%8F%99%ED%95%A0%EA%B9%8C)**
 
 ### ⚡ WebSocket 기반 실시간 협업
 
