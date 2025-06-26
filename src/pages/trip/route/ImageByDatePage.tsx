@@ -31,7 +31,6 @@ const ImageByDatePage = () => {
     const { tripKey, date } = useParams();
     const navigate = useNavigate();
 
-    const imageListRef = useRef<HTMLDivElement>(null);
     const loadedImagesCount = useRef<number>(0);
     const imageRefs = useImageLocationObserver(
         images,
@@ -93,7 +92,7 @@ const ImageByDatePage = () => {
                         <p css={emptyImageListDescription}>{`티켓 속 사진 관리에서\n새로운 사진을 등록해주세요`}</p>
                     </div>
                 ) : (
-                    <main ref={imageListRef} css={imageListStyle}>
+                    <main css={imageListStyle}>
                         {images.map((image, index) => (
                             <ImageItem
                                 key={image.mediaFileId}

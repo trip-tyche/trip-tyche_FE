@@ -12,9 +12,7 @@ export const useImageLocationObserver = (images: MediaFile[], onImageLocationCha
                 if (entry.isIntersecting) {
                     const index = Number(entry.target.getAttribute('data-index'));
                     const image = images[index];
-                    if (image) {
-                        onImageLocationChange({ latitude: image.latitude, longitude: image.longitude });
-                    }
+                    onImageLocationChange({ latitude: image.latitude, longitude: image.longitude });
                 }
             });
         },
@@ -22,21 +20,17 @@ export const useImageLocationObserver = (images: MediaFile[], onImageLocationCha
     );
 
     useEffect(() => {
-        const refs = imageRefs.current;
         const observer = new IntersectionObserver(observerCallback, {
             root: null,
             rootMargin: '0px',
-            threshold: 0.7,
+            threshold: 0.6,
         });
 
-        refs.forEach((ref) => {
-            if (ref) observer.observe(ref);
-        });
+        const refs = imageRefs.current;
+        refs.forEach((ref) => ref && observer.observe(ref));
 
         return () => {
-            refs.forEach((ref) => {
-                if (ref) observer.unobserve(ref);
-            });
+            observer.disconnect();
         };
     }, [observerCallback, images]);
 
