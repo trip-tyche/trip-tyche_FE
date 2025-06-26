@@ -19,7 +19,7 @@ interface SingleMarkerMapProps {
 const SingleMarkerMap = ({ mapRef, position, onMapClick, mapHeight = '180px' }: SingleMarkerMapProps) => {
     const [isMapRendered, setIsMapLoaded] = useState(false);
 
-    const isValidLocation = position !== null && hasValidLocation(position);
+    const isValidLocation = position && hasValidLocation(position);
     const zoom = isValidLocation ? ZOOM_SCALE.DEFAULT : ZOOM_SCALE.UNLOCATION;
     const center = isValidLocation ? { latitude: position.latitude, longitude: position.longitude } : DEFAULT_CENTER;
 

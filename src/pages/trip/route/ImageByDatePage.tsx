@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 
 import { css } from '@emotion/react';
-import { ArrowDown, ImageOff } from 'lucide-react';
+import { ImageOff } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useMediaByDate } from '@/domains/media/hooks/queries';
@@ -10,22 +10,21 @@ import { MediaFile } from '@/domains/media/types';
 import DateSelector from '@/domains/trip/components/DateSelector';
 import ImageItem from '@/domains/trip/components/ImageItem';
 import BackButton from '@/shared/components/common/Button/BackButton';
+import Spinner from '@/shared/components/common/Spinner';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import SingleMarkerMap from '@/shared/components/map/SingleMarkerMap';
 import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/map';
 import { ROUTES } from '@/shared/constants/route';
 import { COLORS } from '@/shared/constants/style';
 import { useMapControl } from '@/shared/hooks/useMapControl';
-import { useScrollHint } from '@/shared/hooks/useScrollHint';
 import { useToastStore } from '@/shared/stores/useToastStore';
-import theme from '@/shared/styles/theme';
 import { Location } from '@/shared/types/map';
 
 const ImageByDatePage = () => {
-    const [imageDates, setImageDates] = useState<string[]>([]);
-    const [imageLocation, setImageLocation] = useState<Location | null>(null);
-    const [isAllImageLoad, setIsAllImageLoad] = useState(false);
     const [images, setImages] = useState<MediaFile[]>([]);
+    const [dates, setDates] = useState<string[]>([]);
+    const [currentImageLocation, setCurrentImageLocation] = useState<Location | null>(null);
+    const [isAllImageLoad, setIsAllImageLoad] = useState(false);
 
     const showToast = useToastStore((state) => state.showToast);
 
@@ -35,46 +34,36 @@ const ImageByDatePage = () => {
     const imageListRef = useRef<HTMLDivElement>(null);
     const loadedImagesCount = useRef<number>(0);
 
-    const { data: result, isLoading } = useMediaByDate(tripKey!, date!);
+    const imageRefs = useImageLocationObserver(images, (location: Location) => setCurrentImageLocation(location));
     const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl(ZOOM_SCALE.IMAGE_BY_DATE, DEFAULT_CENTER);
-    const { isHintOverlayVisible, isFirstUser } = useScrollHint(imageListRef, isMapScriptLoaded, isAllImageLoad);
+    const { data: imagesResult } = useMediaByDate(tripKey || '', date || '');
 
     useEffect(() => {
-        const imageDates = JSON.parse(sessionStorage.getItem('imageDates') || '') as string[];
-        setImageDates(imageDates);
+        const dates: string[] = JSON.parse(sessionStorage.getItem('imageDates') || '');
+        setDates(dates);
     }, []);
 
     useEffect(() => {
-        if (result) {
-            const images = result.success ? result.data : [];
+        if (imagesResult) {
+            const images = imagesResult.success ? imagesResult.data : [];
             setImages(images);
             if (images.length === 0) {
                 setIsAllImageLoad(true);
             }
+            const initialLocation = { latitude: images[0].latitude, longitude: images[0].longitude };
+            setCurrentImageLocation(initialLocation);
         }
-        setImageLocation(null);
-    }, [result]);
-
-    const handleImageLocationChange = useCallback((location: Location) => {
-        setImageLocation(location);
-    }, []);
-
-    const imageRefs = useImageLocationObserver(images, handleImageLocationChange);
+    }, [imagesResult]);
 
     const handleImageLoad = useCallback(() => {
         loadedImagesCount.current += 1;
-        if (loadedImagesCount.current === images.length) {
-            setIsAllImageLoad(true);
-        }
+        if (loadedImagesCount.current === images.length) setIsAllImageLoad(true);
     }, [images]);
-
-    if (!isMapScriptLoaded || isLoading) {
-        return <Indicator />;
-    }
 
     if (isMapScriptLoadError) {
         showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
         navigate(ROUTES.PATH.MAIN);
+        return null;
     }
 
     const emptyImage = images.length === 0;
@@ -82,14 +71,26 @@ const ImageByDatePage = () => {
     return (
         <>
             <div css={container}>
-                {(!result || isLoading || !isAllImageLoad) && <Indicator />}
+                {!isAllImageLoad && <Indicator />}
 
                 <BackButton onClick={() => navigate(`${ROUTES.PATH.TRIP.ROOT(tripKey as string)}`)} />
-
-                <SingleMarkerMap position={imageLocation} />
-                <DateSelector selectedDate={date!} imageDates={imageDates} />
-
-                {!emptyImage ? (
+                {isMapScriptLoaded && isAllImageLoad ? (
+                    <SingleMarkerMap position={currentImageLocation} />
+                ) : (
+                    <div css={mapLoader}>
+                        <Spinner />
+                    </div>
+                )}
+                <DateSelector selectedDate={date!} dates={dates} />
+                {emptyImage ? (
+                    <div css={emptyImageList}>
+                        <div css={emptyIcon}>
+                            <ImageOff color='white' />
+                        </div>
+                        <h3 css={emptyImageListHeading}>등록된 사진이 없어요</h3>
+                        <p css={emptyImageListDescription}>{`티켓 속 사진 관리에서\n새로운 사진을 등록해주세요`}</p>
+                    </div>
+                ) : (
                     <main ref={imageListRef} css={imageListStyle}>
                         {images.map((image, index) => (
                             <ImageItem
@@ -101,24 +102,8 @@ const ImageByDatePage = () => {
                             />
                         ))}
                     </main>
-                ) : (
-                    <div css={emptyImageList}>
-                        <div css={emptyIcon}>
-                            <ImageOff color='white' />
-                        </div>
-                        <h3 css={emptyImageListHeading}>등록된 사진이 없어요</h3>
-                        <p css={emptyImageListDescription}>{`티켓 속 사진 관리에서\n새로운 사진을 등록해주세요`}</p>
-                    </div>
                 )}
             </div>
-            {isFirstUser && (
-                <div css={scrollHintOverlayStyle(isHintOverlayVisible)}>
-                    <div css={scrollHintContentStyle}>
-                        <p css={scrollHintText}>아래로 스크롤하세요</p>
-                        <ArrowDown size={24} color={theme.COLORS.TEXT.WHITE} />
-                    </div>
-                </div>
-            )}
         </>
     );
 };
@@ -175,38 +160,11 @@ const emptyIcon = css`
     background-color: ${COLORS.TEXT.DESCRIPTION_LIGHT};
 `;
 
-const scrollHintOverlayStyle = (isVisible: boolean) => css`
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+const mapLoader = css`
+    height: 180px;
     display: flex;
     justify-content: center;
-    align-items: end;
-    opacity: ${isVisible ? 1 : 0};
-    visibility: ${isVisible ? 'visible' : 'hidden'};
-    transition:
-        opacity 0.3s ease-in-out,
-        visibility 0.3s ease-in-out;
-    z-index: 1000;
-    pointer-events: ${isVisible ? 'auto' : 'none'};
-    padding: 16px;
-`;
-
-const scrollHintContentStyle = css`
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 18px;
-`;
-
-const scrollHintText = css`
-    color: ${theme.COLORS.TEXT.WHITE};
-    text-align: center;
-    margin: 0;
 `;
 
 export default ImageByDatePage;

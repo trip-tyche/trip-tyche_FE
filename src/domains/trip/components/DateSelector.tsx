@@ -10,10 +10,10 @@ import theme from '@/shared/styles/theme';
 
 interface DateSelectorProps {
     selectedDate: string;
-    imageDates: string[];
+    dates: string[];
 }
 
-const DateSelector = React.memo(({ selectedDate, imageDates }: DateSelectorProps) => {
+const DateSelector = React.memo(({ selectedDate, dates }: DateSelectorProps) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const buttonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
@@ -24,9 +24,7 @@ const DateSelector = React.memo(({ selectedDate, imageDates }: DateSelectorProps
         const container = scrollContainerRef.current;
         const button = buttonRefs.current.get(targetDate);
 
-        if (!(container && button)) {
-            return;
-        }
+        if (!(container && button)) return;
 
         const containerWidth = container.offsetWidth;
         const buttonLeft = button.offsetLeft;
@@ -34,10 +32,7 @@ const DateSelector = React.memo(({ selectedDate, imageDates }: DateSelectorProps
 
         const targetScrollLeft = buttonLeft - containerWidth / 2 + buttonWidth / 2 - 20;
 
-        container.scrollTo({
-            left: targetScrollLeft,
-            behavior: 'smooth',
-        });
+        container.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
     }, []);
 
     useEffect(() => {
@@ -46,7 +41,7 @@ const DateSelector = React.memo(({ selectedDate, imageDates }: DateSelectorProps
         }
     }, [selectedDate, scrollToCenter]);
 
-    const days = useMemo(() => getDays(imageDates), [imageDates]);
+    const days = useMemo(() => getDays(dates), [dates]);
 
     const handleDateClick = (date: string) => {
         navigate(ROUTES.PATH.TRIP.IMAGE.BY_DATE(tripKey!, date), { replace: true });

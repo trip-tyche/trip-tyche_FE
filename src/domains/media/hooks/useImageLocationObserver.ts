@@ -18,7 +18,7 @@ export const useImageLocationObserver = (images: MediaFile[], onImageLocationCha
                 }
             });
         },
-        [images, onImageLocationChange],
+        [images],
     );
 
     useEffect(() => {

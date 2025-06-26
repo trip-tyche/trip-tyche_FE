@@ -32,8 +32,12 @@ export const useMediaByPinPoint = (tripKey: string, pinPointId: string) =>
         },
     });
 
-export const useMediaByDate = (tripKey: string, date: string) =>
-    useQuery({
+export const useMediaByDate = (tripKey: string, date: string) => {
+    if (!tripKey || !date) {
+        console.error('tripKey와 date은 필수값입니다.');
+    }
+
+    return useQuery({
         queryKey: ['media', 'by-date', tripKey, date],
         queryFn: () => toResult(() => mediaAPI.fetchMediaByDate(tripKey, date)),
         select: (result) => {
@@ -44,5 +48,6 @@ export const useMediaByDate = (tripKey: string, date: string) =>
                   }
                 : result;
         },
-        enabled: !!date,
+        enabled: Boolean(tripKey && date),
     });
+};
