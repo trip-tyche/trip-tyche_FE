@@ -33,8 +33,10 @@ const ImageByDatePage = () => {
 
     const imageListRef = useRef<HTMLDivElement>(null);
     const loadedImagesCount = useRef<number>(0);
-
-    const imageRefs = useImageLocationObserver(images, (location: Location) => setCurrentImageLocation(location));
+    const imageRefs = useImageLocationObserver(
+        images,
+        useCallback((location: Location) => setCurrentImageLocation(location), []),
+    );
     const { isMapScriptLoaded, isMapScriptLoadError } = useMapControl(ZOOM_SCALE.IMAGE_BY_DATE, DEFAULT_CENTER);
     const { data: imagesResult } = useMediaByDate(tripKey || '', date || '');
 
