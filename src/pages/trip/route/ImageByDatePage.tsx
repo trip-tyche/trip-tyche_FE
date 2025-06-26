@@ -94,13 +94,13 @@ const ImageByDatePage = () => {
                 ) : (
                     <main css={imageListStyle}>
                         {images.map((image, index) => (
-                            <ImageItem
+                            <div
                                 key={image.mediaFileId}
-                                reference={(element) => (imageRefs.current[index] = element)}
-                                image={image}
-                                index={index}
-                                onImageLoad={handleImageLoad}
-                            />
+                                ref={(element) => (imageRefs.current[index] = element)}
+                                data-index={index}
+                            >
+                                <ImageItem image={image} onImageLoad={handleImageLoad} />
+                            </div>
                         ))}
                     </main>
                 )}

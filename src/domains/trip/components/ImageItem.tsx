@@ -6,13 +6,11 @@ import { MediaFile } from '@/domains/media/types';
 import { FONT_SIZES } from '@/shared/constants/style';
 
 interface ImageItemProps {
-    reference: (element: HTMLDivElement | null) => void;
-    index: number;
     image: MediaFile;
     onImageLoad?: () => void;
 }
 
-const ImageItem = ({ image, index, reference, onImageLoad }: ImageItemProps) => {
+const ImageItem = ({ image, onImageLoad }: ImageItemProps) => {
     const [isLoading, setIsLoading] = useState(true);
 
     const handleImageLoad = useCallback(() => {
@@ -21,7 +19,7 @@ const ImageItem = ({ image, index, reference, onImageLoad }: ImageItemProps) => 
     }, [onImageLoad]);
 
     return (
-        <div ref={reference} css={imageItemStyle} data-index={index}>
+        <div css={imageItemStyle}>
             <img src={image.mediaLink} alt={`이미지 ${image.mediaFileId}`} onLoad={handleImageLoad} css={imageStyle} />
             {!isLoading && <p css={timeStampStyle}>{image.recordDate.split('T')[1]}</p>}
         </div>
