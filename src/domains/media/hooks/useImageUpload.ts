@@ -13,6 +13,8 @@ import { filterWithoutDateMediaFile, filterWithoutLocationMediaFile } from '@/do
 import { mediaAPI } from '@/libs/apis';
 import { convertHeicToJpg, extractMetadataFromImage, removeDuplicateImages, resizeImages } from '@/libs/utils/image';
 
+const getProgressPercent = (process: number, total: number) => Math.round((process / total) * 100);
+
 export const useImageUpload = () => {
     const [images, setImages] = useState<ClientImageFile[]>();
     const [imageCategories, setImageCategories] = useState<MediaFileCategories>();
@@ -30,18 +32,14 @@ export const useImageUpload = () => {
         const imagesWithoutHeic = await convertHeicToJpg(images);
         const uniqueImages = removeDuplicateImages(imagesWithoutHeic);
 
-        // console.time(`extract metadata`);
         const imagesWithMetadata = await extractMetadataFromImage(uniqueImages, setProgress);
-        // console.timeEnd(`extract metadata`);
 
         return imagesWithMetadata;
     };
 
     const optimizeImages = async (images: ClientImageFile[]) => {
         setCurrentProcess('optimize');
-        // console.time(`resize and convert to WebP`);
         const optimizedImages = await resizeImages(images, setProgress);
-        // console.timeEnd(`resize and convert to WebP`);
 
         setImages(optimizedImages);
 
@@ -60,32 +58,17 @@ export const useImageUpload = () => {
             const imageNames = images.map((image) => ({ fileName: image.image.name }));
             const result = await mediaAPI.requestPresignedUrls(tripKey!, imageNames);
             if (!result.success) throw new Error(result.error);
-
             const { data: presignedUrls } = result;
 
-            // console.time(`image upload to S3`);
-
             let process = 0;
-
             await Promise.all(
-                presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) => {
-                    return mediaAPI
-                        .uploadToS3(urlInfo.presignedPutUrl, images[index].image)
-                        .catch((err) => {
-                            console.error(err);
-                        })
-                        .finally(() => {
-                            process++;
-                            const progressPercent = Math.round((process / images.length) * 100);
-                            setProgress((prev) => ({
-                                ...prev,
-                                upload: progressPercent,
-                            }));
-                        });
+                presignedUrls.map(async (urlInfo: PresignedUrlResponse, index: number) => {
+                    const result = await mediaAPI.uploadToS3(urlInfo.presignedPutUrl, images[index].image);
+                    const progressPercent = getProgressPercent(process++, images.length);
+                    setProgress((prev) => ({ ...prev, upload: progressPercent }));
+                    return result;
                 }),
             );
-            // console.timeEnd(`image upload to S3`);
-
             submitS3urlAndMetadata(images, presignedUrls);
         } catch (error) {
             console.error(error);
@@ -102,10 +85,7 @@ export const useImageUpload = () => {
                 recordDate: recordDate || DEFAULT_METADATA.DATE,
             };
         });
-
-        // console.time(`send metadata to server`);
         await mediaAPI.createMediaFileMetadata(tripKey!, metaDatas);
-        // console.timeEnd(`send metadata to server`);
     };
 
     return {

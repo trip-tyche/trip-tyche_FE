@@ -107,6 +107,7 @@ export const convertHeicToJpg = async (images: FileList) => {
                     blob: image,
                     toType: 'image/jpeg',
                 });
+
                 const convertedFile = new File(
                     [convertedBlob as Blob],
                     image.name.replace(MEDIA_FORMAT.CURRENT_MEDIA_FORMAT, MEDIA_FORMAT.JPG_FORMAT),
