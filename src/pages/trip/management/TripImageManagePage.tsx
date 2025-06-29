@@ -6,7 +6,7 @@ import { ImageOff, Plus } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import ImageGroupByDate from '@/domains/media/components/view/ImageGroupByDate';
-import { IMAGE_MANAGEMENT_TABS, MediaFileCategoryKey } from '@/domains/media/constants';
+import { IMAGE_MANAGEMENT_TABS } from '@/domains/media/constants';
 import { useMediaDelete, useMetadataUpdate } from '@/domains/media/hooks/mutations';
 import { useTripImages } from '@/domains/media/hooks/queries';
 import { MediaFile, MediaFileCategories } from '@/domains/media/types';
@@ -284,7 +284,7 @@ const TripImageManagePage = () => {
             <TabNavigation
                 tabs={IMAGE_MANAGEMENT_TABS}
                 activeTab={activeTab}
-                onActiveChange={(activeTab) => setActiveTab(activeTab as MediaFileCategoryKey)}
+                onActiveChange={(activeTab) => setActiveTab(activeTab as keyof MediaFileCategories)}
             />
             <div
                 css={css`

@@ -32,9 +32,16 @@ export const DEFAULT_METADATA = {
     DATE: '1980-01-01T00:00:00',
 };
 
-export type MediaFileCategoryKey = keyof MediaFileCategories;
-export const IMAGE_MANAGEMENT_TABS: { id: MediaFileCategoryKey; title: string }[] = [
+export const IMAGE_MANAGEMENT_TABS: { id: keyof MediaFileCategories; title: string }[] = [
     { id: 'withAll', title: '전체' },
     { id: 'withoutLocation', title: '위치 없음' },
     { id: 'withoutDate', title: '날짜 없음' },
 ];
+
+export const IMAGE_UPLOAD_STEP = {
+    upload: '사진 등록',
+    processing: '분석 중',
+    review: '정보 확인',
+    info: '정보 입력',
+    done: '등록 완료',
+} as const;

@@ -1,14 +1,17 @@
+import { useEffect, useState } from 'react';
+
 import { css } from '@emotion/react';
 import { Calendar, Map } from 'lucide-react';
 import { GoCheckCircleFill } from 'react-icons/go';
 
-import { ImageFileWithAddress } from '@/domains/media/types';
+import { MediaFile } from '@/domains/media/types';
 import { formatKoreanDate, formatKoreanTime } from '@/libs/utils/date';
 import { hasValidDate } from '@/libs/utils/validate';
 import { COLORS } from '@/shared/constants/style';
+import { useReverseGeocode } from '@/shared/hooks/useReverseGeocode';
 
 interface ImageCardProps {
-    image: ImageFileWithAddress;
+    image: MediaFile;
     isSelected?: boolean;
     isTimeView?: boolean;
     onClick?: () => void;
@@ -16,18 +19,28 @@ interface ImageCardProps {
 }
 
 const ImageCard = ({ image, isSelected = false, isTimeView = false, onClick, onLoad }: ImageCardProps) => {
-    const address = image.address || '위치 정보 없음';
-    const date = hasValidDate(image.recordDate)
+    const { mediaFileId, mediaLink, latitude, longitude, recordDate } = image;
+
+    const [isLoaded, setIsLoaded] = useState(false);
+    const { address, isLoading } = useReverseGeocode(latitude, longitude);
+
+    const date = hasValidDate(recordDate)
         ? isTimeView
-            ? formatKoreanTime(image.recordDate)
-            : formatKoreanDate(image.recordDate, true)
+            ? formatKoreanTime(recordDate)
+            : formatKoreanDate(recordDate, true)
         : '날짜 정보 없음';
-    const hasAddress = !!image.address;
-    const hasDate = hasValidDate(image.recordDate);
+    const hasAddress = !!address;
+    const hasDate = hasValidDate(recordDate);
+
+    useEffect(() => {
+        if (isLoaded && !isLoading) {
+            onLoad?.();
+        }
+    }, [isLoaded, isLoading, onLoad]);
 
     return (
-        <div key={image.mediaFileId} css={container} onClick={onClick}>
-            <img src={image.mediaLink} alt='여행 사진 카드' css={imageStyle} onLoad={onLoad} />
+        <div key={mediaFileId} css={container} onClick={onClick}>
+            <img src={mediaLink} alt='여행 사진 카드' css={imageStyle} onLoad={() => setIsLoaded(true)} />
             <div css={infoContainer}>
                 <div css={iconStyle}>
                     <Map size={12} />
@@ -59,6 +72,7 @@ const container = css`
     pointer-events: none;
     user-select: none;
     box-shadow: rgba(0, 0, 0, 0.3) 8px 8px 16px -12px;
+    cursor: pointer;
 `;
 
 const imageStyle = css`

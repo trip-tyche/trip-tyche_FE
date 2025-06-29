@@ -1,7 +1,5 @@
 import { ClientImageFile, ImageProcessStatusType, ImageUploadStepType, MediaFile } from '@/domains/media/types';
-import { getAddressFromLocation } from '@/libs/utils/map';
 import { hasValidDate, hasValidLocation } from '@/libs/utils/validate';
-import { Location } from '@/shared/types/map';
 
 /**
  * 위치, 날짜 모두 유효한 미디어 파일 필터링
@@ -70,16 +68,6 @@ export const getAlertBoxMessage = (currentProcess: ImageProcessStatusType) => {
         title: '문제가 발생했나요?',
         description: '새로고침 및 서비스 종료 후 다시 이용해주세요.',
     };
-};
-
-export const getAddressFromImageLocation = async (location: Location): Promise<string> => {
-    const { latitude, longitude } = location;
-    const result = await getAddressFromLocation(latitude, longitude);
-
-    if (result.success) {
-        return result?.data as string;
-    }
-    return result.error as string;
 };
 
 export const getImageDateFromImage = (images: ClientImageFile[] | null) => {

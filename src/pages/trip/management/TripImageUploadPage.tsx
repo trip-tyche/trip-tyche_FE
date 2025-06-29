@@ -9,7 +9,7 @@ import TripCreateCompleteStep from '@/domains/media/components/upload/TripCreate
 import UploadStep from '@/domains/media/components/upload/UploadStep';
 import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
 import { ClientImageFile, ImageFileWithAddress, ImageUploadStepType } from '@/domains/media/types';
-import { getAddressFromImageLocation, getImageDateFromImage, getTitleByStep } from '@/domains/media/utils';
+import { getImageDateFromImage, getTitleByStep } from '@/domains/media/utils';
 import TripInfoForm from '@/domains/trip/components/TripInfoForm';
 import { FORM } from '@/domains/trip/constants';
 import { useTripFormSubmit } from '@/domains/trip/hooks/mutations';
@@ -18,6 +18,7 @@ import { TripInfo } from '@/domains/trip/types';
 import { mediaAPI, tripAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/shared/utils';
 import { formatHyphenToDot } from '@/libs/utils/date';
+import { getAddressFromLocation } from '@/libs/utils/map';
 import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
 import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
@@ -36,10 +37,12 @@ const TripImageUploadPage = () => {
     const [isTripFinalizing, setIsTripFinalizing] = useState(false);
 
     const { isModalOpen, closeModal } = useBrowserCheck();
+    const { isMapScriptLoaded } = useMapScript();
+
     const { isFormComplete } = useTripFormValidation(tripForm);
     const { images, imageCategories, currentProcess, progress, extractMetaData, optimizeImages, uploadImagesToS3 } =
         useImageUpload();
-    const { isMapScriptLoaded } = useMapScript();
+
     const showToast = useToastStore((state) => state.showToast);
 
     const { mutateAsync, isPending: isSubmitting } = useTripFormSubmit();
@@ -49,13 +52,13 @@ const TripImageUploadPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const getAddressFromLocation = async () => {
+        const getAddress = async () => {
             if (images && isMapScriptLoaded) {
                 const imagesWithAddress = await Promise.all(
                     images.map(async (image: ClientImageFile) => {
                         const address =
                             image.latitude && image.longitude
-                                ? await getAddressFromImageLocation({
+                                ? await getAddressFromLocation({
                                       latitude: image.latitude,
                                       longitude: image.longitude,
                                   })
@@ -76,7 +79,7 @@ const TripImageUploadPage = () => {
             }
         };
 
-        getAddressFromLocation();
+        getAddress();
     }, [images, isMapScriptLoaded]);
 
     useEffect(() => {
