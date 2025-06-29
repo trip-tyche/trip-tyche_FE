@@ -2,43 +2,26 @@ import { css } from '@emotion/react';
 import { AlertCircle, Check, Image, MapPin, Calendar, Map as MapIcon } from 'lucide-react';
 
 import ImageExtractionSummary from '@/domains/media/components/upload/ImageExtractionSummary';
-import { ImageFileWithAddress, MediaFileCategories } from '@/domains/media/types';
+import { MediaFileCategories } from '@/domains/media/types';
 import AlertBox from '@/shared/components/common/AlertBox';
 import Avatar from '@/shared/components/common/Avatar';
 import { COLORS } from '@/shared/constants/style';
+import { useAddressAggregation } from '@/shared/hooks/useAddressAggregation';
+import { Location } from '@/shared/types/map';
 
 interface ReviewStepProps {
     imageCategories: MediaFileCategories;
     tripPeriod: string[];
-    imagesWithAddress: ImageFileWithAddress[];
+    locations: Location[];
 }
 
-const ReviewStep = ({ imageCategories, tripPeriod, imagesWithAddress }: ReviewStepProps) => {
-    const getVisitedPlace = (imagesWithAddress: ImageFileWithAddress[]) => {
-        const map = new Map();
-
-        imagesWithAddress.forEach((image) => {
-            const { address } = image;
-            if (address) {
-                if (map.has(address)) {
-                    const count = map.get(address);
-                    map.set(address, count + 1);
-                } else {
-                    map.set(address, 1);
-                }
-            }
-        });
-
-        return Array.from(map).map((image) => {
-            return { place: `${image[0]}`, count: image[1] };
-        });
-    };
+const ReviewStep = ({ imageCategories, tripPeriod, locations }: ReviewStepProps) => {
+    const { addresses } = useAddressAggregation(locations);
 
     const [startDate, endDate] = tripPeriod;
     const isSingleDate = startDate === endDate;
     const estimatedTripPeriod =
         startDate && endDate ? (isSingleDate ? `${startDate} (하루)` : `${startDate} ~ ${endDate}`) : null;
-    const visitedPlace = imagesWithAddress.length > 0 ? getVisitedPlace(imagesWithAddress) : null;
 
     const imagesWithoutLocationCount = imageCategories.withoutLocation.count;
     const imagesWithoutDateCount = imageCategories.withoutDate.count;
@@ -88,16 +71,16 @@ const ReviewStep = ({ imageCategories, tripPeriod, imagesWithAddress }: ReviewSt
                     </div>
                 )}
 
-                {visitedPlace && visitedPlace?.length > 0 && (
+                {addresses.length > 0 && (
                     <div css={periodAndVisitedPlaceContainer}>
                         <div css={periodAndVisitedPlaceHeader}>
                             <MapIcon size={16} color={COLORS.ICON.DEFAULT} />
                             <p css={periodAndVisitedPlaceTitle}>주요 방문 장소</p>
                         </div>
                         <ul>
-                            {visitedPlace.map((location) => (
-                                <li key={location.place} css={placeListStyle}>
-                                    {location.place} ({location.count}장)
+                            {addresses.map((address) => (
+                                <li key={address.place} css={placeListStyle}>
+                                    {address.place} ({address.count}장)
                                 </li>
                             ))}
                         </ul>

@@ -34,10 +34,12 @@ export const useAddressAggregation = (locations: Location[]) => {
                     }
                 });
 
-                const aggregatedAddresses = Array.from(addresses).map((address) => ({
-                    place: `${address[0]}`,
-                    count: Number(address[1]),
-                }));
+                const aggregatedAddresses = Array.from(addressesMap).map((address) => {
+                    return {
+                        place: `${address[0].split(' ').join(', ')}`,
+                        count: Number(address[1]),
+                    };
+                });
                 setAddresses(aggregatedAddresses);
             } finally {
                 setIsLoading(false);

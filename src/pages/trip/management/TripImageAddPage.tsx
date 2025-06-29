@@ -8,29 +8,27 @@ import ProcessingStep from '@/domains/media/components/upload/ProcessingStep';
 import ReviewStep from '@/domains/media/components/upload/ReviewStep';
 import UploadStep from '@/domains/media/components/upload/UploadStep';
 import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
-import { ClientImageFile, ImageFileWithAddress, ImageUploadStepType } from '@/domains/media/types';
+import { ImageUploadStepType } from '@/domains/media/types';
 import { getImageDateFromImage, getTitleByStep } from '@/domains/media/utils';
 import { FORM } from '@/domains/trip/constants';
 import { TripInfo } from '@/domains/trip/types';
 import { mediaAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/shared/utils';
 import { formatHyphenToDot } from '@/libs/utils/date';
-import { getAddressFromLocation } from '@/libs/utils/map';
 import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
 import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
 import { COLORS } from '@/shared/constants/style';
 import useBrowserCheck from '@/shared/hooks/useBrowserCheck';
-import { useMapScript } from '@/shared/hooks/useMapScript';
 import { useToastStore } from '@/shared/stores/useToastStore';
+import { Location } from '@/shared/types/map';
 
-const TripImageUploadPageS = ({ onClose }: { onClose: () => void }) => {
+const TripImageAddPage = ({ onClose }: { onClose: () => void }) => {
     const [step, setStep] = useState<ImageUploadStepType>('upload');
-    const [imagesWithAddress, setImagesWithAddress] = useState<ImageFileWithAddress[]>([]);
+    const [imageLocations, setImageLocations] = useState<Location[]>([]);
     const [tripForm, setTripForm] = useState<TripInfo>(FORM.INITIAL);
 
     const { isModalOpen, closeModal } = useBrowserCheck();
-    const { isMapScriptLoaded } = useMapScript();
     const { images, imageCategories, currentProcess, progress, extractMetaData, optimizeImages, uploadImagesToS3 } =
         useImageUpload();
     const showToast = useToastStore((state) => state.showToast);
@@ -44,37 +42,12 @@ const TripImageUploadPageS = ({ onClose }: { onClose: () => void }) => {
     const { tripKey } = params;
 
     useEffect(() => {
-        const getAddress = async () => {
-            if (images && isMapScriptLoaded) {
-                const imagesWithAddress = await Promise.all(
-                    images.map(async (image: ClientImageFile) => {
-                        const address =
-                            image.latitude && image.longitude
-                                ? await getAddressFromLocation({
-                                      latitude: image.latitude,
-                                      longitude: image.longitude,
-                                  })
-                                : '';
-                        const formattedAddress = address ? `${address.split(' ')[0]}, ${address.split(' ')[1]}` : '';
-                        const blobUrl = URL.createObjectURL(image.image);
+        if (images) {
+            const locations = images.map((image) => ({ latitude: image.latitude, longitude: image.longitude }));
+            setImageLocations(locations);
+        }
+    }, [images]);
 
-                        return {
-                            ...image,
-                            mediaFileId: image.image.name,
-                            mediaLink: blobUrl,
-                            address: formattedAddress,
-                        };
-                    }),
-                );
-
-                setImagesWithAddress(imagesWithAddress);
-            }
-        };
-
-        getAddress();
-    }, [images, isMapScriptLoaded]);
-
-    // tripInfo에 업로드한 이미지에서 추출한 mediaFilesDates 추가
     useEffect(() => {
         const imageDates = getImageDateFromImage(images || null);
 
@@ -100,7 +73,7 @@ const TripImageUploadPageS = ({ onClose }: { onClose: () => void }) => {
                         <ReviewStep
                             imageCategories={imageCategories!}
                             tripPeriod={[estimatedStartDate, estimatedEndDate]}
-                            imagesWithAddress={imagesWithAddress}
+                            locations={imageLocations}
                         />
                         <div css={buttonWrapper}>
                             <Button
@@ -197,4 +170,4 @@ const buttonWrapper = css`
     margin-top: 36px;
 `;
 
-export default TripImageUploadPageS;
+export default TripImageAddPage;

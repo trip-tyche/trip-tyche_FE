@@ -15,9 +15,8 @@ export const useReverseGeocode = (latitude: number, longitude: number) => {
         const convertAddress = async () => {
             setIsLoading(true);
             try {
-                // const result =
-                //     latitude && longitude ? await getAddressFromLocation({ latitude, longitude }) : '위치 정보 없음';
-                const result = '위치 정보 없음';
+                const result =
+                    latitude && longitude ? await getAddressFromLocation({ latitude, longitude }) : '위치 정보 없음';
                 setAddress(result);
             } finally {
                 setIsLoading(false);

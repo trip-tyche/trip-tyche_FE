@@ -18,13 +18,13 @@ import {
 } from '@/domains/media/utils';
 import EditDate from '@/domains/trip/components/EditDate';
 import { formatToISOLocal } from '@/libs/utils/date';
+import TripImageAddPage from '@/pages/trip/management/TripImageAddPage';
 import Button from '@/shared/components/common/Button';
 import EmptyItem from '@/shared/components/common/EmptyItem';
 import Header from '@/shared/components/common/Header';
 import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import TabNavigation from '@/shared/components/common/Tab/TabNavigation';
-import TripImageUploadPageS from '@/shared/components/common/TripImageUploadPageS';
 import SearchPlaceInput from '@/shared/components/map/SearchPlaceInput';
 import SingleMarkerMap from '@/shared/components/map/SingleMarkerMap';
 import { DEFAULT_CENTER, ZOOM_SCALE } from '@/shared/constants/map';
@@ -175,7 +175,7 @@ const TripImageManagePage = () => {
     const renderEditMode = () => {
         return (
             <div css={editContainer}>
-                {isNewImage && <TripImageUploadPageS onClose={() => setIsNewImage(false)} />}
+                {isNewImage && <TripImageAddPage onClose={() => setIsNewImage(false)} />}
 
                 {isLocationEditing && (
                     <>
