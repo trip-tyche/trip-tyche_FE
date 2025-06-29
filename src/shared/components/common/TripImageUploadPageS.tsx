@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import ProcessingStep from '@/domains/media/components/upload/ProcessingStep';
 import ReviewStep from '@/domains/media/components/upload/ReviewStep';
@@ -43,7 +43,6 @@ const TripImageUploadPageS = ({ onClose }: { onClose: () => void }) => {
 
     const { tripKey } = params;
 
-    // 이미지 메타데이터 기반 역지오코딩을 활용한 좌표정보 주소 반환
     useEffect(() => {
         const getAddress = async () => {
             if (images && isMapScriptLoaded) {

@@ -1,7 +1,6 @@
 import { css } from '@emotion/react';
 import { AlertCircle, Check, Image, MapPin, Calendar, Map as MapIcon } from 'lucide-react';
 
-import ImageCard from '@/domains/media/components/upload/ImageCard';
 import ImageExtractionSummary from '@/domains/media/components/upload/ImageExtractionSummary';
 import { ImageFileWithAddress, MediaFileCategories } from '@/domains/media/types';
 import AlertBox from '@/shared/components/common/AlertBox';
@@ -17,6 +16,7 @@ interface ReviewStepProps {
 const ReviewStep = ({ imageCategories, tripPeriod, imagesWithAddress }: ReviewStepProps) => {
     const getVisitedPlace = (imagesWithAddress: ImageFileWithAddress[]) => {
         const map = new Map();
+
         imagesWithAddress.forEach((image) => {
             const { address } = image;
             if (address) {
@@ -33,12 +33,6 @@ const ReviewStep = ({ imageCategories, tripPeriod, imagesWithAddress }: ReviewSt
             return { place: `${image[0]}`, count: image[1] };
         });
     };
-
-    const getImagePreviewComponent = () =>
-        imagesWithAddress
-            .filter((image) => image.address || image.recordDate)
-            .slice(0, 4)
-            .map((image) => <ImageCard key={image.mediaFileId} image={image} />);
 
     const [startDate, endDate] = tripPeriod;
     const isSingleDate = startDate === endDate;
@@ -111,13 +105,6 @@ const ReviewStep = ({ imageCategories, tripPeriod, imagesWithAddress }: ReviewSt
                 )}
             </div>
 
-            {getImagePreviewComponent() && getImagePreviewComponent().length > 0 && (
-                <div>
-                    <h3 css={imagePreviewTitle}>등록된 사진 미리보기</h3>
-                    <div css={imagePreviewStyle}>{getImagePreviewComponent()}</div>
-                </div>
-            )}
-
             {hasInvalidImage && (
                 <AlertBox
                     theme='warning'
@@ -184,17 +171,6 @@ const periodAndVisitedPlaceHeader = css`
 
 const periodAndVisitedPlaceTitle = css`
     font-weight: 500;
-`;
-
-const imagePreviewTitle = css`
-    font-weight: 500;
-    margin-bottom: 16px;
-`;
-
-const imagePreviewStyle = css`
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
 `;
 
 const placeListStyle = css`

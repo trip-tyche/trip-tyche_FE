@@ -9,18 +9,17 @@ import { formatToKorean } from '@/libs/utils/date';
 import { hasValidDate } from '@/libs/utils/validate';
 
 interface ImageGroupByDateProps {
-    imageGroup: {
-        recordDate: string;
-        images: MediaFile[];
-    };
+    imageGroup: { recordDate: string; images: MediaFile[] };
     selectedImages: MediaFile[];
     onImageClick: (selectedImage: MediaFile) => void;
     onLoad: () => void;
 }
 
 const ImageGroupByDate = ({ imageGroup, selectedImages, onImageClick, onLoad }: ImageGroupByDateProps) => {
-    const [isImagesLoaded, setIsImagesLoaded] = useState(false);
+    const { images, recordDate } = imageGroup;
+    const imageCount = images.length || 0;
 
+    const [isImagesLoaded, setIsImagesLoaded] = useState(false);
     const loadedImageCount = useRef(0);
 
     useEffect(() => {
@@ -31,23 +30,24 @@ const ImageGroupByDate = ({ imageGroup, selectedImages, onImageClick, onLoad }: 
 
     const handleAllImagesLoad = useCallback(() => {
         loadedImageCount.current += 1;
-        if (loadedImageCount.current === imageGroup.images.length) {
+        if (loadedImageCount.current === imageCount) {
             setIsImagesLoaded(true);
         }
-    }, []);
+    }, [imageCount]);
 
-    const hasDate = hasValidDate(imageGroup.recordDate);
+    const hasDate = hasValidDate(recordDate);
+    const sortedImages = images.sort((a, b) => new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime());
 
     return (
         <div css={container}>
             {hasDate && (
                 <div css={header}>
                     <Calendar size={20} />
-                    <h2 css={dateStyle}>{formatToKorean(imageGroup.recordDate.split('T')[0])}</h2>
+                    <h2 css={dateStyle}>{formatToKorean(recordDate.split('T')[0])}</h2>
                 </div>
             )}
             <div css={mainStyle}>
-                {imageGroup.images.map((image) => {
+                {sortedImages.map((image) => {
                     const isSelected = selectedImages.some(
                         (selectedImage) => selectedImage.mediaFileId === image.mediaFileId,
                     );
