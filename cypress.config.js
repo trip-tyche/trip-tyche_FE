@@ -2,7 +2,7 @@ import { defineConfig } from 'cypress';
 
 export default defineConfig({
     e2e: {
-        baseUrl: 'https://local.triptychetest.shop:3000',
+        baseUrl: process.env.CI ? 'http://localhost:4173' : 'https://local.triptychetest.shop:3000',
         setupNodeEvents(on, config) {},
     },
 });
