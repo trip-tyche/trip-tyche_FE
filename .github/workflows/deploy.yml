@@ -4,6 +4,7 @@ on:
     push:
         branches:
             - main
+            - develop
 
 jobs:
     deploy:
@@ -16,7 +17,15 @@ jobs:
               with:
                   node-version: '20'
 
-            - name: Create .env file
+            - name: Create .env file for production
+              if: github.ref == 'refs/heads/main'
+              run: |
+                  echo "VITE_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}" >> .env
+                  echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" >> .env
+                  echo "VITE_WEBSOCKET_URL=${{ secrets.VITE_WEBSOCKET_URL }}" >> .env
+
+            - name: Create .env file for staging
+              if: github.ref == 'refs/heads/develop'
               run: |
                   echo "VITE_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}" >> .env
                   echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" >> .env
@@ -36,6 +45,9 @@ jobs:
             - name: Run linting
               run: yarn lint
 
+            - name: Type checking
+              run: yarn tsc --noEmit
+
             - name: Build
               run: yarn build
 
@@ -46,6 +58,12 @@ jobs:
                   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   aws-region: ${{ secrets.AWS_REGION }}
 
-            - name: Deploy to S3
+            - name: Deploy to production (S3)
+              if: github.ref == 'refs/heads/main'
               run: |
                   aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
+
+            - name: Deploy to staging
+              if: github.ref == 'refs/heads/develop'
+              run: |
+                  aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_NAME }}/staging/ --delete
