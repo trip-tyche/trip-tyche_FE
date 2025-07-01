@@ -6,8 +6,8 @@ import { validateFormComplete } from '@/libs/utils/validate';
 export const useTripFormValidation = (tripInfo: TripInfo) => {
     const [isFormComplete, setIsFormComplete] = useState(false);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
     useEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
         const { mediaFilesDates, ...exceptMediaFileImages } = tripInfo;
         if (validateFormComplete(exceptMediaFileImages)) {
             setIsFormComplete(true);
