@@ -50,11 +50,12 @@ jobs:
             - name: Type checking
               run: yarn tsc --noEmit
 
-            - name: Build
-              run: yarn build
-
-            - name: Run Cypress testing (E2E)
-              run: yarn cy
+            - name: Build & Run Cypress tests (E2E)
+              uses: cypress-io/github-action@v6
+              with:
+                  build: yarn build
+                  start: yarn preview
+                  wait-on: 'http://localhost:4173'
 
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@v1
