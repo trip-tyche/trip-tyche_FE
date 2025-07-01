@@ -9,6 +9,20 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 const KEY_PATH = 'certificates/local.triptychetest.shop-key.pem';
 const CERT_PATH = 'certificates/local.triptychetest.shop.pem';
 
+function getHttpsConfig() {
+    try {
+        if (fs.existsSync(KEY_PATH) && fs.existsSync(CERT_PATH)) {
+            return {
+                key: fs.readFileSync(KEY_PATH),
+                cert: fs.readFileSync(CERT_PATH),
+            };
+        }
+    } catch (error) {
+        console.log('certificates not found');
+    }
+    return false;
+}
+
 const baseConfig: UserConfig = {
     plugins: [
         react({
@@ -55,17 +69,3 @@ export default defineConfig(({ command }) => {
         } as UserConfig;
     }
 });
-
-function getHttpsConfig() {
-    try {
-        if (fs.existsSync(KEY_PATH) && fs.existsSync(CERT_PATH)) {
-            return {
-                key: fs.readFileSync(KEY_PATH),
-                cert: fs.readFileSync(CERT_PATH),
-            };
-        }
-    } catch (error) {
-        console.log('certificates not found');
-    }
-    return false;
-}
