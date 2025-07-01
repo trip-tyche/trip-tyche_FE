@@ -34,7 +34,9 @@ jobs:
             - name: Cache dependencies
               uses: actions/cache@v3
               with:
-                  path: node_modules
+                  path: |
+                      node_modules
+                      ~/.cache/Cypress
                   key: ${{ runner.os }}-nm-${{ hashFiles('**/yarn.lock') }}
                   restore-keys: |
                       ${{ runner.os }}-nm-
