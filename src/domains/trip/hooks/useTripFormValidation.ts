@@ -9,11 +9,7 @@ export const useTripFormValidation = (tripInfo: TripInfo) => {
     useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
         const { mediaFilesDates, ...exceptMediaFileImages } = tripInfo;
-        if (validateFormComplete(exceptMediaFileImages)) {
-            setIsFormComplete(true);
-            return;
-        }
-        setIsFormComplete(false);
+        setIsFormComplete(validateFormComplete(exceptMediaFileImages));
     }, [tripInfo]);
 
     return { isFormComplete };

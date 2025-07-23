@@ -19,8 +19,12 @@ export const validateUserNickName = (inputValue: string, minLength = 2, maxLengt
 
 // 폼의 모든 필드에 입력했는지 검사
 export const validateFormComplete = (form: TripInfo) =>
-    Object.entries(form).every(([_, value]) => {
-        return Array.isArray(value) ? value.length > 0 : Boolean(value);
+    Object.keys(form).every((value) => {
+        if (Array.isArray(value)) {
+            return value.length > 0;
+        } else {
+            return Boolean(value);
+        }
     });
 
 // 유효한 위치인지 검사
