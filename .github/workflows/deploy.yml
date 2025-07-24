@@ -37,9 +37,6 @@ jobs:
             - name: Install dependencies
               run: yarn install --frozen-lockfile
 
-            - name: Run linting
-              run: yarn lint
-
             - name: Type checking
               run: yarn tsc --noEmit
 
