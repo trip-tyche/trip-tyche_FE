@@ -1,8 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
 
-import imageCompression from 'browser-image-compression';
-import heic2any from 'heic2any';
-
 import { COMPRESSION_OPTIONS, MEDIA_FORMAT } from '@/domains/media/constants';
 import { ClientImageFile } from '@/domains/media/types';
 import { formatToISOLocal } from '@/libs/utils/date';
@@ -69,6 +66,8 @@ export const resizeImages = async (
     const promise = await Promise.all(
         images.map(async (image: ClientImageFile) => {
             try {
+                const { default: imageCompression } = await import('browser-image-compression');
+
                 const resizedBlob = await imageCompression(image.image, COMPRESSION_OPTIONS);
                 const resizedFile = new File(
                     [resizedBlob],
@@ -103,6 +102,8 @@ export const convertHeicToJpg = async (images: FileList) => {
         Array.from(images).map(async (image) => {
             const actualType = await getActualFileType(image);
             if (actualType === 'image/heic') {
+                const { default: heic2any } = await import('heic2any');
+
                 const convertedBlob = await heic2any({
                     blob: image,
                     toType: 'image/jpeg',
