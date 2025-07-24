@@ -1,9 +1,6 @@
 import { css } from '@emotion/react';
-import { FcGoogle } from 'react-icons/fc';
-import { RiKakaoTalkFill } from 'react-icons/ri';
 
 import Button from '@/shared/components/common/Button';
-import { BUTTON } from '@/shared/constants/ui';
 import theme from '@/shared/styles/theme';
 
 type ProviderType = 'kakao' | 'google';
@@ -13,21 +10,31 @@ interface LoginButtonProps {
     onClick: () => void;
 }
 
-const LoginButton = ({ provider, onClick }: LoginButtonProps) => (
-    <Button
-        text={provider === 'kakao' ? BUTTON.OAUTH.KAKAO : BUTTON.OAUTH.GOOGLE}
-        css={loginButtonStyles(provider)}
-        onClick={onClick}
-        icon={provider === 'kakao' ? <RiKakaoTalkFill css={iconStyle} /> : <FcGoogle css={iconStyle} />}
-    />
-);
+const LoginButton = ({ provider, onClick }: LoginButtonProps) => {
+    const providerConfig = {
+        google: {
+            text: 'Google 계정으로 시작하기',
+            icon: '/google-icon.svg',
+        },
+        kakao: {
+            text: '카카오로 5초안에 시작하기',
+            icon: '/kakao-icon.svg',
+        },
+    };
+
+    return (
+        <Button
+            text={providerConfig[provider].text}
+            css={loginButtonStyles(provider)}
+            onClick={onClick}
+            icon={<img src={providerConfig[provider].icon} css={iconStyle} />}
+        />
+    );
+};
 
 const loginButtonStyles = (provider: ProviderType) => css`
     color: ${theme.COLORS.TEXT.BLACK};
-    /* border-radius: 12px; */
-    /* line-height: 1.5rem; */
     font-size: 14px;
-    /* font-weight: 500; */
     letter-spacing: -0.5px;
     position: relative;
     background-color: ${provider === 'kakao' ? '#fee500' : '#fdfdfd'};

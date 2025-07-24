@@ -1,8 +1,7 @@
 import { useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Clock } from 'lucide-react';
-import { GoKebabHorizontal } from 'react-icons/go';
+import { Clock, Ellipsis } from 'lucide-react';
 
 import NotificationMessage from '@/domains/notification/components/NotificationMessage';
 import { useNotificationDelete, useNotificationStatus } from '@/domains/notification/hooks/mutations';
@@ -94,7 +93,7 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
                 </div>
 
                 <div css={kebabIcon} onClick={handleNotificationDelete}>
-                    <GoKebabHorizontal />
+                    <Ellipsis />
                 </div>
             </div>
 

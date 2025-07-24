@@ -1,6 +1,5 @@
 import { css } from '@emotion/react';
-import { Pause, Play } from 'lucide-react';
-import { BsPersonWalking } from 'react-icons/bs';
+import { Pause, Play, PersonStanding } from 'lucide-react';
 
 import Button from '@/shared/components/common/Button';
 import { COLORS } from '@/shared/constants/style';
@@ -49,7 +48,7 @@ const MapControlButtons = ({
                 ) : (
                     <Button
                         text='경로로 돌아가기'
-                        icon={<BsPersonWalking size={16} />}
+                        icon={<PersonStanding size={20} />}
                         onClick={handler.handleCharacterViewClick}
                         customStyle={customButtonStyle()}
                     />

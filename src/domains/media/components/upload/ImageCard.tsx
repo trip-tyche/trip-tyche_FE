@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Calendar, Map } from 'lucide-react';
-import { GoCheckCircleFill } from 'react-icons/go';
+import { Calendar, Map, CircleCheck } from 'lucide-react';
 
 import { MediaFile } from '@/domains/media/types';
 import { formatKoreanDate, formatKoreanTime } from '@/libs/utils/date';
@@ -55,7 +54,7 @@ const ImageCard = ({ image, isSelected = false, isTimeView = false, onClick, onL
             {isSelected && (
                 <div css={selectedOverlayStyle}>
                     <span css={checkIconStyle}>
-                        <GoCheckCircleFill size={28} color={COLORS.PRIMARY} />
+                        <CircleCheck size={28} color={COLORS.PRIMARY} />
                     </span>
                 </div>
             )}
