@@ -9,16 +9,16 @@ import NotificationPage from '@/pages/NotificationPage';
 import PageNotFound from '@/pages/PageNotFound';
 import SettingPage from '@/pages/SettingPage';
 import SigninPage from '@/pages/SigninPage';
+import TripImageManagePage from '@/pages/trip/management/TripImageManagePage';
 import TripImageUploadPage from '@/pages/trip/management/TripImageUploadPage';
 import TripInfoEditPage from '@/pages/trip/management/TripInfoEditPage';
-import ImageByDatePage from '@/pages/trip/route/ImageByDatePage';
+import TripRoutePage from '@/pages/trip/route/TripRoutePage';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import { ROUTES } from '@/shared/constants/route';
 
 const TripPages = {
-    TripImageManagePage: lazy(() => import('@/pages/trip/management/TripImageManagePage')),
-    TripRoutePage: lazy(() => import('@/pages/trip/route/TripRoutePage')),
     ImageByPinpointPage: lazy(() => import('@/pages/trip/route/ImageByPinpointPage')),
+    ImageByDatePage: lazy(() => import('@/pages/trip/route/ImageByDatePage')),
 };
 
 const router = createBrowserRouter([
@@ -50,7 +50,7 @@ const router = createBrowserRouter([
                         index: true,
                         element: (
                             <Suspense fallback={<Indicator />}>
-                                <TripPages.TripRoutePage />
+                                <TripRoutePage />
                             </Suspense>
                         ),
                     },
@@ -62,7 +62,7 @@ const router = createBrowserRouter([
                         path: 'edit/image',
                         element: (
                             <Suspense fallback={<Indicator />}>
-                                <TripPages.TripImageManagePage />
+                                <TripImageManagePage />
                             </Suspense>
                         ),
                     },
@@ -84,7 +84,7 @@ const router = createBrowserRouter([
                             },
                             {
                                 path: 'by-date/:date',
-                                element: <ImageByDatePage />,
+                                element: <TripPages.ImageByDatePage />,
                             },
                         ],
                     },

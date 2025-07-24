@@ -75,6 +75,20 @@ const TripRoutePage = () => {
     const isLastPinPoint = currentPinPointIndex === pinPoints.length - 1;
 
     useEffect(() => {
+        if (!isMapRendered) return;
+
+        const prefetchImagePages = async () => {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            Promise.allSettled([
+                import('@/pages/trip/route/ImageByPinpointPage'),
+                import('@/pages/trip/route/ImageByDatePage'),
+            ]);
+        };
+
+        prefetchImagePages();
+    }, [isMapRendered]);
+
+    useEffect(() => {
         if (result) {
             if (!result.success) {
                 showToast(result?.error || MESSAGE.ERROR.UNKNOWN);
