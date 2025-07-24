@@ -9,16 +9,16 @@ import NotificationPage from '@/pages/NotificationPage';
 import PageNotFound from '@/pages/PageNotFound';
 import SettingPage from '@/pages/SettingPage';
 import SigninPage from '@/pages/SigninPage';
-import TripImageManagePage from '@/pages/trip/management/TripImageManagePage';
 import TripImageUploadPage from '@/pages/trip/management/TripImageUploadPage';
 import TripInfoEditPage from '@/pages/trip/management/TripInfoEditPage';
-import TripRoutePage from '@/pages/trip/route/TripRoutePage';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import { ROUTES } from '@/shared/constants/route';
 
 const TripPages = {
     ImageByPinpointPage: lazy(() => import('@/pages/trip/route/ImageByPinpointPage')),
+    TripRoutePage: lazy(() => import('@/pages/trip/route/TripRoutePage')),
     ImageByDatePage: lazy(() => import('@/pages/trip/route/ImageByDatePage')),
+    TripImageManagePage: lazy(() => import('@/pages/trip/management/TripImageManagePage')),
 };
 
 const router = createBrowserRouter([
@@ -50,7 +50,7 @@ const router = createBrowserRouter([
                         index: true,
                         element: (
                             <Suspense fallback={<Indicator />}>
-                                <TripRoutePage />
+                                <TripPages.TripRoutePage />
                             </Suspense>
                         ),
                     },
@@ -62,7 +62,7 @@ const router = createBrowserRouter([
                         path: 'edit/image',
                         element: (
                             <Suspense fallback={<Indicator />}>
-                                <TripImageManagePage />
+                                <TripPages.TripImageManagePage />
                             </Suspense>
                         ),
                     },

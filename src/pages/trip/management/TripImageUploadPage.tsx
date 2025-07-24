@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy } from 'react';
 
 import { css } from '@emotion/react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import ProcessingStep from '@/domains/media/components/upload/ProcessingStep';
-import ReviewStep from '@/domains/media/components/upload/ReviewStep';
 import TripCreateCompleteStep from '@/domains/media/components/upload/TripCreateCompleteStep';
 import UploadStep from '@/domains/media/components/upload/UploadStep';
 import { useImageUpload } from '@/domains/media/hooks/useImageUpload';
@@ -28,6 +27,8 @@ import { COLORS } from '@/shared/constants/style';
 import useBrowserCheck from '@/shared/hooks/useBrowserCheck';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import { Location } from '@/shared/types/map';
+
+const ReviewStep = lazy(() => import('@/domains/media/components/upload/ReviewStep'));
 
 const TripImageUploadPage = () => {
     const [step, setStep] = useState<ImageUploadStepType>('upload');
