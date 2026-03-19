@@ -38,4 +38,14 @@ export const baseStyles = css`
         background-color: ${theme.COLORS.BACKGROUND.WHITE};
         padding: 0 16px;
     }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    [tabindex]:focus-visible {
+        outline: none;
+        box-shadow: ${theme.COLORS.BOX_SHADOW.INPUT_FOCUS};
+    }
 `;
