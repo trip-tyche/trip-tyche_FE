@@ -120,22 +120,31 @@ const ImageCarousel = ({ images, carouselState, setCarouselState }: ImageCarouse
     );
 
     return (
-        <SliderComponent {...carouselOptions} css={carouselStyle}>
-            {images.map((image, index) => (
-                <div
-                    key={image.mediaFileId}
-                    onClick={handleSlideClick}
-                    onTouchStart={handleTouchStart}
-                    onTouchEnd={handleTouchEnd}
-                >
-                    <CarouselItem
-                        image={image}
-                        isCurrent={index === currentSlide}
-                        isZoomed={carouselState === 'zoomed' && index === currentSlide}
-                    />
-                </div>
-            ))}
-        </SliderComponent>
+        <div
+            role="region"
+            aria-roledescription="carousel"
+            aria-label="여행 사진 갤러리"
+        >
+            <SliderComponent {...carouselOptions} css={carouselStyle}>
+                {images.map((image, index) => (
+                    <div
+                        key={image.mediaFileId}
+                        role="group"
+                        aria-roledescription="slide"
+                        aria-label={`${images.length}장 중 ${index + 1}번째 사진`}
+                        onClick={handleSlideClick}
+                        onTouchStart={handleTouchStart}
+                        onTouchEnd={handleTouchEnd}
+                    >
+                        <CarouselItem
+                            image={image}
+                            isCurrent={index === currentSlide}
+                            isZoomed={carouselState === 'zoomed' && index === currentSlide}
+                        />
+                    </div>
+                ))}
+            </SliderComponent>
+        </div>
     );
 };
 
