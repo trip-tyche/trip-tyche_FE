@@ -16,10 +16,17 @@ interface ImageCarouselProps {
     setCarouselState: Dispatch<SetStateAction<ImageCarouselState>>;
 }
 
+const CAROUSEL_CONFIG = {
+    ZOOM_DELAY_MS: 1000,
+    TAP_THRESHOLD_MS: 200,
+    SLIDE_SPEED_MS: 1500,
+    AUTOPLAY_SPEED_MS: 500,
+} as const;
+
 const ImageCarousel = ({ images, carouselState, setCarouselState }: ImageCarouselProps) => {
     const [currentSlide, setCurrentSlide] = useState(0);
 
-    const SliderComponent = Slider as any;
+    const SliderComponent = Slider as React.ComponentType<Record<string, unknown>>;
 
     const sliderRef = useRef<Slider | null>(null);
     const touchStartTimeRef = useRef<number | null>(null);
@@ -62,7 +69,7 @@ const ImageCarousel = ({ images, carouselState, setCarouselState }: ImageCarouse
                     newState = 'paused';
                     zoomTimerRef.current = setTimeout(() => {
                         setCarouselState('zoomed');
-                    }, 1000);
+                    }, CAROUSEL_CONFIG.ZOOM_DELAY_MS);
                 } else if (prevState === 'paused') {
                     newState = 'auto';
                 } else {
@@ -80,7 +87,7 @@ const ImageCarousel = ({ images, carouselState, setCarouselState }: ImageCarouse
 
     const handleTouchEnd = useCallback(
         (event: React.TouchEvent) => {
-            if (touchStartTimeRef.current && Date.now() - touchStartTimeRef.current < 200) {
+            if (touchStartTimeRef.current && Date.now() - touchStartTimeRef.current < CAROUSEL_CONFIG.TAP_THRESHOLD_MS) {
                 handleSlideClick(event);
             }
             touchStartTimeRef.current = null;
@@ -93,9 +100,9 @@ const ImageCarousel = ({ images, carouselState, setCarouselState }: ImageCarouse
             centerMode: carouselState !== 'zoomed',
             infinite: false,
             slidesToShow: 1,
-            speed: 1500,
+            speed: CAROUSEL_CONFIG.SLIDE_SPEED_MS,
             autoplay: carouselState === 'auto',
-            autoplaySpeed: 500,
+            autoplaySpeed: CAROUSEL_CONFIG.AUTOPLAY_SPEED_MS,
             pauseOnHover: false,
             pauseOnFocus: true,
             dots: false,

@@ -38,7 +38,7 @@ const convertDMSToDD = (degrees: number, minutes: number, seconds: number, direc
 };
 
 // EXIF 데이터에서 GPS 좌표 추출
-const extractGpsFromExifData = (exifObj: any): Location | null => {
+const extractGpsFromExifData = (exifObj: Exif): Location | null => {
     if (!exifObj || !exifObj['GPS']) return null;
     const gps = exifObj['GPS'];
 

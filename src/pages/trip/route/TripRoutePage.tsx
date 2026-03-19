@@ -35,6 +35,18 @@ interface TripRouteInfo {
     tripImages: MediaFile[];
 }
 
+const ROUTE_PAGE_CONFIG = {
+    PREFETCH_DELAY_MS: 1000,
+    MEDIUM_DISTANCE_MIN_KM: 10,
+    MEDIUM_DISTANCE_MAX_KM: 100,
+    MEDIUM_DISTANCE_DELAY_MS: 1000,
+    SHORT_DISTANCE_DELAY_MS: 50,
+    PHOTO_CARD_HEIGHT_OFFSET: {
+        CHARACTER_VIEW: 65,
+        INDIVIDUAL_VIEW: 55,
+    },
+} as const;
+
 const TripRoutePage = () => {
     const [tripRouteInfo, setTripRouteInfo] = useState<TripRouteInfo | null>(null);
     const [pinPoints, setPinPoints] = useState<PinPoint[]>([]);
@@ -78,7 +90,7 @@ const TripRoutePage = () => {
         if (!isMapRendered) return;
 
         const prefetchImagePages = async () => {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, ROUTE_PAGE_CONFIG.PREFETCH_DELAY_MS));
             Promise.allSettled([
                 import('@/pages/trip/route/ImageByPinpointPage'),
                 import('@/pages/trip/route/ImageByDatePage'),
@@ -222,7 +234,9 @@ const TripRoutePage = () => {
             }
         };
 
-        const delay = distance > 10 && distance < 100 ? 1000 : 50;
+        const delay = distance > ROUTE_PAGE_CONFIG.MEDIUM_DISTANCE_MIN_KM && distance < ROUTE_PAGE_CONFIG.MEDIUM_DISTANCE_MAX_KM
+            ? ROUTE_PAGE_CONFIG.MEDIUM_DISTANCE_DELAY_MS
+            : ROUTE_PAGE_CONFIG.SHORT_DISTANCE_DELAY_MS;
         setTimeout(() => {
             setCharacterPosition(start);
             animationRef.current = requestAnimationFrame(animate);
@@ -352,7 +366,7 @@ const TripRoutePage = () => {
                                         longitude: characterPosition?.longitude || 0,
                                     }}
                                     image={point.mediaLink}
-                                    heightOffset={65}
+                                    heightOffset={ROUTE_PAGE_CONFIG.PHOTO_CARD_HEIGHT_OFFSET.CHARACTER_VIEW}
                                     isVisible={isPhotoCardVisible(index)}
                                     onClick={() =>
                                         navigate(`${ROUTES.PATH.TRIP.IMAGE.BY_PINPOINT(tripKey!, point.pinPointId)}`)
@@ -395,7 +409,7 @@ const TripRoutePage = () => {
                         <PhotoCard
                             position={selectedIndividualMarker}
                             image={selectedIndividualMarker.mediaLink}
-                            heightOffset={55}
+                            heightOffset={ROUTE_PAGE_CONFIG.PHOTO_CARD_HEIGHT_OFFSET.INDIVIDUAL_VIEW}
                             isVisible={!!selectedIndividualMarker}
                         />
                     )}
@@ -472,7 +486,7 @@ const travelMessageStyle = css`
     top: 70px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: ${COLORS.BACKGROUND.OVERLAY};
     color: ${COLORS.BACKGROUND.WHITE};
     padding: 8px 16px;
     border-radius: 20px;

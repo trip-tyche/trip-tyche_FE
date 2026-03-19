@@ -2,7 +2,7 @@ import { Notification } from '@/domains/notification/types';
 import { apiClient } from '@/libs/apis/shared/client';
 import { ApiResponse } from '@/libs/apis/shared/types';
 
-export const notifiactionAPI = {
+export const notificationAPI = {
     // 공유 알림 목록 조회
     fetchNotificationList: async (userId: number): Promise<ApiResponse<Notification[]>> =>
         await apiClient.get(`/v1/users/${userId}/notifications`),

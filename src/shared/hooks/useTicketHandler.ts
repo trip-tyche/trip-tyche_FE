@@ -30,8 +30,7 @@ export const useTicketHandler = (
         delete: () => {
             setIsModalOpen(true);
         },
-        shwoShareInfo: () => {},
-        unlinkShared: () => {},
+        showShareInfo: () => {},
     };
 
     const deleteTrip = async () => {
