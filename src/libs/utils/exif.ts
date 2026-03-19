@@ -46,10 +46,10 @@ const extractGpsFromExifData = (exifObj: Exif): Location | null => {
      * GPSLatitude, GPSLatitudeRef: 위도 정보와 그에 해당하는 참조(방향)
      * GPSLongitude, GPSLongitudeRef: 경도 정보와 그에 해당하는 참조(방향)
      */
-    const latData = gps[piexif.GPSIFD.GPSLatitude];
-    const latRef = gps[piexif.GPSIFD.GPSLatitudeRef];
-    const lonData = gps[piexif.GPSIFD.GPSLongitude];
-    const lonRef = gps[piexif.GPSIFD.GPSLongitudeRef];
+    const latData = gps[piexif.GPSIFD.GPSLatitude] as [number, number][] | undefined;
+    const latRef = gps[piexif.GPSIFD.GPSLatitudeRef] as string | undefined;
+    const lonData = gps[piexif.GPSIFD.GPSLongitude] as [number, number][] | undefined;
+    const lonRef = gps[piexif.GPSIFD.GPSLongitudeRef] as string | undefined;
 
     if (!latData || !latRef || !lonData || !lonRef) {
         return null;
@@ -95,7 +95,7 @@ export const extractDateFromImage = async (file: File): Promise<Date | null> => 
         const exifData = await readExifData(file);
         if (!exifData || !exifData['0th']) return null;
 
-        const dateTimeOriginal = exifData['0th'][piexif.ImageIFD.DateTime];
+        const dateTimeOriginal = exifData['0th'][piexif.ImageIFD.DateTime] as string | undefined;
         if (!dateTimeOriginal) return null;
 
         // EXIF 날짜 형식 (예: "2023:04:01 12:34:56")을 파싱

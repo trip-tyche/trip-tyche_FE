@@ -1,9 +1,7 @@
 // piexifjs에서 반환하는 EXIF 데이터 구조
 // 각 IFD(Image File Directory)는 태그 번호를 키로 사용
-// 값 타입: 문자열, 숫자, 유리수([분자, 분모]), 유리수 배열 등 다양
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type IfdValue = any;
-type IfdData = Record<number, IfdValue>;
+// 값 타입: 문자열, 숫자, 유리수([분자, 분모] 튜플), 유리수 배열 등
+type IfdData = Record<number, string | number | number[] | [number, number][]>;
 
 export interface Exif {
     '0th'?: IfdData;
