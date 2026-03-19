@@ -74,7 +74,7 @@ const TripInfoForm = ({ isEditing = false, tripForm, onChangeTripInfo }: TripInf
         const isImage = imageDates.some(
             (imageDate) => dayjs(imageDate).format('YYYY-MM-DD') === dayjs(date).format('YYYY-MM-DD'),
         );
-        const isSelected = datePickerProps?.isStartOrEndDate(date);
+        const isSelected = datePickerProps?.isStartOrEndDate(date) ?? false;
 
         return (
             <div css={dayContainerStyle}>

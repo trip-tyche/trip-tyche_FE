@@ -1,7 +1,6 @@
 import { TextInput, TextInputProps } from '@mantine/core';
 
 import { COLORS } from '@/shared/constants/style';
-import theme from '@/shared/styles/theme';
 
 interface InputProps extends Omit<TextInputProps, 'value' | 'onChange'> {
     value: string;
