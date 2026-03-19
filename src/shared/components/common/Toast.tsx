@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { useShallow } from 'zustand/react/shallow';
 
 import { useToastStore } from '@/shared/stores/useToastStore';
 import theme from '@/shared/styles/theme';
@@ -10,13 +9,9 @@ const TOAST_VISIBLE_DURATION = 1200;
 const TOAST_FADE_DURATION = 200;
 
 const Toast: React.FC = () => {
-    const { isVisible, message, hideToast } = useToastStore(
-        useShallow((state) => ({
-            isVisible: state.isVisible,
-            message: state.message,
-            hideToast: state.hideToast,
-        })),
-    );
+    const isVisible = useToastStore((state) => state.isVisible);
+    const message = useToastStore((state) => state.message);
+    const hideToast = useToastStore((state) => state.hideToast);
 
     const [isAnimating, setIsAnimating] = useState(false);
 
