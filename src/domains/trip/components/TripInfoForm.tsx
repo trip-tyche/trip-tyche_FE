@@ -74,25 +74,12 @@ const TripInfoForm = ({ isEditing = false, tripForm, onChangeTripInfo }: TripInf
         const isImage = imageDates.some(
             (imageDate) => dayjs(imageDate).format('YYYY-MM-DD') === dayjs(date).format('YYYY-MM-DD'),
         );
+        const isSelected = datePickerProps?.isStartOrEndDate(date);
 
         return (
-            <div style={{ position: 'relative' }}>
+            <div css={dayContainerStyle}>
                 {date.getDate()}
-                {isImage && (
-                    <div
-                        style={{
-                            position: 'absolute',
-                            bottom: '20px',
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            width: '5px',
-                            height: '5px',
-                            backgroundColor: datePickerProps?.isStartOrEndDate(date) ? 'white' : theme.COLORS.PRIMARY,
-                            borderRadius: '50%',
-                            zIndex: 2,
-                        }}
-                    />
-                )}
+                {isImage && <div css={dayIndicatorStyle(isSelected)} />}
             </div>
         );
     };
@@ -294,6 +281,22 @@ const errorStyle = css`
     margin-left: 4px;
     font-size: ${theme.FONT_SIZES.SM};
     color: ${theme.COLORS.TEXT.ERROR};
+`;
+
+const dayContainerStyle = css`
+    position: relative;
+`;
+
+const dayIndicatorStyle = (isSelected?: boolean) => css`
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    background-color: ${isSelected ? 'white' : theme.COLORS.PRIMARY};
+    border-radius: 50%;
+    z-index: 2;
 `;
 
 export default TripInfoForm;
