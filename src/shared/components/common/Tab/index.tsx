@@ -25,7 +25,7 @@ const tab = css`
     background: none;
     border: none;
     cursor: pointer;
-    color: #6b7280;
+    color: ${COLORS.TEXT.SECONDARY};
     user-select: none;
 `;
 

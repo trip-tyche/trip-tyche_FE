@@ -37,7 +37,7 @@ const descriptionStyle = css`
     font-size: 14px;
     margin: 0 10px 33px 10px;
     text-align: center;
-    color: #5e5e5e;
+    color: ${COLORS.TEXT.SECONDARY};
     line-height: 20px;
     white-space: pre-line;
 `;

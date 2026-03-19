@@ -28,14 +28,14 @@ const emptyImageList = css`
 
 const emptyImageListHeading = css`
     margin-top: 18px;
-    color: #303038;
+    color: ${COLORS.TEXT.TITLE};
     font-size: 18px;
     font-weight: bold;
 `;
 
 const emptyImageListDescription = css`
     margin-top: 8px;
-    color: #767678;
+    color: ${COLORS.TEXT.SECONDARY};
     font-size: 15px;
     line-height: 21px;
     text-align: center;

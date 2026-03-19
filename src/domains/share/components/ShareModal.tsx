@@ -171,7 +171,7 @@ const ticketTitleStyle = css`
 
 const ticketDatesStyle = css`
     font-size: 12px;
-    color: #6b7280;
+    color: ${COLORS.TEXT.SECONDARY};
     margin: 0;
 `;
 
@@ -180,7 +180,7 @@ const descriptionStyle = css`
     text-align: center;
     margin: 16px 0;
     font-size: 14px;
-    color: #374151;
+    color: ${COLORS.ICON.DEFAULT};
     line-height: 1.4;
 `;
 
@@ -244,19 +244,19 @@ const errorTextStyle = css`
 `;
 
 const inputHintStyle = css`
-    color: #6b7280;
+    color: ${COLORS.TEXT.SECONDARY};
     font-size: 12px;
 `;
 
 const charCountStyle = (isOverLimit: boolean) => css`
     font-size: 12px;
-    color: ${isOverLimit ? COLORS.TEXT.ERROR : '#6b7280'};
+    color: ${isOverLimit ? COLORS.TEXT.ERROR : COLORS.TEXT.SECONDARY};
 `;
 
 const errorReulstMessageStyle = css`
     margin: 0 16px 16px;
     padding: 8px 12px;
-    background-color: #fef2f2;
+    background-color: ${COLORS.BACKGROUND.ERROR_LIGHT};
     border-radius: 8px;
     color: ${COLORS.TEXT.ERROR};
     font-size: 14px;
@@ -275,15 +275,15 @@ const cancelButtonStyle = css`
     height: 48px;
     padding: 10px;
     border-radius: 8px;
-    border: 1px solid #d1d5db;
+    border: 1px solid ${COLORS.BORDER_LIGHT};
     background-color: ${COLORS.BACKGROUND.WHITE};
-    color: #4b5563;
+    color: ${COLORS.TEXT.DESCRIPTION};
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
 
     &:hover {
-        background-color: #f3f4f6;
+        background-color: ${COLORS.BACKGROUND.GRAY};
     }
 `;
 

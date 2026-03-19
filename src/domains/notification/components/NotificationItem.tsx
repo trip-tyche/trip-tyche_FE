@@ -156,7 +156,7 @@ const sender = css`
 
 const dateText = css`
     font-size: 12px;
-    color: #6b7280;
+    color: ${COLORS.TEXT.SECONDARY};
     white-space: nowrap;
     margin-left: 8px;
 `;
@@ -175,7 +175,7 @@ const timeContainer = css`
 
 const timeText = css`
     font-size: 12px;
-    color: #6b7280;
+    color: ${COLORS.TEXT.SECONDARY};
 `;
 
 const kebabIcon = css`

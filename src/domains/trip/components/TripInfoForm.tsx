@@ -273,8 +273,8 @@ const selectedButtonStyle = css`
 `;
 
 const defaultButtonStyle = css`
-    background-color: #868e961a;
-    color: #868e96;
+    background-color: ${theme.COLORS.HASHTAG.DEFAULT_BG};
+    color: ${theme.COLORS.HASHTAG.DEFAULT_TEXT};
 `;
 
 const baseDescriptionStyle = css`

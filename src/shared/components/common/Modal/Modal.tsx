@@ -46,7 +46,7 @@ const overlayStyle = css`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgb(0, 0, 0, 0.7);
+    background-color: ${theme.COLORS.BACKGROUND.OVERLAY};
     z-index: 999;
     cursor: pointer;
 `;

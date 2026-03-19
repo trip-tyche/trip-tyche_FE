@@ -62,7 +62,7 @@ const baseStyles = css`
 const buttonStlye = {
     primary: (isActive: boolean) => css`
         background-color: ${isActive ? COLORS.PRIMARY : COLORS.DISABLED};
-        color: ${isActive ? '#f2f4f9' : '#1010104d'};
+        color: ${isActive ? COLORS.BUTTON.WHITE_BG : COLORS.BUTTON.DISABLED_TEXT};
 
         @media (hover: hover) {
             &:hover {
@@ -78,17 +78,17 @@ const buttonStlye = {
         }
     `,
     white: (isActive: boolean) => css`
-        background-color: ${isActive ? '#f2f4f9' : COLORS.DISABLED};
-        color: ${isActive ? COLORS.PRIMARY : '#1010104d'};
+        background-color: ${isActive ? COLORS.BUTTON.WHITE_BG : COLORS.DISABLED};
+        color: ${isActive ? COLORS.PRIMARY : COLORS.BUTTON.DISABLED_TEXT};
 
         @media (hover: hover) {
             &:hover {
-                background-color: ${'#e5e8f0'};
+                background-color: ${COLORS.BUTTON.WHITE_HOVER};
             }
         }
 
         &:active {
-            background-color: ${'#e5e8f0'};
+            background-color: ${COLORS.BUTTON.WHITE_HOVER};
         }
         &:disabled {
             cursor: not-allowed;
@@ -99,7 +99,7 @@ const buttonStlye = {
         color: ${isActive ? THEME_COLORS.error.TEXT : COLORS.DISABLED};
 
         &:hover {
-            background-color: ${isActive ? '#ffe8e8' : COLORS.DISABLED};
+            background-color: ${isActive ? COLORS.BUTTON.ERROR_HOVER : COLORS.DISABLED};
         }
         &:disabled {
             cursor: not-allowed;

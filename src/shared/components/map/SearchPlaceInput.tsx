@@ -79,7 +79,7 @@ const backButtonStyle = css`
     cursor: pointer;
 
     &:hover {
-        background-color: #f0f0f0;
+        background-color: ${COLORS.BACKGROUND.GRAY_LIGHT};
     }
 `;
 

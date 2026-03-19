@@ -1,5 +1,7 @@
 import { css } from '@emotion/react';
 
+import { COLORS } from '@/shared/constants/style';
+
 type SizeType = 'lg' | 'sm';
 
 interface ProgessProps {
@@ -32,13 +34,13 @@ const label = (size: SizeType) => css`
     display: flex;
     justify-content: space-between;
     font-size: ${size === 'sm' ? '12px' : '14px'};
-    color: #4b5563;
+    color: ${COLORS.TEXT.DESCRIPTION};
     margin-bottom: 6px;
 `;
 
 const bar = css`
     height: 6px;
-    background-color: #e5e7eb;
+    background-color: ${COLORS.DISABLED};
     border-radius: 9999px;
     overflow: hidden;
 `;
@@ -47,7 +49,7 @@ const getStepProgressFillStyle = (percentage: number, completed: boolean, size: 
     width: ${percentage}%;
     height: 100%;
     border-radius: 9999px;
-    background-color: ${size === 'lg' ? '#3b82f6' : completed ? '#10b981' : '#3b82f6'};
+    background-color: ${size === 'lg' ? COLORS.PROGRESS.BLUE : completed ? COLORS.PROGRESS.GREEN : COLORS.PROGRESS.BLUE};
     transition: width 0.3s ease;
 `;
 
