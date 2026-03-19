@@ -12,7 +12,7 @@ const readExifData = (file: File): Promise<Exif | null> => {
 
             if (typeof result === 'string') {
                 try {
-                    const exif = piexif.load(result);
+                    const exif = piexif.load(result) as Exif;
                     resolve(exif);
                 } catch (error) {
                     resolve(null);
