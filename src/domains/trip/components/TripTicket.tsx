@@ -62,7 +62,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
             {!isCompletedTrip && (
                 <div css={isUncompletedTripOverlayStyle}>
                     <div css={isUncompletedTripButtonStyle}>
-                        <div
+                        <button
                             css={css`
                                 padding: 10px 12px;
                                 display: flex;
@@ -70,26 +70,34 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
                                 align-items: center;
                                 gap: 6px;
                                 color: ${COLORS.TEXT.DESCRIPTION};
+                                background: none;
+                                border: none;
+                                cursor: pointer;
                             `}
                             onClick={() => handler.edit(isCompletedTrip)}
+                            aria-label="여행 정보 이어서 작성하기"
                         >
-                            <Plus size={14} /> 여행 정보 이어서 작성하기
-                        </div>
+                            <Plus size={14} aria-hidden="true" /> 여행 정보 이어서 작성하기
+                        </button>
 
-                        <div
+                        <button
                             css={css`
                                 padding: 10px 12px;
                                 display: flex;
                                 justify-content: center;
                                 align-items: center;
                                 gap: 6px;
+                                border: none;
                                 border-left: 2px solid ${COLORS.BORDER};
                                 color: ${COLORS.TEXT.ERROR};
+                                background: none;
+                                cursor: pointer;
                             `}
                             onClick={() => handler.delete()}
+                            aria-label="삭제하기"
                         >
-                            <Trash size={14} /> 삭제하기
-                        </div>
+                            <Trash size={14} aria-hidden="true" /> 삭제하기
+                        </button>
                     </div>
                 </div>
             )}
@@ -152,29 +160,29 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
 
             <footer css={buttonGroup}>
                 <button css={buttonStyle} onClick={() => handler.edit(isCompletedTrip)}>
-                    <Edit size={14} />
+                    <Edit size={14} aria-hidden="true" />
                     {isOwner ? '티켓 수정' : '정보 보기'}
                 </button>
                 <button css={buttonStyle} onClick={() => handler.images()}>
-                    <ImagePlus size={16} />
+                    <ImagePlus size={16} aria-hidden="true" />
                     {isOwner ? '사진 관리' : '사진 보기'}
                 </button>
                 {isOwner ? (
                     <button css={buttonStyle} onClick={() => setIsShareModalOpen(true)}>
-                        <Share2 size={16} /> 티켓 공유
+                        <Share2 size={16} aria-hidden="true" /> 티켓 공유
                     </button>
                 ) : (
                     <button css={buttonStyle} onClick={() => setIsShareModalOpen(true)}>
-                        <Info size={16} /> 공유 정보
+                        <Info size={16} aria-hidden="true" /> 공유 정보
                     </button>
                 )}
                 {isOwner ? (
                     <button css={buttonStyle} onClick={() => handler.delete()}>
-                        <Trash size={14} /> 티켓 삭제
+                        <Trash size={14} aria-hidden="true" /> 티켓 삭제
                     </button>
                 ) : (
                     <button css={buttonStyle} onClick={() => handler.delete()}>
-                        <Unlink size={14} /> 공유 해제
+                        <Unlink size={14} aria-hidden="true" /> 공유 해제
                     </button>
                 )}
             </footer>
