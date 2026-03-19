@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { ImagePlus, Share2, Edit, Trash, Unlink, Info, Plus } from 'lucide-react';
@@ -459,4 +459,4 @@ const buttonStyle = css`
     }
 `;
 
-export default TripTicket;
+export default memo(TripTicket);
