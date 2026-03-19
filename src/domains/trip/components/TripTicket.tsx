@@ -31,7 +31,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     } = tripInfo;
 
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-    const { showToast } = useToastStore.getState();
+    const showToast = useToastStore((state) => state.showToast);
 
     const userInfo = useUserStore((state) => state.userInfo);
 

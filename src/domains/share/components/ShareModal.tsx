@@ -26,7 +26,7 @@ const ShareModal = ({ tripKey, tripTitle, isOwner, sharedPeople, onClose, startD
     const [isValid, setIsValid] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
 
-    const { showToast } = useToastStore.getState();
+    const showToast = useToastStore((state) => state.showToast);
     const { isSharing, error: errorResult, shareTrip, clearError } = useTripShare(inputValue, tripKey!, onShareSuccess);
 
     useEffect(() => {
