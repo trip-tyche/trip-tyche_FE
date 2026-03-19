@@ -16,7 +16,8 @@ export const baseStyles = css`
     body {
         font-family: 'Pretendard', sans-serif;
         font-weight: 400;
-        line-height: 1.6;
+        line-height: 1;
+        letter-spacing: -0.14px;
         font-size: ${theme.FONT_SIZES.LG};
         color: ${theme.COLORS.TEXT.BLACK};
         background-color: ${theme.COLORS.BACKGROUND.BODY};
