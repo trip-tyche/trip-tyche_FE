@@ -20,7 +20,7 @@ const CAROUSEL_CONFIG = {
     ZOOM_DELAY_MS: 1000,
     TAP_THRESHOLD_MS: 200,
     SLIDE_SPEED_MS: 1500,
-    AUTOPLAY_SPEED_MS: 2000,
+    AUTOPLAY_SPEED_MS: 500,
 } as const;
 
 const ImageCarousel = ({ images, carouselState, setCarouselState }: ImageCarouselProps) => {
