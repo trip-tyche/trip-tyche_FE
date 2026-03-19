@@ -6,11 +6,9 @@ import { COLORS, THEME_COLORS } from '@/shared/constants/style';
 import theme from '@/shared/styles/theme';
 
 type VariantType = 'primary' | 'white' | 'error';
-type SizeType = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
     variant?: VariantType;
-    size?: SizeType;
     text?: string;
     icon?: React.ReactNode;
     isLoading?: boolean;
@@ -18,15 +16,8 @@ interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
     customStyle?: SerializedStyles;
 }
 
-const BUTTON_SIZES = {
-    sm: { height: '36px', fontSize: theme.FONT_SIZES.SM, borderRadius: '8px' },
-    md: { height: '44px', fontSize: theme.FONT_SIZES.MD, borderRadius: '10px' },
-    lg: { height: '48px', fontSize: theme.FONT_SIZES.LG, borderRadius: '12px' },
-} as const;
-
 const Button = ({
     variant = 'primary',
-    size = 'lg',
     text,
     icon,
     isLoading = false,
@@ -37,7 +28,7 @@ const Button = ({
 }: ButtonProps) => {
     return (
         <button
-            css={[baseStyles, sizeStyle(size), buttonStyle[variant](!disabled), customStyle]}
+            css={[baseStyles, buttonStyle[variant](!disabled), customStyle]}
             disabled={disabled || isLoading}
             {...props}
         >
@@ -58,18 +49,14 @@ const baseStyles = css`
     justify-content: center;
     align-items: center;
     border: 0;
+    border-radius: 12px;
     width: 100%;
+    height: 48px;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     &:active {
         transform: scale(0.97);
     }
-`;
-
-const sizeStyle = (size: SizeType) => css`
-    height: ${BUTTON_SIZES[size].height};
-    font-size: ${BUTTON_SIZES[size].fontSize};
-    border-radius: ${BUTTON_SIZES[size].borderRadius};
 `;
 
 const buttonStyle = {
