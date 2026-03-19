@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { useState } from 'react';
 
 import { css } from '@emotion/react';
 import { Clock, Ellipsis } from 'lucide-react';
@@ -184,4 +184,4 @@ const kebabIcon = css`
     cursor: pointer;
 `;
 
-export default memo(NotificationItem);
+export default NotificationItem;
