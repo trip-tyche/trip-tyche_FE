@@ -28,8 +28,8 @@ const Modal = ({ closeModal, isConfirm = false, children, customStyle }: ModalPr
 
     return createPortal(
         <React.Fragment>
-            <div css={overlayStyle} onClick={!isConfirm ? closeModal : undefined}></div>
-            <div css={modalStyle(customStyle)}>{children}</div>
+            <div css={overlayStyle} onClick={!isConfirm ? closeModal : undefined} aria-hidden="true"></div>
+            <div css={modalStyle(customStyle)} role="dialog" aria-modal="true">{children}</div>
         </React.Fragment>,
         document.getElementById('portal-root') || document.body,
     );
