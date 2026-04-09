@@ -17,17 +17,16 @@ export const baseStyles = css`
         font-family: 'Pretendard', sans-serif;
         font-weight: 400;
         line-height: 1;
+        letter-spacing: -0.14px;
         font-size: ${theme.FONT_SIZES.LG};
         color: ${theme.COLORS.TEXT.BLACK};
-        background-color: #eee;
-        letter-spacing: -0.14px;
+        background-color: ${theme.COLORS.BACKGROUND.BODY};
         overflow: hidden;
     }
 
     input,
     textarea {
         font-family: 'Pretendard', sans-serif;
-        letter-spacing: -0.14px;
         color: ${theme.COLORS.TEXT.BLACK};
 
         &::placeholder {
@@ -39,5 +38,15 @@ export const baseStyles = css`
     .wrapper {
         background-color: ${theme.COLORS.BACKGROUND.WHITE};
         padding: 0 16px;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    [tabindex]:focus-visible {
+        outline: none;
+        box-shadow: ${theme.COLORS.BOX_SHADOW.INPUT_FOCUS};
     }
 `;

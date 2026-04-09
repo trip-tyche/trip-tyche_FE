@@ -83,9 +83,8 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
                         error.response.data.message = '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요';
                         return Promise.reject(error);
                     }
-                } catch (error) {
-                    console.error('interceptor error: ', error);
-                    return Promise.reject(error);
+                } catch (retryError) {
+                    return Promise.reject(retryError);
                 }
             }
 

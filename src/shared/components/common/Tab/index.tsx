@@ -24,14 +24,16 @@ const tab = css`
     text-align: center;
     background: none;
     border: none;
+    border-bottom: 2px solid transparent;
     cursor: pointer;
-    color: #6b7280;
+    color: ${COLORS.TEXT.SECONDARY};
     user-select: none;
+    transition: color 0.2s ease, border-color 0.2s ease;
 `;
 
 const activeTab = css`
     color: ${COLORS.PRIMARY};
-    border-bottom: 2px solid ${COLORS.PRIMARY};
+    border-bottom-color: ${COLORS.PRIMARY};
 `;
 
 export default Tab;

@@ -1,6 +1,6 @@
 import { TextInput, TextInputProps } from '@mantine/core';
 
-import theme from '@/shared/styles/theme';
+import { COLORS } from '@/shared/constants/style';
 
 interface InputProps extends Omit<TextInputProps, 'value' | 'onChange'> {
     value: string;
@@ -16,19 +16,17 @@ const Input = ({ value, onChange, ...props }: InputProps) => {
             onChange={(event) => onChange(event.target.value)}
             styles={{
                 input: {
-                    ...inputBaseStyles,
+                    transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+                    '&:focus-within': {
+                        outline: 'none',
+                        border: `2px solid ${COLORS.PRIMARY}`,
+                        boxShadow: COLORS.BOX_SHADOW.INPUT_FOCUS,
+                    },
                 },
             }}
             {...props}
         />
     );
-};
-
-const inputBaseStyles = {
-    '&:focusWithin': {
-        outline: 'none',
-        border: `2px solid ${theme.COLORS.PRIMARY}`,
-    },
 };
 
 export default Input;

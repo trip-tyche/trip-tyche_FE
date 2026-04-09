@@ -31,7 +31,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     } = tripInfo;
 
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-    const { showToast } = useToastStore.getState();
+    const showToast = useToastStore((state) => state.showToast);
 
     const userInfo = useUserStore((state) => state.userInfo);
 
@@ -62,7 +62,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
             {!isCompletedTrip && (
                 <div css={isUncompletedTripOverlayStyle}>
                     <div css={isUncompletedTripButtonStyle}>
-                        <div
+                        <button
                             css={css`
                                 padding: 10px 12px;
                                 display: flex;
@@ -70,26 +70,34 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
                                 align-items: center;
                                 gap: 6px;
                                 color: ${COLORS.TEXT.DESCRIPTION};
+                                background: none;
+                                border: none;
+                                cursor: pointer;
                             `}
                             onClick={() => handler.edit(isCompletedTrip)}
+                            aria-label="여행 정보 이어서 작성하기"
                         >
-                            <Plus size={14} /> 여행 정보 이어서 작성하기
-                        </div>
+                            <Plus size={14} aria-hidden="true" /> 여행 정보 이어서 작성하기
+                        </button>
 
-                        <div
+                        <button
                             css={css`
                                 padding: 10px 12px;
                                 display: flex;
                                 justify-content: center;
                                 align-items: center;
                                 gap: 6px;
+                                border: none;
                                 border-left: 2px solid ${COLORS.BORDER};
                                 color: ${COLORS.TEXT.ERROR};
+                                background: none;
+                                cursor: pointer;
                             `}
                             onClick={() => handler.delete()}
+                            aria-label="삭제하기"
                         >
-                            <Trash size={14} /> 삭제하기
-                        </div>
+                            <Trash size={14} aria-hidden="true" /> 삭제하기
+                        </button>
                     </div>
                 </div>
             )}
@@ -152,29 +160,29 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
 
             <footer css={buttonGroup}>
                 <button css={buttonStyle} onClick={() => handler.edit(isCompletedTrip)}>
-                    <Edit size={14} />
+                    <Edit size={14} aria-hidden="true" />
                     {isOwner ? '티켓 수정' : '정보 보기'}
                 </button>
                 <button css={buttonStyle} onClick={() => handler.images()}>
-                    <ImagePlus size={16} />
+                    <ImagePlus size={16} aria-hidden="true" />
                     {isOwner ? '사진 관리' : '사진 보기'}
                 </button>
                 {isOwner ? (
                     <button css={buttonStyle} onClick={() => setIsShareModalOpen(true)}>
-                        <Share2 size={16} /> 티켓 공유
+                        <Share2 size={16} aria-hidden="true" /> 티켓 공유
                     </button>
                 ) : (
                     <button css={buttonStyle} onClick={() => setIsShareModalOpen(true)}>
-                        <Info size={16} /> 공유 정보
+                        <Info size={16} aria-hidden="true" /> 공유 정보
                     </button>
                 )}
                 {isOwner ? (
                     <button css={buttonStyle} onClick={() => handler.delete()}>
-                        <Trash size={14} /> 티켓 삭제
+                        <Trash size={14} aria-hidden="true" /> 티켓 삭제
                     </button>
                 ) : (
                     <button css={buttonStyle} onClick={() => handler.delete()}>
-                        <Unlink size={14} /> 공유 해제
+                        <Unlink size={14} aria-hidden="true" /> 공유 해제
                     </button>
                 )}
             </footer>
@@ -214,9 +222,7 @@ const container = css`
     margin-bottom: 8px;
     position: relative;
     transition: all 0.25s ease;
-    box-shadow:
-        0 4px 6px -1px rgba(0, 0, 0, 0.06),
-        0 2px 4px -1px rgba(0, 0, 0, 0.08);
+    box-shadow: ${COLORS.BOX_SHADOW.CARD};
     border-radius: 14px;
     overflow: hidden;
     user-select: none;
@@ -245,9 +251,7 @@ const isUncompletedTripButtonStyle = css`
     border: none;
     border-radius: 24px;
     cursor: pointer;
-    box-shadow:
-        0 4px 6px -1px rgba(0, 0, 0, 0.06),
-        0 2px 4px -1px rgba(0, 0, 0, 0.08);
+    box-shadow: ${COLORS.BOX_SHADOW.CARD};
     font-size: 14px;
     font-weight: 600;
 `;
@@ -259,7 +263,7 @@ const mainStyle = css`
 const header = (isOwner: boolean) => css`
     display: flex;
     justify-content: space-around;
-    background: ${isOwner ? COLORS.PRIMARY : '#4b5563'};
+    background: ${isOwner ? COLORS.PRIMARY : COLORS.TEXT.DESCRIPTION};
     color: ${COLORS.BACKGROUND.WHITE};
     padding: 12px 0;
     position: relative;
@@ -273,7 +277,7 @@ const headerItem = css`
 
 const labelStyle = css`
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.7); /* header label semi-transparent white */
     margin-bottom: 4px;
     font-weight: 500;
 `;
@@ -313,7 +317,7 @@ const dotsAndCharacterContainer = css`
 const pointDots = css`
     width: 100%;
     height: 2px;
-    background: #9ca3af;
+    background: ${COLORS.ICON.LIGHT};
 `;
 
 const startPointDot = css`
@@ -323,7 +327,7 @@ const startPointDot = css`
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background-color: #9ca3af;
+    background-color: ${COLORS.ICON.LIGHT};
     transform: translateY(-50%);
 `;
 
@@ -334,7 +338,7 @@ const endPointDot = css`
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background-color: #9ca3af;
+    background-color: ${COLORS.ICON.LIGHT};
     transform: translateY(-50%);
 `;
 
@@ -376,13 +380,13 @@ const titleStyle = css`
 const titleLabelStyle = css`
     font-size: 12px;
     font-weight: 500;
-    color: #6b7280;
+    color: ${COLORS.TEXT.SECONDARY};
 `;
 
 const titleValueStyle = css`
     font-size: 14px;
     font-weight: 600;
-    color: #111827;
+    color: ${COLORS.TEXT.TITLE};
 `;
 
 const contentFooter = css`
@@ -399,9 +403,8 @@ const hashtagGroup = css`
 `;
 
 const hashtagStyle = css`
-    background-color: #f0f0f0;
-    color: ${COLORS.TEXT.BLACK};
-    color: #4b5563;
+    background-color: ${COLORS.BACKGROUND.GRAY_LIGHT};
+    color: ${COLORS.TEXT.DESCRIPTION};
     padding: 5px 10px;
     border-radius: 9999px;
     font-size: ${FONT_SIZES.SM};
@@ -414,8 +417,8 @@ const hashSymbol = css`
 
 const flagStyle = (isOwner: boolean) => css`
     padding: 4px 8px;
-    background-color: ${isOwner ? '#eff6ff' : '#f1f5f9'};
-    border: 1px solid ${isOwner ? '#dbeafe' : '#e2e8f0'};
+    background-color: ${isOwner ? COLORS.FLAG.OWNER_BG : COLORS.FLAG.SHARED_BG};
+    border: 1px solid ${isOwner ? COLORS.FLAG.OWNER_BORDER : COLORS.FLAG.SHARED_BORDER};
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -427,10 +430,10 @@ const flagStyle = (isOwner: boolean) => css`
 const buttonGroup = css`
     display: flex;
     justify-content: space-between;
-    background-color: white;
+    background-color: ${COLORS.BACKGROUND.WHITE};
     padding: 10px 12px;
     border-radius: 0 0 14px 14px;
-    border: 1px solid #f3f4f6;
+    border: 1px solid ${COLORS.BACKGROUND.GRAY};
     border-top: none;
     transition: all 0.25s ease;
 `;
@@ -448,7 +451,7 @@ const buttonStyle = css`
     transition: all 0.2s ease;
     gap: 6px;
     background: transparent;
-    color: #4b5563;
+    color: ${COLORS.TEXT.DESCRIPTION};
     transition: color 0.2s ease;
 
     &:hover {

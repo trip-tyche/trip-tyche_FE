@@ -113,7 +113,7 @@ const imageDetailWrapper = css`
         cursor: pointer;
 
         &:hover {
-            background: #000000;
+            background: ${COLORS.BACKGROUND.BLACK};
         }
     }
 
@@ -130,9 +130,7 @@ const photoCardStyle = (isLoading: boolean) => css`
     height: ${MAP.PHOTO_CARD_SIZE.HEIGHT}px;
     border-radius: 15%;
     padding: 1px;
-    box-shadow:
-        rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
-        rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+    box-shadow: ${COLORS.BOX_SHADOW.PHOTO_CARD};
     cursor: pointer;
     transition: transform 0.2s ease;
     position: relative;
@@ -149,10 +147,8 @@ const photoCardStyle = (isLoading: boolean) => css`
         transform: translateX(-50%);
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
-        border-top: 10px solid white;
-        box-shadow:
-            rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
-            rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+        border-top: 10px solid ${COLORS.BACKGROUND.WHITE};
+        box-shadow: ${COLORS.BOX_SHADOW.PHOTO_CARD};
     }
 
     img {

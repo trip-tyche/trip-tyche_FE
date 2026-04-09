@@ -70,8 +70,8 @@ export const useImageUpload = () => {
                 }),
             );
             submitS3urlAndMetadata(images, presignedUrls);
-        } catch (error) {
-            console.error(error);
+        } catch {
+            // presigned URL 요청 실패 시 사용자에게 에러 메시지가 Result 패턴으로 전달됨
         }
     };
 

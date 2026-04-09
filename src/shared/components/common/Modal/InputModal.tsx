@@ -53,7 +53,7 @@ const titleStyle = css`
     text-align: center;
     font-size: 18px;
     font-weight: 600;
-    color: #181818;
+    color: ${theme.COLORS.TEXT.TITLE};
     margin-top: 24px;
     margin-bottom: 20px;
 `;
@@ -62,7 +62,7 @@ const descriptionStyle = css`
     font-size: 14px;
     margin: 0 26px 20px 26px;
     text-align: center;
-    color: #5e5e5e;
+    color: ${theme.COLORS.TEXT.SECONDARY};
     line-height: 20px;
 `;
 

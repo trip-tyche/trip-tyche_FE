@@ -34,7 +34,7 @@ const container = css`
 const iconContainer = (size: string, shape: string) => css`
     width: ${size === 'lg' ? '48px' : '36px'};
     height: ${size === 'lg' ? '48px' : '36px'};
-    background-color: #dbeafe;
+    background-color: ${COLORS.BACKGROUND.PRIMARY_LIGHT};
     border-radius: ${shape === 'rectangle' ? '8px' : '9999px'};
     display: flex;
     align-items: center;

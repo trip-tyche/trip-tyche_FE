@@ -105,7 +105,7 @@ const mainStyle = css`
 const header = (isOwner: boolean) => css`
     display: flex;
     justify-content: space-around;
-    background: ${isOwner ? COLORS.PRIMARY : '#4b5563'};
+    background: ${isOwner ? COLORS.PRIMARY : COLORS.TEXT.DESCRIPTION};
     color: ${COLORS.BACKGROUND.WHITE};
     padding: 12px 0;
     position: relative;
@@ -160,7 +160,7 @@ const dotsAndCharacterContainer = css`
 const pointDots = css`
     width: 100%;
     height: 2px;
-    background: #9ca3af;
+    background: ${COLORS.ICON.LIGHT};
 `;
 
 const startPointDot = css`
@@ -170,7 +170,7 @@ const startPointDot = css`
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background-color: #9ca3af;
+    background-color: ${COLORS.ICON.LIGHT};
     transform: translateY(-50%);
 `;
 
@@ -181,7 +181,7 @@ const endPointDot = css`
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background-color: #9ca3af;
+    background-color: ${COLORS.ICON.LIGHT};
     transform: translateY(-50%);
 `;
 
@@ -223,13 +223,13 @@ const titleStyle = css`
 const titleLabelStyle = css`
     font-size: 12px;
     font-weight: 500;
-    color: #6b7280;
+    color: ${COLORS.TEXT.SECONDARY};
 `;
 
 const titleValueStyle = css`
     font-size: 14px;
     font-weight: 600;
-    color: #111827;
+    color: ${COLORS.TEXT.TITLE};
 `;
 
 const contentFooter = css`
@@ -246,9 +246,8 @@ const hashtagGroup = css`
 `;
 
 const hashtagStyle = css`
-    background-color: #f0f0f0;
-    color: ${COLORS.TEXT.BLACK};
-    color: #4b5563;
+    background-color: ${COLORS.BACKGROUND.GRAY_LIGHT};
+    color: ${COLORS.TEXT.DESCRIPTION};
     padding: 5px 10px;
     border-radius: 9999px;
     font-size: ${FONT_SIZES.SM};
@@ -261,8 +260,8 @@ const hashSymbol = css`
 
 const flagStyle = (isOwner: boolean) => css`
     padding: 4px 8px;
-    background-color: ${isOwner ? '#eff6ff' : '#f1f5f9'};
-    border: 1px solid ${isOwner ? '#dbeafe' : '#e2e8f0'};
+    background-color: ${isOwner ? COLORS.FLAG.OWNER_BG : COLORS.FLAG.SHARED_BG};
+    border: 1px solid ${isOwner ? COLORS.FLAG.OWNER_BORDER : COLORS.FLAG.SHARED_BORDER};
     border-radius: 8px;
     display: flex;
     align-items: center;

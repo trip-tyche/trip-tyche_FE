@@ -161,7 +161,7 @@ const mainTitleStyle = css`
 
 const subtitleStyle = css`
     font-size: 14px;
-    color: #6b7280;
+    color: ${COLORS.TEXT.SECONDARY};
 `;
 
 const inputSectionStyle = css`
@@ -223,13 +223,13 @@ const errorTextStyle = css`
 `;
 
 const inputHintStyle = css`
-    color: #6b7280;
+    color: ${COLORS.TEXT.SECONDARY};
     font-size: 12px;
 `;
 
 const charCountStyle = (isOverLimit: boolean) => css`
     font-size: 12px;
-    color: ${isOverLimit ? COLORS.TEXT.ERROR : '#6b7280'};
+    color: ${isOverLimit ? COLORS.TEXT.ERROR : COLORS.TEXT.SECONDARY};
 `;
 
 const suggestionsContainerStyle = css`
@@ -239,7 +239,7 @@ const suggestionsContainerStyle = css`
 const suggestionsTitleStyle = css`
     font-size: 14px;
     font-weight: 500;
-    color: #4b5563;
+    color: ${COLORS.TEXT.DESCRIPTION};
     margin-bottom: 12px;
 `;
 
@@ -251,11 +251,11 @@ const suggestionsGridStyle = css`
 
 const suggestionButtonStyle = css`
     padding: 8px 12px;
-    background-color: #f3f4f6;
+    background-color: ${COLORS.BACKGROUND.GRAY};
     border-radius: 9999px;
     border: none;
     font-size: 14px;
-    color: #4b5563;
+    color: ${COLORS.TEXT.DESCRIPTION};
     cursor: pointer;
     transition: all 0.2s ease;
 

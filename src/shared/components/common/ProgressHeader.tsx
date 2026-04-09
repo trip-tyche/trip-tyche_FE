@@ -19,18 +19,18 @@ const ProgressHeader = ({ currentStep }: ProgressHeaderProps) => {
     const getStepStyle = (step: string) => {
         if (isCurrent(step)) {
             return css`
-                background-color: #2563eb;
+                background-color: ${COLORS.PROGRESS.BLUE_DARK};
                 color: white;
             `;
         } else if (isActive(step)) {
             return css`
-                background-color: #16a34a;
+                background-color: ${COLORS.PROGRESS.GREEN_DARK};
                 color: white;
             `;
         } else {
             return css`
-                background-color: #e5e7eb;
-                color: #4b5563;
+                background-color: ${COLORS.DISABLED};
+                color: ${COLORS.TEXT.DESCRIPTION};
             `;
         }
     };
@@ -38,11 +38,11 @@ const ProgressHeader = ({ currentStep }: ProgressHeaderProps) => {
     const getConnectorStyle = (afterStep: string) => {
         if (isActive(afterStep)) {
             return css`
-                background-color: #16a34a;
+                background-color: ${COLORS.PROGRESS.GREEN_DARK};
             `;
         } else {
             return css`
-                background-color: #e5e7eb;
+                background-color: ${COLORS.DISABLED};
             `;
         }
     };
@@ -112,7 +112,7 @@ const stepText = css`
     display: flex;
     justify-content: space-between;
     font-size: 12px;
-    color: #6b7280;
+    color: ${COLORS.TEXT.SECONDARY};
     margin-top: 8px;
 `;
 

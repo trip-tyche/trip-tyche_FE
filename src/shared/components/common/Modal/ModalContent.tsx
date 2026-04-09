@@ -30,7 +30,7 @@ const contentContainer = css`
 const titleStyle = css`
     font-size: 16px;
     font-weight: 600;
-    color: #181818;
+    color: ${theme.COLORS.TEXT.TITLE};
 `;
 
 const countStyle = css`

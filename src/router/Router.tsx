@@ -4,15 +4,16 @@ import { createBrowserRouter } from 'react-router-dom';
 
 import RootLayout from '@/layouts/RootLayout';
 import ErrorPage from '@/pages/ErrorPage';
-import MainPage from '@/pages/MainPage';
-import NotificationPage from '@/pages/NotificationPage';
 import PageNotFound from '@/pages/PageNotFound';
-import SettingPage from '@/pages/SettingPage';
 import SigninPage from '@/pages/SigninPage';
-import TripImageUploadPage from '@/pages/trip/management/TripImageUploadPage';
-import TripInfoEditPage from '@/pages/trip/management/TripInfoEditPage';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import { ROUTES } from '@/shared/constants/route';
+
+const MainPage = lazy(() => import('@/pages/MainPage'));
+const SettingPage = lazy(() => import('@/pages/SettingPage'));
+const NotificationPage = lazy(() => import('@/pages/NotificationPage'));
+const TripImageUploadPage = lazy(() => import('@/pages/trip/management/TripImageUploadPage'));
+const TripInfoEditPage = lazy(() => import('@/pages/trip/management/TripInfoEditPage'));
 
 const TripPages = {
     ImageByPinpointPage: lazy(() => import('@/pages/trip/route/ImageByPinpointPage')),
@@ -29,7 +30,11 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <MainPage />,
+                element: (
+                    <Suspense fallback={<Indicator />}>
+                        <MainPage />
+                    </Suspense>
+                ),
             },
             {
                 path: ROUTES.PATH.SIGNIN,
@@ -37,11 +42,19 @@ const router = createBrowserRouter([
             },
             {
                 path: ROUTES.PATH.SETTING,
-                element: <SettingPage />,
+                element: (
+                    <Suspense fallback={<Indicator />}>
+                        <SettingPage />
+                    </Suspense>
+                ),
             },
             {
                 path: `notification/:userId`,
-                element: <NotificationPage />,
+                element: (
+                    <Suspense fallback={<Indicator />}>
+                        <NotificationPage />
+                    </Suspense>
+                ),
             },
             {
                 path: 'trip/:tripKey/',
@@ -56,7 +69,11 @@ const router = createBrowserRouter([
                     },
                     {
                         path: 'new',
-                        element: <TripImageUploadPage />,
+                        element: (
+                            <Suspense fallback={<Indicator />}>
+                                <TripImageUploadPage />
+                            </Suspense>
+                        ),
                     },
                     {
                         path: 'edit/image',
@@ -68,7 +85,11 @@ const router = createBrowserRouter([
                     },
                     {
                         path: 'edit/info',
-                        element: <TripInfoEditPage />,
+                        element: (
+                            <Suspense fallback={<Indicator />}>
+                                <TripInfoEditPage />
+                            </Suspense>
+                        ),
                     },
 
                     {
@@ -84,7 +105,11 @@ const router = createBrowserRouter([
                             },
                             {
                                 path: 'by-date/:date',
-                                element: <TripPages.ImageByDatePage />,
+                                element: (
+                                    <Suspense fallback={<Indicator />}>
+                                        <TripPages.ImageByDatePage />
+                                    </Suspense>
+                                ),
                             },
                         ],
                     },

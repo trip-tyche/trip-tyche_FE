@@ -6,12 +6,14 @@ export const COLORS = {
     PRIMARY_HOVER: '#005d96',
     TEXT: {
         BLACK: '#404040',
+        TITLE: '#111827',
         WHITE: '#F1F1F1',
         PLACEHOLDER: '#9ca3af',
         SUCCESS: '#059669',
         ERROR: '#ef4444',
         DESCRIPTION: '#4b5563',
         DESCRIPTION_LIGHT: '#8B95A1',
+        SECONDARY: '#6b7280',
     },
     ICON: {
         DEFAULT: '#374151',
@@ -20,15 +22,49 @@ export const COLORS = {
     DISABLED: '#e5e7eb',
     BACKGROUND: {
         PRIMARY: '#eff6ff',
+        PRIMARY_LIGHT: '#dbeafe',
         BLACK: '#101010',
         WHITE: '#FFFFFF',
         WHITE_SECONDARY: '#f9fafb',
+        GRAY: '#f3f4f6',
+        GRAY_LIGHT: '#f0f0f0',
         ICON: '#8B95A1',
+        TOAST: '#455555',
+        ERROR_LIGHT: '#fef2f2',
+        BODY: '#eeeeee',
+        OVERLAY: 'rgba(0, 0, 0, 0.7)',
+        OVERLAY_LIGHT: 'rgba(0, 0, 0, 0.3)',
     },
     BORDER: '#e5e7eb',
+    BORDER_LIGHT: '#d1d5db',
     BOX_SHADOW: {
         DEFAULT: 'rgba(0, 0, 0, 0.3) 0px 8px 16px -8px',
-        INPUT_FOCUS: 'rgba(0, 115, 187, 0.2) 0 0 0 3px ;',
+        INPUT_FOCUS: 'rgba(0, 115, 187, 0.2) 0 0 0 3px',
+        CARD: '0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.08)',
+        PHOTO_CARD:
+            'rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px',
+    },
+    PROGRESS: {
+        BLUE: '#3b82f6',
+        BLUE_DARK: '#2563eb',
+        GREEN: '#10b981',
+        GREEN_DARK: '#16a34a',
+    },
+    BUTTON: {
+        WHITE_BG: '#f2f4f9',
+        WHITE_HOVER: '#e5e8f0',
+        DISABLED_TEXT: '#1010104d',
+        ERROR_HOVER: '#ffe8e8',
+    },
+    FLAG: {
+        OWNER_BG: '#eff6ff',
+        OWNER_BORDER: '#dbeafe',
+        SHARED_BG: '#f1f5f9',
+        SHARED_BORDER: '#e2e8f0',
+    },
+    HASHTAG: {
+        DEFAULT_BG: '#868e961a',
+        DEFAULT_TEXT: '#868e96',
     },
 } as const;
 
@@ -48,4 +84,15 @@ export const FONT_SIZES = {
     XL: '18px',
     XXL: '20px',
     XXXL: '24px',
+} as const;
+
+export const SPACING = {
+    XXS: '2px',
+    XS: '4px',
+    SM: '8px',
+    MD: '12px',
+    LG: '16px',
+    XL: '24px',
+    XXL: '32px',
+    XXXL: '48px',
 } as const;

@@ -49,7 +49,7 @@ const toastStyle = css`
     align-items: center;
     padding: 20px 0;
     border-radius: 8px;
-    background-color: #455555;
+    background-color: ${theme.COLORS.BACKGROUND.TOAST};
     color: ${theme.COLORS.TEXT.WHITE};
     z-index: 1000;
     transition: all 0.2s ease-in;

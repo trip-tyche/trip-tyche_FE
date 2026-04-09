@@ -49,7 +49,7 @@ const titleStyle = (theme: ThemeType) => css`
 
 const descriptionStyle = (theme: ThemeType) => css`
     font-size: 14px;
-    color: ${theme === 'warning' || theme === 'error' ? THEME_COLORS[theme].TEXT : '#4b5563'};
+    color: ${theme === 'warning' || theme === 'error' ? THEME_COLORS[theme].TEXT : THEME_COLORS.default.TEXT};
     line-height: 1.2;
 `;
 

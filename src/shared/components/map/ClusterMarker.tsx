@@ -18,7 +18,7 @@ const ClusterMarker = ({ mapRef, images }: ClusterMarkerProps) => {
             zoomOnClick: true,
             minimumClusterSize: 1,
             clickZoom: 2,
-            onClick: (cluster: any, _markers: any) => {
+            onClick: (cluster: { getCenter: () => google.maps.LatLng }) => {
                 if (mapRef.current) {
                     const currentZoom = mapRef.current.getZoom() || 0;
                     const newZoom = Math.min(currentZoom + 3, ZOOM_SCALE.INDIVIDUAL_IMAGE_MARKERS_VISIBLE - 1);

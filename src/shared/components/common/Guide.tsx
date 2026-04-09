@@ -29,7 +29,7 @@ const container = css`
     border-radius: 8px;
     border: 1px solid ${COLORS.BORDER};
     font-size: 14px;
-    color: #4b5563;
+    color: ${COLORS.TEXT.DESCRIPTION};
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     user-select: none;
 `;
