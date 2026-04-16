@@ -2,7 +2,6 @@ import axios from 'axios';
 
 import { PresignedUrlResponse, MediaFile } from '@/domains/media/types';
 import { apiClient } from '@/libs/apis/shared/client';
-import { API_ENDPOINTS } from '@/libs/apis/shared/constants';
 import { ApiResponse, MediaByDate, MediaByPinPoint, Result } from '@/libs/apis/shared/types';
 import { exceptTimeFromDateString } from '@/libs/utils/date';
 import { Location } from '@/shared/types/map';
@@ -16,8 +15,11 @@ export const mediaAPI = {
         const onlyDate = exceptTimeFromDateString(dateString);
         return await apiClient.get(`/v1/trips/${tripKey}/map?date=${onlyDate}`);
     },
-    updateUnlocatedImages: async (tripKey: string, mediaFileId: string, location: Location) => {
-        const data = await apiClient.put(`${API_ENDPOINTS.TRIPS}/${tripKey}/images/unlocated/${mediaFileId}`, location);
+    // 위치 정보 없는 이미지 목록 조회
+    fetchUnlocatedImages: async (tripKey: string) => await apiClient.get(`/v1/trips/${tripKey}/media-files/unlocated`),
+    // 위치 정보 없는 이미지 위치 업데이트
+    updateUnlocatedImages: async (tripKey: string, mediaFileId: number, location: Location) => {
+        const data = await apiClient.patch(`/v1/trips/${tripKey}/media-files/unlocated/${mediaFileId}`, location);
         return data.data;
     },
     // 미디어 파일 업로드를 위한 Presigned URL 생성
@@ -40,8 +42,11 @@ export const mediaAPI = {
             },
         });
     },
-    // 미디어 파일 메타데이터 등록 (mediaLink, latitude, longitude, recordDate)
-    createMediaFileMetadata: async (tripKey: string, metaDatas: Omit<MediaFile, 'mediaFileId'>[]) => {
+    // 미디어 파일 메타데이터 등록 (fileKey, latitude, longitude, recordDate)
+    createMediaFileMetadata: async (
+        tripKey: string,
+        metaDatas: { fileKey: string; latitude: number; longitude: number; recordDate: string }[],
+    ) => {
         await apiClient.post(`/v1/trips/${tripKey}/media-files`, metaDatas);
     },
     // 여행에 등록된 모든 이미지 조회
@@ -55,7 +60,7 @@ export const mediaAPI = {
         }>
     > => await apiClient.get(`/v1/trips/${tripKey}/media-files`),
     // 선택한 여행 이미지 삭제
-    deleteImages: async (tripKey: string, images: string[]): Promise<ApiResponse<string>> =>
+    deleteImages: async (tripKey: string, images: number[]): Promise<ApiResponse<string>> =>
         await apiClient.delete(`/v1/trips/${tripKey}/media-files`, {
             data: { mediaFileIds: images },
         }),

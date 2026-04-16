@@ -39,7 +39,7 @@ const TripImageUploadPage = () => {
     const { isModalOpen, closeModal } = useBrowserCheck();
 
     const { isFormComplete } = useTripFormValidation(tripForm);
-    const { images, imageCategories, currentProcess, progress, extractMetaData, optimizeImages, uploadImagesToS3 } =
+    const { images, imageCategories, currentProcess, progress, extractMetaData, uploadImagesToS3 } =
         useImageUpload();
 
     const showToast = useToastStore((state) => state.showToast);
@@ -114,9 +114,8 @@ const TripImageUploadPage = () => {
         const selectedImages = event.target.files;
         if (selectedImages) {
             setStep('processing');
-            const imagesWithMetadata = await extractMetaData(selectedImages);
-            const optimizedImages = await optimizeImages(imagesWithMetadata);
-            await uploadImagesToS3(optimizedImages);
+            const uniqueFiles = await extractMetaData(selectedImages);
+            await uploadImagesToS3(uniqueFiles);
             setStep('review');
 
             if (!isEdit) {

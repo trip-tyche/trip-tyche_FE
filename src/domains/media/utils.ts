@@ -53,11 +53,6 @@ export const getAlertBoxMessage = (currentProcess: ImageProcessStatusType) => {
             title: '사진 정보 수집 중...',
             description: '소중한 추억의 장소와 날짜를 기억하고 있어요.',
         };
-    } else if (currentProcess === 'optimize') {
-        return {
-            title: '사진 최적화 중...',
-            description: '언제 어디서나 쉽게 볼 수 있도록 사진을 가볍게 만들고 있어요.',
-        };
     } else if (currentProcess === 'upload') {
         return {
             title: '안전하게 저장 중...',
