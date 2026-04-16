@@ -8,7 +8,7 @@ export const useMediaDelete = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: ({ tripKey, images }: { tripKey: string; images: MediaFile[] }) => {
-            const mediaFilesId: string[] = images.map((image) => image.mediaFileId!);
+            const mediaFilesId: number[] = images.map((image) => image.mediaFileId!);
             return toResult(() => mediaAPI.deleteImages(tripKey, mediaFilesId));
         },
         onSuccess: () => {

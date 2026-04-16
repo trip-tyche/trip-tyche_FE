@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 
-import { COMPRESSION_OPTIONS, MEDIA_FORMAT } from '@/domains/media/constants';
+import { MEDIA_FORMAT } from '@/domains/media/constants';
 import { ClientImageFile } from '@/domains/media/types';
 import { formatToISOLocal } from '@/libs/utils/date';
 import { extractDateFromImage, extractLocationFromImage } from '@/libs/utils/exif';
@@ -23,7 +23,7 @@ export const removeDuplicateImages = (images: File[]): FileList => {
 // 이미지 메타데이터 추출
 export const extractMetadataFromImage = async (
     images: FileList,
-    onProgress?: Dispatch<SetStateAction<{ metadata: number; optimize: number; upload: number }>>,
+    onProgress?: Dispatch<SetStateAction<{ metadata: number; upload: number }>>,
 ): Promise<ClientImageFile[]> => {
     if (images.length === 0) return [];
 
@@ -52,48 +52,6 @@ export const extractMetadataFromImage = async (
             };
         }),
     );
-};
-
-// 이미지 리사이징
-export const resizeImages = async (
-    images: ClientImageFile[],
-    onProgress?: Dispatch<SetStateAction<{ metadata: number; optimize: number; upload: number }>>,
-): Promise<ClientImageFile[]> => {
-    if (images.length === 0) return [];
-
-    const totalImages = images.length;
-    let process = 0;
-    const promise = await Promise.all(
-        images.map(async (image: ClientImageFile) => {
-            try {
-                const { default: imageCompression } = await import('browser-image-compression');
-
-                const resizedBlob = await imageCompression(image.image, COMPRESSION_OPTIONS);
-                const resizedFile = new File(
-                    [resizedBlob],
-                    image.image.name.replace(MEDIA_FORMAT.CURRENT_MEDIA_FORMAT, MEDIA_FORMAT.WEBP_FORMAT),
-                    { type: 'image/webp' },
-                );
-                return {
-                    ...image,
-                    image: resizedFile,
-                };
-            } catch (error) {
-                return image;
-            } finally {
-                process++;
-                if (onProgress) {
-                    const progressPercent = Math.round((process / totalImages) * 100);
-                    onProgress((prev) => ({
-                        ...prev,
-                        optimize: progressPercent,
-                    }));
-                }
-            }
-        }),
-    );
-
-    return promise;
 };
 
 // Heic -> jpeg 확장자 변경

@@ -9,17 +9,15 @@ import { COLORS } from '@/shared/constants/style';
 
 interface ProcessingStepProps {
     currentProcess: ImageProcessStatusType;
-    progress: { metadata: number; optimize: number; upload: number };
+    progress: { metadata: number; upload: number };
 }
 
 const ProcessingStep = ({ currentProcess, progress }: ProcessingStepProps) => {
     const getTotalProgress = () => {
         if (currentProcess === 'metadata') {
             return Math.floor(progress.metadata * 0.1);
-        } else if (currentProcess === 'optimize') {
-            return 10 + Math.floor(progress.optimize * 0.75);
         } else if (currentProcess === 'upload') {
-            return 85 + Math.floor(progress.upload * 0.15);
+            return 10 + Math.floor(progress.upload * 0.9);
         }
         return 0;
     };
@@ -38,10 +36,9 @@ const ProcessingStep = ({ currentProcess, progress }: ProcessingStepProps) => {
                 />
                 <div css={progressContainer}>
                     <Progress title='메타데이터 추출' count={progress.metadata} />
-                    <Progress title='이미지 최적화' count={currentProcess === 'metadata' ? 0 : progress.optimize} />
                     <Progress
                         title='클라우드 업로드'
-                        count={currentProcess === 'metadata' || currentProcess === 'optimize' ? 0 : progress.upload}
+                        count={currentProcess === 'metadata' ? 0 : progress.upload}
                     />
                 </div>
             </main>

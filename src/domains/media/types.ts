@@ -1,14 +1,14 @@
 import { Location } from '@/shared/types/map';
 
 export type ImageUploadStepType = 'upload' | 'processing' | 'review' | 'info' | 'done';
-export type ImageProcessStatusType = 'metadata' | 'optimize' | 'upload';
+export type ImageProcessStatusType = 'metadata' | 'upload';
 
 interface MetaData extends Location {
     recordDate: string;
 }
 
 export interface MediaFile extends MetaData {
-    mediaFileId: string;
+    mediaFileId: number;
     mediaLink: string;
 }
 
