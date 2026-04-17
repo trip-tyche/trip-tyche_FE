@@ -11,21 +11,15 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: Set up Node.js
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
                   node-version: '20'
 
-            - name: Create .env file
-              run: |
-                  echo "VITE_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}" >> .env
-                  echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" >> .env
-                  echo "VITE_WEBSOCKET_URL=${{ secrets.VITE_WEBSOCKET_URL }}" >> .env
-
             - name: Cache dependencies
-              uses: actions/cache@v3
+              uses: actions/cache@v4
               with:
                   path: |
                       node_modules
@@ -37,29 +31,32 @@ jobs:
             - name: Install dependencies
               run: yarn install --frozen-lockfile --legacy-peer-deps
 
+            - name: Install Vercel CLI
+              run: npm install -g vercel@latest
+
             - name: Type checking
               run: yarn tsc --noEmit
 
-            - name: Build
-              run: yarn build
-
-            - name: Deploy to Vercel (Production)
+            - name: Pull Vercel environment (Production)
               if: github.ref == 'refs/heads/main'
-              uses: amondnet/vercel-action@v25
-              with:
-                  vercel-token: ${{ secrets.VERCEL_TOKEN }}
-                  vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-                  vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-                  vercel-args: '--prod'
-                  vercel-version: 'latest'
-                  working-directory: ./
+              run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
-            - name: Deploy to Vercel (Preview)
+            - name: Pull Vercel environment (Preview)
               if: github.ref == 'refs/heads/develop'
-              uses: amondnet/vercel-action@v25
-              with:
-                  vercel-token: ${{ secrets.VERCEL_TOKEN }}
-                  vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-                  vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-                  vercel-version: 'latest'
-                  working-directory: ./
+              run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+            - name: Build (Production)
+              if: github.ref == 'refs/heads/main'
+              run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+            - name: Build (Preview)
+              if: github.ref == 'refs/heads/develop'
+              run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+
+            - name: Deploy (Production)
+              if: github.ref == 'refs/heads/main'
+              run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+            - name: Deploy (Preview)
+              if: github.ref == 'refs/heads/develop'
+              run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}

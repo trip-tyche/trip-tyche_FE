@@ -3,16 +3,15 @@ import React, { useEffect } from 'react';
 import { css, keyframes, SerializedStyles } from '@emotion/react';
 import { createPortal } from 'react-dom';
 
-import theme from '@/shared/styles/theme';
-
 interface ModalProps {
     closeModal?: () => void;
     isConfirm?: boolean;
     children: React.ReactNode;
     customStyle?: SerializedStyles;
+    ariaLabel?: string;
 }
 
-const Modal = ({ closeModal, isConfirm = false, children, customStyle }: ModalProps) => {
+const Modal = ({ closeModal, isConfirm = false, children, customStyle, ariaLabel }: ModalProps) => {
     useEffect(() => {
         if (!closeModal || isConfirm) return;
 
@@ -29,7 +28,14 @@ const Modal = ({ closeModal, isConfirm = false, children, customStyle }: ModalPr
     return createPortal(
         <React.Fragment>
             <div css={overlayStyle} onClick={!isConfirm ? closeModal : undefined} aria-hidden="true"></div>
-            <div css={modalStyle(customStyle)} role="dialog" aria-modal="true">{children}</div>
+            <div
+                css={modalStyle(customStyle)}
+                role="dialog"
+                aria-modal="true"
+                aria-label={ariaLabel}
+            >
+                {children}
+            </div>
         </React.Fragment>,
         document.getElementById('portal-root') || document.body,
     );
@@ -52,7 +58,7 @@ const overlayFadeIn = keyframes`
 `;
 
 const modalStyle = (customStyle?: SerializedStyles) => css`
-    padding: 16px;
+    padding: 20px 16px 16px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -62,11 +68,18 @@ const modalStyle = (customStyle?: SerializedStyles) => css`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border-radius: 16px;
-    background-color: ${theme.COLORS.BACKGROUND.WHITE};
+    border-radius: 14px;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    box-shadow: rgba(0, 0, 0, 0.22) 3px 5px 30px 0px;
     z-index: 1000;
     animation: ${fadeIn} 200ms ease-out;
     ${customStyle}
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+    }
 `;
 
 const overlayStyle = css`
@@ -76,10 +89,14 @@ const overlayStyle = css`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.48);
     z-index: 999;
     cursor: pointer;
     animation: ${overlayFadeIn} 200ms ease-out;
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+    }
 `;
 
 export default Modal;

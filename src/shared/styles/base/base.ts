@@ -14,19 +14,21 @@ export const baseStyles = css`
     }
 
     body {
-        font-family: 'Pretendard', sans-serif;
+        font-family: 'SF Pro Text', 'SF Pro Display', 'Apple SD Gothic Neo', 'Pretendard', 'Noto Sans KR', 'Helvetica Neue', Helvetica, Arial, sans-serif;
         font-weight: 400;
-        line-height: 1;
-        letter-spacing: -0.14px;
-        font-size: ${theme.FONT_SIZES.LG};
-        color: ${theme.COLORS.TEXT.BLACK};
-        background-color: ${theme.COLORS.BACKGROUND.BODY};
+        line-height: 1.47;
+        letter-spacing: -0.3px;
+        font-size: 15px;
+        color: #0f172a;
+        background-color: #f8fafc;
         overflow: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
     }
 
     input,
     textarea {
-        font-family: 'Pretendard', sans-serif;
+        font-family: 'SF Pro Text', 'SF Pro Display', 'Apple SD Gothic Neo', 'Pretendard', 'Noto Sans KR', 'Helvetica Neue', Helvetica, Arial, sans-serif;
         color: ${theme.COLORS.TEXT.BLACK};
 
         &::placeholder {

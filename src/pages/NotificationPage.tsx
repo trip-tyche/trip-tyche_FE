@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { css } from '@emotion/react';
+import { css, keyframes } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import EmptyNotification from '@/domains/notification/components/EmptyNotification';
@@ -19,11 +19,21 @@ const NotificationPage = () => {
     const [activeTab, setActiveTab] = useState(NOTIFICATION_TABS[0].id);
 
     const showToast = useToastStore((state) => state.showToast);
-
     const navigate = useNavigate();
     const { userId } = useParams();
 
     const { data: result, isLoading } = useNotificationList(Number(userId));
+
+    useEffect(() => {
+        if (!document.getElementById('outfit-font')) {
+            const link = document.createElement('link');
+            link.id = 'outfit-font';
+            link.rel = 'stylesheet';
+            link.href =
+                'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap';
+            document.head.appendChild(link);
+        }
+    }, []);
 
     useEffect(() => {
         if (result && !result.success) {
@@ -46,19 +56,21 @@ const NotificationPage = () => {
 
     return (
         <div css={page}>
-            <Header title={'알림'} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
+            <Header title="알림" isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
             <TabNavigation tabs={NOTIFICATION_TABS} activeTab={activeTab} onActiveChange={handleTabChange} />
 
             {isLoading ? (
-                <Indicator text='알림 불러오는 중...' />
+                <Indicator text="알림 불러오는 중..." />
             ) : (
                 <div css={content}>
                     {/* TODO: 안내 알림 추가 시, 각 API 요청으로 로직 변경 */}
                     {activeTab === 'notice' ? (
                         <EmptyNotification />
                     ) : hasNotifications ? (
-                        notifications.map((item: Notification) => (
-                            <NotificationItem key={item.notificationId} notificationInfo={item} />
+                        notifications.map((item: Notification, i: number) => (
+                            <div key={item.notificationId} css={itemWrap(i)}>
+                                <NotificationItem notificationInfo={item} />
+                            </div>
                         ))
                     ) : (
                         <EmptyNotification />
@@ -69,12 +81,24 @@ const NotificationPage = () => {
     );
 };
 
+export default NotificationPage;
+
+/* ════════════════════════════════════════════
+   STYLES
+════════════════════════════════════════════ */
+
+const itemEnter = keyframes`
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0);    }
+`;
+
 const page = css`
     height: 100%;
     overflow: auto;
     display: flex;
     flex-direction: column;
-    background-color: #f9fafb;
+    background: #f8fafc;
+    font-family: 'Outfit', -apple-system, 'SF Pro Text', sans-serif;
 `;
 
 const content = css`
@@ -82,4 +106,6 @@ const content = css`
     overflow-y: auto;
 `;
 
-export default NotificationPage;
+const itemWrap = (i: number) => css`
+    animation: ${itemEnter} 0.45s cubic-bezier(0.22, 1, 0.36, 1) ${i * 0.05}s both;
+`;

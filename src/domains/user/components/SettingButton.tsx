@@ -1,17 +1,15 @@
 import { css } from '@emotion/react';
 
-import { COLORS } from '@/shared/constants/style';
-import theme from '@/shared/styles/theme';
-
 interface SettingButtonProps {
     text: string;
     icon?: React.ReactNode;
     onClick?: () => void;
+    disabled?: boolean;
 }
 
-const SettingButton = ({ text, icon, onClick }: SettingButtonProps) => {
+const SettingButton = ({ text, icon, onClick, disabled = false }: SettingButtonProps) => {
     return (
-        <li css={buttonStyle} onClick={onClick}>
+        <li css={[buttonStyle, disabled && disabledStyle]} onClick={disabled ? undefined : onClick}>
             {icon}
             <p css={textStyle}>{text}</p>
         </li>
@@ -19,18 +17,42 @@ const SettingButton = ({ text, icon, onClick }: SettingButtonProps) => {
 };
 
 const buttonStyle = css`
-    height: 44px;
-    padding: 10px 18px;
+    height: 52px;
+    padding: 0 16px;
     display: flex;
     align-items: center;
-    color: ${theme.COLORS.TEXT.BLACK};
-    background-color: ${COLORS.BACKGROUND.WHITE};
-    border-bottom: 1px solid rgb(233, 233, 233);
+    color: #0f172a;
+    background-color: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.15s ease;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            background-color: #f8fafc;
+        }
+    }
+    &:active {
+        background-color: #f8fafc;
+    }
 `;
 
 const textStyle = css`
-    margin-left: 10px;
+    margin-left: 12px;
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: -0.374px;
+`;
+
+const disabledStyle = css`
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
 `;
 
 export default SettingButton;

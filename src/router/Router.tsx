@@ -10,6 +10,7 @@ import Indicator from '@/shared/components/common/Spinner/Indicator';
 import { ROUTES } from '@/shared/constants/route';
 
 const MainPage = lazy(() => import('@/pages/MainPage'));
+const DevPreviewPage = lazy(() => import('@/pages/DevPreviewPage'));
 const SettingPage = lazy(() => import('@/pages/SettingPage'));
 const NotificationPage = lazy(() => import('@/pages/NotificationPage'));
 const TripImageUploadPage = lazy(() => import('@/pages/trip/management/TripImageUploadPage'));
@@ -40,6 +41,14 @@ const router = createBrowserRouter([
                 path: ROUTES.PATH.SIGNIN,
                 element: <SigninPage />,
             },
+            ...(import.meta.env.DEV ? [{
+                path: 'preview',
+                element: (
+                    <Suspense fallback={<Indicator />}>
+                        <DevPreviewPage />
+                    </Suspense>
+                ),
+            }] : []),
             {
                 path: ROUTES.PATH.SETTING,
                 element: (

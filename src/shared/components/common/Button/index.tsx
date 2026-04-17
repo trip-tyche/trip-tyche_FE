@@ -2,7 +2,7 @@ import React, { ComponentPropsWithoutRef } from 'react';
 
 import { css, SerializedStyles } from '@emotion/react';
 
-import { COLORS, THEME_COLORS } from '@/shared/constants/style';
+import { COLORS, FONT_FAMILY, THEME_COLORS } from '@/shared/constants/style';
 import theme from '@/shared/styles/theme';
 
 type VariantType = 'primary' | 'white' | 'error';
@@ -33,7 +33,7 @@ const Button = ({
             {...props}
         >
             {isLoading ? (
-                <p css={loadingStyle}>{loadingText} </p>
+                <p css={loadingStyle}>{loadingText}</p>
             ) : (
                 <React.Fragment>
                     {icon && <span css={iconStyle(!!text)}>{icon}</span>}
@@ -48,21 +48,26 @@ const baseStyles = css`
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 0;
-    border-radius: 12px;
+    border: none;
+    border-radius: 8px;
     width: 100%;
     height: 48px;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    font-family: ${FONT_FAMILY};
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: -0.374px;
+    transition: background-color 0.15s ease, opacity 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
     &:active {
-        transform: scale(0.97);
+        opacity: 0.85;
     }
 `;
 
 const buttonStyle = {
     primary: (isActive: boolean) => css`
         background-color: ${isActive ? COLORS.PRIMARY : COLORS.DISABLED};
-        color: ${isActive ? COLORS.BUTTON.WHITE_BG : COLORS.BUTTON.DISABLED_TEXT};
+        color: ${isActive ? '#ffffff' : COLORS.BUTTON.DISABLED_TEXT};
 
         @media (hover: hover) {
             &:hover {
@@ -70,16 +75,14 @@ const buttonStyle = {
             }
         }
 
-        &:active {
-            background-color: ${COLORS.PRIMARY_HOVER};
-        }
         &:disabled {
             cursor: not-allowed;
         }
     `,
     white: (isActive: boolean) => css`
         background-color: ${isActive ? COLORS.BUTTON.WHITE_BG : COLORS.DISABLED};
-        color: ${isActive ? COLORS.PRIMARY : COLORS.BUTTON.DISABLED_TEXT};
+        color: ${isActive ? COLORS.SECONDARY : COLORS.BUTTON.DISABLED_TEXT};
+        border: 1px solid ${isActive ? 'rgba(0,0,0,0.12)' : 'transparent'};
 
         @media (hover: hover) {
             &:hover {
@@ -98,8 +101,10 @@ const buttonStyle = {
         background-color: ${isActive ? THEME_COLORS.error.BACKGROUND : COLORS.DISABLED};
         color: ${isActive ? THEME_COLORS.error.TEXT : COLORS.DISABLED};
 
-        &:hover {
-            background-color: ${isActive ? COLORS.BUTTON.ERROR_HOVER : COLORS.DISABLED};
+        @media (hover: hover) {
+            &:hover {
+                background-color: ${isActive ? COLORS.BUTTON.ERROR_HOVER : COLORS.DISABLED};
+            }
         }
         &:disabled {
             cursor: not-allowed;
