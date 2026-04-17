@@ -2,14 +2,13 @@ import { css } from '@emotion/react';
 import { ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import theme from '@/shared/styles/theme';
-
 interface HeaderProps {
     title: string;
     isBackButton?: boolean;
     children?: React.ReactNode;
     onBack?: () => void;
 }
+
 const Header = ({ title, isBackButton, children, onBack }: HeaderProps) => {
     const navigate = useNavigate();
 
@@ -19,7 +18,9 @@ const Header = ({ title, isBackButton, children, onBack }: HeaderProps) => {
         <div css={headerStyle}>
             <div css={defaultStyle}>
                 {isBackButton && (
-                    <ChevronLeft size={20} strokeWidth={1.5} css={backButtonStyle} onClick={navigateBeforePage} />
+                    <button css={backButtonStyle} onClick={navigateBeforePage} aria-label="뒤로 가기">
+                        <ChevronLeft size={20} strokeWidth={1.5} aria-hidden="true" />
+                    </button>
                 )}
                 <h1 css={titleStyle}>{title}</h1>
             </div>
@@ -34,9 +35,9 @@ const headerStyle = css`
     justify-content: space-between;
     align-items: center;
     min-height: 48px;
-    background-color: rgba(0, 0, 0, 0.8);
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
     z-index: 30;
     user-select: none;
     position: sticky;
@@ -46,21 +47,30 @@ const headerStyle = css`
 const defaultStyle = css`
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 4px;
 `;
 
 const titleStyle = css`
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 600;
-    letter-spacing: -0.374px;
-    color: #ffffff;
+    letter-spacing: -0.4px;
+    color: #0f172a;
 `;
 
 const backButtonStyle = css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    margin-left: -8px;
+    border: none;
+    background: none;
     cursor: pointer;
-    color: #ffffff;
-    opacity: 0.9;
+    color: #0071e3;
+    border-radius: 8px;
     transition: opacity 0.15s;
+    -webkit-tap-highlight-color: transparent;
     &:active {
         opacity: 0.6;
     }

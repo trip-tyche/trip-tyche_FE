@@ -4,11 +4,12 @@ interface SettingButtonProps {
     text: string;
     icon?: React.ReactNode;
     onClick?: () => void;
+    disabled?: boolean;
 }
 
-const SettingButton = ({ text, icon, onClick }: SettingButtonProps) => {
+const SettingButton = ({ text, icon, onClick, disabled = false }: SettingButtonProps) => {
     return (
-        <li css={buttonStyle} onClick={onClick}>
+        <li css={[buttonStyle, disabled && disabledStyle]} onClick={disabled ? undefined : onClick}>
             {icon}
             <p css={textStyle}>{text}</p>
         </li>
@@ -20,9 +21,9 @@ const buttonStyle = css`
     padding: 0 16px;
     display: flex;
     align-items: center;
-    color: #1d1d1f;
+    color: #0f172a;
     background-color: #ffffff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: background-color 0.15s ease;
@@ -33,11 +34,11 @@ const buttonStyle = css`
 
     @media (hover: hover) {
         &:hover {
-            background-color: #f5f5f7;
+            background-color: #f8fafc;
         }
     }
     &:active {
-        background-color: #f5f5f7;
+        background-color: #f8fafc;
     }
 `;
 
@@ -46,6 +47,12 @@ const textStyle = css`
     font-size: 17px;
     font-weight: 400;
     letter-spacing: -0.374px;
+`;
+
+const disabledStyle = css`
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
 `;
 
 export default SettingButton;

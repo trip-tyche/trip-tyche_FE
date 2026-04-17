@@ -1,7 +1,6 @@
 import { css } from '@emotion/react';
 
 import Button from '@/shared/components/common/Button';
-import theme from '@/shared/styles/theme';
 
 type ProviderType = 'kakao' | 'google';
 

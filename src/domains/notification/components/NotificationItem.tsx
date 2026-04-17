@@ -125,16 +125,16 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
 
 const container = (isRead: boolean) => css`
     padding: 14px 16px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     display: flex;
     align-items: flex-start;
-    background-color: ${isRead ? '#ffffff' : 'rgba(0, 113, 227, 0.05)'};
+    background-color: ${isRead ? '#ffffff' : 'rgba(0, 113, 227, 0.04)'};
     cursor: pointer;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
     transition: background-color 0.15s ease;
     &:active {
-        background-color: #f5f5f7;
+        background-color: #f8fafc;
     }
 `;
 
@@ -155,7 +155,7 @@ const sender = css`
     font-size: 14px;
     font-weight: 600;
     letter-spacing: -0.224px;
-    color: #1d1d1f;
+    color: #0f172a;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

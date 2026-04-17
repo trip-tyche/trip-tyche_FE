@@ -14,13 +14,13 @@ export const baseStyles = css`
     }
 
     body {
-        font-family: 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-family: 'SF Pro Text', 'SF Pro Display', 'Apple SD Gothic Neo', 'Pretendard', 'Noto Sans KR', 'Helvetica Neue', Helvetica, Arial, sans-serif;
         font-weight: 400;
         line-height: 1.47;
-        letter-spacing: -0.374px;
-        font-size: ${theme.FONT_SIZES.LG};
-        color: ${theme.COLORS.TEXT.BLACK};
-        background-color: ${theme.COLORS.BACKGROUND.BODY};
+        letter-spacing: -0.3px;
+        font-size: 15px;
+        color: #0f172a;
+        background-color: #f8fafc;
         overflow: hidden;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
@@ -28,7 +28,7 @@ export const baseStyles = css`
 
     input,
     textarea {
-        font-family: 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-family: 'SF Pro Text', 'SF Pro Display', 'Apple SD Gothic Neo', 'Pretendard', 'Noto Sans KR', 'Helvetica Neue', Helvetica, Arial, sans-serif;
         color: ${theme.COLORS.TEXT.BLACK};
 
         &::placeholder {

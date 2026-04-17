@@ -4,13 +4,13 @@ import { COLORS } from '@/shared/constants/style';
 
 type SizeType = 'lg' | 'sm';
 
-interface ProgessProps {
+interface ProgressProps {
     title: string;
     count: number;
     size?: SizeType;
 }
 
-const Progress = ({ title, count, size = 'sm' }: ProgessProps) => {
+const Progress = ({ title, count, size = 'sm' }: ProgressProps) => {
     return (
         <div css={container}>
             <div css={label(size)}>
@@ -43,14 +43,20 @@ const bar = css`
     background-color: ${COLORS.DISABLED};
     border-radius: 9999px;
     overflow: hidden;
+    position: relative;
 `;
 
 const getStepProgressFillStyle = (percentage: number, completed: boolean, size: SizeType) => css`
-    width: ${percentage}%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
     height: 100%;
     border-radius: 9999px;
     background-color: ${size === 'lg' ? COLORS.PROGRESS.BLUE : completed ? COLORS.PROGRESS.GREEN : COLORS.PROGRESS.BLUE};
-    transition: width 0.3s ease;
+    transform: scaleX(${percentage / 100});
+    transform-origin: left;
+    transition: transform 0.3s ease;
 `;
 
 export default Progress;

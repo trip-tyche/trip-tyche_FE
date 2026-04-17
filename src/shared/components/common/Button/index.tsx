@@ -2,7 +2,7 @@ import React, { ComponentPropsWithoutRef } from 'react';
 
 import { css, SerializedStyles } from '@emotion/react';
 
-import { COLORS, THEME_COLORS } from '@/shared/constants/style';
+import { COLORS, FONT_FAMILY, THEME_COLORS } from '@/shared/constants/style';
 import theme from '@/shared/styles/theme';
 
 type VariantType = 'primary' | 'white' | 'error';
@@ -33,7 +33,7 @@ const Button = ({
             {...props}
         >
             {isLoading ? (
-                <p css={loadingStyle}>{loadingText} </p>
+                <p css={loadingStyle}>{loadingText}</p>
             ) : (
                 <React.Fragment>
                     {icon && <span css={iconStyle(!!text)}>{icon}</span>}
@@ -53,7 +53,7 @@ const baseStyles = css`
     width: 100%;
     height: 48px;
     cursor: pointer;
-    font-family: 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+    font-family: ${FONT_FAMILY};
     font-size: 17px;
     font-weight: 400;
     letter-spacing: -0.374px;
@@ -101,8 +101,10 @@ const buttonStyle = {
         background-color: ${isActive ? THEME_COLORS.error.BACKGROUND : COLORS.DISABLED};
         color: ${isActive ? THEME_COLORS.error.TEXT : COLORS.DISABLED};
 
-        &:hover {
-            background-color: ${isActive ? COLORS.BUTTON.ERROR_HOVER : COLORS.DISABLED};
+        @media (hover: hover) {
+            &:hover {
+                background-color: ${isActive ? COLORS.BUTTON.ERROR_HOVER : COLORS.DISABLED};
+            }
         }
         &:disabled {
             cursor: not-allowed;
