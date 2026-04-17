@@ -58,15 +58,15 @@ const SigninPage = () => {
 const container = css`
     width: 100%;
     height: 100dvh;
-    padding: 44px 24px 60px 24px;
+    padding: 52px 24px 56px 24px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
     position: relative;
-    gap: 72px;
     background-image: url(${backgroundImage});
     background-size: cover;
+    background-position: center;
     user-select: none;
 `;
 
@@ -75,39 +75,50 @@ const overlay = css`
     height: 100%;
     position: absolute;
     inset: 0;
-    background-color: #00000010;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.15) 0%,
+        rgba(0, 0, 0, 0.08) 40%,
+        rgba(0, 0, 0, 0.55) 100%
+    );
     z-index: 10;
 `;
 
 const textContainer = css`
     display: flex;
-    gap: 24px;
+    gap: 16px;
     flex-direction: column;
     align-self: flex-start;
-    color: ${COLORS.TEXT.WHITE};
+    color: #ffffff;
     z-index: 20;
 `;
 
 const logo = css`
-    font-weight: bold;
-    letter-spacing: 0.2px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.72);
 `;
 
 const titleStyle = css`
-    font-size: 24px;
-    margin-bottom: 22px;
-    line-height: 1.4;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 0.196px;
+    line-height: 1.14;
+    color: #ffffff;
 `;
 
 const strong = css`
     font-weight: 700;
+    color: #ffffff;
 `;
 
 const buttonGroup = css`
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 12px;
     z-index: 20;
 `;
 

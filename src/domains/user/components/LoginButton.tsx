@@ -27,24 +27,27 @@ const LoginButton = ({ provider, onClick }: LoginButtonProps) => {
             text={providerConfig[provider].text}
             css={loginButtonStyles(provider)}
             onClick={onClick}
-            icon={<img src={providerConfig[provider].icon} css={iconStyle} />}
+            icon={<img src={providerConfig[provider].icon} css={iconStyle} alt={`${provider} 로그인`} />}
         />
     );
 };
 
 const loginButtonStyles = (provider: ProviderType) => css`
-    color: ${theme.COLORS.TEXT.BLACK};
-    font-size: 14px;
-    letter-spacing: -0.5px;
+    color: #1d1d1f;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.374px;
     position: relative;
-    background-color: ${provider === 'kakao' ? '#fee500' : '#fdfdfd'};
+    border-radius: 8px;
+    background-color: ${provider === 'kakao' ? '#fee500' : '#ffffff'};
+    border: 1px solid ${provider === 'kakao' ? 'transparent' : 'rgba(0,0,0,0.12)'};
     @media (hover: hover) {
         &:hover {
-            background-color: ${provider === 'kakao' ? '#fdd835' : '#DCDCDC'};
+            background-color: ${provider === 'kakao' ? '#fdd835' : '#f5f5f7'};
         }
     }
     &:active {
-        background-color: ${provider === 'kakao' ? '#fdd835' : '#DCDCDC'};
+        opacity: 0.85;
     }
 `;
 

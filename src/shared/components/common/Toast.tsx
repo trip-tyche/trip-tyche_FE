@@ -40,19 +40,25 @@ const Toast: React.FC = () => {
 const toastStyle = css`
     width: 90vw;
     max-width: 388px;
-    height: 60px;
+    min-height: 52px;
     position: fixed;
     bottom: 84px;
     left: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px 0;
-    border-radius: 8px;
-    background-color: ${theme.COLORS.BACKGROUND.TOAST};
-    color: ${theme.COLORS.TEXT.WHITE};
+    padding: 14px 20px;
+    border-radius: 12px;
+    background-color: rgba(29, 29, 31, 0.92);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    color: #ffffff;
+    font-size: 14px;
+    letter-spacing: -0.224px;
+    line-height: 1.43;
     z-index: 1000;
     transition: all 0.2s ease-in;
+    box-shadow: rgba(0, 0, 0, 0.22) 3px 5px 30px 0px;
 `;
 const toastEnterStyle = css`
     opacity: 1;

@@ -100,38 +100,44 @@ const pageContainer = css`
     height: 100dvh;
     display: flex;
     flex-direction: column;
+    background-color: #f5f5f7;
 `;
 
 const mainStyle = css`
-    height: calc(100% - 44px);
-    background-color: ${COLORS.BACKGROUND.WHITE_SECONDARY};
+    flex: 1;
+    background-color: #f5f5f7;
+    overflow: auto;
 `;
 
 const userInfoContainer = css`
-    margin-bottom: 14px;
-    padding: 16px;
+    padding: 20px 16px;
     display: flex;
     align-items: center;
     gap: 14px;
-    font-size: ${theme.FONT_SIZES.XL};
-    background-color: ${COLORS.BACKGROUND.WHITE};
-    border-bottom: 1px solid rgb(233, 233, 233);
+    background-color: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    margin-bottom: 8px;
 `;
 
 const characterStyle = css`
-    width: 30px;
+    width: 36px;
     height: auto;
 `;
 
 const nickNameWrapper = css`
-    align-self: flex-end;
-    margin-bottom: 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    font-size: 17px;
+    letter-spacing: -0.374px;
+    color: rgba(0, 0, 0, 0.48);
 `;
 
 const nickNameStyle = css`
-    font-size: ${theme.FONT_SIZES.XL};
+    font-size: 21px;
     font-weight: 600;
-    margin-left: 4px;
+    letter-spacing: 0.231px;
+    color: #1d1d1f;
     position: relative;
     display: inline-block;
     z-index: 1;
@@ -140,11 +146,11 @@ const nickNameStyle = css`
         content: '';
         position: absolute;
         left: 0;
-        bottom: 0;
+        bottom: 1px;
         width: 100%;
-        height: 40%;
-        background-color: ${theme.COLORS.PRIMARY};
-        opacity: 0.3;
+        height: 35%;
+        background-color: #0071e3;
+        opacity: 0.18;
         border-radius: 2px;
         z-index: -1;
     }
@@ -153,7 +159,11 @@ const nickNameStyle = css`
 const optionList = css`
     display: flex;
     flex-direction: column;
-    margin-bottom: 14px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    margin: 0 16px 8px;
+    overflow: hidden;
+    box-shadow: rgba(0, 0, 0, 0.06) 0px 1px 4px;
 `;
 
 export default SettingPage;

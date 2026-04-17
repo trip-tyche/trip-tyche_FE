@@ -74,7 +74,7 @@ const page = css`
     overflow: auto;
     display: flex;
     flex-direction: column;
-    background-color: #f9fafb;
+    background-color: #f5f5f7;
 `;
 
 const content = css`

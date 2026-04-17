@@ -52,7 +52,7 @@ const overlayFadeIn = keyframes`
 `;
 
 const modalStyle = (customStyle?: SerializedStyles) => css`
-    padding: 16px;
+    padding: 20px 16px 16px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -62,8 +62,11 @@ const modalStyle = (customStyle?: SerializedStyles) => css`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border-radius: 16px;
-    background-color: ${theme.COLORS.BACKGROUND.WHITE};
+    border-radius: 14px;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    box-shadow: rgba(0, 0, 0, 0.22) 3px 5px 30px 0px;
     z-index: 1000;
     animation: ${fadeIn} 200ms ease-out;
     ${customStyle}
@@ -76,7 +79,7 @@ const overlayStyle = css`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.48);
     z-index: 999;
     cursor: pointer;
     animation: ${overlayFadeIn} 200ms ease-out;

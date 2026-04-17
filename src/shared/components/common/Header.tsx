@@ -29,29 +29,41 @@ const Header = ({ title, isBackButton, children, onBack }: HeaderProps) => {
 };
 
 const headerStyle = css`
-    padding: 8px 12px;
+    padding: 0 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    min-height: 54px;
-    border-bottom: 1px solid ${theme.COLORS.BORDER};
-    background-color: ${theme.COLORS.BACKGROUND.WHITE};
+    min-height: 48px;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
     z-index: 30;
     user-select: none;
+    position: sticky;
+    top: 0;
 `;
 
 const defaultStyle = css`
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
 `;
 
 const titleStyle = css`
+    font-size: 17px;
     font-weight: 600;
+    letter-spacing: -0.374px;
+    color: #ffffff;
 `;
 
 const backButtonStyle = css`
     cursor: pointer;
+    color: #ffffff;
+    opacity: 0.9;
+    transition: opacity 0.15s;
+    &:active {
+        opacity: 0.6;
+    }
 `;
 
 export default Header;

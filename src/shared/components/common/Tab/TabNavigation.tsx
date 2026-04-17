@@ -27,8 +27,8 @@ const TabNavigation = ({ tabs, activeTab, onActiveChange }: TabNavigationProps) 
 
 const tabNavigationStyle = css`
     display: flex;
-    border-bottom: 1px solid ${COLORS.BORDER};
-    background-color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    background-color: #ffffff;
 `;
 
 export default TabNavigation;

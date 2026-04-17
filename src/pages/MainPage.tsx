@@ -115,22 +115,28 @@ const page = css`
     height: 100dvh;
     display: flex;
     flex-direction: column;
-    background-color: ${COLORS.BACKGROUND.WHITE_SECONDARY};
+    background-color: #f5f5f7;
 `;
 
 const header = css`
-    background-color: ${COLORS.BACKGROUND.WHITE};
-    padding: 16px;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    padding: 0 16px;
+    height: 48px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 30;
 `;
 
 const logo = css`
-    font-size: 20px;
-    font-weight: 700;
-    color: ${COLORS.PRIMARY};
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.374px;
+    color: #ffffff;
     user-select: none;
 `;
 
@@ -146,9 +152,9 @@ const notificationContainer = css`
 `;
 
 const notificationIcon = css`
-    width: 24px;
-    height: 24px;
-    color: ${COLORS.ICON.DEFAULT};
+    width: 22px;
+    height: 22px;
+    color: #ffffff;
     -webkit-tap-highlight-color: transparent;
 `;
 
@@ -156,23 +162,24 @@ const notificationBadge = css`
     position: absolute;
     top: -4px;
     right: -2px;
-    width: 16px;
+    min-width: 16px;
     height: 16px;
-    background-color: ${COLORS.TEXT.ERROR};
-    color: ${COLORS.TEXT.WHITE};
-    font-size: 12px;
-    font-weight: bold;
+    background-color: #0071e3;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 600;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     user-select: none;
+    padding: 0 2px;
 `;
 
 const settingsIcon = css`
-    width: 24px;
-    height: 24px;
-    color: ${COLORS.ICON.DEFAULT};
+    width: 22px;
+    height: 22px;
+    color: #ffffff;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
 `;
@@ -193,26 +200,27 @@ const titleRow = css`
 `;
 
 const mainTitle = css`
-    font-size: 20px;
+    font-size: 21px;
     font-weight: 600;
-    color: ${COLORS.TEXT.BLACK};
+    letter-spacing: 0.231px;
+    color: #1d1d1f;
 `;
 
 const addButton = css`
     border-radius: 50%;
     width: 40px;
     height: 40px;
-    box-shadow:
-        0 4px 6px -1px rgba(0, 0, 0, 0.1),
-        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    background-color: #0071e3;
+    box-shadow: rgba(0, 0, 0, 0.22) 3px 5px 30px 0px;
 `;
 
 const subtitle = css`
     display: flex;
     align-items: center;
     font-size: 14px;
-    color: ${COLORS.TEXT.DESCRIPTION};
-    margin: 16px 0;
+    letter-spacing: -0.224px;
+    color: rgba(0, 0, 0, 0.48);
+    margin: 12px 0;
 `;
 
 const tripListContent = css`
@@ -232,8 +240,9 @@ const emptyTripList = css`
 
 const touchGuideText = css`
     font-size: 12px;
-    font-weight: 600;
-    color: #666666;
+    font-weight: 500;
+    letter-spacing: -0.12px;
+    color: rgba(0, 0, 0, 0.48);
     display: flex;
     align-items: center;
     gap: 4px;

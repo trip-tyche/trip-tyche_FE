@@ -124,13 +124,18 @@ const NotificationItem = ({ notificationInfo }: NotificationProps) => {
 };
 
 const container = (isRead: boolean) => css`
-    padding: 16px;
-    border-bottom: 1px solid ${COLORS.BORDER};
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     display: flex;
     align-items: flex-start;
-    background-color: ${isRead ? COLORS.BACKGROUND.WHITE : COLORS.BACKGROUND.PRIMARY};
+    background-color: ${isRead ? '#ffffff' : 'rgba(0, 113, 227, 0.05)'};
     cursor: pointer;
     user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.15s ease;
+    &:active {
+        background-color: #f5f5f7;
+    }
 `;
 
 const content = css`
@@ -147,16 +152,19 @@ const header = css`
 `;
 
 const sender = css`
-    font-weight: 500;
-    color: ${COLORS.TEXT.BLACK};
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.224px;
+    color: #1d1d1f;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 `;
 
 const dateText = css`
-    font-size: 12px;
-    color: ${COLORS.TEXT.SECONDARY};
+    font-size: 11px;
+    letter-spacing: -0.08px;
+    color: rgba(0, 0, 0, 0.48);
     white-space: nowrap;
     margin-left: 8px;
 `;
@@ -165,6 +173,7 @@ const notificationFooter = css`
     display: flex;
     align-items: center;
     gap: 6px;
+    margin-top: 4px;
 `;
 
 const timeContainer = css`
@@ -174,14 +183,17 @@ const timeContainer = css`
 `;
 
 const timeText = css`
-    font-size: 12px;
-    color: ${COLORS.TEXT.SECONDARY};
+    font-size: 11px;
+    letter-spacing: -0.08px;
+    color: rgba(0, 0, 0, 0.48);
 `;
 
 const kebabIcon = css`
     margin-left: 12px;
     transform: rotate(90deg);
     cursor: pointer;
+    color: rgba(0, 0, 0, 0.32);
+    -webkit-tap-highlight-color: transparent;
 `;
 
 export default NotificationItem;

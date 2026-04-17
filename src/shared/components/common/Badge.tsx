@@ -15,10 +15,12 @@ const Badge = ({ message }: { message: MessageType }) => {
 };
 
 const badge = (isSuccess: boolean) => css`
-    padding: 2px 8px;
+    padding: 3px 10px;
     color: ${THEME_COLORS[isSuccess ? 'success' : 'error'].TEXT};
     background-color: ${THEME_COLORS[isSuccess ? 'success' : 'error'].BACKGROUND};
     font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.12px;
     border-radius: 9999px;
 `;
 

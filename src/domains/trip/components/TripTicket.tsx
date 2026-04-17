@@ -222,8 +222,8 @@ const container = css`
     margin-bottom: 8px;
     position: relative;
     transition: all 0.25s ease;
-    box-shadow: ${COLORS.BOX_SHADOW.CARD};
-    border-radius: 14px;
+    box-shadow: rgba(0, 0, 0, 0.22) 3px 5px 30px 0px;
+    border-radius: 12px;
     overflow: hidden;
     user-select: none;
 `;
@@ -237,7 +237,7 @@ const isUncompletedTripOverlayStyle = css`
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: ${`${COLORS.BACKGROUND.ICON}70`};
+    background-color: rgba(0, 0, 0, 0.48);
     z-index: 9;
     cursor: pointer;
 `;
@@ -246,14 +246,17 @@ const isUncompletedTripButtonStyle = css`
     display: flex;
     align-items: center;
     gap: 6px;
-    color: ${COLORS.TEXT.BLACK};
-    background-color: ${COLORS.BACKGROUND.WHITE};
+    color: #1d1d1f;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border: none;
     border-radius: 24px;
     cursor: pointer;
-    box-shadow: ${COLORS.BOX_SHADOW.CARD};
+    box-shadow: rgba(0, 0, 0, 0.22) 3px 5px 30px 0px;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
+    letter-spacing: -0.224px;
 `;
 
 const mainStyle = css`
@@ -263,8 +266,8 @@ const mainStyle = css`
 const header = (isOwner: boolean) => css`
     display: flex;
     justify-content: space-around;
-    background: ${isOwner ? COLORS.PRIMARY : COLORS.TEXT.DESCRIPTION};
-    color: ${COLORS.BACKGROUND.WHITE};
+    background: ${isOwner ? '#000000' : '#272729'};
+    color: #ffffff;
     padding: 12px 0;
     position: relative;
     overflow: hidden;
@@ -276,15 +279,19 @@ const headerItem = css`
 `;
 
 const labelStyle = css`
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.7); /* header label semi-transparent white */
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.48);
     margin-bottom: 4px;
-    font-weight: 500;
+    font-weight: 400;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
 `;
 
 const valueStyle = css`
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
+    letter-spacing: -0.12px;
+    color: #ffffff;
 `;
 
 const contentStyle = () => css`
@@ -292,7 +299,7 @@ const contentStyle = () => css`
     padding: 16px 16px 12px 16px;
     display: flex;
     flex-direction: column;
-    background: ${COLORS.BACKGROUND.WHITE_SECONDARY};
+    background: #f5f5f7;
 `;
 
 const citiesStyle = css`
@@ -301,9 +308,10 @@ const citiesStyle = css`
 `;
 
 const countryNameStyle = css`
-    font-size: 18px;
-    font-weight: 700;
-    color: ${COLORS.TEXT.BLACK};
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.374px;
+    color: #1d1d1f;
 `;
 
 const dotsAndCharacterContainer = css`
@@ -316,18 +324,18 @@ const dotsAndCharacterContainer = css`
 
 const pointDots = css`
     width: 100%;
-    height: 2px;
-    background: ${COLORS.ICON.LIGHT};
+    height: 1px;
+    background: rgba(0, 0, 0, 0.16);
 `;
 
 const startPointDot = css`
     position: absolute;
     left: 0;
     top: 50%;
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
-    background-color: ${COLORS.ICON.LIGHT};
+    background-color: rgba(0, 0, 0, 0.28);
     transform: translateY(-50%);
 `;
 
@@ -335,10 +343,10 @@ const endPointDot = css`
     position: absolute;
     right: 0;
     top: 50%;
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
-    background-color: ${COLORS.ICON.LIGHT};
+    background-color: rgba(0, 0, 0, 0.28);
     transform: translateY(-50%);
 `;
 
@@ -371,22 +379,25 @@ const characterShadow = css`
 `;
 
 const titleStyle = css`
-    margin: 24px 0 -8px 4px;
+    margin: 20px 0 -8px 4px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 `;
 
 const titleLabelStyle = css`
-    font-size: 12px;
-    font-weight: 500;
-    color: ${COLORS.TEXT.SECONDARY};
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.48);
 `;
 
 const titleValueStyle = css`
     font-size: 14px;
     font-weight: 600;
-    color: ${COLORS.TEXT.TITLE};
+    letter-spacing: -0.224px;
+    color: #1d1d1f;
 `;
 
 const contentFooter = css`
@@ -403,38 +414,36 @@ const hashtagGroup = css`
 `;
 
 const hashtagStyle = css`
-    background-color: ${COLORS.BACKGROUND.GRAY_LIGHT};
-    color: ${COLORS.TEXT.DESCRIPTION};
-    padding: 5px 10px;
+    background-color: rgba(0, 0, 0, 0.06);
+    color: rgba(0, 0, 0, 0.6);
+    padding: 4px 10px;
     border-radius: 9999px;
     font-size: ${FONT_SIZES.SM};
+    letter-spacing: -0.12px;
 `;
 
 const hashSymbol = css`
-    color: ${COLORS.PRIMARY};
-    font-weight: 700;
+    color: #0071e3;
+    font-weight: 600;
 `;
 
 const flagStyle = (isOwner: boolean) => css`
     padding: 4px 8px;
-    background-color: ${isOwner ? COLORS.FLAG.OWNER_BG : COLORS.FLAG.SHARED_BG};
-    border: 1px solid ${isOwner ? COLORS.FLAG.OWNER_BORDER : COLORS.FLAG.SHARED_BORDER};
+    background-color: ${isOwner ? 'rgba(0, 113, 227, 0.08)' : '#f5f5f7'};
+    border: 1px solid ${isOwner ? 'rgba(0, 113, 227, 0.2)' : 'rgba(0,0,0,0.1)'};
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     font-size: 36px;
 `;
 
 const buttonGroup = css`
     display: flex;
     justify-content: space-between;
-    background-color: ${COLORS.BACKGROUND.WHITE};
+    background-color: #ffffff;
     padding: 10px 12px;
-    border-radius: 0 0 14px 14px;
-    border: 1px solid ${COLORS.BACKGROUND.GRAY};
-    border-top: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
     transition: all 0.25s ease;
 `;
 
@@ -442,20 +451,27 @@ const buttonStyle = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 4px 8px;
+    padding: 6px 8px;
     border: none;
     border-radius: 6px;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 400;
+    letter-spacing: -0.12px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    gap: 6px;
+    transition: color 0.15s ease;
+    gap: 5px;
     background: transparent;
-    color: ${COLORS.TEXT.DESCRIPTION};
-    transition: color 0.2s ease;
+    color: rgba(0, 0, 0, 0.6);
+    -webkit-tap-highlight-color: transparent;
 
-    &:hover {
-        color: ${COLORS.PRIMARY_HOVER};
+    @media (hover: hover) {
+        &:hover {
+            color: #0071e3;
+        }
+    }
+    &:active {
+        color: #0055d4;
+        opacity: 0.8;
     }
 `;
 
