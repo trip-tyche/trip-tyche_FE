@@ -6,14 +6,17 @@ import { queryClient } from '@/shared/providers/TanStackProvider';
 
 interface UserState {
     isLoggingOut: boolean;
+    isGuest: boolean;
     userInfo: UserInfo | null;
     updateNickname: (nickname: string) => void;
+    loginAsGuest: () => void;
     login: (userInfo: UserInfo) => void;
     logout: () => void;
 }
 
 const useUserStore = create<UserState>()((set, get) => ({
     isLoggingOut: false,
+    isGuest: false,
     userInfo: null,
     updateNickname: (nickname: string) => {
         const { userInfo } = get();
@@ -25,6 +28,9 @@ const useUserStore = create<UserState>()((set, get) => ({
                 nickname,
             },
         }));
+    },
+    loginAsGuest: () => {
+        set({ isGuest: true });
     },
     login: (userInfo: UserInfo) => {
         set(() => ({
