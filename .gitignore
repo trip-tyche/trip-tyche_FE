@@ -60,3 +60,7 @@ src/pages/BeforeMainPage.tsx
 .omc/
 skills-lock.json
 package-lock.json
+
+# 디자인 핸드오프
+design_handoff_*/
+*.zip

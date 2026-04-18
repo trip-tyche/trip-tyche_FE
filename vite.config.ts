@@ -19,7 +19,7 @@ const baseConfig: UserConfig = {
         }),
         tsconfigPaths(),
         visualizer({
-            open: true,
+            open: process.env.CI !== 'true',
             gzipSize: true,
         }),
     ],
