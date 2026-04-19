@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { useParams } from 'react-router-dom';
 
@@ -13,8 +13,6 @@ import { filterWithoutDateMediaFile, filterWithoutLocationMediaFile } from '@/do
 import { mediaAPI } from '@/libs/apis';
 import { convertHeicToJpg, extractMetadataFromImage, removeDuplicateImages } from '@/libs/utils/image';
 
-const getProgressPercent = (process: number, total: number) => Math.round((process / total) * 100);
-
 export const useImageUpload = () => {
     const [images, setImages] = useState<ClientImageFile[]>();
     const [imageCategories, setImageCategories] = useState<MediaFileCategories>();
@@ -23,6 +21,8 @@ export const useImageUpload = () => {
         metadata: 0,
         upload: 0,
     });
+    const [backgroundUploadError, setBackgroundUploadError] = useState<Error | null>(null);
+    const bgUploadPromiseRef = useRef<Promise<void> | null>(null);
 
     const { tripKey } = useParams();
 
@@ -34,7 +34,6 @@ export const useImageUpload = () => {
     };
 
     const uploadImagesToS3 = async (uniqueFiles: FileList) => {
-        setCurrentProcess('upload');
         try {
             const fileArray = Array.from(uniqueFiles);
             const imageNames = fileArray.map((file) => ({ fileName: file.name }));
@@ -54,19 +53,19 @@ export const useImageUpload = () => {
                 withoutDate: { count: filterWithoutDateMediaFile(imagesWithMetadata).length || 0 },
             });
 
-            let process = 0;
-            await Promise.all(
-                presignedUrls.map(async (urlInfo: PresignedUrlResponse, index: number) => {
-                    const originalFile = fileArray[index];
-                    await mediaAPI.uploadToS3(urlInfo.presignedPutUrl, originalFile);
-                    const progressPercent = getProgressPercent(process++, fileArray.length);
-                    setProgress((prev) => ({ ...prev, upload: progressPercent }));
-                }),
-            );
-
+            // 메타데이터를 백엔드에 즉시 전송 (fileKey + EXIF 데이터)
             await submitMetadata(imagesWithMetadata, presignedUrls);
+
+            // S3 업로드는 백그라운드에서 실행 (사용자를 차단하지 않음)
+            const rawUpload = Promise.all(
+                presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) =>
+                    mediaAPI.uploadToS3(urlInfo.presignedPutUrl, fileArray[index]),
+                ),
+            ).then(() => {});
+            bgUploadPromiseRef.current = rawUpload;
+            rawUpload.catch((err: Error) => setBackgroundUploadError(err));
         } catch {
-            // presigned URL 요청 실패 시 사용자에게 에러 메시지가 Result 패턴으로 전달됨
+            // presigned URL 요청 또는 메타데이터 POST 실패
         }
     };
 
@@ -83,12 +82,18 @@ export const useImageUpload = () => {
         await mediaAPI.createMediaFileMetadata(tripKey!, metaDatas);
     };
 
+    const waitForBackgroundUpload = async () => {
+        if (bgUploadPromiseRef.current) await bgUploadPromiseRef.current;
+    };
+
     return {
         images,
         imageCategories,
         currentProcess,
         progress,
+        backgroundUploadError,
         extractMetaData,
         uploadImagesToS3,
+        waitForBackgroundUpload,
     };
 };

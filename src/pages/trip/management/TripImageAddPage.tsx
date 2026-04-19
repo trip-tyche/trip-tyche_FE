@@ -29,7 +29,7 @@ const TripImageAddPage = ({ onClose }: { onClose: () => void }) => {
     const [tripForm, setTripForm] = useState<TripInfo>(FORM.INITIAL);
 
     const { isModalOpen, closeModal } = useBrowserCheck();
-    const { images, imageCategories, currentProcess, progress, extractMetaData, uploadImagesToS3 } =
+    const { images, imageCategories, progress, extractMetaData, uploadImagesToS3 } =
         useImageUpload();
     const showToast = useToastStore((state) => state.showToast);
 
@@ -66,7 +66,7 @@ const TripImageAddPage = ({ onClose }: { onClose: () => void }) => {
             case 'upload':
                 return <UploadStep onImageSelect={handleImageUpload} />;
             case 'processing':
-                return <ProcessingStep currentProcess={currentProcess} progress={progress} />;
+                return <ProcessingStep progress={progress} />;
             case 'review':
                 return (
                     <div>

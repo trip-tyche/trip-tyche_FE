@@ -1,4 +1,4 @@
-import { useEffect, useState, lazy } from 'react';
+import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -16,7 +16,6 @@ import { useTripFormValidation } from '@/domains/trip/hooks/useTripFormValidatio
 import { TripInfo } from '@/domains/trip/types';
 import { mediaAPI, tripAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/shared/utils';
-import { formatHyphenToDot } from '@/libs/utils/date';
 import Button from '@/shared/components/common/Button';
 import Header from '@/shared/components/common/Header';
 import ConfirmModal from '@/shared/components/common/Modal/ConfirmModal';
@@ -26,20 +25,16 @@ import { ROUTES } from '@/shared/constants/route';
 import { COLORS } from '@/shared/constants/style';
 import useBrowserCheck from '@/shared/hooks/useBrowserCheck';
 import { useToastStore } from '@/shared/stores/useToastStore';
-import { Location } from '@/shared/types/map';
-
-const ReviewStep = lazy(() => import('@/domains/media/components/upload/ReviewStep'));
 
 const TripImageUploadPage = () => {
     const [step, setStep] = useState<ImageUploadStepType>('upload');
-    const [imageLocations, setImageLocations] = useState<Location[]>([]);
     const [tripForm, setTripForm] = useState<TripInfo>(FORM.INITIAL);
     const [isTripFinalizing, setIsTripFinalizing] = useState(false);
 
     const { isModalOpen, closeModal } = useBrowserCheck();
 
     const { isFormComplete } = useTripFormValidation(tripForm);
-    const { images, imageCategories, currentProcess, progress, extractMetaData, uploadImagesToS3 } =
+    const { images, progress, backgroundUploadError, extractMetaData, uploadImagesToS3, waitForBackgroundUpload } =
         useImageUpload();
 
     const showToast = useToastStore((state) => state.showToast);
@@ -61,11 +56,6 @@ const TripImageUploadPage = () => {
             hashtags: [],
             mediaFilesDates: imageDates ? imageDates : [],
         });
-
-        if (images) {
-            const locations = images.map((image) => ({ latitude: image.latitude, longitude: image.longitude }));
-            setImageLocations(locations);
-        }
     }, [images]);
 
     const renderMainSectionByStep = (step: ImageUploadStepType) => {
@@ -73,20 +63,9 @@ const TripImageUploadPage = () => {
             case 'upload':
                 return <UploadStep onImageSelect={handleImageUpload} />;
             case 'processing':
-                return <ProcessingStep currentProcess={currentProcess} progress={progress} />;
+                return <ProcessingStep progress={progress} />;
             case 'review':
-                return (
-                    <div>
-                        <ReviewStep
-                            imageCategories={imageCategories!}
-                            tripPeriod={[estimatedStartDate, estimatedEndDate]}
-                            locations={imageLocations}
-                        />
-                        <div css={buttonWrapper}>
-                            <Button text='여행 정보 입력하기' onClick={() => setStep('info')} />
-                        </div>
-                    </div>
-                );
+                return null;
             case 'info':
                 return (
                     <div css={infoSectionContainer}>
@@ -116,7 +95,7 @@ const TripImageUploadPage = () => {
             setStep('processing');
             const uniqueFiles = await extractMetaData(selectedImages);
             await uploadImagesToS3(uniqueFiles);
-            setStep('review');
+            setStep('info');
 
             if (!isEdit) {
                 const result = await toResult(async () => await mediaAPI.updateTripStatusToImagesUploaded(tripKey!));
@@ -130,28 +109,31 @@ const TripImageUploadPage = () => {
     const handleTripFormSubmit = async () => {
         if (!tripKey) return;
 
-        const result = await mutateAsync({ tripKey, tripForm });
-        if (result.success) {
-            setIsTripFinalizing(true);
-            await finalizeTrip();
+        setIsTripFinalizing(true);
+        try {
+            if (backgroundUploadError) {
+                showToast('일부 사진 업로드에 실패했습니다. 다시 시도해 주세요.');
+                return;
+            }
+            await waitForBackgroundUpload();
+            const result = await mutateAsync({ tripKey, tripForm });
+            if (result.success) {
+                await finalizeTrip();
+                setStep('done');
+            } else {
+                showToast(result.error);
+            }
+        } finally {
             setIsTripFinalizing(false);
-            setStep('done');
-        } else {
-            showToast(result.error);
         }
     };
-
-    const estimatedStartDate = tripForm.mediaFilesDates?.length ? formatHyphenToDot(tripForm.mediaFilesDates[0]) : '';
-    const estimatedEndDate = tripForm.mediaFilesDates?.length
-        ? formatHyphenToDot(tripForm.mediaFilesDates[tripForm.mediaFilesDates.length - 1])
-        : '';
 
     const isCreateDone = step === 'done';
     const isEdit = pathname.includes('edit');
 
     return (
         <div css={page}>
-            {(isSubmitting || isTripFinalizing) && <Indicator text='여행 등록 중...' />}
+            {(isSubmitting || isTripFinalizing) && <Indicator text='잠시만 기다려 주세요…' />}
             <Header
                 title={`새로운 ${isEdit ? '사진' : '여행'} 등록`}
                 isBackButton
