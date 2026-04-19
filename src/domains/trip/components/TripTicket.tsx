@@ -553,7 +553,7 @@ const planeTraverseStyle = css`
     position: absolute;
     top: 50%;
     transform: translateY(-50%) rotate(90deg);
-    animation: ${planeTraverseKeyframes} 720ms ease-in-out forwards;
+    animation: ${planeTraverseKeyframes} 900ms ease-in-out forwards;
     pointer-events: none;
 `;
 

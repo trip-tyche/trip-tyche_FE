@@ -17,7 +17,7 @@ export const useTicketNavigation = (tripKey: string) => {
         if (isAnimating) {
             const timer = setTimeout(() => {
                 navigate(`${ROUTES.PATH.TRIP.ROOT(tripKey)}`);
-            }, 800);
+            }, 1050);
 
             return () => clearTimeout(timer);
         }
