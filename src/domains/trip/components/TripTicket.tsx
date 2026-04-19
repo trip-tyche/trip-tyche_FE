@@ -131,16 +131,19 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
                         <div css={routeCodeStyle}>한국</div>
                         <div css={routeLineStyle}>
                             <div css={dashedLineStyle} />
-                            <svg
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="#fff"
-                                css={[css`margin: 0 3px; flex-shrink: 0;`, isAnimating && planeFlyStyle]}
-                            >
-                                <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16z" />
-                            </svg>
                             <div css={dashedLineStyle} />
+                            {isAnimating && (
+                                <svg
+                                    width="14"
+                                    height="14"
+                                    viewBox="0 0 24 24"
+                                    fill="#fff"
+                                    css={planeTraverseStyle}
+                                    aria-hidden="true"
+                                >
+                                    <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16z" />
+                                </svg>
+                            )}
                         </div>
                         <div css={[routeCodeStyle, css`text-align: right;`]}>{destination}</div>
                     </div>
@@ -403,6 +406,8 @@ const routeLineStyle = css`
     display: flex;
     align-items: center;
     min-width: 0;
+    position: relative;
+    overflow: hidden;
 `;
 
 const dashedLineStyle = css`
@@ -539,14 +544,17 @@ const separatorStyle = css`
     flex-shrink: 0;
 `;
 
-const planeFlyKeyframes = keyframes`
-    0%   { transform: translateX(0) scale(1); opacity: 1; }
-    15%  { transform: translateX(-3px) scale(1.1); opacity: 1; }
-    100% { transform: translateX(48px) scale(0.9); opacity: 0; }
+const planeTraverseKeyframes = keyframes`
+    from { left: -4px; }
+    to   { left: calc(100% - 10px); }
 `;
 
-const planeFlyStyle = css`
-    animation: ${planeFlyKeyframes} 700ms ease-in forwards;
+const planeTraverseStyle = css`
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    animation: ${planeTraverseKeyframes} 720ms ease-in-out forwards;
+    pointer-events: none;
 `;
 
 export default TripTicket;
