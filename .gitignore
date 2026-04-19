@@ -59,6 +59,8 @@ src/pages/BeforeMainPage.tsx
 .kiro/
 .omc/
 skills-lock.json
+CLAUDE.md
+scripts/
 package-lock.json
 
 # 디자인 핸드오프
