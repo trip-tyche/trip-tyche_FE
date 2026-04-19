@@ -17,12 +17,15 @@ import Button from '@/shared/components/common/Button';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import { ROUTES } from '@/shared/constants/route';
 import { MESSAGE } from '@/shared/constants/ui';
+import { useMapScript } from '@/shared/hooks/useMapScript';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 const MainPage = () => {
     const login = useUserStore((state) => state.login);
     const logout = useUserStore((state) => state.logout);
     const showToast = useToastStore((state) => state.showToast);
+
+    useMapScript(); // TripRoutePage 진입 전 Google Maps 스크립트 백그라운드 로드
 
     const { data: userInfoResult, isLoading: isSummaryLoading } = useSummary();
     const shouldFetchTrips = userInfoResult?.success && userInfoResult.data ? true : false;

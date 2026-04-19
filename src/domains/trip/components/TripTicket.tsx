@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { css } from '@emotion/react';
+import { css, keyframes } from '@emotion/react';
 import { Plus, Trash } from 'lucide-react';
 
 import ShareModal from '@/domains/share/components/ShareModal';
@@ -42,7 +42,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
             onError: (message) => showToast(message),
         },
     );
-    const { handleCardClick } = useTicketNavigation(tripKey!);
+    const { isAnimating, handleCardClick } = useTicketNavigation(tripKey!);
 
     const { data: imagesData } = useTripImages(tripKey ?? '');
     const mediaFiles = imagesData?.success ? imagesData.data : undefined;
@@ -136,7 +136,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
                                 height="14"
                                 viewBox="0 0 24 24"
                                 fill="#fff"
-                                css={css`margin: 0 3px; flex-shrink: 0;`}
+                                css={[css`margin: 0 3px; flex-shrink: 0;`, isAnimating && planeFlyStyle]}
                             >
                                 <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16z" />
                             </svg>
@@ -537,6 +537,16 @@ const separatorStyle = css`
     background: ${COLORS.BORDER};
     align-self: center;
     flex-shrink: 0;
+`;
+
+const planeFlyKeyframes = keyframes`
+    0%   { transform: translateX(0) scale(1); opacity: 1; }
+    15%  { transform: translateX(-3px) scale(1.1); opacity: 1; }
+    100% { transform: translateX(48px) scale(0.9); opacity: 0; }
+`;
+
+const planeFlyStyle = css`
+    animation: ${planeFlyKeyframes} 700ms ease-in forwards;
 `;
 
 export default TripTicket;
