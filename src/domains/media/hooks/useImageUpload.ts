@@ -21,7 +21,6 @@ export const useImageUpload = () => {
         metadata: 0,
         upload: 0,
     });
-    const [backgroundUploadError, setBackgroundUploadError] = useState<Error | null>(null);
     const bgUploadPromiseRef = useRef<Promise<void> | null>(null);
 
     const { tripKey } = useParams();
@@ -53,17 +52,16 @@ export const useImageUpload = () => {
                 withoutDate: { count: filterWithoutDateMediaFile(imagesWithMetadata).length || 0 },
             });
 
-            // 메타데이터를 백엔드에 즉시 전송 (fileKey + EXIF 데이터)
-            await submitMetadata(imagesWithMetadata, presignedUrls);
-
-            // S3 업로드는 백그라운드에서 실행 (사용자를 차단하지 않음)
+            // S3 업로드 완료 후 메타데이터 등록 (순서 보장 — 워커가 originals/ 접근 전 파일 존재 보장)
             const rawUpload = Promise.all(
                 presignedUrls.map((urlInfo: PresignedUrlResponse, index: number) =>
                     mediaAPI.uploadToS3(urlInfo.presignedPutUrl, fileArray[index]),
                 ),
-            ).then(() => {});
+            )
+                .then(() => submitMetadata(imagesWithMetadata, presignedUrls))
+                .then(() => {});
             bgUploadPromiseRef.current = rawUpload;
-            rawUpload.catch((err: Error) => setBackgroundUploadError(err));
+            rawUpload.catch(() => {});
         } catch {
             // presigned URL 요청 또는 메타데이터 POST 실패
         }
@@ -91,7 +89,6 @@ export const useImageUpload = () => {
         imageCategories,
         currentProcess,
         progress,
-        backgroundUploadError,
         extractMetaData,
         uploadImagesToS3,
         waitForBackgroundUpload,

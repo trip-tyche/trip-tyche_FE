@@ -34,7 +34,7 @@ const TripImageUploadPage = () => {
     const { isModalOpen, closeModal } = useBrowserCheck();
 
     const { isFormComplete } = useTripFormValidation(tripForm);
-    const { images, progress, backgroundUploadError, extractMetaData, uploadImagesToS3, waitForBackgroundUpload } =
+    const { images, progress, extractMetaData, uploadImagesToS3, waitForBackgroundUpload } =
         useImageUpload();
 
     const showToast = useToastStore((state) => state.showToast);
@@ -111,11 +111,13 @@ const TripImageUploadPage = () => {
 
         setIsTripFinalizing(true);
         try {
-            if (backgroundUploadError) {
+            try {
+                await waitForBackgroundUpload();
+            } catch {
                 showToast('일부 사진 업로드에 실패했습니다. 다시 시도해 주세요.');
                 return;
             }
-            await waitForBackgroundUpload();
+
             const result = await mutateAsync({ tripKey, tripForm });
             if (result.success) {
                 await finalizeTrip();
