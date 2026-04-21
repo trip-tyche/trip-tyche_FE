@@ -21,61 +21,47 @@ const connect = (userId: string) => {
     const client = new Client({
         brokerURL: `${SOCKET_URL.BASE}`,
         reconnectDelay: 5000,
-        heartbeatIncoming: 50000,
-        heartbeatOutgoing: 50000,
+        heartbeatIncoming: 25000,
+        heartbeatOutgoing: 25000,
     });
 
     client.onConnect = () => {
-        // console.log('ws-conneted');
         state.isConnected = true;
-
         subscribeToShareNotifications(userId);
     };
 
-    client.onStompError = () => {
-        console.error('ws-conneted-error');
-        state.client = null;
+    client.onStompError = (frame) => {
+        console.error('ws-stomp-error', frame.headers['message']);
+    };
 
-        reconnect();
+    client.onWebSocketClose = () => {
+        state.isConnected = false;
     };
 
     state.client = client;
     client.activate();
 };
 
-const reconnect = () => {
-    disconnect();
-    if (state.userId) {
-        const { userId } = state;
-        setTimeout(() => {
-            connect(userId);
-        }, 500);
-    }
-};
-
 const disconnect = (): void => {
-    // console.log('ws-disconneted');
-    if (state.client && state.isConnected) {
+    if (state.client) {
         if (state.client.active) {
             state.client.deactivate();
         }
         state.client = null;
     }
     state.isConnected = false;
+    state.userId = null;
 };
 
 const subscribeToShareNotifications = (userId: string) => {
-    if (!state.isConnected || !state.client) {
-        connect(userId);
-        return null;
-    }
+    if (!state.client) return;
 
     state.client.subscribe(SOCKET_URL.TOPIC.REQUEST(userId), async (message) => {
         const { showToast } = useToastStore.getState();
         const { openModal } = useShareModalStore.getState();
 
         try {
-            const subscribedMessage = JSON.parse(JSON.parse(message.body));
+            const subscribedMessage = JSON.parse(message.body);
             const messageType = subscribedMessage.type;
 
             if (messageType === 'SHARED_REQUEST') {
