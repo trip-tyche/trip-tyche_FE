@@ -26,6 +26,29 @@ const SigninPage = () => {
         navigate(ROUTES.PATH.MAIN);
     };
 
+    const handleDevLogin = async () => {
+        try {
+            const res = await fetch('http://localhost:8080/v1/auth/test-token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: 'test@test.com', provider: 'google' }),
+            });
+            const json = await res.json();
+            console.log('[DEV] test-token response:', json);
+            const token = json?.data?.accessToken;
+            if (!token) {
+                console.error('[DEV] accessToken not found in response', json);
+                return;
+            }
+            document.cookie = `access_token=${token}; path=/`;
+            console.log('[DEV] cookie set:', document.cookie);
+            await new Promise((r) => setTimeout(r, 2000));
+            window.location.replace(ROUTES.PATH.MAIN);
+        } catch (e) {
+            console.error('[DEV] login failed:', e);
+        }
+    };
+
     return (
         <main css={wrap}>
             {/* ── Step 1 · Hero ── */}
@@ -101,6 +124,12 @@ const SigninPage = () => {
                             </div>
 
                             <GuestButton onClick={handleGuestClick} />
+
+                            {import.meta.env.DEV && (
+                                <button type="button" css={devBtn} onClick={handleDevLogin}>
+                                    DEV 로그인
+                                </button>
+                            )}
                         </div>
 
                         <p css={fineprint}>
@@ -370,4 +399,27 @@ const underline = css`
     text-decoration: underline;
     text-underline-offset: 2px;
     cursor: pointer;
+`;
+
+const devBtn = css`
+    width: 100%;
+    height: 44px;
+    border-radius: 100px;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.35);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+
+    @media (hover: hover) {
+        &:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            color: rgba(255, 255, 255, 0.6);
+        }
+    }
 `;

@@ -302,7 +302,7 @@ const badgeContainerStyle = css`
 const badgeStyle = css`
     font-size: 10px;
     font-weight: 800;
-    letter-spacing: 2.5px;
+    letter-spacing: 1px;
     text-transform: uppercase;
     color: #fff;
     padding: 4px 10px;
@@ -344,7 +344,7 @@ const heroOverlayStyle = css`
 const heroDateStyle = css`
     font-size: 10px;
     color: rgba(255, 255, 255, 0.7);
-    letter-spacing: 2px;
+    letter-spacing: 0.3px;
     text-transform: uppercase;
     font-weight: 600;
     margin-bottom: 4px;
