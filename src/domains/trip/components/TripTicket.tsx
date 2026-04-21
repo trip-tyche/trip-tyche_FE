@@ -52,7 +52,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     if (isCompletedTrip === undefined) return null;
 
     const isOwner = userInfo?.nickname === ownerNickname;
-    const destination = isCompletedTrip ? country.split('/')[1] || '' : '트립티케';
+    const destination = isCompletedTrip ? country?.split('/')[1] || '' : '트립티케';
     const formattedStartDate = isCompletedTrip ? formatToDot(startDate) : '—';
     const formattedEndDate = isCompletedTrip ? formatToDot(endDate) : '—';
     const sharedPeople = [ownerNickname || '', ...(sharedUsersNicknames || [])];

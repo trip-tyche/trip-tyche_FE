@@ -17,7 +17,7 @@ const MovableTripTicket = ({ trip }: IntroTicketProps) => {
     const userInfo = useUserStore((state) => state.userInfo);
 
     const userNickname = userInfo?.nickname || '';
-    const destination = country.split('/')[1] || '';
+    const destination = country?.split('/')[1] || '';
 
     const { ticketStyle, handlers } = useTicket3DEffect();
 
