@@ -326,7 +326,7 @@ const GlobeMapPage = () => {
         controls.minDistance     = 2.7;
         controls.maxDistance     = 7.0;
         controls.enablePan       = false;
-        controls.enableZoom      = false;
+        controls.enableZoom      = true;
         controlsRef.current = controls;
 
         const visitedCentroids: Array<[number, number]> = [];
