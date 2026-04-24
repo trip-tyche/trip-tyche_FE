@@ -319,8 +319,8 @@ const GlobeMapPage = () => {
 
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping   = true;
-        controls.dampingFactor   = 0.05;
-        controls.rotateSpeed     = 0.45;
+        controls.dampingFactor   = 0.09;
+        controls.rotateSpeed     = 0.7;
         controls.autoRotate      = true;
         controls.autoRotateSpeed = 0.45;
         controls.minDistance     = 2.7;
