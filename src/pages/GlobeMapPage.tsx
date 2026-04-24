@@ -25,117 +25,121 @@ import { ROUTES } from '@/shared/constants/route';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 /* ─── design tokens ─────────────────────────────────────── */
-const ACCENT     = '#0ea5e9';
+const ACCENT = '#0ea5e9';
 const ACCENT_HEX = 0x0ea5e9;
 
 /* ─── globe constants ───────────────────────────────────── */
-const R              = 0.78;
-const DOT_STEP       = 1.1;
-const VISIT_RADIUS   = 5;
-const DOT_SIZE       = 0.005;
-const LAND_MASK_URL  = '/earth-texture.jpg';
+const R = 0.78;
+const DOT_STEP = 1.1;
+const VISIT_RADIUS = 5;
+const DOT_SIZE = 0.005;
+const LAND_MASK_URL = '/earth-texture.jpg';
 
 /* ─── country centroids ─────────────────────────────────── */
 const CENTROIDS: Record<string, [number, number]> = {
-    'SOUTH KOREA': [37.5, 127.0], 'KOREA': [37.5, 127.0],
-    'JAPAN': [36.2, 138.2],
-    'CHINA': [35.9, 104.2],
-    'TAIWAN': [23.7, 121.0],
+    'SOUTH KOREA': [37.5, 127.0],
+    KOREA: [37.5, 127.0],
+    JAPAN: [36.2, 138.2],
+    CHINA: [35.9, 104.2],
+    TAIWAN: [23.7, 121.0],
     'HONG KONG': [22.4, 114.1],
-    'SINGAPORE': [1.3, 103.8],
-    'THAILAND': [15.9, 100.9],
-    'VIETNAM': [14.1, 108.3],
-    'INDONESIA': [-1.0, 116.5],
-    'MALAYSIA': [3.8, 108.5],
-    'PHILIPPINES': [12.5, 122.8],
-    'CAMBODIA': [12.6, 104.9],
-    'MYANMAR': [17.1, 96.9],
-    'LAOS': [17.6, 102.5],
-    'MONGOLIA': [46.9, 103.8],
-    'INDIA': [20.6, 78.9],
+    SINGAPORE: [1.3, 103.8],
+    THAILAND: [15.9, 100.9],
+    VIETNAM: [14.1, 108.3],
+    INDONESIA: [-1.0, 116.5],
+    MALAYSIA: [3.8, 108.5],
+    PHILIPPINES: [12.5, 122.8],
+    CAMBODIA: [12.6, 104.9],
+    MYANMAR: [17.1, 96.9],
+    LAOS: [17.6, 102.5],
+    MONGOLIA: [46.9, 103.8],
+    INDIA: [20.6, 78.9],
     'SRI LANKA': [7.9, 80.8],
-    'NEPAL': [28.4, 84.1],
-    'PAKISTAN': [30.4, 69.3],
-    'BANGLADESH': [23.7, 90.4],
-    'FRANCE': [46.2, 2.2],
-    'ITALY': [41.9, 12.6],
-    'SPAIN': [40.5, -3.7],
-    'GERMANY': [51.2, 10.5],
-    'UNITED KINGDOM': [55.4, -3.4], 'UK': [55.4, -3.4],
-    'PORTUGAL': [39.4, -8.2],
-    'GREECE': [39.1, 21.8],
-    'NETHERLANDS': [52.1, 5.3],
-    'SWITZERLAND': [46.8, 8.2],
-    'AUSTRIA': [47.5, 14.6],
-    'BELGIUM': [50.5, 4.5],
+    NEPAL: [28.4, 84.1],
+    PAKISTAN: [30.4, 69.3],
+    BANGLADESH: [23.7, 90.4],
+    FRANCE: [46.2, 2.2],
+    ITALY: [41.9, 12.6],
+    SPAIN: [40.5, -3.7],
+    GERMANY: [51.2, 10.5],
+    'UNITED KINGDOM': [55.4, -3.4],
+    UK: [55.4, -3.4],
+    PORTUGAL: [39.4, -8.2],
+    GREECE: [39.1, 21.8],
+    NETHERLANDS: [52.1, 5.3],
+    SWITZERLAND: [46.8, 8.2],
+    AUSTRIA: [47.5, 14.6],
+    BELGIUM: [50.5, 4.5],
     'CZECH REPUBLIC': [50.1, 15.5],
-    'HUNGARY': [47.2, 19.5],
-    'POLAND': [51.9, 19.1],
-    'CROATIA': [45.1, 15.2],
-    'NORWAY': [60.5, 8.5],
-    'SWEDEN': [60.1, 18.6],
-    'DENMARK': [56.3, 9.5],
-    'FINLAND': [61.9, 25.8],
-    'ICELAND': [64.9, -19.0],
-    'IRELAND': [53.4, -8.2],
-    'ROMANIA': [45.9, 24.9],
-    'UKRAINE': [48.4, 31.2],
-    'RUSSIA': [61.5, 105.3],
-    'TURKEY': [38.9, 35.2],
-    'GEORGIA': [42.3, 43.4],
-    'SERBIA': [44.0, 21.0],
-    'UNITED STATES': [37.1, -95.7], 'USA': [37.1, -95.7],
-    'CANADA': [56.1, -106.3],
-    'MEXICO': [23.6, -102.6],
-    'CUBA': [21.5, -79.5],
+    HUNGARY: [47.2, 19.5],
+    POLAND: [51.9, 19.1],
+    CROATIA: [45.1, 15.2],
+    NORWAY: [60.5, 8.5],
+    SWEDEN: [60.1, 18.6],
+    DENMARK: [56.3, 9.5],
+    FINLAND: [61.9, 25.8],
+    ICELAND: [64.9, -19.0],
+    IRELAND: [53.4, -8.2],
+    ROMANIA: [45.9, 24.9],
+    UKRAINE: [48.4, 31.2],
+    RUSSIA: [61.5, 105.3],
+    TURKEY: [38.9, 35.2],
+    GEORGIA: [42.3, 43.4],
+    SERBIA: [44.0, 21.0],
+    'UNITED STATES': [37.1, -95.7],
+    USA: [37.1, -95.7],
+    CANADA: [56.1, -106.3],
+    MEXICO: [23.6, -102.6],
+    CUBA: [21.5, -79.5],
     'COSTA RICA': [9.7, -83.8],
-    'PANAMA': [8.5, -80.8],
-    'BRAZIL': [-14.2, -51.9],
-    'ARGENTINA': [-38.4, -63.6],
-    'CHILE': [-35.7, -71.5],
-    'PERU': [-9.2, -75.0],
-    'COLOMBIA': [4.6, -74.1],
-    'ECUADOR': [-1.8, -78.2],
-    'AUSTRALIA': [-25.3, 133.8],
+    PANAMA: [8.5, -80.8],
+    BRAZIL: [-14.2, -51.9],
+    ARGENTINA: [-38.4, -63.6],
+    CHILE: [-35.7, -71.5],
+    PERU: [-9.2, -75.0],
+    COLOMBIA: [4.6, -74.1],
+    ECUADOR: [-1.8, -78.2],
+    AUSTRALIA: [-25.3, 133.8],
     'NEW ZEALAND': [-40.9, 174.9],
-    'UAE': [23.4, 53.8], 'UNITED ARAB EMIRATES': [23.4, 53.8],
-    'QATAR': [25.4, 51.2],
+    UAE: [23.4, 53.8],
+    'UNITED ARAB EMIRATES': [23.4, 53.8],
+    QATAR: [25.4, 51.2],
     'SAUDI ARABIA': [24.0, 45.0],
-    'ISRAEL': [31.0, 34.9],
-    'JORDAN': [30.6, 36.2],
-    'OMAN': [21.5, 55.9],
-    'BAHRAIN': [26.0, 50.6],
-    'KUWAIT': [29.3, 47.5],
-    'LEBANON': [33.9, 35.5],
-    'IRAN': [32.4, 53.7],
-    'EGYPT': [26.8, 30.8],
-    'MOROCCO': [31.8, -7.1],
-    'TUNISIA': [33.9, 9.5],
+    ISRAEL: [31.0, 34.9],
+    JORDAN: [30.6, 36.2],
+    OMAN: [21.5, 55.9],
+    BAHRAIN: [26.0, 50.6],
+    KUWAIT: [29.3, 47.5],
+    LEBANON: [33.9, 35.5],
+    IRAN: [32.4, 53.7],
+    EGYPT: [26.8, 30.8],
+    MOROCCO: [31.8, -7.1],
+    TUNISIA: [33.9, 9.5],
     'SOUTH AFRICA': [-30.6, 22.9],
-    'KENYA': [-0.0, 37.9],
-    'TANZANIA': [-6.4, 34.9],
-    'ETHIOPIA': [9.1, 40.5],
-    'NIGERIA': [9.1, 8.7],
-    'MALDIVES': [4.2, 73.5],
-    'UZBEKISTAN': [41.4, 64.6],
-    'KAZAKHSTAN': [47.2, 67.0],
+    KENYA: [-0.0, 37.9],
+    TANZANIA: [-6.4, 34.9],
+    ETHIOPIA: [9.1, 40.5],
+    NIGERIA: [9.1, 8.7],
+    MALDIVES: [4.2, 73.5],
+    UZBEKISTAN: [41.4, 64.6],
+    KAZAKHSTAN: [47.2, 67.0],
 };
 
 /* ─── helpers ───────────────────────────────────────────── */
 const toVec3 = (lat: number, lng: number, r: number): THREE.Vector3 => {
-    const phi   = (90 - lat) * (Math.PI / 180);
+    const phi = (90 - lat) * (Math.PI / 180);
     const theta = (lng + 180) * (Math.PI / 180);
     return new THREE.Vector3(
         -r * Math.sin(phi) * Math.cos(theta),
-         r * Math.cos(phi),
-         r * Math.sin(phi) * Math.sin(theta),
+        r * Math.cos(phi),
+        r * Math.sin(phi) * Math.sin(theta),
     );
 };
 
 const parseCountry = (str: string) => {
     const parts = (str || '').split('/');
     return {
-        emoji:  parts[0] ?? '',
+        emoji: parts[0] ?? '',
         nameKo: parts[1] ?? '',
         nameEn: (parts[2] ?? '').trim().toUpperCase(),
     };
@@ -145,92 +149,84 @@ const parseCountry = (str: string) => {
 interface SelectedMark {
     nameKo: string;
     nameEn: string;
-    emoji:  string;
-    trips:  Trip[];
+    emoji: string;
+    trips: Trip[];
 }
 
 const EMPTY_TRIPS: Trip[] = [];
 
 /* ─── TicketCard (boarding-pass) ────────────────────────── */
-const TicketCard = ({
-    trip,
-    country,
-    onPress,
-}: {
-    trip:    Trip;
-    country: SelectedMark;
-    onPress: () => void;
-}) => {
+const TicketCard = ({ trip, country, onPress }: { trip: Trip; country: SelectedMark; onPress: () => void }) => {
     const { data: imagesData } = useTripImages(trip.tripKey ?? '');
     const coverPhoto = imagesData?.success ? imagesData.data?.[0]?.mediaLink : undefined;
 
     return (
-    <div css={ticketWrap} onClick={onPress}>
-        {/* main area */}
-        <div css={ticketMain}>
-            <div css={ticketPhotoArea}>
-                {coverPhoto && <img src={coverPhoto} alt={trip.tripTitle} css={ticketCoverImg} />}
-                <div css={ticketPhotoOverlay} />
-                <div css={ticketPhotoMeta}>
-                    <div>
-                        <div css={ticketDestLabel}>Destination</div>
-                        <div css={ticketDestName}>{country.nameEn}</div>
+        <div css={ticketWrap} onClick={onPress}>
+            {/* main area */}
+            <div css={ticketMain}>
+                <div css={ticketPhotoArea}>
+                    {coverPhoto && <img src={coverPhoto} alt={trip.tripTitle} css={ticketCoverImg} />}
+                    <div css={ticketPhotoOverlay} />
+                    <div css={ticketPhotoMeta}>
+                        <div>
+                            <div css={ticketDestLabel}>Destination</div>
+                            <div css={ticketDestName}>{country.nameEn}</div>
+                        </div>
+                        <span css={ticketEmojiLg}>{country.emoji}</span>
                     </div>
-                    <span css={ticketEmojiLg}>{country.emoji}</span>
+                </div>
+                <div css={ticketInfoArea}>
+                    <div css={ticketInfoTitle}>{trip.tripTitle}</div>
+                    <div css={ticketInfoDate}>
+                        {dayjs(trip.startDate).format('YY.MM.DD')} → {dayjs(trip.endDate).format('YY.MM.DD')}
+                    </div>
                 </div>
             </div>
-            <div css={ticketInfoArea}>
-                <div css={ticketInfoTitle}>{trip.tripTitle}</div>
-                <div css={ticketInfoDate}>
-                    {dayjs(trip.startDate).format('YY.MM.DD')} → {dayjs(trip.endDate).format('YY.MM.DD')}
+
+            {/* perforation */}
+            <div css={ticketPerf}>
+                <div css={ticketPerfNotchTop} />
+                <div css={ticketPerfNotchBottom} />
+            </div>
+
+            {/* stub */}
+            <div css={ticketStub}>
+                <div>
+                    <div css={ticketStubLabel}>Trip</div>
+                    <div css={ticketStubNum}>#{String(country.trips.length).padStart(2, '0')}</div>
                 </div>
+                <svg width='36' height='14' viewBox='0 0 36 14' fill='none'>
+                    <rect x='0' y='2' width='2' height='10' fill='#111827' />
+                    <rect x='4' y='2' width='1' height='10' fill='#111827' />
+                    <rect x='7' y='2' width='3' height='10' fill='#111827' />
+                    <rect x='12' y='2' width='1' height='10' fill='#111827' />
+                    <rect x='15' y='2' width='2' height='10' fill='#111827' />
+                    <rect x='19' y='2' width='3' height='10' fill='#111827' />
+                    <rect x='24' y='2' width='1' height='10' fill='#111827' />
+                    <rect x='27' y='2' width='2' height='10' fill='#111827' />
+                    <rect x='31' y='2' width='3' height='10' fill='#111827' />
+                </svg>
             </div>
         </div>
-
-        {/* perforation */}
-        <div css={ticketPerf}>
-            <div css={ticketPerfNotchTop} />
-            <div css={ticketPerfNotchBottom} />
-        </div>
-
-        {/* stub */}
-        <div css={ticketStub}>
-            <div>
-                <div css={ticketStubLabel}>Trip</div>
-                <div css={ticketStubNum}>#{String(country.trips.length).padStart(2, '0')}</div>
-            </div>
-            <svg width="36" height="14" viewBox="0 0 36 14" fill="none">
-                <rect x="0"  y="2" width="2" height="10" fill="#111827"/>
-                <rect x="4"  y="2" width="1" height="10" fill="#111827"/>
-                <rect x="7"  y="2" width="3" height="10" fill="#111827"/>
-                <rect x="12" y="2" width="1" height="10" fill="#111827"/>
-                <rect x="15" y="2" width="2" height="10" fill="#111827"/>
-                <rect x="19" y="2" width="3" height="10" fill="#111827"/>
-                <rect x="24" y="2" width="1" height="10" fill="#111827"/>
-                <rect x="27" y="2" width="2" height="10" fill="#111827"/>
-                <rect x="31" y="2" width="3" height="10" fill="#111827"/>
-            </svg>
-        </div>
-    </div>
     );
 };
 
 /* ─── main component ────────────────────────────────────── */
 const GlobeMapPage = () => {
-    const navigate  = useNavigate();
+    const navigate = useNavigate();
     const showToast = useToastStore((s) => s.showToast);
 
-    const mountRef    = useRef<HTMLDivElement>(null);
-    const pinsRef     = useRef<THREE.Mesh[]>([]);
+    const mountRef = useRef<HTMLDivElement>(null);
+    const pinsRef = useRef<THREE.Mesh[]>([]);
     const controlsRef = useRef<OrbitControls | null>(null);
 
     const [dotsReady, setDotsReady] = useState(false);
-    const [selected,  setSelected]  = useState<SelectedMark | null>(null);
-    const [ctaReady,  setCtaReady]  = useState(false);
+    const [selected, setSelected] = useState<SelectedMark | null>(null);
+    const [ctaReady, setCtaReady] = useState(false);
 
     /* idle CTA timer — refs avoid stale closures inside Three.js effect */
     const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const armCtaRef    = useRef<() => void>(() => {});
+    const armCtaRef = useRef<() => void>(() => {});
     const disarmCtaRef = useRef<() => void>(() => {});
 
     armCtaRef.current = () => {
@@ -247,9 +243,7 @@ const GlobeMapPage = () => {
     const shouldFetchTrips = !!(summaryResult?.success && summaryResult.data);
     const { data: tripsResult, isLoading: isTripsLoading } = useTripTicketList(shouldFetchTrips);
     const isLoading = isSummaryLoading || (shouldFetchTrips && isTripsLoading);
-    const trips: Trip[] = tripsResult?.success
-        ? (tripsResult as { success: true; data: Trip[] }).data
-        : EMPTY_TRIPS;
+    const trips: Trip[] = tripsResult?.success ? (tripsResult as { success: true; data: Trip[] }).data : EMPTY_TRIPS;
 
     const globeState = isLoading ? 'loading' : trips.length === 0 ? 'empty' : 'populated';
     const nickname = summaryResult?.success ? summaryResult.data.nickname : '';
@@ -259,10 +253,11 @@ const GlobeMapPage = () => {
     const queryClient = useQueryClient();
     const [nicknameInput, setNicknameInput] = useState('');
     const nicknameValidation = validateUserNickName(nicknameInput, NICKNAME_FORM.MIN_LENGTH, NICKNAME_FORM.MAX_LENGTH);
-    const { isSubmitting, error: nicknameError, submitNickname } = useNickname(
-        nicknameInput,
-        () => queryClient.invalidateQueries({ queryKey: ['summary'] }),
-    );
+    const {
+        isSubmitting,
+        error: nicknameError,
+        submitNickname,
+    } = useNickname(nicknameInput, () => queryClient.invalidateQueries({ queryKey: ['summary'] }));
 
     const countriesMap = useMemo(() => {
         const map = new Map<string, { trips: Trip[]; nameKo: string; emoji: string }>();
@@ -288,7 +283,8 @@ const GlobeMapPage = () => {
     useEffect(() => {
         if (!document.getElementById('outfit-font')) {
             const link = document.createElement('link');
-            link.id = 'outfit-font'; link.rel = 'stylesheet';
+            link.id = 'outfit-font';
+            link.rel = 'stylesheet';
             link.href = 'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap';
             document.head.appendChild(link);
         }
@@ -300,10 +296,11 @@ const GlobeMapPage = () => {
         if (!container) return;
         setDotsReady(false);
 
-        const W = container.clientWidth, H = container.clientHeight;
+        const W = container.clientWidth,
+            H = container.clientHeight;
 
-        const scene    = new THREE.Scene();
-        const camera   = new THREE.PerspectiveCamera(45, W / H, 0.1, 1000);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 1000);
         camera.position.set(0, 0, 3.8);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -312,21 +309,18 @@ const GlobeMapPage = () => {
         renderer.setClearColor(0x000000, 0);
         container.appendChild(renderer.domElement);
 
-        scene.add(new THREE.Mesh(
-            new THREE.SphereGeometry(R, 32, 32),
-            new THREE.MeshBasicMaterial({ visible: false }),
-        ));
+        scene.add(new THREE.Mesh(new THREE.SphereGeometry(R, 32, 32), new THREE.MeshBasicMaterial({ visible: false })));
 
         const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping   = true;
-        controls.dampingFactor   = 0.09;
-        controls.rotateSpeed     = 0.7;
-        controls.autoRotate      = true;
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.09;
+        controls.rotateSpeed = 0.7;
+        controls.autoRotate = true;
         controls.autoRotateSpeed = 0.45;
-        controls.minDistance     = 2.7;
-        controls.maxDistance     = 7.0;
-        controls.enablePan       = false;
-        controls.enableZoom      = true;
+        controls.minDistance = 2.7;
+        controls.maxDistance = 7.0;
+        controls.enablePan = false;
+        controls.enableZoom = true;
         controlsRef.current = controls;
 
         const visitedCentroids: Array<[number, number]> = [];
@@ -340,10 +334,12 @@ const GlobeMapPage = () => {
         const buildDots = (pixels: Uint8ClampedArray, CW: number, CH: number) => {
             const isLand = (lat: number, lng: number): boolean => {
                 if (CW === 0) return false;
-                const px  = Math.min(CW - 1, Math.max(0, Math.floor((lng + 180) / 360 * CW)));
-                const py  = Math.min(CH - 1, Math.max(0, Math.floor((90 - lat)  / 180 * CH)));
+                const px = Math.min(CW - 1, Math.max(0, Math.floor(((lng + 180) / 360) * CW)));
+                const py = Math.min(CH - 1, Math.max(0, Math.floor(((90 - lat) / 180) * CH)));
                 const idx = (py * CW + px) * 4;
-                const r   = pixels[idx], g = pixels[idx + 1], b = pixels[idx + 2];
+                const r = pixels[idx],
+                    g = pixels[idx + 1],
+                    b = pixels[idx + 2];
                 return !(b > r * 1.2 && b > g * 1.1 && b > 100);
             };
 
@@ -354,7 +350,8 @@ const GlobeMapPage = () => {
                 return false;
             };
 
-            const grayPos: THREE.Vector3[] = [], bluePos: THREE.Vector3[] = [];
+            const grayPos: THREE.Vector3[] = [],
+                bluePos: THREE.Vector3[] = [];
 
             for (let lat = -88; lat <= 88; lat += DOT_STEP) {
                 for (let lng = -180; lng < 180; lng += DOT_STEP) {
@@ -365,12 +362,12 @@ const GlobeMapPage = () => {
             }
 
             const dotGeo = new THREE.CircleGeometry(DOT_SIZE, 5);
-            const dummy  = new THREE.Object3D();
-            const UP     = new THREE.Vector3(0, 0, 1);
+            const dummy = new THREE.Object3D();
+            const UP = new THREE.Vector3(0, 0, 1);
 
             const addMesh = (positions: THREE.Vector3[], color: number) => {
                 if (!positions.length) return;
-                const mat  = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide });
+                const mat = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide });
                 const mesh = new THREE.InstancedMesh(dotGeo, mat, positions.length);
                 positions.forEach((pos, i) => {
                     dummy.position.copy(pos);
@@ -389,7 +386,7 @@ const GlobeMapPage = () => {
             countriesMap.forEach(({ trips: ct, nameKo, emoji }, nameEn) => {
                 const coords = CENTROIDS[nameEn];
                 if (!coords) return;
-                const pos    = toVec3(coords[0], coords[1], R);
+                const pos = toVec3(coords[0], coords[1], R);
                 const normal = pos.clone().normalize();
 
                 const pin = new THREE.Mesh(
@@ -404,8 +401,11 @@ const GlobeMapPage = () => {
                 const ring = new THREE.Mesh(
                     new THREE.RingGeometry(0.038, 0.06, 32),
                     new THREE.MeshBasicMaterial({
-                        color: ACCENT_HEX, transparent: true, opacity: 0.6,
-                        side: THREE.DoubleSide, depthWrite: false,
+                        color: ACCENT_HEX,
+                        transparent: true,
+                        opacity: 0.6,
+                        side: THREE.DoubleSide,
+                        depthWrite: false,
                     }),
                 );
                 ring.position.copy(pos);
@@ -421,33 +421,52 @@ const GlobeMapPage = () => {
         img.crossOrigin = 'anonymous';
         img.onload = () => {
             try {
-                const CW = 720, CH = 360;
+                const CW = 720,
+                    CH = 360;
                 const cvs = document.createElement('canvas');
-                cvs.width = CW; cvs.height = CH;
+                cvs.width = CW;
+                cvs.height = CH;
                 const ctx = cvs.getContext('2d')!;
                 ctx.drawImage(img, 0, 0, CW, CH);
                 buildDots(ctx.getImageData(0, 0, CW, CH).data, CW, CH);
-            } catch { buildDots(new Uint8ClampedArray(0), 0, 0); }
+            } catch {
+                buildDots(new Uint8ClampedArray(0), 0, 0);
+            }
         };
         img.onerror = () => buildDots(new Uint8ClampedArray(0), 0, 0);
         img.src = LAND_MASK_URL;
 
         /* pointer: drag detection + pin raycasting */
         const ray = new THREE.Raycaster();
-        let dragged = false, downX = 0, downY = 0;
+        let dragged = false,
+            downX = 0,
+            downY = 0,
+            activePointers = 0;
         const onDown = (e: PointerEvent) => {
-            dragged = false; downX = e.clientX; downY = e.clientY;
+            activePointers++;
+            if (activePointers > 1) {
+                dragged = true; // 멀티터치(핀치) → tap 아님
+            } else {
+                dragged = false;
+                downX = e.clientX;
+                downY = e.clientY;
+            }
             disarmCtaRef.current();
             controls.autoRotate = false;
         };
         const onMove = (e: PointerEvent) => {
-            if (Math.hypot(e.clientX - downX, e.clientY - downY) > 6) dragged = true;
+            if (activePointers === 1 && Math.hypot(e.clientX - downX, e.clientY - downY) > 6) dragged = true;
         };
         const onUp = (e: PointerEvent) => {
-            if (dragged) { armCtaRef.current(); return; }
+            activePointers = Math.max(0, activePointers - 1);
+            if (activePointers > 0) return; // 다른 손가락이 아직 down 상태
+            if (dragged) {
+                armCtaRef.current();
+                return;
+            }
             const rect = renderer.domElement.getBoundingClientRect();
-            const x =  ((e.clientX - rect.left) / rect.width)  * 2 - 1;
-            const y = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
+            const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
             ray.setFromCamera(new THREE.Vector2(x, y), camera);
             const hits = ray.intersectObjects(pinsRef.current);
             if (hits.length > 0) {
@@ -463,10 +482,11 @@ const GlobeMapPage = () => {
         };
         renderer.domElement.addEventListener('pointerdown', onDown);
         renderer.domElement.addEventListener('pointermove', onMove);
-        renderer.domElement.addEventListener('pointerup',   onUp);
+        renderer.domElement.addEventListener('pointerup', onUp);
 
         const onResize = () => {
-            const w = container.clientWidth, h = container.clientHeight;
+            const w = container.clientWidth,
+                h = container.clientHeight;
             camera.aspect = w / h;
             camera.updateProjectionMatrix();
             renderer.setSize(w, h);
@@ -490,7 +510,7 @@ const GlobeMapPage = () => {
             cancelAnimationFrame(rafId);
             renderer.domElement.removeEventListener('pointerdown', onDown);
             renderer.domElement.removeEventListener('pointermove', onMove);
-            renderer.domElement.removeEventListener('pointerup',   onUp);
+            renderer.domElement.removeEventListener('pointerup', onUp);
             window.removeEventListener('resize', onResize);
             controls.dispose();
             renderer.dispose();
@@ -546,9 +566,7 @@ const GlobeMapPage = () => {
                     <div css={hintPillInner}>
                         {globeState === 'populated' && <span css={hintDot} />}
                         <span css={hintText}>
-                            {globeState === 'empty'
-                                ? '지구본을 돌려보세요'
-                                : '핀을 탭하거나 지구본을 돌려보세요'}
+                            {globeState === 'empty' ? '지구본을 돌려보세요' : '핀을 탭하거나 지구본을 돌려보세요'}
                         </span>
                     </div>
                 </div>
@@ -559,9 +577,17 @@ const GlobeMapPage = () => {
                 <div css={emptyCard(ctaReady)}>
                     <div css={emptyCardHead}>
                         <div css={emptyIconBox}>
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-                                stroke={ACCENT} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.2.6-.6.5-1.1z"/>
+                            <svg
+                                width='22'
+                                height='22'
+                                viewBox='0 0 24 24'
+                                fill='none'
+                                stroke={ACCENT}
+                                strokeWidth='2'
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                            >
+                                <path d='M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.2.6-.6.5-1.1z' />
                             </svg>
                         </div>
                         <div>
@@ -570,9 +596,16 @@ const GlobeMapPage = () => {
                         </div>
                     </div>
                     <button css={emptyCtaBtn} onClick={handleCreateFirst}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                            <path d="M12 5v14M5 12h14"/>
+                        <svg
+                            width='14'
+                            height='14'
+                            viewBox='0 0 24 24'
+                            fill='none'
+                            stroke='currentColor'
+                            strokeWidth='2.5'
+                            strokeLinecap='round'
+                        >
+                            <path d='M12 5v14M5 12h14' />
                         </svg>
                         첫 티켓 만들기
                     </button>
@@ -583,19 +616,34 @@ const GlobeMapPage = () => {
             {globeState === 'populated' && !selected && (
                 <button css={ticketEntry(ctaReady)} onClick={() => navigate(ROUTES.PATH.TICKETS)}>
                     <div css={ticketEntryIcon}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                            stroke={ACCENT} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/>
-                            <path d="M13 5v14"/>
+                        <svg
+                            width='18'
+                            height='18'
+                            viewBox='0 0 24 24'
+                            fill='none'
+                            stroke={ACCENT}
+                            strokeWidth='2.2'
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                        >
+                            <path d='M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z' />
+                            <path d='M13 5v14' />
                         </svg>
                     </div>
                     <div css={ticketEntryText}>
                         <span css={ticketEntryTitle}>내 티켓 {trips.length}장</span>
                         <span css={ticketEntrySub}>리스트로 보기 · 새 티켓 추가</span>
                     </div>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="#cbd5e1" strokeWidth="2" strokeLinecap="round">
-                        <polyline points="9 18 15 12 9 6"/>
+                    <svg
+                        width='18'
+                        height='18'
+                        viewBox='0 0 24 24'
+                        fill='none'
+                        stroke='#cbd5e1'
+                        strokeWidth='2'
+                        strokeLinecap='round'
+                    >
+                        <polyline points='9 18 15 12 9 6' />
                     </svg>
                 </button>
             )}
@@ -632,8 +680,8 @@ const GlobeMapPage = () => {
                         <div css={nicknameInputWrap(nicknameValidation.valid || !nicknameInput)}>
                             <input
                                 css={nicknameInputField}
-                                type="text"
-                                placeholder="닉네임 입력"
+                                type='text'
+                                placeholder='닉네임 입력'
                                 value={nicknameInput}
                                 onChange={(e) => setNicknameInput(e.target.value)}
                                 maxLength={NICKNAME_FORM.MAX_LENGTH + 1}
@@ -695,20 +743,27 @@ const page = css`
     height: 100dvh;
     background: radial-gradient(ellipse at 50% 48%, #eef2ff 0%, #f8faff 50%, #ffffff 100%);
     overflow: hidden;
-    font-family: 'Outfit', -apple-system, sans-serif;
+    font-family:
+        'Outfit',
+        -apple-system,
+        sans-serif;
 `;
 
 const canvas = css`
     position: absolute;
     inset: 0;
     cursor: grab;
-    &:active { cursor: grabbing; }
+    &:active {
+        cursor: grabbing;
+    }
 `;
 
 /* editorial header */
 const editorialHeader = css`
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     padding: 54px 24px 0;
     z-index: 40;
     display: flex;
@@ -778,24 +833,31 @@ const welcomeName = css`
 /* hint pill */
 const hintPill = css`
     position: absolute;
-    bottom: 44px; left: 0; right: 0;
-    display: flex; justify-content: center;
-    z-index: 10; pointer-events: none;
+    bottom: 44px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
     animation: ${fadeIn} 0.4s ease both;
 `;
 
 const hintPillInner = css`
-    display: inline-flex; align-items: center; gap: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     padding: 6px 12px;
-    background: rgba(255,255,255,0.7);
+    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border-radius: 100px;
-    border: 1px solid rgba(0,0,0,0.04);
+    border: 1px solid rgba(0, 0, 0, 0.04);
 `;
 
 const hintDot = css`
-    width: 5px; height: 5px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
     background: ${ACCENT};
     flex-shrink: 0;
@@ -811,99 +873,151 @@ const hintText = css`
 /* empty CTA card */
 const emptyCard = (visible: boolean) => css`
     position: absolute;
-    bottom: 36px; left: 16px; right: 16px;
+    bottom: 36px;
+    left: 16px;
+    right: 16px;
     z-index: 30;
     background: #fff;
     border-radius: 20px;
     padding: 18px 20px;
-    box-shadow: 0 12px 48px rgba(37,99,235,0.12), 0 4px 16px rgba(0,0,0,0.04);
-    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow:
+        0 12px 48px rgba(37, 99, 235, 0.12),
+        0 4px 16px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.04);
     transform: ${visible ? 'translateY(0)' : 'translateY(calc(100% + 40px))'};
     opacity: ${visible ? 1 : 0};
-    transition: transform 600ms cubic-bezier(0.22,1,0.36,1), opacity 400ms ease;
+    transition:
+        transform 600ms cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 400ms ease;
 `;
 
 const emptyCardHead = css`
-    display: flex; align-items: center; gap: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 14px;
 `;
 
 const emptyIconBox = css`
-    width: 44px; height: 44px;
+    width: 44px;
+    height: 44px;
     border-radius: 14px;
     background: ${ACCENT}18;
-    display: flex; align-items: center; justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
 `;
 
 const emptyCardTitle = css`
-    font-size: 15px; font-weight: 700;
-    color: #111827; letter-spacing: -0.3px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.3px;
     margin-bottom: 3px;
 `;
 
 const emptyCardSub = css`
-    font-size: 12px; color: #6b7280; line-height: 1.5;
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.5;
 `;
 
 const emptyCtaBtn = css`
-    width: 100%; padding: 13px 0;
+    width: 100%;
+    padding: 13px 0;
     border-radius: 12px;
-    background: ${ACCENT}; color: #fff;
+    background: ${ACCENT};
+    color: #fff;
     border: none;
-    font-size: 14px; font-weight: 700; letter-spacing: -0.2px;
-    cursor: pointer; font-family: inherit;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     box-shadow: 0 6px 20px ${ACCENT}50;
     -webkit-tap-highlight-color: transparent;
-    &:active { opacity: 0.85; transform: scale(0.98); }
+    &:active {
+        opacity: 0.85;
+        transform: scale(0.98);
+    }
 `;
 
 /* populated bottom entry */
 const ticketEntry = (visible: boolean) => css`
     position: absolute;
-    bottom: 28px; left: 16px; right: 16px;
+    bottom: 28px;
+    left: 16px;
+    right: 16px;
     z-index: 30;
-    background: #fff; border-radius: 16px;
+    background: #fff;
+    border-radius: 16px;
     padding: 14px 18px;
-    box-shadow: 0 8px 32px rgba(15,23,42,0.12), 0 2px 8px rgba(0,0,0,0.04);
-    border: 1px solid rgba(0,0,0,0.04);
-    display: flex; align-items: center; gap: 12px;
-    cursor: pointer; font-family: inherit; text-align: left;
+    box-shadow:
+        0 8px 32px rgba(15, 23, 42, 0.12),
+        0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
     transform: ${visible ? 'translateY(0)' : 'translateY(calc(100% + 40px))'};
     opacity: ${visible ? 1 : 0};
-    transition: transform 600ms cubic-bezier(0.22,1,0.36,1), opacity 400ms ease;
+    transition:
+        transform 600ms cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 400ms ease;
     -webkit-tap-highlight-color: transparent;
-    &:active { opacity: 0.85; transform: scale(0.98); }
+    &:active {
+        opacity: 0.85;
+        transform: scale(0.98);
+    }
 `;
 
 const ticketEntryIcon = css`
-    width: 38px; height: 38px;
+    width: 38px;
+    height: 38px;
     border-radius: 10px;
     background: ${ACCENT}15;
-    display: flex; align-items: center; justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
 `;
 
 const ticketEntryText = css`
-    flex: 1; min-width: 0;
-    display: flex; flex-direction: column; gap: 2px;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 `;
 
 const ticketEntryTitle = css`
-    font-size: 14px; font-weight: 700;
-    color: #111827; letter-spacing: -0.2px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.2px;
 `;
 
 const ticketEntrySub = css`
-    font-size: 11px; color: #94a3b8;
+    font-size: 11px;
+    color: #94a3b8;
 `;
 
 /* floating backdrop */
 const floatingBackdrop = css`
-    position: absolute; inset: 0;
+    position: absolute;
+    inset: 0;
     z-index: 50;
-    display: flex; align-items: flex-end; justify-content: center;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
     padding: 0 20px 96px;
     animation: ${fadeIn} 200ms ease;
 `;
@@ -912,8 +1026,8 @@ const floatingBackdrop = css`
 const ticketWrap = css`
     display: flex;
     width: 270px;
-    filter: drop-shadow(0 16px 40px rgba(0,0,0,0.2));
-    animation: ${cardUp} 420ms cubic-bezier(0.22,1,0.36,1);
+    filter: drop-shadow(0 16px 40px rgba(0, 0, 0, 0.2));
+    animation: ${cardUp} 420ms cubic-bezier(0.22, 1, 0.36, 1);
     cursor: pointer;
 `;
 
@@ -926,42 +1040,54 @@ const ticketMain = css`
 
 const ticketPhotoArea = css`
     position: relative;
-    width: 100%; height: 120px;
+    width: 100%;
+    height: 120px;
     background: linear-gradient(135deg, ${ACCENT} 0%, #0284c7 100%);
 `;
 
 const ticketCoverImg = css`
     position: absolute;
     inset: 0;
-    width: 100%; height: 100%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
 `;
 
 const ticketPhotoOverlay = css`
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.5));
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.5));
 `;
 
 const ticketPhotoMeta = css`
     position: absolute;
-    bottom: 10px; left: 12px; right: 12px;
-    display: flex; align-items: flex-end; justify-content: space-between;
+    bottom: 10px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
     color: #fff;
 `;
 
 const ticketDestLabel = css`
-    font-size: 10px; font-weight: 600;
-    letter-spacing: 1.5px; opacity: 0.85;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    opacity: 0.85;
     text-transform: uppercase;
 `;
 
 const ticketDestName = css`
-    font-size: 18px; font-weight: 800;
-    letter-spacing: -0.5px; line-height: 1;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1;
 `;
 
 const ticketEmojiLg = css`
-    font-size: 22px; line-height: 1;
+    font-size: 22px;
+    line-height: 1;
 `;
 
 const ticketInfoArea = css`
@@ -969,87 +1095,117 @@ const ticketInfoArea = css`
 `;
 
 const ticketInfoTitle = css`
-    font-size: 13px; font-weight: 700;
-    color: #111827; letter-spacing: -0.2px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.2px;
     margin-bottom: 3px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 `;
 
 const ticketInfoDate = css`
-    font-size: 10px; color: #9ca3af;
-    font-weight: 500; letter-spacing: 0.3px;
+    font-size: 10px;
+    color: #9ca3af;
+    font-weight: 500;
+    letter-spacing: 0.3px;
 `;
 
 const ticketPerf = css`
     width: 1px;
-    background: repeating-linear-gradient(
-        180deg,
-        #d1d5db 0,
-        #d1d5db 3px,
-        transparent 3px,
-        transparent 6px
-    );
+    background: repeating-linear-gradient(180deg, #d1d5db 0, #d1d5db 3px, transparent 3px, transparent 6px);
     margin: 8px 0;
     position: relative;
 `;
 
 const ticketPerfNotchTop = css`
-    position: absolute; top: -8px; left: -6px;
-    width: 12px; height: 12px; border-radius: 50%;
+    position: absolute;
+    top: -8px;
+    left: -6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
     background: transparent;
     box-shadow: 0 0 0 20px #fff;
     clip-path: inset(0 0 50% 0);
 `;
 
 const ticketPerfNotchBottom = css`
-    position: absolute; bottom: -8px; left: -6px;
-    width: 12px; height: 12px; border-radius: 50%;
+    position: absolute;
+    bottom: -8px;
+    left: -6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
     background: transparent;
     box-shadow: 0 0 0 20px #fff;
     clip-path: inset(50% 0 0 0);
 `;
 
 const ticketStub = css`
-    width: 62px; background: #fff;
+    width: 62px;
+    background: #fff;
     border-radius: 0 14px 14px 0;
     padding: 14px 10px;
-    display: flex; flex-direction: column; justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 `;
 
 const ticketStubLabel = css`
-    font-size: 8px; color: #9ca3af;
-    font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    font-size: 8px;
+    color: #9ca3af;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 `;
 
 const ticketStubNum = css`
-    font-size: 18px; font-weight: 800;
-    color: #111827; letter-spacing: -0.5px;
-    line-height: 1; margin-top: 2px;
+    font-size: 18px;
+    font-weight: 800;
+    color: #111827;
+    letter-spacing: -0.5px;
+    line-height: 1;
+    margin-top: 2px;
 `;
 
 /* loading */
 const loadingWrap = css`
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 12px; z-index: 10; pointer-events: none;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    z-index: 10;
+    pointer-events: none;
 `;
 
 const loadingOrb = css`
-    width: 10px; height: 10px; border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
     background: ${ACCENT};
     animation: ${orbPulse} 1.4s ease-in-out infinite;
 `;
 
 const loadingText = css`
-    font-size: 12px; font-weight: 500;
-    color: #9ca3af; letter-spacing: 0.3px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #9ca3af;
+    letter-spacing: 0.3px;
 `;
 
 /* nickname overlay */
 const nicknameOverlay = css`
-    position: absolute; inset: 0; z-index: 60;
-    display: flex; align-items: center; justify-content: center;
+    position: absolute;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 24px;
     background: rgba(15, 23, 42, 0.55);
     backdrop-filter: blur(12px);
@@ -1058,75 +1214,112 @@ const nicknameOverlay = css`
 `;
 
 const nicknameCard = css`
-    width: 100%; max-width: 340px;
+    width: 100%;
+    max-width: 340px;
     background: #fff;
     border-radius: 24px;
     padding: 28px 24px 24px;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.2);
-    display: flex; flex-direction: column; align-items: center;
-    animation: ${cardUp} 0.4s cubic-bezier(0.22,1,0.36,1) both;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: ${cardUp} 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 `;
 
 const nicknameCardEmoji = css`
-    font-size: 36px; margin-bottom: 12px;
+    font-size: 36px;
+    margin-bottom: 12px;
 `;
 
 const nicknameCardTitle = css`
-    font-size: 17px; font-weight: 800;
-    color: #0f172a; letter-spacing: -0.4px;
-    margin-bottom: 6px; text-align: center;
+    font-size: 17px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.4px;
+    margin-bottom: 6px;
+    text-align: center;
 `;
 
 const nicknameCardSub = css`
-    font-size: 13px; color: #64748b;
-    text-align: center; margin-bottom: 20px;
+    font-size: 13px;
+    color: #64748b;
+    text-align: center;
+    margin-bottom: 20px;
     line-height: 1.5;
 `;
 
 const nicknameInputWrap = (valid: boolean) => css`
     width: 100%;
     border: 1.5px solid ${valid ? '#e2e8f0' : '#ef4444'};
-    border-radius: 12px; overflow: hidden;
+    border-radius: 12px;
+    overflow: hidden;
     margin-bottom: 8px;
     transition: border-color 0.2s;
-    &:focus-within { border-color: ${valid ? ACCENT : '#ef4444'}; }
+    &:focus-within {
+        border-color: ${valid ? ACCENT : '#ef4444'};
+    }
 `;
 
 const nicknameInputField = css`
-    width: 100%; padding: 12px 14px;
-    font-size: 15px; font-weight: 500;
-    border: none; outline: none;
-    font-family: inherit; color: #0f172a;
-    &::placeholder { color: #94a3b8; }
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    outline: none;
+    font-family: inherit;
+    color: #0f172a;
+    &::placeholder {
+        color: #94a3b8;
+    }
 `;
 
 const nicknameErrorMsg = css`
-    font-size: 12px; color: #ef4444;
-    align-self: flex-start; margin-bottom: 8px;
+    font-size: 12px;
+    color: #ef4444;
+    align-self: flex-start;
+    margin-bottom: 8px;
 `;
 
 const nicknameSuggestions = css`
-    display: flex; flex-wrap: wrap; gap: 6px;
-    width: 100%; margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+    margin-bottom: 20px;
 `;
 
 const nicknameSuggestionChip = css`
     padding: 6px 12px;
-    background: #f1f5f9; border: none; border-radius: 100px;
-    font-size: 12px; color: #475569; cursor: pointer;
+    background: #f1f5f9;
+    border: none;
+    border-radius: 100px;
+    font-size: 12px;
+    color: #475569;
+    cursor: pointer;
     font-family: inherit;
     transition: background 0.15s;
-    &:hover { background: #e2e8f0; }
+    &:hover {
+        background: #e2e8f0;
+    }
 `;
 
 const nicknameSubmitBtn = (active: boolean) => css`
-    width: 100%; padding: 14px;
-    border-radius: 12px; border: none;
-    font-size: 15px; font-weight: 700;
-    font-family: inherit; cursor: ${active ? 'pointer' : 'not-allowed'};
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: ${active ? 'pointer' : 'not-allowed'};
     background: ${active ? ACCENT : '#cbd5e1'};
     color: #fff;
-    transition: background 0.2s, transform 0.1s;
-    &:active { transform: ${active ? 'scale(0.98)' : 'none'}; }
+    transition:
+        background 0.2s,
+        transform 0.1s;
+    &:active {
+        transform: ${active ? 'scale(0.98)' : 'none'};
+    }
 `;
 /* eslint-disable @typescript-eslint/no-unused-vars */
