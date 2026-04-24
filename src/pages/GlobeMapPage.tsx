@@ -32,7 +32,7 @@ const ACCENT_HEX = 0x0ea5e9;
 const R              = 0.78;
 const DOT_STEP       = 1.0;
 const VISIT_RADIUS   = 9;
-const DOT_SIZE       = 0.005;
+const DOT_SIZE       = 0.006;
 const LAND_MASK_URL  = '/earth-texture.jpg';
 
 /* ─── country centroids ─────────────────────────────────── */
