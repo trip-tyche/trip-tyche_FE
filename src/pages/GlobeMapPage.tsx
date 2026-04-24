@@ -6,6 +6,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { css, keyframes } from '@emotion/react';
+import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -255,9 +256,13 @@ const GlobeMapPage = () => {
     const showNicknameSetup = summaryResult?.success && !summaryResult.data.nickname;
 
     /* 닉네임 설정 오버레이 */
+    const queryClient = useQueryClient();
     const [nicknameInput, setNicknameInput] = useState('');
     const nicknameValidation = validateUserNickName(nicknameInput, NICKNAME_FORM.MIN_LENGTH, NICKNAME_FORM.MAX_LENGTH);
-    const { isSubmitting, error: nicknameError, submitNickname } = useNickname(nicknameInput);
+    const { isSubmitting, error: nicknameError, submitNickname } = useNickname(
+        nicknameInput,
+        () => queryClient.invalidateQueries({ queryKey: ['summary'] }),
+    );
 
     const countriesMap = useMemo(() => {
         const map = new Map<string, { trips: Trip[]; nameKo: string; emoji: string }>();
