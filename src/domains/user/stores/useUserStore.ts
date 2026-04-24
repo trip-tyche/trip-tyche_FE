@@ -42,13 +42,18 @@ const useUserStore = create<UserState>()((set, get) => ({
             isLoggingOut: true,
         }));
 
-        await userAPI.requestLogout();
-        queryClient.clear();
-        set(() => ({
-            userInfo: null,
-            isLoggingOut: false,
-        }));
-        window.location.replace('/signin');
+        try {
+            await userAPI.requestLogout();
+        } catch {
+            // API 실패해도 클라이언트 세션은 반드시 초기화
+        } finally {
+            queryClient.clear();
+            set(() => ({
+                userInfo: null,
+                isLoggingOut: false,
+            }));
+            window.location.replace('/signin');
+        }
     },
 }));
 
