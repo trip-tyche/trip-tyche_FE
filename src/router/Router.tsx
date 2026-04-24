@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 
 import { createBrowserRouter } from 'react-router-dom';
 
+import PrivateRoute from '@/layouts/PrivateRoute';
 import RootLayout from '@/layouts/RootLayout';
 import ErrorPage from '@/pages/ErrorPage';
 import PageNotFound from '@/pages/PageNotFound';
@@ -30,104 +31,111 @@ const router = createBrowserRouter([
         element: <RootLayout />,
         errorElement: <ErrorPage />,
         children: [
-            {
-                index: true,
-                element: (
-                    <Suspense fallback={<Indicator />}>
-                        <GlobeMapPage />
-                    </Suspense>
-                ),
-            },
-            {
-                path: ROUTES.PATH.TICKETS,
-                element: (
-                    <Suspense fallback={<Indicator />}>
-                        <MainPage />
-                    </Suspense>
-                ),
-            },
+            /* ── Public ─────────────────────────── */
             {
                 path: ROUTES.PATH.SIGNIN,
                 element: <SigninPage />,
             },
-            ...(import.meta.env.DEV ? [{
-                path: 'preview',
-                element: (
-                    <Suspense fallback={<Indicator />}>
-                        <DevPreviewPage />
-                    </Suspense>
-                ),
-            }] : []),
+
+            /* ── Protected (로그인 필요) ───────── */
             {
-                path: ROUTES.PATH.SETTING,
-                element: (
-                    <Suspense fallback={<Indicator />}>
-                        <SettingPage />
-                    </Suspense>
-                ),
-            },
-            {
-                path: `notification/:userId`,
-                element: (
-                    <Suspense fallback={<Indicator />}>
-                        <NotificationPage />
-                    </Suspense>
-                ),
-            },
-            {
-                path: 'trip/:tripKey/',
+                element: <PrivateRoute />,
                 children: [
                     {
                         index: true,
                         element: (
                             <Suspense fallback={<Indicator />}>
-                                <TripPages.TripRoutePage />
+                                <GlobeMapPage />
                             </Suspense>
                         ),
                     },
                     {
-                        path: 'new',
+                        path: ROUTES.PATH.TICKETS,
                         element: (
                             <Suspense fallback={<Indicator />}>
-                                <TripImageUploadPage />
+                                <MainPage />
                             </Suspense>
                         ),
                     },
-                    {
-                        path: 'edit/image',
+                    ...(import.meta.env.DEV ? [{
+                        path: 'preview',
                         element: (
                             <Suspense fallback={<Indicator />}>
-                                <TripPages.TripImageManagePage />
+                                <DevPreviewPage />
                             </Suspense>
                         ),
-                    },
+                    }] : []),
                     {
-                        path: 'edit/info',
+                        path: ROUTES.PATH.SETTING,
                         element: (
                             <Suspense fallback={<Indicator />}>
-                                <TripInfoEditPage />
+                                <SettingPage />
                             </Suspense>
                         ),
                     },
-
                     {
-                        path: 'image',
+                        path: `notification/:userId`,
+                        element: (
+                            <Suspense fallback={<Indicator />}>
+                                <NotificationPage />
+                            </Suspense>
+                        ),
+                    },
+                    {
+                        path: 'trip/:tripKey/',
                         children: [
                             {
-                                path: 'by-pinpoint/:pinPointId',
+                                index: true,
                                 element: (
                                     <Suspense fallback={<Indicator />}>
-                                        <TripPages.ImageByPinpointPage />,
+                                        <TripPages.TripRoutePage />
                                     </Suspense>
                                 ),
                             },
                             {
-                                path: 'by-date/:date',
+                                path: 'new',
                                 element: (
                                     <Suspense fallback={<Indicator />}>
-                                        <TripPages.ImageByDatePage />
+                                        <TripImageUploadPage />
                                     </Suspense>
                                 ),
+                            },
+                            {
+                                path: 'edit/image',
+                                element: (
+                                    <Suspense fallback={<Indicator />}>
+                                        <TripPages.TripImageManagePage />
+                                    </Suspense>
+                                ),
+                            },
+                            {
+                                path: 'edit/info',
+                                element: (
+                                    <Suspense fallback={<Indicator />}>
+                                        <TripInfoEditPage />
+                                    </Suspense>
+                                ),
+                            },
+                            {
+                                path: 'image',
+                                children: [
+                                    {
+                                        path: 'by-pinpoint/:pinPointId',
+                                        element: (
+                                            <Suspense fallback={<Indicator />}>
+                                                <TripPages.ImageByPinpointPage />,
+                                            </Suspense>
+                                        ),
+                                    },
+                                    {
+                                        path: 'by-date/:date',
+                                        element: (
+                                            <Suspense fallback={<Indicator />}>
+                                                <TripPages.ImageByDatePage />
+                                            </Suspense>
+                                        ),
+                                    },
+                                ],
                             },
                         ],
                     },
