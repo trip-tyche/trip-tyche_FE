@@ -55,7 +55,8 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
 
             if (error.response && originalRequest && !originalRequest.isAlreadyRequest) {
                 originalRequest.isAlreadyRequest = true;
-                const { status } = error.response.data;
+                const httpStatus = error.response.status;
+                const { status } = error.response.data ?? {};
 
                 try {
                     if (status === 401) {
@@ -82,6 +83,12 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
                     if (status === 500) {
                         error.response.data.message = '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요';
                         return Promise.reject(error);
+                    }
+
+                    // body에 status 필드가 없는 경우 (502 등 gateway 에러)
+                    if (status === undefined && httpStatus >= 500) {
+                        logout();
+                        return Promise.resolve();
                     }
                 } catch (retryError) {
                     return Promise.reject(retryError);
