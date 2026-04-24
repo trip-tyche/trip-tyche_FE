@@ -9,6 +9,7 @@ import SigninPage from '@/pages/SigninPage';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
 import { ROUTES } from '@/shared/constants/route';
 
+const GlobeMapPage = lazy(() => import('@/pages/GlobeMapPage'));
 const MainPage = lazy(() => import('@/pages/MainPage'));
 const DevPreviewPage = lazy(() => import('@/pages/DevPreviewPage'));
 const SettingPage = lazy(() => import('@/pages/SettingPage'));
@@ -31,6 +32,14 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
+                element: (
+                    <Suspense fallback={<Indicator />}>
+                        <GlobeMapPage />
+                    </Suspense>
+                ),
+            },
+            {
+                path: ROUTES.PATH.TICKETS,
                 element: (
                     <Suspense fallback={<Indicator />}>
                         <MainPage />

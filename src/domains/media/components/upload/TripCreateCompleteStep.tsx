@@ -33,7 +33,7 @@ const TripCreateCompleteStep = ({ tripInfo }: { tripInfo: TripInfo }) => {
                     />
                 )}
                 <div css={buttonWrapper}>
-                    <Button text='여행 티켓 보러가기' onClick={() => navigate(ROUTES.PATH.MAIN)} />
+                    <Button text='여행 티켓 보러가기' onClick={() => navigate(ROUTES.PATH.TICKETS)} />
                 </div>
             </div>
         </div>

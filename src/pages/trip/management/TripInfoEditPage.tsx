@@ -41,7 +41,7 @@ const TripInfoEditPage = () => {
         if (tripInfoResult) {
             if (!tripInfoResult.success) {
                 showToast(tripInfoResult?.error);
-                navigate(ROUTES.PATH.MAIN);
+                navigate(ROUTES.PATH.TICKETS);
                 return;
             }
             setTripForm((prev) => {
@@ -80,14 +80,14 @@ const TripInfoEditPage = () => {
             }
         }
         showToast(result.success ? result.data : result.error);
-        navigate(ROUTES.PATH.MAIN);
+        navigate(ROUTES.PATH.TICKETS);
     };
 
     return (
         <div css={pageContainer}>
             {(isLoading || isSubmitting || isTripFinalizing) && <Indicator text='여행 정보 불러오는 중...' />}
 
-            <Header title={ROUTES.PATH_TITLE.TRIPS.NEW.INFO} isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
+            <Header title={ROUTES.PATH_TITLE.TRIPS.NEW.INFO} isBackButton onBack={() => navigate(ROUTES.PATH.TICKETS)} />
             <main css={mainStyle}>
                 <TripInfoForm isEditing={true} tripForm={tripForm} onChangeTripInfo={setTripForm} />
                 <Button

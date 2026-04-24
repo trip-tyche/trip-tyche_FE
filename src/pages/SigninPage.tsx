@@ -23,7 +23,7 @@ const SigninPage = () => {
 
     const handleGuestClick = () => {
         loginAsGuest();
-        navigate(ROUTES.PATH.MAIN);
+        navigate(ROUTES.PATH.HOME);
     };
 
     const handleDevLogin = async () => {
@@ -43,7 +43,7 @@ const SigninPage = () => {
             document.cookie = `access_token=${token}; path=/`;
             console.log('[DEV] cookie set:', document.cookie);
             await new Promise((r) => setTimeout(r, 2000));
-            window.location.replace(ROUTES.PATH.MAIN);
+            window.location.replace(ROUTES.PATH.HOME);
         } catch (e) {
             console.error('[DEV] login failed:', e);
         }

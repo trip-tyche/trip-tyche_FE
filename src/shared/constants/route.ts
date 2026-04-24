@@ -7,7 +7,8 @@ export const ROUTES = {
         ONBOARDING: '/onboarding',
         SIGNIN: '/signin',
         MAIN: '/',
-        GLOBE: '/globe',
+        HOME: '/',
+        TICKETS: '/tickets',
         SETTING: '/setting',
         NOTIFICATION: (userId: UserId) => `notification/${userId}`,
         TRIP: {

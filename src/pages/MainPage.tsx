@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { css, keyframes } from '@emotion/react';
-import { Bell, Settings, Plus, Hand } from 'lucide-react';
+import { Bell, Globe, Settings, Plus, Hand } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import MovableTripTicket from '@/domains/trip/components/MovableTripTicket';
@@ -76,6 +76,7 @@ const MainPage = () => {
                 <header css={header}>
                     <span css={logo}>TRIPTYCHE</span>
                     <div css={headerIcons}>
+                        <div css={iconBtnWrap}><Globe css={iconBtn} /></div>
                         <div css={iconBtnWrap}><Bell css={iconBtn} /></div>
                         <div css={iconBtnWrap}><Settings css={iconBtn} /></div>
                     </div>
@@ -105,6 +106,13 @@ const MainPage = () => {
             <header css={header}>
                 <span css={logo}>TRIPTYCHE</span>
                 <div css={headerIcons}>
+                    <button
+                        css={iconBtnWrap}
+                        onClick={() => navigate(ROUTES.PATH.HOME)}
+                        aria-label="지구본"
+                    >
+                        <Globe css={iconBtn} />
+                    </button>
                     <button
                         css={iconBtnWrap}
                         onClick={() => userId && navigate(ROUTES.PATH.NOTIFICATION(userId))}

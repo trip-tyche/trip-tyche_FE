@@ -104,7 +104,7 @@ const TripRoutePage = () => {
         if (result) {
             if (!result.success) {
                 showToast(result?.error || MESSAGE.ERROR.UNKNOWN);
-                navigate(ROUTES.PATH.MAIN);
+                navigate(ROUTES.PATH.TICKETS);
                 return;
             }
 
@@ -116,13 +116,13 @@ const TripRoutePage = () => {
 
             if (validLocationPinPoints.length === 0) {
                 showToast('여행 경로를 표시할 수 있는 사진이 없습니다');
-                navigate(ROUTES.PATH.MAIN);
+                navigate(ROUTES.PATH.TICKETS);
                 return;
             }
 
             if (!isValidTrip) {
                 showToast('여행 정보가 올바르지 않아요. 정보를 다시 확인해주세요');
-                navigate(ROUTES.PATH.MAIN);
+                navigate(ROUTES.PATH.TICKETS);
                 return;
             }
 
@@ -426,7 +426,7 @@ const TripRoutePage = () => {
 
     if (isMapScriptLoadError) {
         showToast('지도를 불러오는데 실패했습니다');
-        navigate(ROUTES.PATH.MAIN);
+        navigate(ROUTES.PATH.TICKETS);
         return;
     }
 
@@ -443,7 +443,7 @@ const TripRoutePage = () => {
 
     return (
         <div css={container}>
-            <BackButton onClick={() => navigate(`${ROUTES.PATH.MAIN}`)} />
+            <BackButton onClick={() => navigate(`${ROUTES.PATH.TICKETS}`)} />
 
             <Map
                 zoom={mapStatus.zoom}

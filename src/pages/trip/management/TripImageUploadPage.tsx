@@ -139,7 +139,7 @@ const TripImageUploadPage = () => {
             <Header
                 title={`새로운 ${isEdit ? '사진' : '여행'} 등록`}
                 isBackButton
-                onBack={() => (isEdit ? navigate(ROUTES.PATH.TRIP.EDIT.IMAGE(tripKey!)) : navigate(ROUTES.PATH.MAIN))}
+                onBack={() => (isEdit ? navigate(ROUTES.PATH.TRIP.EDIT.IMAGE(tripKey!)) : navigate(ROUTES.PATH.TICKETS))}
             />
 
             {!isCreateDone && <ProgressHeader currentStep={step} />}

@@ -41,7 +41,7 @@ const ErrorPage = () => {
                     새로고침
                 </button>
 
-                <button css={primaryButton} onClick={() => navigate(`${ROUTES.PATH.MAIN}`)}>
+                <button css={primaryButton} onClick={() => navigate(`${ROUTES.PATH.TICKETS}`)}>
                     <Home css={buttonIcon} />
                     홈으로 돌아가기
                 </button>

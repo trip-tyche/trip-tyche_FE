@@ -44,7 +44,7 @@ const PageNotFound = () => {
                     이전 페이지로 돌아가기
                 </button>
 
-                <button css={primaryButton} onClick={() => navigate(`${ROUTES.PATH.MAIN}`)}>
+                <button css={primaryButton} onClick={() => navigate(`${ROUTES.PATH.TICKETS}`)}>
                     <Home css={buttonIcon} />
                     홈으로 돌아가기
                 </button>

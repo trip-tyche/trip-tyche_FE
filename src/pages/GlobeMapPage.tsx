@@ -1,23 +1,36 @@
+/* GlobeMapPage — 로그인 후 메인 랜딩 페이지
+   Design: design_handoff_globe_home/README.md
+   empty:     회색 지구본 + CTA 카드 슬라이드업 (1.8s)
+   populated: 파란 핀 + 하단 티켓 진입 버튼 (1.2s idle)
+*/
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { css, keyframes } from '@emotion/react';
 import dayjs from 'dayjs';
-import { ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { useNavigate } from 'react-router-dom';
 
 import { useTripTicketList } from '@/domains/trip/hooks/queries';
+import { useSummary } from '@/domains/user/hooks/queries';
 import { Trip } from '@/domains/trip/types';
+import { tripAPI } from '@/libs/apis';
+import { toResult } from '@/libs/apis/shared/utils';
 import { ROUTES } from '@/shared/constants/route';
+import { useToastStore } from '@/shared/stores/useToastStore';
 
-/* ─── constants ─────────────────────────────────────────── */
-const R = 0.78;
-const DOT_STEP = 1.8;           // degrees between dots
-const VISIT_RADIUS = 9;         // degrees — dot turns blue if within this range of a visited centroid
-const DOT_SIZE = 0.0075;
-const LAND_MASK_URL = 'https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-day.jpg';
+/* ─── design tokens ─────────────────────────────────────── */
+const ACCENT     = '#0ea5e9';
+const ACCENT_HEX = 0x0ea5e9;
 
+/* ─── globe constants ───────────────────────────────────── */
+const R              = 0.78;
+const DOT_STEP       = 1.8;
+const VISIT_RADIUS   = 9;
+const DOT_SIZE       = 0.0075;
+const LAND_MASK_URL  = '/earth-texture.jpg';
+
+/* ─── country centroids ─────────────────────────────────── */
 const CENTROIDS: Record<string, [number, number]> = {
     'SOUTH KOREA': [37.5, 127.0], 'KOREA': [37.5, 127.0],
     'JAPAN': [36.2, 138.2],
@@ -115,90 +128,186 @@ const toVec3 = (lat: number, lng: number, r: number): THREE.Vector3 => {
 };
 
 const parseCountry = (str: string) => {
-    const [emoji = '', nameKo = '', nameEn = ''] = str.split('/');
-    return { emoji, nameKo, nameEn: nameEn.trim().toUpperCase() };
+    const parts = (str || '').split('/');
+    return {
+        emoji:  parts[0] ?? '',
+        nameKo: parts[1] ?? '',
+        nameEn: (parts[2] ?? '').trim().toUpperCase(),
+    };
 };
 
 /* ─── types ─────────────────────────────────────────────── */
 interface SelectedMark {
     nameKo: string;
     nameEn: string;
-    emoji: string;
-    trips: Trip[];
+    emoji:  string;
+    trips:  Trip[];
 }
 
-/* ─── component ─────────────────────────────────────────── */
+const EMPTY_TRIPS: Trip[] = [];
+
+/* ─── TicketCard (boarding-pass) ────────────────────────── */
+const TicketCard = ({
+    trip,
+    country,
+    onPress,
+}: {
+    trip:    Trip;
+    country: SelectedMark;
+    onPress: () => void;
+}) => (
+    <div css={ticketWrap} onClick={onPress}>
+        {/* main area */}
+        <div css={ticketMain}>
+            <div css={ticketPhotoArea}>
+                <div css={ticketPhotoOverlay} />
+                <div css={ticketPhotoMeta}>
+                    <div>
+                        <div css={ticketDestLabel}>Destination</div>
+                        <div css={ticketDestName}>{country.nameEn}</div>
+                    </div>
+                    <span css={ticketEmojiLg}>{country.emoji}</span>
+                </div>
+            </div>
+            <div css={ticketInfoArea}>
+                <div css={ticketInfoTitle}>{trip.tripTitle}</div>
+                <div css={ticketInfoDate}>
+                    {dayjs(trip.startDate).format('YY.MM.DD')} → {dayjs(trip.endDate).format('YY.MM.DD')}
+                </div>
+            </div>
+        </div>
+
+        {/* perforation */}
+        <div css={ticketPerf}>
+            <div css={ticketPerfNotchTop} />
+            <div css={ticketPerfNotchBottom} />
+        </div>
+
+        {/* stub */}
+        <div css={ticketStub}>
+            <div>
+                <div css={ticketStubLabel}>Trip</div>
+                <div css={ticketStubNum}>#{String(country.trips.length).padStart(2, '0')}</div>
+            </div>
+            <svg width="36" height="14" viewBox="0 0 36 14" fill="none">
+                <rect x="0"  y="2" width="2" height="10" fill="#111827"/>
+                <rect x="4"  y="2" width="1" height="10" fill="#111827"/>
+                <rect x="7"  y="2" width="3" height="10" fill="#111827"/>
+                <rect x="12" y="2" width="1" height="10" fill="#111827"/>
+                <rect x="15" y="2" width="2" height="10" fill="#111827"/>
+                <rect x="19" y="2" width="3" height="10" fill="#111827"/>
+                <rect x="24" y="2" width="1" height="10" fill="#111827"/>
+                <rect x="27" y="2" width="2" height="10" fill="#111827"/>
+                <rect x="31" y="2" width="3" height="10" fill="#111827"/>
+            </svg>
+        </div>
+    </div>
+);
+
+/* ─── main component ────────────────────────────────────── */
 const GlobeMapPage = () => {
-    const navigate    = useNavigate();
+    const navigate  = useNavigate();
+    const showToast = useToastStore((s) => s.showToast);
+
     const mountRef    = useRef<HTMLDivElement>(null);
     const pinsRef     = useRef<THREE.Mesh[]>([]);
-    const [selected, setSelected]     = useState<SelectedMark | null>(null);
-    const [dotsReady, setDotsReady]   = useState(false);
+    const controlsRef = useRef<OrbitControls | null>(null);
 
-    const { data: tripsResult, isLoading } = useTripTicketList(true);
+    const [dotsReady, setDotsReady] = useState(false);
+    const [selected,  setSelected]  = useState<SelectedMark | null>(null);
+    const [ctaReady,  setCtaReady]  = useState(false);
+
+    /* idle CTA timer — refs avoid stale closures inside Three.js effect */
+    const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const armCtaRef    = useRef<() => void>(() => {});
+    const disarmCtaRef = useRef<() => void>(() => {});
+
+    armCtaRef.current = () => {
+        if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+        idleTimerRef.current = setTimeout(() => setCtaReady(true), 400);
+    };
+    disarmCtaRef.current = () => {
+        if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+        setCtaReady(false);
+    };
+
+    /* data */
+    const { data: summaryResult, isLoading: isSummaryLoading } = useSummary();
+    const shouldFetchTrips = !!(summaryResult?.success && summaryResult.data);
+    const { data: tripsResult, isLoading: isTripsLoading } = useTripTicketList(shouldFetchTrips);
+    const isLoading = isSummaryLoading || (shouldFetchTrips && isTripsLoading);
     const trips: Trip[] = tripsResult?.success
         ? (tripsResult as { success: true; data: Trip[] }).data
-        : [];
+        : EMPTY_TRIPS;
+
+    const globeState = isLoading ? 'loading' : trips.length === 0 ? 'empty' : 'populated';
+    const nickname = summaryResult?.success ? summaryResult.data.nickname : '';
 
     const countriesMap = useMemo(() => {
         const map = new Map<string, { trips: Trip[]; nameKo: string; emoji: string }>();
         trips.forEach((trip) => {
+            if (!trip.country) return;
             const { nameEn, nameKo, emoji } = parseCountry(trip.country);
+            if (!nameEn) return;
             if (!map.has(nameEn)) map.set(nameEn, { trips: [], nameKo, emoji });
             map.get(nameEn)!.trips.push(trip);
         });
         return map;
     }, [trips]);
 
+    const countryCount = countriesMap.size;
+
+    /* globeState 변경 시 CTA 리셋 (자동 표시 없음 — 터치 후에만 표시) */
+    useEffect(() => {
+        setCtaReady(false);
+        if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    }, [globeState]);
+
+    /* Outfit font */
     useEffect(() => {
         if (!document.getElementById('outfit-font')) {
             const link = document.createElement('link');
-            link.id = 'outfit-font';
-            link.rel = 'stylesheet';
+            link.id = 'outfit-font'; link.rel = 'stylesheet';
             link.href = 'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap';
             document.head.appendChild(link);
         }
     }, []);
 
+    /* Three.js scene */
     useEffect(() => {
         const container = mountRef.current;
         if (!container) return;
+        setDotsReady(false);
 
-        const W = container.clientWidth;
-        const H = container.clientHeight;
+        const W = container.clientWidth, H = container.clientHeight;
 
-        /* scene setup */
         const scene    = new THREE.Scene();
         const camera   = new THREE.PerspectiveCamera(45, W / H, 0.1, 1000);
-        camera.position.set(0, 0, 3.0);
+        camera.position.set(0, 0, 3.8);
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.setSize(W, H);
-        renderer.setClearColor(0xffffff, 1);
+        renderer.setClearColor(0x000000, 0);
         container.appendChild(renderer.domElement);
 
-        scene.add(new THREE.AmbientLight(0xffffff, 1));
-
-        /* invisible sphere — gives OrbitControls something to target */
         scene.add(new THREE.Mesh(
             new THREE.SphereGeometry(R, 32, 32),
             new THREE.MeshBasicMaterial({ visible: false }),
         ));
 
-        /* orbit controls */
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping   = true;
         controls.dampingFactor   = 0.05;
         controls.rotateSpeed     = 0.45;
         controls.autoRotate      = true;
         controls.autoRotateSpeed = 0.45;
-        controls.minDistance     = 2.0;
+        controls.minDistance     = 2.7;
         controls.maxDistance     = 7.0;
         controls.enablePan       = false;
         controls.enableZoom      = false;
+        controlsRef.current = controls;
 
-        /* visited centroids list */
         const visitedCentroids: Array<[number, number]> = [];
         countriesMap.forEach((_, nameEn) => {
             const c = CENTROIDS[nameEn];
@@ -207,14 +316,11 @@ const GlobeMapPage = () => {
 
         const rings: Array<{ mesh: THREE.Mesh; t: number }> = [];
 
-        /* ── build dot globe from land mask ── */
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-
         const buildDots = (pixels: Uint8ClampedArray, CW: number, CH: number) => {
             const isLand = (lat: number, lng: number): boolean => {
+                if (CW === 0) return false;
                 const px  = Math.min(CW - 1, Math.max(0, Math.floor((lng + 180) / 360 * CW)));
-                const py  = Math.min(CH - 1, Math.max(0, Math.floor((90 - lat) / 180 * CH)));
+                const py  = Math.min(CH - 1, Math.max(0, Math.floor((90 - lat)  / 180 * CH)));
                 const idx = (py * CW + px) * 4;
                 const r   = pixels[idx], g = pixels[idx + 1], b = pixels[idx + 2];
                 return !(b > r * 1.2 && b > g * 1.1 && b > 100);
@@ -227,24 +333,19 @@ const GlobeMapPage = () => {
                 return false;
             };
 
-            const grayPos: THREE.Vector3[] = [];
-            const bluePos: THREE.Vector3[] = [];
+            const grayPos: THREE.Vector3[] = [], bluePos: THREE.Vector3[] = [];
 
             for (let lat = -88; lat <= 88; lat += DOT_STEP) {
                 for (let lng = -180; lng < 180; lng += DOT_STEP) {
                     if (!isLand(lat, lng)) continue;
                     const pos = toVec3(lat, lng, R);
-                    if (visitedCentroids.length > 0 && isNearVisited(lat, lng)) {
-                        bluePos.push(pos);
-                    } else {
-                        grayPos.push(pos);
-                    }
+                    (visitedCentroids.length > 0 && isNearVisited(lat, lng) ? bluePos : grayPos).push(pos);
                 }
             }
 
-            const dotGeo  = new THREE.CircleGeometry(DOT_SIZE, 5);
-            const dummy   = new THREE.Object3D();
-            const UP      = new THREE.Vector3(0, 0, 1);
+            const dotGeo = new THREE.CircleGeometry(DOT_SIZE, 5);
+            const dummy  = new THREE.Object3D();
+            const UP     = new THREE.Vector3(0, 0, 1);
 
             const addMesh = (positions: THREE.Vector3[], color: number) => {
                 if (!positions.length) return;
@@ -260,21 +361,19 @@ const GlobeMapPage = () => {
                 scene.add(mesh);
             };
 
-            addMesh(grayPos, 0xc4cad6);   // unvisited land — light gray
-            addMesh(bluePos, 0x3b82f6);   // visited country region — blue
+            addMesh(grayPos, 0xc4cad6);
+            addMesh(bluePos, ACCENT_HEX);
 
-            /* clickable pins for visited countries */
             pinsRef.current = [];
             countriesMap.forEach(({ trips: ct, nameKo, emoji }, nameEn) => {
                 const coords = CENTROIDS[nameEn];
                 if (!coords) return;
-                const [lat, lng] = coords;
-                const pos    = toVec3(lat, lng, R);
+                const pos    = toVec3(coords[0], coords[1], R);
                 const normal = pos.clone().normalize();
 
                 const pin = new THREE.Mesh(
                     new THREE.SphereGeometry(0.028, 12, 12),
-                    new THREE.MeshBasicMaterial({ color: 0x1d4ed8 }),
+                    new THREE.MeshBasicMaterial({ color: ACCENT_HEX }),
                 );
                 pin.position.copy(pos);
                 pin.userData = { nameEn, nameKo, emoji, trips: ct };
@@ -284,7 +383,7 @@ const GlobeMapPage = () => {
                 const ring = new THREE.Mesh(
                     new THREE.RingGeometry(0.038, 0.06, 32),
                     new THREE.MeshBasicMaterial({
-                        color: 0x3b82f6, transparent: true, opacity: 0.6,
+                        color: ACCENT_HEX, transparent: true, opacity: 0.6,
                         side: THREE.DoubleSide, depthWrite: false,
                     }),
                 );
@@ -297,6 +396,8 @@ const GlobeMapPage = () => {
             setDotsReady(true);
         };
 
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
         img.onload = () => {
             try {
                 const CW = 720, CH = 360;
@@ -304,42 +405,45 @@ const GlobeMapPage = () => {
                 cvs.width = CW; cvs.height = CH;
                 const ctx = cvs.getContext('2d')!;
                 ctx.drawImage(img, 0, 0, CW, CH);
-                const pixels = ctx.getImageData(0, 0, CW, CH).data;
-                buildDots(pixels, CW, CH);
-            } catch {
-                /* CORS fallback: dots based on centroids only */
-                buildDots(new Uint8ClampedArray(0), 0, 0);
-            }
+                buildDots(ctx.getImageData(0, 0, CW, CH).data, CW, CH);
+            } catch { buildDots(new Uint8ClampedArray(0), 0, 0); }
         };
         img.onerror = () => buildDots(new Uint8ClampedArray(0), 0, 0);
         img.src = LAND_MASK_URL;
 
-        /* pointer hit detection */
+        /* pointer: drag detection + pin raycasting */
+        const ray = new THREE.Raycaster();
         let dragged = false, downX = 0, downY = 0;
-        const onDown = (e: PointerEvent) => { dragged = false; downX = e.clientX; downY = e.clientY; };
-        const onMove = (e: PointerEvent) => { if (Math.hypot(e.clientX - downX, e.clientY - downY) > 6) dragged = true; };
-        const onUp   = (e: PointerEvent) => {
-            if (dragged) return;
+        const onDown = (e: PointerEvent) => {
+            dragged = false; downX = e.clientX; downY = e.clientY;
+            disarmCtaRef.current();
+            controls.autoRotate = false;
+        };
+        const onMove = (e: PointerEvent) => {
+            if (Math.hypot(e.clientX - downX, e.clientY - downY) > 6) dragged = true;
+        };
+        const onUp = (e: PointerEvent) => {
+            if (dragged) { armCtaRef.current(); return; }
             const rect = renderer.domElement.getBoundingClientRect();
             const x =  ((e.clientX - rect.left) / rect.width)  * 2 - 1;
             const y = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
-            const ray = new THREE.Raycaster();
             ray.setFromCamera(new THREE.Vector2(x, y), camera);
             const hits = ray.intersectObjects(pinsRef.current);
             if (hits.length > 0) {
                 const { nameEn, nameKo, emoji, trips: t } = hits[0].object.userData;
                 setSelected({ nameEn, nameKo, emoji, trips: t });
                 controls.autoRotate = false;
+                disarmCtaRef.current();
             } else {
                 setSelected(null);
                 controls.autoRotate = true;
+                armCtaRef.current();
             }
         };
         renderer.domElement.addEventListener('pointerdown', onDown);
         renderer.domElement.addEventListener('pointermove', onMove);
         renderer.domElement.addEventListener('pointerup',   onUp);
 
-        /* resize */
         const onResize = () => {
             const w = container.clientWidth, h = container.clientHeight;
             camera.aspect = w / h;
@@ -348,10 +452,9 @@ const GlobeMapPage = () => {
         };
         window.addEventListener('resize', onResize);
 
-        /* render loop */
-        let id: number;
+        let rafId: number;
         const animate = () => {
-            id = requestAnimationFrame(animate);
+            rafId = requestAnimationFrame(animate);
             rings.forEach((r) => {
                 r.t = (r.t + 0.007) % 1;
                 r.mesh.scale.setScalar(1 + r.t * 2.2);
@@ -363,124 +466,137 @@ const GlobeMapPage = () => {
         animate();
 
         return () => {
-            cancelAnimationFrame(id);
+            cancelAnimationFrame(rafId);
             renderer.domElement.removeEventListener('pointerdown', onDown);
             renderer.domElement.removeEventListener('pointermove', onMove);
             renderer.domElement.removeEventListener('pointerup',   onUp);
             window.removeEventListener('resize', onResize);
             controls.dispose();
             renderer.dispose();
+            controlsRef.current = null;
             if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement);
         };
     }, [countriesMap]);
 
-    const countryCount = countriesMap.size;
+    const handleCreateFirst = async () => {
+        const result = await toResult(() => tripAPI.createNewTrip());
+        if (result.success) {
+            navigate(ROUTES.PATH.TRIP.NEW(result.data.tripKey!));
+        } else {
+            showToast(result.error);
+        }
+    };
+
+    const closeCard = () => {
+        setSelected(null);
+        if (controlsRef.current) controlsRef.current.autoRotate = true;
+        armCtaRef.current();
+    };
 
     return (
         <div css={page}>
-            {/* header */}
-            <div css={header}>
-                <button css={backBtn} onClick={() => navigate(ROUTES.PATH.MAIN)} aria-label="뒤로">
-                    <ChevronLeft size={20} />
-                </button>
-                <span css={headerTitle}>내 여행 지구본</span>
-                {trips.length > 0 && (
-                    <div css={statsPill}>
-                        <span css={statsNum}>{countryCount}</span>
-                        <span css={statsLabel}>개국</span>
-                    </div>
-                )}
-            </div>
-
-            {/* globe canvas */}
+            {/* Three.js — transparent WebGL over CSS gradient */}
             <div ref={mountRef} css={canvas} />
 
-            {/* legend */}
-            {!isLoading && dotsReady && !selected && (
-                <div css={legend}>
-                    <span css={legendDot(false)} />
-                    <span css={legendText}>미방문</span>
-                    <span css={legendDot(true)} />
-                    <span css={legendText}>방문</span>
+            {/* Editorial header */}
+            {globeState !== 'loading' && (
+                <div css={editorialHeader}>
+                    {globeState === 'populated' && (
+                        <div css={countryDisplay}>
+                            <span css={countryNum}>{countryCount}</span>
+                            <div css={countryLabels}>
+                                <span css={countriesLabel}>COUNTRIES</span>
+                                <span css={visitedLabel}>방문한 지역</span>
+                            </div>
+                        </div>
+                    )}
+                    {globeState === 'empty' && (
+                        <div css={welcomeDisplay}>
+                            <span css={welcomeLabel}>WELCOME</span>
+                            <span css={welcomeName}>{nickname ? `${nickname}님` : '안녕하세요'}</span>
+                        </div>
+                    )}
                 </div>
             )}
 
-            {/* stats bar */}
-            {!isLoading && trips.length > 0 && dotsReady && !selected && (
-                <div css={statsBar}>
-                    <div css={statsItem}>
-                        <span css={statsItemNum}>{countryCount}</span>
-                        <span css={statsItemLabel}>방문 국가</span>
-                    </div>
-                    <div css={statsDivider} />
-                    <div css={statsItem}>
-                        <span css={statsItemNum}>{trips.length}</span>
-                        <span css={statsItemLabel}>총 여행</span>
-                    </div>
-                    <div css={statsDivider} />
-                    <div css={statsItem}>
-                        <MapPin size={12} css={pinIconBlue} />
-                        <span css={statsItemLabel}>핀을 탭하세요</span>
+            {/* Hint pill */}
+            {dotsReady && !ctaReady && !selected && globeState !== 'loading' && (
+                <div css={hintPill}>
+                    <div css={hintPillInner}>
+                        {globeState === 'populated' && <span css={hintDot} />}
+                        <span css={hintText}>
+                            {globeState === 'empty'
+                                ? '지구본을 돌려보세요'
+                                : '핀을 탭하거나 지구본을 돌려보세요'}
+                        </span>
                     </div>
                 </div>
             )}
 
-            {/* country bottom sheet */}
+            {/* Empty: CTA card */}
+            {globeState === 'empty' && dotsReady && (
+                <div css={emptyCard(ctaReady)}>
+                    <div css={emptyCardHead}>
+                        <div css={emptyIconBox}>
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                                stroke={ACCENT} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.2.6-.6.5-1.1z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p css={emptyCardTitle}>첫 여행을 기록해볼까요?</p>
+                            <p css={emptyCardSub}>티켓 하나만 있으면 지구본이 채워져요</p>
+                        </div>
+                    </div>
+                    <button css={emptyCtaBtn} onClick={handleCreateFirst}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        첫 티켓 만들기
+                    </button>
+                </div>
+            )}
+
+            {/* Populated: bottom entry button */}
+            {globeState === 'populated' && !selected && (
+                <button css={ticketEntry(ctaReady)} onClick={() => navigate(ROUTES.PATH.TICKETS)}>
+                    <div css={ticketEntryIcon}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke={ACCENT} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/>
+                            <path d="M13 5v14"/>
+                        </svg>
+                    </div>
+                    <div css={ticketEntryText}>
+                        <span css={ticketEntryTitle}>내 티켓 {trips.length}장</span>
+                        <span css={ticketEntrySub}>리스트로 보기 · 새 티켓 추가</span>
+                    </div>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="#cbd5e1" strokeWidth="2" strokeLinecap="round">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </button>
+            )}
+
+            {/* Floating ticket card */}
             {selected && (
-                <div css={backdrop} onClick={() => setSelected(null)}>
-                    <div css={card} onClick={(e) => e.stopPropagation()}>
-                        <div css={handle} />
-                        <div css={cardHead}>
-                            <div css={cardEmojiWrap}>
-                                <span css={cardEmoji}>{selected.emoji}</span>
-                            </div>
-                            <div css={cardHeadText}>
-                                <p css={cardNameKo}>{selected.nameKo}</p>
-                                <p css={cardNameEn}>{selected.nameEn}</p>
-                            </div>
-                            <div css={cardBadgeWrap}>
-                                <span css={cardBadgeNum}>{selected.trips.length}</span>
-                                <span css={cardBadgeLabel}>번 방문</span>
-                            </div>
-                        </div>
-                        <div css={tripList}>
-                            {selected.trips.map((trip, i) => (
-                                <button
-                                    key={trip.tripKey}
-                                    css={tripRow(i)}
-                                    onClick={() => navigate(ROUTES.PATH.TRIP.ROOT(trip.tripKey!))}
-                                >
-                                    <span css={tripIndex}>{String(i + 1).padStart(2, '0')}</span>
-                                    <div css={tripInfo}>
-                                        <p css={tripTitle}>{trip.tripTitle}</p>
-                                        <p css={tripDate}>
-                                            {dayjs(trip.startDate).format('YY.MM.DD')} — {dayjs(trip.endDate).format('YY.MM.DD')}
-                                        </p>
-                                    </div>
-                                    <ChevronRight size={14} css={tripArrow} />
-                                </button>
-                            ))}
-                        </div>
+                <div css={floatingBackdrop} onClick={closeCard}>
+                    <div onClick={(e) => e.stopPropagation()}>
+                        <TicketCard
+                            trip={selected.trips[0]}
+                            country={selected}
+                            onPress={() => navigate(ROUTES.PATH.TRIP.ROOT(selected.trips[0].tripKey!))}
+                        />
                     </div>
                 </div>
             )}
 
-            {/* loading */}
-            {(!dotsReady) && (
+            {/* Loading */}
+            {!dotsReady && (
                 <div css={loadingWrap}>
                     <div css={loadingOrb} />
                     <p css={loadingText}>지구본 로딩 중</p>
-                </div>
-            )}
-
-            {/* empty */}
-            {!isLoading && trips.length === 0 && dotsReady && (
-                <div css={emptyWrap}>
-                    <div css={emptyOrb}>
-                        <MapPin size={18} css={emptyIcon} />
-                    </div>
-                    <p css={emptyTitle}>아직 여행 기록이 없어요</p>
-                    <p css={emptySub}>티켓을 만들면 지구본에 표시됩니다</p>
                 </div>
             )}
         </div>
@@ -493,9 +609,9 @@ export default GlobeMapPage;
    STYLES
 ════════════════════════════════════════════ */
 
-const slideUp = keyframes`
-    from { transform: translateY(20px); opacity: 0; }
-    to   { transform: translateY(0);    opacity: 1; }
+const cardUp = keyframes`
+    from { transform: translateY(24px) scale(0.94); opacity: 0; }
+    to   { transform: translateY(0)    scale(1);    opacity: 1; }
 `;
 
 const fadeIn = keyframes`
@@ -503,323 +619,358 @@ const fadeIn = keyframes`
     to   { opacity: 1; }
 `;
 
-const sheetUp = keyframes`
-    from { transform: translateY(100%); }
-    to   { transform: translateY(0);    }
-`;
-
 const orbPulse = keyframes`
-    0%, 100% { opacity: 0.5; transform: scale(1); }
+    0%, 100% { opacity: 0.5; transform: scale(1);   }
     50%       { opacity: 1;   transform: scale(1.5); }
 `;
 
-/* ─── page ───────────────────────────────── */
+/* page */
 const page = css`
     position: relative;
     height: 100dvh;
     background: radial-gradient(ellipse at 50% 48%, #eef2ff 0%, #f8faff 50%, #ffffff 100%);
-    display: flex;
-    flex-direction: column;
     overflow: hidden;
     font-family: 'Outfit', -apple-system, sans-serif;
 `;
 
-/* ─── header ─────────────────────────────── */
-const header = css`
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    z-index: 40;
-    height: 58px;
-    padding: 0 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(255,255,255,0.85);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    animation: ${fadeIn} 0.4s ease both;
-`;
-
-const backBtn = css`
-    width: 34px; height: 34px;
-    border: none;
-    background: #f3f4f6;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    color: #374151;
-    cursor: pointer; flex-shrink: 0;
-    transition: background 0.15s, transform 0.15s;
-    -webkit-tap-highlight-color: transparent;
-    &:active { background: #e5e7eb; transform: scale(0.9); }
-`;
-
-const headerTitle = css`
-    flex: 1;
-    font-size: 15px; font-weight: 700;
-    color: #111827;
-    letter-spacing: -0.3px;
-`;
-
-const statsPill = css`
-    display: flex; align-items: baseline; gap: 2px;
-    background: #eff6ff;
-    border: 1px solid #bfdbfe;
-    border-radius: 100px;
-    padding: 4px 10px;
-    flex-shrink: 0;
-`;
-
-const statsNum = css`
-    font-size: 13px; font-weight: 800;
-    color: #2563eb;
-    letter-spacing: -0.3px;
-`;
-
-const statsLabel = css`
-    font-size: 10px; font-weight: 500;
-    color: #60a5fa;
-`;
-
-/* ─── canvas ─────────────────────────────── */
 const canvas = css`
-    flex: 1;
-    width: 100%;
+    position: absolute;
+    inset: 0;
     cursor: grab;
     &:active { cursor: grabbing; }
 `;
 
-/* ─── legend ─────────────────────────────── */
-const legend = css`
+/* editorial header */
+const editorialHeader = css`
     position: absolute;
-    top: 70px; right: 16px;
-    z-index: 20;
-    display: flex; align-items: center; gap: 6px;
-    background: rgba(255,255,255,0.88);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(0,0,0,0.06);
-    border-radius: 100px;
-    padding: 5px 12px;
-    animation: ${fadeIn} 0.5s ease 0.4s both;
+    top: 0; left: 0; right: 0;
+    padding: 54px 24px 0;
+    z-index: 40;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    pointer-events: none;
+    animation: ${fadeIn} 0.5s ease both;
 `;
 
-const legendDot = (visited: boolean) => css`
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: ${visited ? '#3b82f6' : '#c4cad6'};
-    flex-shrink: 0;
+const countryDisplay = css`
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
 `;
 
-const legendText = css`
-    font-size: 10px; font-weight: 500;
-    color: #6b7280;
-`;
-
-/* ─── stats bar ──────────────────────────── */
-const statsBar = css`
-    position: absolute;
-    bottom: 32px; left: 50%; transform: translateX(-50%);
-    z-index: 20;
-    display: flex; align-items: center;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(0,0,0,0.07);
-    border-radius: 100px;
-    padding: 10px 4px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-    white-space: nowrap;
-    animation: ${slideUp} 0.5s cubic-bezier(0.22,1,0.36,1) 0.3s both;
-`;
-
-const statsItem = css`
-    display: flex; align-items: center; gap: 5px;
-    padding: 0 16px;
-`;
-
-const statsItemNum = css`
-    font-size: 15px; font-weight: 800;
+const countryNum = css`
+    font-size: 44px;
+    font-weight: 800;
     color: #111827;
-    letter-spacing: -0.4px;
+    letter-spacing: -1.5px;
+    line-height: 1;
+    font-family: 'Outfit', sans-serif;
 `;
 
-const statsItemLabel = css`
-    font-size: 11px; font-weight: 400;
+const countryLabels = css`
+    padding-bottom: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+`;
+
+const countriesLabel = css`
+    font-size: 11px;
+    font-weight: 600;
     color: #9ca3af;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
 `;
 
-const statsDivider = css`
-    width: 1px; height: 14px;
-    background: #e5e7eb;
+const visitedLabel = css`
+    font-size: 12px;
+    font-weight: 500;
+    color: #374151;
+`;
+
+const welcomeDisplay = css`
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+`;
+
+const welcomeLabel = css`
+    font-size: 11px;
+    font-weight: 600;
+    color: #9ca3af;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+`;
+
+const welcomeName = css`
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.5px;
+`;
+
+/* hint pill */
+const hintPill = css`
+    position: absolute;
+    bottom: 44px; left: 0; right: 0;
+    display: flex; justify-content: center;
+    z-index: 10; pointer-events: none;
+    animation: ${fadeIn} 0.4s ease both;
+`;
+
+const hintPillInner = css`
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 100px;
+    border: 1px solid rgba(0,0,0,0.04);
+`;
+
+const hintDot = css`
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: ${ACCENT};
     flex-shrink: 0;
 `;
 
-const pinIconBlue = css`color: #3b82f6; flex-shrink: 0;`;
-
-/* ─── bottom sheet ───────────────────────── */
-const backdrop = css`
-    position: absolute; inset: 0;
-    z-index: 50;
-    display: flex; flex-direction: column; justify-content: flex-end;
-    background: rgba(0,0,0,0.15);
-    backdrop-filter: blur(1px);
-    -webkit-backdrop-filter: blur(1px);
-    animation: ${fadeIn} 0.2s ease both;
+const hintText = css`
+    font-size: 11px;
+    font-weight: 500;
+    color: #6b7280;
+    letter-spacing: -0.2px;
 `;
 
-const card = css`
-    background: #ffffff;
-    border: 1px solid rgba(0,0,0,0.06);
-    border-bottom: none;
-    border-radius: 24px 24px 0 0;
-    padding: 12px 20px 48px;
-    box-shadow: 0 -8px 40px rgba(0,0,0,0.08);
-    animation: ${sheetUp} 0.38s cubic-bezier(0.22,1,0.36,1) both;
+/* empty CTA card */
+const emptyCard = (visible: boolean) => css`
+    position: absolute;
+    bottom: 36px; left: 16px; right: 16px;
+    z-index: 30;
+    background: #fff;
+    border-radius: 20px;
+    padding: 18px 20px;
+    box-shadow: 0 12px 48px rgba(37,99,235,0.12), 0 4px 16px rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.04);
+    transform: ${visible ? 'translateY(0)' : 'translateY(calc(100% + 40px))'};
+    opacity: ${visible ? 1 : 0};
+    transition: transform 600ms cubic-bezier(0.22,1,0.36,1), opacity 400ms ease;
 `;
 
-const handle = css`
-    width: 32px; height: 3px;
-    background: #e5e7eb;
-    border-radius: 100px;
-    margin: 0 auto 20px;
-`;
-
-const cardHead = css`
+const emptyCardHead = css`
     display: flex; align-items: center; gap: 12px;
-    margin-bottom: 16px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #f3f4f6;
+    margin-bottom: 14px;
 `;
 
-const cardEmojiWrap = css`
+const emptyIconBox = css`
     width: 44px; height: 44px;
-    background: #f9fafb;
-    border: 1px solid #f3f4f6;
     border-radius: 14px;
+    background: ${ACCENT}18;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
 `;
 
-const cardEmoji = css`font-size: 26px; line-height: 1;`;
-
-const cardHeadText = css`flex: 1; min-width: 0;`;
-
-const cardNameKo = css`
-    font-size: 18px; font-weight: 800;
-    color: #111827; letter-spacing: -0.4px;
-    margin-bottom: 2px;
+const emptyCardTitle = css`
+    font-size: 15px; font-weight: 700;
+    color: #111827; letter-spacing: -0.3px;
+    margin-bottom: 3px;
 `;
 
-const cardNameEn = css`
-    font-size: 10px; font-weight: 500;
-    color: #9ca3af;
-    letter-spacing: 1.8px; text-transform: uppercase;
+const emptyCardSub = css`
+    font-size: 12px; color: #6b7280; line-height: 1.5;
 `;
 
-const cardBadgeWrap = css`
-    text-align: right; flex-shrink: 0;
-`;
-
-const cardBadgeNum = css`
-    display: block;
-    font-size: 22px; font-weight: 800;
-    color: #2563eb; letter-spacing: -0.5px;
-    line-height: 1;
-`;
-
-const cardBadgeLabel = css`
-    font-size: 10px; font-weight: 400;
-    color: #93c5fd;
-`;
-
-const tripList = css`display: flex; flex-direction: column;`;
-
-const tripRow = (i: number) => css`
-    display: flex; align-items: center; gap: 12px;
-    padding: 13px 0;
-    border-bottom: 1px solid #f9fafb;
-    cursor: pointer; background: none;
-    border-left: none; border-right: none; border-top: none;
-    width: 100%; text-align: left;
+const emptyCtaBtn = css`
+    width: 100%; padding: 13px 0;
+    border-radius: 12px;
+    background: ${ACCENT}; color: #fff;
+    border: none;
+    font-size: 14px; font-weight: 700; letter-spacing: -0.2px;
+    cursor: pointer; font-family: inherit;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    box-shadow: 0 6px 20px ${ACCENT}50;
     -webkit-tap-highlight-color: transparent;
-    transition: opacity 0.15s;
-    animation: ${slideUp} 0.3s cubic-bezier(0.22,1,0.36,1) ${i * 0.055}s both;
-    &:last-child { border-bottom: none; }
-    &:active { opacity: 0.5; }
+    &:active { opacity: 0.85; transform: scale(0.98); }
 `;
 
-const tripIndex = css`
-    font-size: 10px; font-weight: 700;
-    color: #d1d5db;
-    letter-spacing: 0.3px;
-    min-width: 18px;
+/* populated bottom entry */
+const ticketEntry = (visible: boolean) => css`
+    position: absolute;
+    bottom: 28px; left: 16px; right: 16px;
+    z-index: 30;
+    background: #fff; border-radius: 16px;
+    padding: 14px 18px;
+    box-shadow: 0 8px 32px rgba(15,23,42,0.12), 0 2px 8px rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.04);
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer; font-family: inherit; text-align: left;
+    transform: ${visible ? 'translateY(0)' : 'translateY(calc(100% + 40px))'};
+    opacity: ${visible ? 1 : 0};
+    transition: transform 600ms cubic-bezier(0.22,1,0.36,1), opacity 400ms ease;
+    -webkit-tap-highlight-color: transparent;
+    &:active { opacity: 0.85; transform: scale(0.98); }
+`;
+
+const ticketEntryIcon = css`
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: ${ACCENT}15;
+    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
 `;
 
-const tripInfo = css`flex: 1; min-width: 0;`;
+const ticketEntryText = css`
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column; gap: 2px;
+`;
 
-const tripTitle = css`
-    font-size: 14px; font-weight: 600;
-    color: #111827;
-    letter-spacing: -0.2px;
+const ticketEntryTitle = css`
+    font-size: 14px; font-weight: 700;
+    color: #111827; letter-spacing: -0.2px;
+`;
+
+const ticketEntrySub = css`
+    font-size: 11px; color: #94a3b8;
+`;
+
+/* floating backdrop */
+const floatingBackdrop = css`
+    position: absolute; inset: 0;
+    z-index: 50;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding: 0 20px 96px;
+    animation: ${fadeIn} 200ms ease;
+`;
+
+/* ticket card */
+const ticketWrap = css`
+    display: flex;
+    width: 270px;
+    filter: drop-shadow(0 16px 40px rgba(0,0,0,0.2));
+    animation: ${cardUp} 420ms cubic-bezier(0.22,1,0.36,1);
+    cursor: pointer;
+`;
+
+const ticketMain = css`
+    flex: 1;
+    background: #fff;
+    border-radius: 14px 0 0 14px;
+    overflow: hidden;
+`;
+
+const ticketPhotoArea = css`
+    position: relative;
+    width: 100%; height: 120px;
+    background: linear-gradient(135deg, ${ACCENT} 0%, #0284c7 100%);
+`;
+
+const ticketPhotoOverlay = css`
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.5));
+`;
+
+const ticketPhotoMeta = css`
+    position: absolute;
+    bottom: 10px; left: 12px; right: 12px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    color: #fff;
+`;
+
+const ticketDestLabel = css`
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 1.5px; opacity: 0.85;
+    text-transform: uppercase;
+`;
+
+const ticketDestName = css`
+    font-size: 18px; font-weight: 800;
+    letter-spacing: -0.5px; line-height: 1;
+`;
+
+const ticketEmojiLg = css`
+    font-size: 22px; line-height: 1;
+`;
+
+const ticketInfoArea = css`
+    padding: 10px 14px 12px;
+`;
+
+const ticketInfoTitle = css`
+    font-size: 13px; font-weight: 700;
+    color: #111827; letter-spacing: -0.2px;
     margin-bottom: 3px;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 `;
 
-const tripDate = css`
-    font-size: 11px; font-weight: 400;
-    color: #9ca3af;
+const ticketInfoDate = css`
+    font-size: 10px; color: #9ca3af;
+    font-weight: 500; letter-spacing: 0.3px;
 `;
 
-const tripArrow = css`color: #d1d5db; flex-shrink: 0;`;
+const ticketPerf = css`
+    width: 1px;
+    background: repeating-linear-gradient(
+        180deg,
+        #d1d5db 0,
+        #d1d5db 3px,
+        transparent 3px,
+        transparent 6px
+    );
+    margin: 8px 0;
+    position: relative;
+`;
 
-/* ─── loading ────────────────────────────── */
+const ticketPerfNotchTop = css`
+    position: absolute; top: -8px; left: -6px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: transparent;
+    box-shadow: 0 0 0 20px #fff;
+    clip-path: inset(0 0 50% 0);
+`;
+
+const ticketPerfNotchBottom = css`
+    position: absolute; bottom: -8px; left: -6px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: transparent;
+    box-shadow: 0 0 0 20px #fff;
+    clip-path: inset(50% 0 0 0);
+`;
+
+const ticketStub = css`
+    width: 62px; background: #fff;
+    border-radius: 0 14px 14px 0;
+    padding: 14px 10px;
+    display: flex; flex-direction: column; justify-content: space-between;
+`;
+
+const ticketStubLabel = css`
+    font-size: 8px; color: #9ca3af;
+    font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+`;
+
+const ticketStubNum = css`
+    font-size: 18px; font-weight: 800;
+    color: #111827; letter-spacing: -0.5px;
+    line-height: 1; margin-top: 2px;
+`;
+
+/* loading */
 const loadingWrap = css`
     position: absolute; inset: 0;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
     gap: 12px; z-index: 10; pointer-events: none;
 `;
 
 const loadingOrb = css`
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: #3b82f6;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: ${ACCENT};
     animation: ${orbPulse} 1.4s ease-in-out infinite;
 `;
 
 const loadingText = css`
     font-size: 12px; font-weight: 500;
-    color: #9ca3af;
-    letter-spacing: 0.3px;
+    color: #9ca3af; letter-spacing: 0.3px;
 `;
-
-/* ─── empty ──────────────────────────────── */
-const emptyWrap = css`
-    position: absolute;
-    bottom: 90px; left: 0; right: 0;
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    z-index: 10; pointer-events: none;
-    animation: ${slideUp} 0.5s cubic-bezier(0.22,1,0.36,1) 0.5s both;
-`;
-
-const emptyOrb = css`
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 4px;
-`;
-
-const emptyIcon = css`color: #d1d5db;`;
-
-const emptyTitle = css`
-    font-size: 15px; font-weight: 700;
-    color: #374151;
-    letter-spacing: -0.3px;
-`;
-
-const emptySub = css`
-    font-size: 12px; font-weight: 400;
-    color: #9ca3af;
-`;
+/* eslint-disable @typescript-eslint/no-unused-vars */

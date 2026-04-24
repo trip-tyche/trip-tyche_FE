@@ -34,7 +34,7 @@ const SettingPage = () => {
         }
     }, []);
 
-    const navigateBeforePage = () => (isEditing ? setIsEditing(false) : navigate(ROUTES.PATH.MAIN));
+    const navigateBeforePage = () => (isEditing ? setIsEditing(false) : navigate(ROUTES.PATH.TICKETS));
 
     const confirmLogoutModal = () => {
         setIsModalOpen(false);
