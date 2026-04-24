@@ -255,6 +255,13 @@ const GlobeMapPage = () => {
     const nickname = summaryResult?.success ? summaryResult.data.nickname : '';
     const showNicknameSetup = summaryResult?.success && !summaryResult.data.nickname;
 
+    /* 미인증 사용자 → 로그인 페이지로 */
+    useEffect(() => {
+        if (summaryResult && (!summaryResult.success || !summaryResult.data)) {
+            navigate(ROUTES.PATH.SIGNIN, { replace: true });
+        }
+    }, [summaryResult]);
+
     /* 닉네임 설정 오버레이 */
     const queryClient = useQueryClient();
     const [nicknameInput, setNicknameInput] = useState('');
