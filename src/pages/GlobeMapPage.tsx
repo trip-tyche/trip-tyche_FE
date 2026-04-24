@@ -11,11 +11,15 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { useNavigate } from 'react-router-dom';
 
+import { useTripImages } from '@/domains/media/hooks/queries';
 import { useTripTicketList } from '@/domains/trip/hooks/queries';
-import { useSummary } from '@/domains/user/hooks/queries';
 import { Trip } from '@/domains/trip/types';
+import { NICKNAME_FORM } from '@/domains/user/constants';
+import { useNickname } from '@/domains/user/hooks/useNickname';
+import { useSummary } from '@/domains/user/hooks/queries';
 import { tripAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/shared/utils';
+import { validateUserNickName } from '@/libs/utils/validate';
 import { ROUTES } from '@/shared/constants/route';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
@@ -155,11 +159,16 @@ const TicketCard = ({
     trip:    Trip;
     country: SelectedMark;
     onPress: () => void;
-}) => (
+}) => {
+    const { data: imagesData } = useTripImages(trip.tripKey ?? '');
+    const coverPhoto = imagesData?.success ? imagesData.data?.[0]?.mediaLink : undefined;
+
+    return (
     <div css={ticketWrap} onClick={onPress}>
         {/* main area */}
         <div css={ticketMain}>
             <div css={ticketPhotoArea}>
+                {coverPhoto && <img src={coverPhoto} alt={trip.tripTitle} css={ticketCoverImg} />}
                 <div css={ticketPhotoOverlay} />
                 <div css={ticketPhotoMeta}>
                     <div>
@@ -202,7 +211,8 @@ const TicketCard = ({
             </svg>
         </div>
     </div>
-);
+    );
+};
 
 /* ─── main component ────────────────────────────────────── */
 const GlobeMapPage = () => {
@@ -242,6 +252,12 @@ const GlobeMapPage = () => {
 
     const globeState = isLoading ? 'loading' : trips.length === 0 ? 'empty' : 'populated';
     const nickname = summaryResult?.success ? summaryResult.data.nickname : '';
+    const showNicknameSetup = summaryResult?.success && !summaryResult.data.nickname;
+
+    /* 닉네임 설정 오버레이 */
+    const [nicknameInput, setNicknameInput] = useState('');
+    const nicknameValidation = validateUserNickName(nicknameInput, NICKNAME_FORM.MIN_LENGTH, NICKNAME_FORM.MAX_LENGTH);
+    const { isSubmitting, error: nicknameError, submitNickname } = useNickname(nicknameInput);
 
     const countriesMap = useMemo(() => {
         const map = new Map<string, { trips: Trip[]; nameKo: string; emoji: string }>();
@@ -599,6 +615,50 @@ const GlobeMapPage = () => {
                     <p css={loadingText}>지구본 로딩 중</p>
                 </div>
             )}
+
+            {/* Nickname setup overlay */}
+            {showNicknameSetup && (
+                <div css={nicknameOverlay}>
+                    <div css={nicknameCard}>
+                        <div css={nicknameCardEmoji}>✈️</div>
+                        <h2 css={nicknameCardTitle}>트립티케에 오신 걸 환영해요!</h2>
+                        <p css={nicknameCardSub}>여행 티켓에 표시될 닉네임을 정해주세요</p>
+
+                        <div css={nicknameInputWrap(nicknameValidation.valid || !nicknameInput)}>
+                            <input
+                                css={nicknameInputField}
+                                type="text"
+                                placeholder="닉네임 입력"
+                                value={nicknameInput}
+                                onChange={(e) => setNicknameInput(e.target.value)}
+                                maxLength={NICKNAME_FORM.MAX_LENGTH + 1}
+                                autoFocus
+                            />
+                        </div>
+
+                        {nicknameInput && !nicknameValidation.valid && (
+                            <p css={nicknameErrorMsg}>{nicknameValidation.message}</p>
+                        )}
+                        {nicknameError && <p css={nicknameErrorMsg}>{nicknameError}</p>}
+
+                        <div css={nicknameSuggestions}>
+                            {NICKNAME_FORM.SUGGESTIONS.slice(0, 4).map((s) => (
+                                <button key={s} css={nicknameSuggestionChip} onClick={() => setNicknameInput(s)}>
+                                    {s}
+                                </button>
+                            ))}
+                        </div>
+
+                        <button
+                            css={nicknameSubmitBtn(nicknameValidation.valid && !!nicknameInput && !isSubmitting)}
+                            disabled={!nicknameValidation.valid || !nicknameInput || isSubmitting}
+                            onClick={submitNickname}
+                        >
+                            {isSubmitting ? '처리 중...' : '닉네임 등록하기'}
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
@@ -865,6 +925,13 @@ const ticketPhotoArea = css`
     background: linear-gradient(135deg, ${ACCENT} 0%, #0284c7 100%);
 `;
 
+const ticketCoverImg = css`
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+`;
+
 const ticketPhotoOverlay = css`
     position: absolute; inset: 0;
     background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.5));
@@ -972,5 +1039,89 @@ const loadingOrb = css`
 const loadingText = css`
     font-size: 12px; font-weight: 500;
     color: #9ca3af; letter-spacing: 0.3px;
+`;
+
+/* nickname overlay */
+const nicknameOverlay = css`
+    position: absolute; inset: 0; z-index: 60;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    animation: ${fadeIn} 0.3s ease both;
+`;
+
+const nicknameCard = css`
+    width: 100%; max-width: 340px;
+    background: #fff;
+    border-radius: 24px;
+    padding: 28px 24px 24px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+    display: flex; flex-direction: column; align-items: center;
+    animation: ${cardUp} 0.4s cubic-bezier(0.22,1,0.36,1) both;
+`;
+
+const nicknameCardEmoji = css`
+    font-size: 36px; margin-bottom: 12px;
+`;
+
+const nicknameCardTitle = css`
+    font-size: 17px; font-weight: 800;
+    color: #0f172a; letter-spacing: -0.4px;
+    margin-bottom: 6px; text-align: center;
+`;
+
+const nicknameCardSub = css`
+    font-size: 13px; color: #64748b;
+    text-align: center; margin-bottom: 20px;
+    line-height: 1.5;
+`;
+
+const nicknameInputWrap = (valid: boolean) => css`
+    width: 100%;
+    border: 1.5px solid ${valid ? '#e2e8f0' : '#ef4444'};
+    border-radius: 12px; overflow: hidden;
+    margin-bottom: 8px;
+    transition: border-color 0.2s;
+    &:focus-within { border-color: ${valid ? ACCENT : '#ef4444'}; }
+`;
+
+const nicknameInputField = css`
+    width: 100%; padding: 12px 14px;
+    font-size: 15px; font-weight: 500;
+    border: none; outline: none;
+    font-family: inherit; color: #0f172a;
+    &::placeholder { color: #94a3b8; }
+`;
+
+const nicknameErrorMsg = css`
+    font-size: 12px; color: #ef4444;
+    align-self: flex-start; margin-bottom: 8px;
+`;
+
+const nicknameSuggestions = css`
+    display: flex; flex-wrap: wrap; gap: 6px;
+    width: 100%; margin-bottom: 20px;
+`;
+
+const nicknameSuggestionChip = css`
+    padding: 6px 12px;
+    background: #f1f5f9; border: none; border-radius: 100px;
+    font-size: 12px; color: #475569; cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s;
+    &:hover { background: #e2e8f0; }
+`;
+
+const nicknameSubmitBtn = (active: boolean) => css`
+    width: 100%; padding: 14px;
+    border-radius: 12px; border: none;
+    font-size: 15px; font-weight: 700;
+    font-family: inherit; cursor: ${active ? 'pointer' : 'not-allowed'};
+    background: ${active ? ACCENT : '#cbd5e1'};
+    color: #fff;
+    transition: background 0.2s, transform 0.1s;
+    &:active { transform: ${active ? 'scale(0.98)' : 'none'}; }
 `;
 /* eslint-disable @typescript-eslint/no-unused-vars */

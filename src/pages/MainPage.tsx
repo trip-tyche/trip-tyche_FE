@@ -1,12 +1,10 @@
 import { useEffect } from 'react';
 
 import { css, keyframes } from '@emotion/react';
-import { Bell, Globe, Settings, Plus, Hand } from 'lucide-react';
+import { Bell, Globe, Settings, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import MovableTripTicket from '@/domains/trip/components/MovableTripTicket';
 import TripTicket from '@/domains/trip/components/TripTicket';
-import { DEFAULT_TICKET } from '@/domains/trip/constants';
 import { useTripTicketList } from '@/domains/trip/hooks/queries';
 import { Trip } from '@/domains/trip/types';
 import { useSummary } from '@/domains/user/hooks/queries';
@@ -99,6 +97,11 @@ const MainPage = () => {
     const sortedTrips = myTrips && myTrips.success ? [...myTrips.data].reverse() : [];
     const tripCount = sortedTrips.length;
 
+    if (!isTripsLoading && myTrips && tripCount === 0) {
+        navigate(ROUTES.PATH.HOME, { replace: true });
+        return null;
+    }
+
     return (
         <div css={page}>
             {(isTripsLoading || isSummaryLoading) && <Indicator text='티켓 정보 불러오는 중...' />}
@@ -146,25 +149,13 @@ const MainPage = () => {
                     <Button css={addButton} onClick={createNewTrip} icon={<Plus size={22} />} />
                 </div>
 
-                {tripCount > 0 ? (
-                    <div css={tripList}>
-                        {sortedTrips.map((trip: Trip, i: number) => (
-                            <div key={trip.tripKey} css={tripItem(i)}>
-                                <TripTicket tripInfo={trip} />
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    !isTripsLoading && (
-                        <div css={emptyState}>
-                            <p css={emptyHint}>
-                                <Hand size={13} />
-                                아래 티켓을 움직여보세요
-                            </p>
-                            <MovableTripTicket trip={DEFAULT_TICKET} />
+                <div css={tripList}>
+                    {sortedTrips.map((trip: Trip, i: number) => (
+                        <div key={trip.tripKey} css={tripItem(i)}>
+                            <TripTicket tripInfo={trip} />
                         </div>
-                    )
-                )}
+                    ))}
+                </div>
             </main>
         </div>
     );
@@ -341,26 +332,6 @@ const tripList = css`
 
 const tripItem = (i: number) => css`
     animation: ${cardEnter} 0.55s cubic-bezier(0.22, 1, 0.36, 1) ${i * 0.07}s both;
-`;
-
-const emptyState = css`
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 14px;
-`;
-
-const emptyHint = css`
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-family: 'Outfit', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    color: rgba(0, 0, 0, 0.36);
-    letter-spacing: -0.1px;
 `;
 
 const skeletonList = css`
