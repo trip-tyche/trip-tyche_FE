@@ -30,9 +30,9 @@ const ACCENT_HEX = 0x0ea5e9;
 
 /* ─── globe constants ───────────────────────────────────── */
 const R              = 0.78;
-const DOT_STEP       = 1.8;
+const DOT_STEP       = 1.0;
 const VISIT_RADIUS   = 9;
-const DOT_SIZE       = 0.0075;
+const DOT_SIZE       = 0.005;
 const LAND_MASK_URL  = '/earth-texture.jpg';
 
 /* ─── country centroids ─────────────────────────────────── */
@@ -45,9 +45,9 @@ const CENTROIDS: Record<string, [number, number]> = {
     'SINGAPORE': [1.3, 103.8],
     'THAILAND': [15.9, 100.9],
     'VIETNAM': [14.1, 108.3],
-    'INDONESIA': [-0.8, 113.9],
-    'MALAYSIA': [4.2, 109.5],
-    'PHILIPPINES': [13.0, 122.0],
+    'INDONESIA': [-1.0, 116.5],
+    'MALAYSIA': [3.8, 108.5],
+    'PHILIPPINES': [12.5, 122.8],
     'CAMBODIA': [12.6, 104.9],
     'MYANMAR': [17.1, 96.9],
     'LAOS': [17.6, 102.5],
@@ -116,7 +116,7 @@ const CENTROIDS: Record<string, [number, number]> = {
     'TANZANIA': [-6.4, 34.9],
     'ETHIOPIA': [9.1, 40.5],
     'NIGERIA': [9.1, 8.7],
-    'MALDIVES': [3.2, 73.2],
+    'MALDIVES': [4.2, 73.5],
     'UZBEKISTAN': [41.4, 64.6],
     'KAZAKHSTAN': [47.2, 67.0],
 };
