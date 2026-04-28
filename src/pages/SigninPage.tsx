@@ -9,6 +9,7 @@ import LoginButton from '@/domains/user/components/LoginButton';
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { OAUTH_CONFIG } from '@/libs/apis/shared/constants';
 import { ROUTES } from '@/shared/constants/route';
+import { useToastStore } from '@/shared/stores/useToastStore';
 
 type Step = 0 | 1;
 
@@ -16,14 +17,19 @@ const SigninPage = () => {
     const [step, setStep] = useState<Step>(0);
     const navigate = useNavigate();
     const loginAsGuest = useUserStore((s) => s.loginAsGuest);
+    const showToast = useToastStore((s) => s.showToast);
 
     const handleLoginButtonClick = (provider: keyof typeof OAUTH_CONFIG.PATH) => {
         window.location.href = OAUTH_CONFIG.PATH[provider];
     };
 
-    const handleGuestClick = () => {
-        loginAsGuest();
-        navigate(ROUTES.PATH.HOME);
+    const handleGuestClick = async () => {
+        try {
+            await loginAsGuest();
+            navigate(ROUTES.PATH.HOME);
+        } catch {
+            showToast('게스트 로그인에 실패했습니다. 잠시 후 다시 시도해주세요.');
+        }
     };
 
     const handleDevLogin = async () => {

@@ -20,6 +20,7 @@ const SettingPage = () => {
 
     const nickname = useUserStore((state) => state.userInfo?.nickname);
     const logout = useUserStore((state) => state.logout);
+    const isGuest = useUserStore((state) => state.isGuest);
 
     const navigate = useNavigate();
 
@@ -46,11 +47,11 @@ const SettingPage = () => {
     };
 
     const settingButtons = [
-        {
+        ...(!isGuest ? [{
             text: '닉네임 수정',
             icon: <User size={20} color={theme.COLORS.TEXT.BLACK} />,
             handleButtonClick: () => setIsEditing(true),
-        },
+        }] : []),
         {
             text: '문의하기',
             icon: <MessageCircle size={20} color={theme.COLORS.TEXT.BLACK} />,

@@ -17,6 +17,7 @@ interface TripTicketActionSheetProps {
     onClose: () => void;
     trip: ActionSheetTrip;
     isOwner: boolean;
+    isGuest: boolean;
     isCompletedTrip: boolean;
     handler: {
         edit: (isCompletedTrip: boolean) => void;
@@ -31,6 +32,7 @@ const TripTicketActionSheet = ({
     onClose,
     trip,
     isOwner,
+    isGuest,
     isCompletedTrip,
     handler,
     onShare,
@@ -78,7 +80,7 @@ const TripTicketActionSheet = ({
 
     const destination = trip.country.split('/')[1] || '—';
 
-    const actions = isOwner
+    const actions = isOwner && !isGuest
         ? [
               { id: 'edit', label: '여행 정보 수정', sub: '제목, 날짜, 해시태그', Icon: Edit, tone: 'default' as const },
               { id: 'photo', label: '사진 관리', sub: '추가 · 삭제 · 위치 수정', Icon: Image, tone: 'default' as const },

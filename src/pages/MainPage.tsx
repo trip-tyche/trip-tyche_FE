@@ -21,6 +21,7 @@ import { useToastStore } from '@/shared/stores/useToastStore';
 const MainPage = () => {
     const login = useUserStore((state) => state.login);
     const logout = useUserStore((state) => state.logout);
+    const isGuest = useUserStore((state) => state.isGuest);
     const showToast = useToastStore((state) => state.showToast);
 
     useMapScript(); // TripRoutePage 진입 전 Google Maps 스크립트 백그라운드 로드
@@ -146,7 +147,7 @@ const MainPage = () => {
                             </p>
                         )}
                     </div>
-                    <Button css={addButton} onClick={createNewTrip} icon={<Plus size={22} />} />
+                    {!isGuest && <Button css={addButton} onClick={createNewTrip} icon={<Plus size={22} />} />}
                 </div>
 
                 <div css={tripList}>

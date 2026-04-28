@@ -34,6 +34,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const showToast = useToastStore((state) => state.showToast);
     const userInfo = useUserStore((state) => state.userInfo);
+    const isGuest = useUserStore((state) => state.isGuest);
 
     const { isModalOpen, isDeleting, isUnLinking, handler, deleteTrip, unlinkShared, closeModal } = useTicketHandler(
         tripKey!,
@@ -208,6 +209,7 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
                 onClose={() => setIsSheetOpen(false)}
                 trip={{ tripTitle, country, coverPhoto }}
                 isOwner={isOwner}
+                isGuest={isGuest}
                 isCompletedTrip={!!isCompletedTrip}
                 handler={handler}
                 onShare={() => setIsShareModalOpen(true)}

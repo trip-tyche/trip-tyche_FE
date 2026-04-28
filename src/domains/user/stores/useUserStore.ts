@@ -9,7 +9,7 @@ interface UserState {
     isGuest: boolean;
     userInfo: UserInfo | null;
     updateNickname: (nickname: string) => void;
-    loginAsGuest: () => void;
+    loginAsGuest: () => Promise<void>;
     login: (userInfo: UserInfo) => void;
     logout: () => void;
 }
@@ -29,13 +29,14 @@ const useUserStore = create<UserState>()((set, get) => ({
             },
         }));
     },
-    loginAsGuest: () => {
-        set({ isGuest: true });
+    loginAsGuest: async () => {
+        await userAPI.postGuestLogin();
     },
     login: (userInfo: UserInfo) => {
-        set(() => ({
+        set({
             userInfo,
-        }));
+            isGuest: userInfo.role === 'GUEST',
+        });
     },
     logout: async () => {
         set(() => ({
