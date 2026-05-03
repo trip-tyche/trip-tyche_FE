@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { css, keyframes } from '@emotion/react';
 import { Bell, Globe, Settings, Plus } from 'lucide-react';
@@ -27,7 +27,11 @@ const MainPage = () => {
     useMapScript(); // TripRoutePage 진입 전 Google Maps 스크립트 백그라운드 로드
 
     const { data: userInfoResult, isLoading: isSummaryLoading } = useSummary();
-    const shouldFetchTrips = userInfoResult?.success && userInfoResult.data ? true : false;
+
+    // 페이지 첫 렌더링 완료 후 trip 목록 fetch — 렌더링 전에 BE 트리거가 발화하는 것을 방지
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => { setMounted(true); }, []);
+    const shouldFetchTrips = mounted && userInfoResult?.success && userInfoResult.data ? true : false;
     const { data: myTrips, isLoading: isTripsLoading } = useTripTicketList(shouldFetchTrips);
 
     const navigate = useNavigate();
