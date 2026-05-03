@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { tripAPI } from '@/libs/apis';
+import { TripSummary } from '@/domains/trip/types';
 import { toResult } from '@/libs/apis/shared/utils';
 
 // 여행 티켓 목록 조회
@@ -18,6 +19,21 @@ export const useTripTicketList = (isEnable: boolean) => {
         },
         enabled: isEnable,
         staleTime: 0,
+    });
+};
+
+// 지구본 전용 — 경량 5개 필드, GUEST 트리거 없음
+export const useTripSummaryList = (isEnable: boolean) => {
+    return useQuery({
+        queryKey: ['trip-summary-list'],
+        queryFn: () => toResult(() => tripAPI.fetchTripSummaryList()),
+        select: (result) => {
+            return result.success
+                ? { ...result, data: result.data.trips as TripSummary[] }
+                : result;
+        },
+        enabled: isEnable,
+        staleTime: 5 * 60 * 1000,
     });
 };
 
