@@ -15,6 +15,14 @@ export interface TripInfo {
     confirmed?: boolean;
 }
 
+export interface TripSummary {
+    tripKey: string;
+    tripTitle: string;
+    country: string;
+    startDate: string;
+    endDate: string;
+}
+
 export interface Country {
     emoji: string;
     nameKo: string;
