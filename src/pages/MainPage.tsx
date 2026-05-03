@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import TripTicket from '@/domains/trip/components/TripTicket';
 import { useTripTicketList } from '@/domains/trip/hooks/queries';
 import { Trip } from '@/domains/trip/types';
+import { useShareModalStore } from '@/domains/share/stores/useShareModalStore';
 import { useSummary } from '@/domains/user/hooks/queries';
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { tripAPI } from '@/libs/apis';
@@ -33,6 +34,7 @@ const MainPage = () => {
     const shouldFetchTrips = mounted && userInfoResult?.success && userInfoResult.data ? true : false;
     const { data: myTrips, isLoading: isTripsLoading } = useTripTicketList(shouldFetchTrips);
 
+    const setTicketPageReady = useShareModalStore((state) => state.setTicketPageReady);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -61,6 +63,12 @@ const MainPage = () => {
             document.head.appendChild(link);
         }
     }, []);
+
+    useEffect(() => {
+        if (myTrips?.success) {
+            setTicketPageReady();
+        }
+    }, [myTrips, setTicketPageReady]);
 
     const createNewTrip = async () => {
         const result = await toResult(() => tripAPI.createNewTrip());

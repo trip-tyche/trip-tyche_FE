@@ -58,14 +58,14 @@ const subscribeToShareNotifications = (userId: string) => {
 
     state.client.subscribe(SOCKET_URL.TOPIC.REQUEST(userId), async (message) => {
         const { showToast } = useToastStore.getState();
-        const { openModal } = useShareModalStore.getState();
+        const { queueOrOpen } = useShareModalStore.getState();
 
         try {
             const subscribedMessage = JSON.parse(message.body);
             const messageType = subscribedMessage.type;
 
             if (messageType === 'SHARED_REQUEST') {
-                openModal(subscribedMessage.senderNickname, `${subscribedMessage.tripTitle} 여행에 초대합니다!`);
+                queueOrOpen(subscribedMessage.senderNickname, `${subscribedMessage.tripTitle} 여행에 초대합니다!`);
             } else if (messageType === 'SHARED_APPROVE') {
                 showToast('친구와 여행 메이트가 됐어요! 🎉');
                 queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
