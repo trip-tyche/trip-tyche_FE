@@ -65,7 +65,11 @@ const subscribeToShareNotifications = (userId: string) => {
             const messageType = subscribedMessage.type;
 
             if (messageType === 'SHARED_REQUEST') {
-                openModal(subscribedMessage.senderNickname, `${subscribedMessage.tripTitle} 여행에 초대합니다!`);
+                const { setPendingShareRequest } = useShareModalStore.getState();
+                setPendingShareRequest({
+                    senderNickname: subscribedMessage.senderNickname,
+                    description: `${subscribedMessage.tripTitle} 여행에 초대합니다!`,
+                });
             } else if (messageType === 'SHARED_APPROVE') {
                 showToast('친구와 여행 메이트가 됐어요! 🎉');
                 queryClient.invalidateQueries({ queryKey: ['ticket-list'] });
