@@ -13,8 +13,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { useNavigate } from 'react-router-dom';
 
 import { useTripImages } from '@/domains/media/hooks/queries';
-import { useTripTicketList } from '@/domains/trip/hooks/queries';
-import { Trip } from '@/domains/trip/types';
+import { useTripSummaryList } from '@/domains/trip/hooks/queries';
+import { TripSummary } from '@/domains/trip/types';
 import { NICKNAME_FORM } from '@/domains/user/constants';
 import { useNickname } from '@/domains/user/hooks/useNickname';
 import { useSummary } from '@/domains/user/hooks/queries';
@@ -150,13 +150,13 @@ interface SelectedMark {
     nameKo: string;
     nameEn: string;
     emoji: string;
-    trips: Trip[];
+    trips: TripSummary[];
 }
 
-const EMPTY_TRIPS: Trip[] = [];
+const EMPTY_TRIPS: TripSummary[] = [];
 
 /* ─── TicketCard (boarding-pass) ────────────────────────── */
-const TicketCard = ({ trip, country, onPress }: { trip: Trip; country: SelectedMark; onPress: () => void }) => {
+const TicketCard = ({ trip, country, onPress }: { trip: TripSummary; country: SelectedMark; onPress: () => void }) => {
     const { data: imagesData } = useTripImages(trip.tripKey ?? '');
     const coverPhoto = imagesData?.success ? imagesData.data?.[0]?.mediaLink : undefined;
 
@@ -241,9 +241,9 @@ const GlobeMapPage = () => {
     /* data */
     const { data: summaryResult, isLoading: isSummaryLoading } = useSummary();
     const shouldFetchTrips = !!(summaryResult?.success && summaryResult.data);
-    const { data: tripsResult, isLoading: isTripsLoading } = useTripTicketList(shouldFetchTrips);
+    const { data: tripsResult, isLoading: isTripsLoading } = useTripSummaryList(shouldFetchTrips);
     const isLoading = isSummaryLoading || (shouldFetchTrips && isTripsLoading);
-    const trips: Trip[] = tripsResult?.success ? (tripsResult as { success: true; data: Trip[] }).data : EMPTY_TRIPS;
+    const trips: TripSummary[] = tripsResult?.success ? (tripsResult as { success: true; data: TripSummary[] }).data : EMPTY_TRIPS;
 
     const globeState = isLoading ? 'loading' : trips.length === 0 ? 'empty' : 'populated';
     const nickname = summaryResult?.success ? summaryResult.data.nickname : '';
@@ -260,7 +260,7 @@ const GlobeMapPage = () => {
     } = useNickname(nicknameInput, () => queryClient.invalidateQueries({ queryKey: ['summary'] }));
 
     const countriesMap = useMemo(() => {
-        const map = new Map<string, { trips: Trip[]; nameKo: string; emoji: string }>();
+        const map = new Map<string, { trips: TripSummary[]; nameKo: string; emoji: string }>();
         trips.forEach((trip) => {
             if (!trip.country) return;
             const { nameEn, nameKo, emoji } = parseCountry(trip.country);
