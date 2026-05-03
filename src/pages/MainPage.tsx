@@ -8,7 +8,6 @@ import TripTicket from '@/domains/trip/components/TripTicket';
 import { useTripTicketList } from '@/domains/trip/hooks/queries';
 import { Trip } from '@/domains/trip/types';
 import { useSummary } from '@/domains/user/hooks/queries';
-import { useShareModalStore } from '@/domains/share/stores/useShareModalStore';
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { tripAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/shared/utils';
@@ -24,8 +23,6 @@ const MainPage = () => {
     const logout = useUserStore((state) => state.logout);
     const isGuest = useUserStore((state) => state.isGuest);
     const showToast = useToastStore((state) => state.showToast);
-    const { pendingShareRequest, openModal, setPendingShareRequest } = useShareModalStore();
-
     useMapScript(); // TripRoutePage 진입 전 Google Maps 스크립트 백그라운드 로드
 
     const { data: userInfoResult, isLoading: isSummaryLoading } = useSummary();
@@ -42,14 +39,6 @@ const MainPage = () => {
         sessionStorage.removeItem('recentPinPointId');
         sessionStorage.removeItem('imageDates');
     }, []);
-
-    // trips 로드 완료 후 pending 공유 신청 모달 표시 (WS 도착 시점과 페이지 렌더링 시점 분리)
-    useEffect(() => {
-        if (myTrips?.success && pendingShareRequest) {
-            openModal(pendingShareRequest.senderNickname, pendingShareRequest.description);
-            setPendingShareRequest(null);
-        }
-    }, [myTrips?.success, pendingShareRequest, openModal, setPendingShareRequest]);
 
     useEffect(() => {
         if (userInfoResult) {
