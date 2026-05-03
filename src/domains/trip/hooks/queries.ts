@@ -17,6 +17,7 @@ export const useTripTicketList = (isEnable: boolean) => {
                 : result;
         },
         enabled: isEnable,
+        staleTime: 0,
     });
 };
 

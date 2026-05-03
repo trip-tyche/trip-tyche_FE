@@ -27,7 +27,7 @@ var baseConfig = {
         }),
         tsconfigPaths(),
         visualizer({
-            open: true,
+            open: process.env.CI !== 'true',
             gzipSize: true,
         }),
     ],

@@ -7,6 +7,7 @@ export const useSummary = () =>
     useQuery({
         queryKey: ['summary'],
         queryFn: () => toResult(() => userAPI.fetchUserInfo()),
+        staleTime: 0,
         select: (result) => {
             return result.success
                 ? {
