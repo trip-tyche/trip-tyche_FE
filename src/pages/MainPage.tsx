@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { css, keyframes } from '@emotion/react';
 import { Bell, Globe, Settings, Plus } from 'lucide-react';
@@ -10,7 +10,7 @@ import { Trip } from '@/domains/trip/types';
 import { useShareModalStore } from '@/domains/share/stores/useShareModalStore';
 import { useSummary } from '@/domains/user/hooks/queries';
 import useUserStore from '@/domains/user/stores/useUserStore';
-import { tripAPI } from '@/libs/apis';
+import { notificationAPI, tripAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/shared/utils';
 import Button from '@/shared/components/common/Button';
 import Indicator from '@/shared/components/common/Spinner/Indicator';
@@ -35,6 +35,8 @@ const MainPage = () => {
     const { data: myTrips, isLoading: isTripsLoading } = useTripTicketList(shouldFetchTrips);
 
     const setTicketPageReady = useShareModalStore((state) => state.setTicketPageReady);
+    const openModal = useShareModalStore((state) => state.openModal);
+    const pendingModalShown = useRef(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -65,10 +67,32 @@ const MainPage = () => {
     }, []);
 
     useEffect(() => {
-        if (myTrips?.success) {
-            setTicketPageReady();
-        }
-    }, [myTrips, setTicketPageReady]);
+        if (!myTrips?.success) return;
+        setTicketPageReady();
+
+        if (pendingModalShown.current || !userInfoResult?.success) return;
+        const { userId } = userInfoResult.data;
+
+        (async () => {
+            const notifResult = await toResult(() =>
+                notificationAPI.fetchNotificationList(userId),
+            );
+            if (!notifResult.success) return;
+
+            const pending = notifResult.data.find(
+                (n) => n.message === 'SHARED_REQUEST' && n.status === 'UNREAD',
+            );
+            if (!pending) return;
+
+            const detailResult = await toResult(() =>
+                notificationAPI.fetchNotificationDetail(pending.notificationId),
+            );
+            if (!detailResult.success) return;
+
+            openModal(detailResult.data.senderNickname, `${detailResult.data.tripTitle} 여행에 초대합니다!`);
+            pendingModalShown.current = true;
+        })();
+    }, [myTrips, setTicketPageReady, openModal, userInfoResult]);
 
     const createNewTrip = async () => {
         const result = await toResult(() => tripAPI.createNewTrip());
