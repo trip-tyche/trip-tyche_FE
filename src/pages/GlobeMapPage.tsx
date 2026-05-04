@@ -18,10 +18,12 @@ import { TripSummary } from '@/domains/trip/types';
 import { NICKNAME_FORM } from '@/domains/user/constants';
 import { useNickname } from '@/domains/user/hooks/useNickname';
 import { useSummary } from '@/domains/user/hooks/queries';
+import useUserStore from '@/domains/user/stores/useUserStore';
 import { tripAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/shared/utils';
 import { validateUserNickName } from '@/libs/utils/validate';
 import { ROUTES } from '@/shared/constants/route';
+import { MESSAGE } from '@/shared/constants/ui';
 import { useToastStore } from '@/shared/stores/useToastStore';
 
 /* ─── design tokens ─────────────────────────────────────── */
@@ -215,6 +217,8 @@ const TicketCard = ({ trip, country, onPress }: { trip: TripSummary; country: Se
 const GlobeMapPage = () => {
     const navigate = useNavigate();
     const showToast = useToastStore((s) => s.showToast);
+    const login = useUserStore((state) => state.login);
+    const logout = useUserStore((state) => state.logout);
 
     const mountRef = useRef<HTMLDivElement>(null);
     const pinsRef = useRef<THREE.Mesh[]>([]);
@@ -248,6 +252,17 @@ const GlobeMapPage = () => {
     const globeState = isLoading ? 'loading' : trips.length === 0 ? 'empty' : 'populated';
     const nickname = summaryResult?.success ? summaryResult.data.nickname : '';
     const showNicknameSetup = summaryResult?.success && !summaryResult.data.nickname;
+
+    useEffect(() => {
+        if (summaryResult) {
+            if (summaryResult.success) {
+                login(summaryResult.data);
+            } else {
+                logout();
+                showToast(summaryResult.error || MESSAGE.ERROR.UNKNOWN);
+            }
+        }
+    }, [summaryResult, login, logout, showToast]);
 
     /* 닉네임 설정 오버레이 */
     const queryClient = useQueryClient();
