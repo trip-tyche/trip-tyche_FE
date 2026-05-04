@@ -5,15 +5,17 @@ import { Outlet } from 'react-router-dom';
 
 import GlobalShareModal from '@/domains/share/components/GlobalShareModal';
 import { useShareModalStore } from '@/domains/share/stores/useShareModalStore';
-import useUserStore from '@/domains/user/stores/useUserStore';
+import { useSummary } from '@/domains/user/hooks/queries';
 import { socket } from '@/libs/socket';
 import Toast from '@/shared/components/common/Toast';
 import theme from '@/shared/styles/theme';
 
 const RootLayout = () => {
-    const userId = useUserStore((state) => state.userInfo?.userId);
     const { senderNickname, description } = useShareModalStore();
     const { connect, disconnect } = socket;
+
+    const { data: summaryResult } = useSummary();
+    const userId = summaryResult?.success ? summaryResult.data.userId : undefined;
 
     useEffect(() => {
         if (userId) {
