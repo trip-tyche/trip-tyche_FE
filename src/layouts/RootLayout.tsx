@@ -18,6 +18,7 @@ const RootLayout = () => {
     const userId = summaryResult?.success ? summaryResult.data.userId : undefined;
 
     useEffect(() => {
+        console.log('[RootLayout] userId effect', { userId, path: location.pathname, t: Date.now() });
         if (userId) {
             connect(String(userId));
         }

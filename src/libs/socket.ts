@@ -16,6 +16,7 @@ const connect = (userId: string) => {
     if (state.client && state.isConnected && state.userId === userId) {
         return state.client;
     }
+    console.log('[socket] connect()', { userId, path: location.pathname, t: Date.now() });
     state.userId = userId;
 
     const client = new Client({
@@ -26,6 +27,7 @@ const connect = (userId: string) => {
     });
 
     client.onConnect = () => {
+        console.log('[socket] CONNECTED', { path: location.pathname, t: Date.now() });
         state.isConnected = true;
         subscribeToShareNotifications(userId);
     };
