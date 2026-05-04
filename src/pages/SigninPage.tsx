@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { css } from '@emotion/react';
 
@@ -15,7 +14,6 @@ type Step = 0 | 1;
 
 const SigninPage = () => {
     const [step, setStep] = useState<Step>(0);
-    const navigate = useNavigate();
     const loginAsGuest = useUserStore((s) => s.loginAsGuest);
     const showToast = useToastStore((s) => s.showToast);
 
@@ -26,7 +24,7 @@ const SigninPage = () => {
     const handleGuestClick = async () => {
         try {
             await loginAsGuest();
-            navigate(ROUTES.PATH.HOME);
+            window.location.replace(ROUTES.PATH.HOME);
         } catch {
             showToast('게스트 로그인에 실패했습니다. 잠시 후 다시 시도해주세요.');
         }
