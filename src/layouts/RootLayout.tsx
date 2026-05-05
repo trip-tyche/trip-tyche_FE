@@ -5,7 +5,7 @@ import { Outlet } from 'react-router-dom';
 
 import GlobalShareModal from '@/domains/share/components/GlobalShareModal';
 import { useShareModalStore } from '@/domains/share/stores/useShareModalStore';
-import { useSummary } from '@/domains/user/hooks/queries';
+import useUserStore from '@/domains/user/stores/useUserStore';
 import { socket } from '@/libs/socket';
 import Toast from '@/shared/components/common/Toast';
 import theme from '@/shared/styles/theme';
@@ -14,15 +14,12 @@ const RootLayout = () => {
     const { senderNickname, description } = useShareModalStore();
     const { connect, disconnect } = socket;
 
-    const { data: summaryResult } = useSummary();
-    const userId = summaryResult?.success ? summaryResult.data.userId : undefined;
+    const userId = useUserStore((s) => s.userInfo?.userId);
 
     useEffect(() => {
-        console.log('[RootLayout] userId effect', { userId, path: location.pathname, t: Date.now() });
         if (userId) {
             connect(String(userId));
         }
-
         return () => {
             disconnect();
         };

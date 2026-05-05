@@ -6,19 +6,19 @@ interface GuestButtonProps {
 
 const GuestButton = ({ onClick }: GuestButtonProps) => {
     return (
-        <button type="button" css={guestButtonStyles} onClick={onClick}>
+        <button type='button' css={guestButtonStyles} onClick={onClick}>
             <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
+                width='15'
+                height='15'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                aria-hidden='true'
             >
-                <path d="M7 17l10-10M7 7h10v10" />
+                <path d='M7 17l10-10M7 7h10v10' />
             </svg>
             게스트로 둘러보기
         </button>
@@ -41,7 +41,9 @@ const guestButtonStyles = css`
     justify-content: center;
     gap: 8px;
     cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
 
     @media (hover: hover) {
         &:hover {

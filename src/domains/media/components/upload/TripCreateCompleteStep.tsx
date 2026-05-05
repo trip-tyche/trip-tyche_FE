@@ -1,40 +1,160 @@
+import { useCallback, useEffect, useState } from 'react';
+
 import { css } from '@emotion/react';
-import { Check, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import MovableTripTicket from '@/domains/trip/components/MovableTripTicket';
+import MiniTicketPreview from '@/domains/media/components/upload/MiniTicketPreview';
+import PassportStamp from '@/domains/media/components/upload/PassportStamp';
+import { fadeUp, ink, slamEntry } from '@/domains/media/components/upload/tripUploadAnimations';
 import { TripInfo } from '@/domains/trip/types';
-import AlertBox from '@/shared/components/common/AlertBox';
 import Button from '@/shared/components/common/Button';
 import { ROUTES } from '@/shared/constants/route';
+import { useToastStore } from '@/shared/stores/useToastStore';
 
-const TripCreateCompleteStep = ({ tripInfo }: { tripInfo: TripInfo }) => {
+type Phase = 0 | 1 | 2;
+
+interface TripCreateCompleteStepProps {
+    tripInfo: TripInfo;
+    waitForBackgroundUpload: () => Promise<void>;
+    onFinalize: () => Promise<{ success: boolean; error?: string } | void>;
+    coverPhotoUrl?: string;
+    ownerNickname?: string;
+    photoCount?: number;
+}
+
+const ERROR_UPLOAD_MSG = '일부 사진 업로드에 실패했습니다. 다시 시도해 주세요.';
+const ERROR_FINALIZE_MSG = '티켓 발급에 실패했습니다.';
+
+/** YY·MM·DD 포맷. iso가 비었거나 invalid면 빈 문자열 반환. */
+const toStampDate = (iso?: string) => {
+    const dt = iso ? new Date(iso) : new Date();
+    if (isNaN(+dt)) return '';
+    const yy = String(dt.getFullYear()).slice(2);
+    const mm = String(dt.getMonth() + 1).padStart(2, '0');
+    const dd = String(dt.getDate()).padStart(2, '0');
+    return `${yy}·${mm}·${dd}`;
+};
+
+const TripCreateCompleteStep = ({
+    tripInfo,
+    waitForBackgroundUpload,
+    onFinalize,
+    coverPhotoUrl,
+    ownerNickname,
+    photoCount,
+}: TripCreateCompleteStepProps) => {
+    const [phase, setPhase] = useState<Phase>(0);
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
+    const showToast = useToastStore((state) => state.showToast);
     const navigate = useNavigate();
+
+    const stampDate = toStampDate(tripInfo.startDate) || toStampDate();
+
+    /** waitForBackgroundUpload → finalize → phase2 시퀀스. cancellation token으로 unmount 안전성 확보. */
+    const runPhases = useCallback(
+        async (signal?: { cancelled: boolean }) => {
+            const aborted = () => signal?.cancelled === true;
+            try {
+                await waitForBackgroundUpload();
+                if (aborted()) return;
+                setPhase(1);
+
+                const result = await onFinalize();
+                if (aborted()) return;
+
+                if (result && 'success' in result && !result.success) {
+                    const msg = result.error || ERROR_FINALIZE_MSG;
+                    setErrorMsg(msg);
+                    showToast(msg);
+                    return;
+                }
+                setPhase(2);
+            } catch {
+                if (aborted()) return;
+                setErrorMsg(ERROR_UPLOAD_MSG);
+                showToast(ERROR_UPLOAD_MSG);
+            }
+        },
+        [waitForBackgroundUpload, onFinalize, showToast],
+    );
+
+    useEffect(() => {
+        const signal = { cancelled: false };
+        void runPhases(signal);
+        return () => {
+            signal.cancelled = true;
+        };
+    }, [runPhases]);
+
+    const handleRetry = () => {
+        setErrorMsg(null);
+        setPhase(0);
+        void runPhases();
+    };
 
     return (
         <div css={container}>
-            <div css={content}>
-                <div css={iconWrapper}>
-                    <Check size={32} color='#059669' />
+            <div css={contentArea}>
+                <div css={titleBlock}>
+                    {phase < 2 ? (
+                        <div key={phase} css={phaseTextWrap}>
+                            <div css={kicker}>{phase === 0 ? '티켓 확인 중' : '색상 적용 중'}</div>
+                            <h2 css={waitingTitle}>{phase === 0 ? '잠시만 기다려 주세요' : '티켓을 완성하는 중...'}</h2>
+                        </div>
+                    ) : (
+                        <div css={phaseTextWrap}>
+                            <h2 css={doneTitle}>티켓이 발급되었습니다</h2>
+                            <p css={doneSubtitle}>여행이 공식 기록되었어요</p>
+                        </div>
+                    )}
                 </div>
-                <h2 css={title}>여행 등록 완료!</h2>
-                <p css={description}>{`새로운 여행이 성공적으로 등록되었습니다.\n아래 티켓을 움직여보세요.`}</p>
 
-                <MovableTripTicket trip={tripInfo} />
+                <div css={ticketArea}>
+                    <div css={ticketFilter(phase)}>
+                        <MiniTicketPreview
+                            trip={tripInfo}
+                            ownerNickname={ownerNickname}
+                            coverPhotoUrl={coverPhotoUrl}
+                            photoCount={photoCount}
+                        />
+                    </div>
+                    {phase === 2 &&
+                        Array.from({ length: 12 }).map((_, i) => {
+                            const ang = (i * 30 * Math.PI) / 180;
+                            const dist = 32 + (i % 3) * 12;
+                            const sizePx = 4 + (i % 2);
+                            return (
+                                <span
+                                    key={i}
+                                    css={inkDot}
+                                    style={{
+                                        width: sizePx,
+                                        height: sizePx,
+                                        ['--dx' as string]: `${Math.cos(ang) * dist}px`,
+                                        ['--dy' as string]: `${Math.sin(ang) * dist}px`,
+                                        animationDelay: `${0.85 + i * 0.025}s`,
+                                    }}
+                                />
+                            );
+                        })}
+                    {phase === 2 && (
+                        <div css={stampWrap}>
+                            <PassportStamp size={130} color='#dc2626' city='ENTRY' brand='TRIPTYCHE' date={stampDate} />
+                        </div>
+                    )}
+                </div>
             </div>
 
-            <div>
-                {true && (
-                    <AlertBox
-                        theme='warning'
-                        title='누락된 정보가 있습니다'
-                        description='위치 또는 날짜 정보가 없는 사진이 있습니다. 사진 관리 페이지에서 정보를 추가해 보세요'
-                        icon={<AlertCircle size={20} />}
+            <div css={footer}>
+                {errorMsg ? (
+                    <Button text='다시 시도하기' onClick={handleRetry} />
+                ) : (
+                    <Button
+                        text={phase < 2 ? '발급 중...' : '티켓 보기'}
+                        onClick={() => navigate(ROUTES.PATH.TICKETS)}
+                        disabled={phase < 2}
                     />
                 )}
-                <div css={buttonWrapper}>
-                    <Button text='여행 티켓 보러가기' onClick={() => navigate(ROUTES.PATH.TICKETS)} />
-                </div>
             </div>
         </div>
     );
@@ -44,41 +164,91 @@ const container = css`
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    overflow: hidden;
 `;
 
-const content = css`
+const contentArea = css`
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    padding: 4px 4px 12px;
 `;
 
-const iconWrapper = css`
-    margin: 24px 0;
-    background-color: #d1fae5;
-    padding: 8px;
-    border-radius: 9999px;
-`;
-
-const title = css`
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 8px;
-`;
-
-const description = css`
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 24px;
-    color: #666666;
+const titleBlock = css`
     text-align: center;
-    line-height: 1.3;
-    white-space: pre-line;
+    margin-bottom: 16px;
 `;
 
-const buttonWrapper = css`
-    width: 100%;
-    margin-top: 32px;
+const phaseTextWrap = css`
+    animation: ${fadeUp} 0.4s ease-out both;
+`;
+
+const kicker = css`
+    font-size: 10px;
+    font-weight: 700;
+    color: #cbd5e1;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+`;
+
+const waitingTitle = css`
+    font-size: 18px;
+    font-weight: 900;
+    color: #94a3b8;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+`;
+
+const doneTitle = css`
+    font-size: 20px;
+    font-weight: 900;
+    color: #0f172a;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+`;
+
+const doneSubtitle = css`
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 5px;
+    font-weight: 500;
+`;
+
+const ticketArea = css`
+    position: relative;
+`;
+
+const ticketFilter = (phase: Phase) => css`
+    filter: ${phase === 0 ? 'grayscale(1) brightness(0.82)' : 'grayscale(0) brightness(1)'};
+    transition: filter 0.9s ease-out;
+`;
+
+const inkDot = css`
+    position: absolute;
+    top: 73px;
+    right: 77px;
+    z-index: 6;
+    border-radius: 50%;
+    background: #dc2626;
+    animation: ${ink} 0.9s ease-out both;
+    transform-origin: 0 0;
+`;
+
+const stampWrap = css`
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    z-index: 7;
+    transform-origin: 50% 50%;
+    animation: ${slamEntry} 1.4s cubic-bezier(0.5, 0, 0.5, 1) both;
+`;
+
+const footer = css`
+    padding: 12px 0 0;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid #f1f5f9;
 `;
 
 export default TripCreateCompleteStep;

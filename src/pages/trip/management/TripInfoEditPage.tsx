@@ -4,12 +4,14 @@ import { css } from '@emotion/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
+import MiniTicketPreview from '@/domains/media/components/upload/MiniTicketPreview';
 import TripInfoForm from '@/domains/trip/components/TripInfoForm';
 import { FORM } from '@/domains/trip/constants';
 import { useTripFormSubmit } from '@/domains/trip/hooks/mutations';
 import { useTripInfo } from '@/domains/trip/hooks/queries';
 import { useTripFormValidation } from '@/domains/trip/hooks/useTripFormValidation';
 import { TripInfo } from '@/domains/trip/types';
+import useUserStore from '@/domains/user/stores/useUserStore';
 import { tripAPI } from '@/libs/apis';
 import { toResult } from '@/libs/apis/shared/utils';
 import Button from '@/shared/components/common/Button';
@@ -22,6 +24,7 @@ const TripInfoEditPage = () => {
     const [tripForm, setTripForm] = useState<TripInfo>(FORM.INITIAL);
     const [isTripFinalizing, setIsTripFinalizing] = useState(false);
     const showToast = useToastStore((state) => state.showToast);
+    const userInfo = useUserStore((state) => state.userInfo);
 
     const { tripKey } = useParams();
     const location = useLocation();
@@ -89,12 +92,18 @@ const TripInfoEditPage = () => {
 
             <Header title={ROUTES.PATH_TITLE.TRIPS.NEW.INFO} isBackButton onBack={() => navigate(ROUTES.PATH.TICKETS)} />
             <main css={mainStyle}>
+                <div css={previewWrapper}>
+                    <MiniTicketPreview trip={tripForm} ownerNickname={userInfo?.nickname} />
+                    <p css={previewHint}>↓ 아래를 편집하면 티켓이 실시간으로 바뀌어요</p>
+                </div>
                 <TripInfoForm isEditing={true} tripForm={tripForm} onChangeTripInfo={setTripForm} />
-                <Button
-                    text={`여행 ${isDraft ? '등록' : '수정'}하기`}
-                    onClick={handleTripFormSubmit}
-                    disabled={!isFormComplete}
-                />
+                <div css={buttonWrapper}>
+                    <Button
+                        text={`여행 ${isDraft ? '등록' : '수정'}하기`}
+                        onClick={handleTripFormSubmit}
+                        disabled={!isFormComplete}
+                    />
+                </div>
             </main>
         </div>
     );
@@ -110,8 +119,26 @@ const mainStyle = css`
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    gap: 18px;
     padding: 16px;
+    overflow-y: auto;
+`;
+
+const previewWrapper = css`
+    display: flex;
+    flex-direction: column;
+`;
+
+const previewHint = css`
+    text-align: center;
+    margin-top: 10px;
+    font-size: 10px;
+    color: #94a3b8;
+    font-weight: 600;
+`;
+
+const buttonWrapper = css`
+    margin-top: 4px;
 `;
 
 export default TripInfoEditPage;

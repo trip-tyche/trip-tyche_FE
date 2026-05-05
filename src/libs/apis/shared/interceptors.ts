@@ -32,13 +32,21 @@ export const setupRequestInterceptor = (instance: AxiosInstance) => {
     );
 };
 
+/**
+ * 응답 인터셉터.
+ *
+ * 설계 원칙:
+ * - 인증 실패(401)는 refresh 1회 시도 후 실패 시 store status를 `unauthenticated`로 설정만 한다.
+ *   라우터의 `<RequireAuth>`가 status를 보고 navigate한다 — 인터셉터가 직접 logout/redirect하지 않는다.
+ * - `apiClient.post('/v1/auth/logout')`을 인터셉터에서 호출하지 않는다 (재진입 무한루프 방지).
+ * - 실패 응답은 `Promise.reject`로 일관되게 전파한다 (Promise.resolve({}) 트릭 금지).
+ */
 export const setupResponseInterceptor = (instance: AxiosInstance) => {
     instance.interceptors.response.use(
         (response) => {
             return response.data;
         },
         async (error: AxiosError<ApiResponse<null>>) => {
-            const { logout } = useUserStore.getState();
             const { showToast } = useToastStore.getState();
 
             const originalRequest = error.config as CustomRequestConfing;
@@ -58,40 +66,31 @@ export const setupResponseInterceptor = (instance: AxiosInstance) => {
                 const httpStatus = error.response.status;
                 const { status } = error.response.data ?? {};
 
-                try {
-                    if (status === 401) {
-                        try {
-                            await axios.post(
-                                `${API_BASE_URL}/v1/auth/refresh`,
-                                {},
-                                {
-                                    withCredentials: true,
-                                },
-                            );
-                            return apiClient(originalRequest);
-                        } catch (error) {
-                            logout();
-                            return Promise.resolve({});
-                        }
-                    }
-
-                    if (status === 403) {
-                        logout();
-                        return Promise.resolve();
-                    }
-
-                    if (status === 500) {
-                        error.response.data.message = '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요';
+                if (status === 401) {
+                    try {
+                        await axios.post(`${API_BASE_URL}/v1/auth/refresh`, {}, { withCredentials: true });
+                        return apiClient(originalRequest);
+                    } catch {
+                        // 세션 만료 — 라우터 가드가 redirect를 책임진다.
+                        useUserStore.getState().setUnauthenticated();
                         return Promise.reject(error);
                     }
+                }
 
-                    // body에 status 필드가 없는 경우 (502 등 gateway 에러)
-                    if (status === undefined && httpStatus >= 500) {
-                        logout();
-                        return Promise.resolve();
+                if (status === 403) {
+                    useUserStore.getState().setUnauthenticated();
+                    return Promise.reject(error);
+                }
+
+                if (status === 500) {
+                    if (error.response.data) {
+                        error.response.data.message = '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요';
                     }
-                } catch (retryError) {
-                    return Promise.reject(retryError);
+                    return Promise.reject(error);
+                }
+
+                if (status === undefined && httpStatus >= 500) {
+                    return Promise.reject(error);
                 }
             }
 

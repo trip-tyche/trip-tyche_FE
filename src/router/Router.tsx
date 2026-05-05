@@ -1,7 +1,8 @@
-import { lazy, Suspense } from 'react';
+import { lazy, ReactNode, Suspense } from 'react';
 
 import { createBrowserRouter } from 'react-router-dom';
 
+import RequireAuth from '@/domains/user/components/RequireAuth';
 import RootLayout from '@/layouts/RootLayout';
 import ErrorPage from '@/pages/ErrorPage';
 import PageNotFound from '@/pages/PageNotFound';
@@ -24,6 +25,13 @@ const TripPages = {
     TripImageManagePage: lazy(() => import('@/pages/trip/management/TripImageManagePage')),
 };
 
+/** 인증 가드 + Suspense를 한 번에 적용하는 헬퍼. */
+const protect = (element: ReactNode) => (
+    <RequireAuth>
+        <Suspense fallback={<Indicator />}>{element}</Suspense>
+    </RequireAuth>
+);
+
 const router = createBrowserRouter([
     {
         path: ROUTES.PATH.MAIN,
@@ -36,100 +44,60 @@ const router = createBrowserRouter([
                 element: <SigninPage />,
             },
 
-            /* ── Protected (로그인 필요 — interceptor가 401 처리) ── */
+            /* ── Protected (RequireAuth가 status 기반으로 가드) ── */
             {
                 index: true,
-                element: (
-                    <Suspense fallback={<Indicator />}>
-                        <GlobeMapPage />
-                    </Suspense>
-                ),
+                element: protect(<GlobeMapPage />),
             },
             {
                 path: ROUTES.PATH.TICKETS,
-                element: (
-                    <Suspense fallback={<Indicator />}>
-                        <MainPage />
-                    </Suspense>
-                ),
+                element: protect(<MainPage />),
             },
-            ...(import.meta.env.DEV ? [{
-                path: 'preview',
-                element: (
-                    <Suspense fallback={<Indicator />}>
-                        <DevPreviewPage />
-                    </Suspense>
-                ),
-            }] : []),
+            ...(import.meta.env.DEV
+                ? [
+                      {
+                          path: 'preview',
+                          element: protect(<DevPreviewPage />),
+                      },
+                  ]
+                : []),
             {
                 path: ROUTES.PATH.SETTING,
-                element: (
-                    <Suspense fallback={<Indicator />}>
-                        <SettingPage />
-                    </Suspense>
-                ),
+                element: protect(<SettingPage />),
             },
             {
                 path: `notification/:userId`,
-                element: (
-                    <Suspense fallback={<Indicator />}>
-                        <NotificationPage />
-                    </Suspense>
-                ),
+                element: protect(<NotificationPage />),
             },
             {
                 path: 'trip/:tripKey/',
                 children: [
                     {
                         index: true,
-                        element: (
-                            <Suspense fallback={<Indicator />}>
-                                <TripPages.TripRoutePage />
-                            </Suspense>
-                        ),
+                        element: protect(<TripPages.TripRoutePage />),
                     },
                     {
                         path: 'new',
-                        element: (
-                            <Suspense fallback={<Indicator />}>
-                                <TripImageUploadPage />
-                            </Suspense>
-                        ),
+                        element: protect(<TripImageUploadPage />),
                     },
                     {
                         path: 'edit/image',
-                        element: (
-                            <Suspense fallback={<Indicator />}>
-                                <TripPages.TripImageManagePage />
-                            </Suspense>
-                        ),
+                        element: protect(<TripPages.TripImageManagePage />),
                     },
                     {
                         path: 'edit/info',
-                        element: (
-                            <Suspense fallback={<Indicator />}>
-                                <TripInfoEditPage />
-                            </Suspense>
-                        ),
+                        element: protect(<TripInfoEditPage />),
                     },
                     {
                         path: 'image',
                         children: [
                             {
                                 path: 'by-pinpoint/:pinPointId',
-                                element: (
-                                    <Suspense fallback={<Indicator />}>
-                                        <TripPages.ImageByPinpointPage />,
-                                    </Suspense>
-                                ),
+                                element: protect(<TripPages.ImageByPinpointPage />),
                             },
                             {
                                 path: 'by-date/:date',
-                                element: (
-                                    <Suspense fallback={<Indicator />}>
-                                        <TripPages.ImageByDatePage />
-                                    </Suspense>
-                                ),
+                                element: protect(<TripPages.ImageByDatePage />),
                             },
                         ],
                     },
