@@ -1,51 +1,31 @@
 import { css } from '@emotion/react';
 import { AlertCircle, Loader } from 'lucide-react';
 
-import { ImageProcessStatusType } from '@/domains/media/types';
-import { getAlertBoxMessage } from '@/domains/media/utils';
 import AlertBox from '@/shared/components/common/AlertBox';
 import Progress from '@/shared/components/common/Progress';
 import { COLORS } from '@/shared/constants/style';
 
 interface ProcessingStepProps {
-    currentProcess: ImageProcessStatusType;
-    progress: { metadata: number; upload: number };
+    progress: { metadata: number };
 }
 
-const ProcessingStep = ({ currentProcess, progress }: ProcessingStepProps) => {
-    const getTotalProgress = () => {
-        if (currentProcess === 'metadata') {
-            return Math.floor(progress.metadata * 0.1);
-        } else if (currentProcess === 'upload') {
-            return 10 + Math.floor(progress.upload * 0.9);
-        }
-        return 0;
-    };
-
+const ProcessingStep = ({ progress }: ProcessingStepProps) => {
     return (
         <div css={container}>
             <main>
-                <div css={totalProgressContainer}>
-                    <Progress title='전체 진행률' count={getTotalProgress()} size='lg' />
+                <div css={progressContainer}>
+                    <Progress title='전체 진행률' count={progress.metadata} size='lg' />
                 </div>
                 <AlertBox
                     theme='primary'
-                    title={getAlertBoxMessage(currentProcess).title}
-                    description={getAlertBoxMessage(currentProcess).description}
+                    title='사진 정보를 읽어오는 중...'
+                    description='위치, 날짜 정보를 추출하고 있어요.'
                     icon={<Loader size={16} color={COLORS.PRIMARY} style={{ animation: 'spin 1s linear infinite' }} />}
                 />
-                <div css={progressContainer}>
-                    <Progress title='메타데이터 추출' count={progress.metadata} />
-                    <Progress
-                        title='클라우드 업로드'
-                        count={currentProcess === 'metadata' ? 0 : progress.upload}
-                    />
-                </div>
             </main>
 
             <AlertBox
-                description='처리 중에는 화면을 나가지 마세요. 약 10초 정도 소요됩니다. 위치 및 날짜 정보가 없는
-                        사진은 후에 정보를 직접 추가할 수 있습니다.'
+                description='처리 중에는 화면을 나가지 마세요. 약 5초 정도 소요됩니다. 위치 및 날짜 정보가 없는 사진은 후에 정보를 직접 추가할 수 있습니다.'
                 icon={<AlertCircle size={16} color={'#4b5563'} />}
             />
         </div>
@@ -59,15 +39,8 @@ const container = css`
     justify-content: space-between;
 `;
 
-const totalProgressContainer = css`
-    margin-bottom: 24px;
-`;
-
 const progressContainer = css`
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin: 24px 0;
+    margin-bottom: 24px;
 `;
 
 export default ProcessingStep;

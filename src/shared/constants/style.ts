@@ -5,6 +5,7 @@ export const FONT_FAMILY = "'SF Pro Text', 'SF Pro Display', 'Apple SD Gothic Ne
 export const COLORS = {
     PRIMARY: '#0071e3',
     SECONDARY: '#1d1d1f',
+    TICKET_BAND: '#0f172a',
     PRIMARY_HOVER: '#0077ed',
     TEXT: {
         BLACK: '#0f172a',

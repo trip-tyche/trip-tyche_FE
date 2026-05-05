@@ -7,6 +7,7 @@ export const useNotificationList = (userId: number) => {
     return useQuery({
         queryKey: ['notification', userId],
         queryFn: () => toResult(() => notificationAPI.fetchNotificationList(userId)),
+        staleTime: 0,
     });
 };
 

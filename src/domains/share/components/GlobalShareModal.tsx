@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useShareModalStore } from '@/domains/share/stores/useShareModalStore';
 import useUserStore from '@/domains/user/stores/useUserStore';
+import { queryClient } from '@/shared/providers/TanStackProvider';
 import Avatar from '@/shared/components/common/Avatar';
 import Modal from '@/shared/components/common/Modal/Modal';
 import { ROUTES } from '@/shared/constants/route';
@@ -22,11 +23,17 @@ const GlobalShareModal = ({ senderNickname, description }: GlobalShareModalProps
 
     if (!userInfo || !isModalOpen) return null;
 
+    const handleClose = () => {
+        closeModal();
+        queryClient.invalidateQueries({ queryKey: ['summary'] });
+        queryClient.invalidateQueries({ queryKey: ['notification'] });
+    };
+
     return (
         <Modal customStyle={customModalStyle}>
             <div css={header}>
                 <h2 css={title}>티켓 공유 요청</h2>
-                <div css={xIcon} onClick={() => closeModal()}>
+                <div css={xIcon} onClick={handleClose}>
                     <X />
                 </div>
             </div>
@@ -47,7 +54,7 @@ const GlobalShareModal = ({ senderNickname, description }: GlobalShareModalProps
                 <button
                     css={backButton}
                     onClick={() => {
-                        closeModal();
+                        handleClose();
                         navigate(ROUTES.PATH.NOTIFICATION(userInfo?.userId));
                     }}
                 >

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { css, keyframes } from '@emotion/react';
 import {
     Bell, Settings, Plus, Edit, ImagePlus, Share2, Trash, ChevronLeft,
-    Clock, User, MessageCircle, LogOut, Check, AlertCircle, Info, Hand,
+    Clock, User, MessageCircle, LogOut, Check, AlertCircle, Info,
 } from 'lucide-react';
 
 import backgroundImage from '@/assets/images/background-mobile.webp';
@@ -635,7 +635,6 @@ const bentoH2 = css`
     line-height: 1.15; letter-spacing: -0.03em;
     color: #0f172a; margin-bottom: 8px;
 `;
-const bentoSubCopy = css`font-size: 12px; color: #64748b; margin-bottom: 28px;`;
 
 const bentoGrid = css`
     display: grid; grid-template-columns: 1fr 1fr;

@@ -63,7 +63,7 @@ const ImageByDatePage = () => {
 
     if (isMapScriptLoadError) {
         showToast('지도를 불러오는데 실패했습니다, 다시 시도해주세요');
-        navigate(ROUTES.PATH.MAIN);
+        navigate(ROUTES.PATH.TICKETS);
         return null;
     }
 

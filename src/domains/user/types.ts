@@ -3,4 +3,5 @@ export interface UserInfo {
     nickname: string;
     tripsCount: number;
     unreadNotificationsCount: number;
+    role: 'USER' | 'GUEST';
 }

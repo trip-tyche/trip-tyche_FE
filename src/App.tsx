@@ -2,6 +2,7 @@ import { ThemeProvider } from '@emotion/react';
 import { MantineProvider } from '@mantine/core';
 import { RouterProvider } from 'react-router-dom';
 
+import AuthProvider from '@/domains/user/components/AuthProvider';
 import router from '@/router/Router';
 import TanStackProvider from '@/shared/providers/TanStackProvider';
 import GlobalStyle from '@/shared/styles/GlobalStyle';
@@ -18,7 +19,9 @@ const App = () => {
                 <ThemeProvider theme={theme}>
                     <GlobalStyle />
                     <GoogleAutoCompleteStyle />
-                    <RouterProvider router={router} />
+                    <AuthProvider>
+                        <RouterProvider router={router} />
+                    </AuthProvider>
                 </ThemeProvider>
             </MantineProvider>
         </TanStackProvider>

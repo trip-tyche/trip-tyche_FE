@@ -51,3 +51,18 @@ backup/
 src/pages/trash/
 src/pages/BeforeMainPage.tsx
 .vercel
+
+# AI 도구
+.claude/
+.agents/
+.junie/
+.kiro/
+.omc/
+skills-lock.json
+CLAUDE.md
+scripts/
+package-lock.json
+
+# 디자인 핸드오프
+design_handoff_*/
+*.zip

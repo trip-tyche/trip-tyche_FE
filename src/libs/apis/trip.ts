@@ -1,10 +1,13 @@
-import { Trip } from '@/domains/trip/types';
+import { Trip, TripSummary } from '@/domains/trip/types';
 import { apiClient } from '@/libs/apis/shared/client';
 import { ApiResponse } from '@/libs/apis/shared/types';
 
 export const tripAPI = {
     // 사용자의 전체 여행 티켓 목록 조회
     fetchTripTicketList: async (): Promise<ApiResponse<{ trips: Trip[] }>> => await apiClient.get(`/v1/trips`),
+    // 지구본 전용 — 경량 5개 필드, GUEST 트리거 없음
+    fetchTripSummaryList: async (): Promise<ApiResponse<{ trips: TripSummary[] }>> =>
+        await apiClient.get(`/v1/trips?view=summary`),
     // 특정 여행의 티켓 상세 정보 조회
     fetchTripTicketInfo: async (tripKey: string): Promise<ApiResponse<Trip>> =>
         await apiClient.get(`/v1/trips/${tripKey}`),

@@ -11,15 +11,15 @@ import Toast from '@/shared/components/common/Toast';
 import theme from '@/shared/styles/theme';
 
 const RootLayout = () => {
-    const userId = useUserStore((state) => state.userInfo?.userId);
     const { senderNickname, description } = useShareModalStore();
     const { connect, disconnect } = socket;
+
+    const userId = useUserStore((s) => s.userInfo?.userId);
 
     useEffect(() => {
         if (userId) {
             connect(String(userId));
         }
-
         return () => {
             disconnect();
         };

@@ -234,7 +234,7 @@ const TripImageManagePage = () => {
             {isImageDeleting && <Indicator text='사진 삭제 중...' />}
             {isImageUpdating && <Indicator text='사진 수정 중...' />}
 
-            <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)}>
+            <Header title='사진 관리' isBackButton onBack={() => navigate(ROUTES.PATH.TICKETS)}>
                 <div>
                     {isSelectionMode ? (
                         <div

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
-import { css } from '@emotion/react';
-import { ImagePlus, Share2, Edit, Trash, Unlink, Info, Plus } from 'lucide-react';
+import { css, keyframes } from '@emotion/react';
+import { Plus, Trash } from 'lucide-react';
 
-import characterImg from '@/assets/images/character-icon.png';
 import ShareModal from '@/domains/share/components/ShareModal';
-import { TICKET } from '@/domains/trip/constants';
+import { useTripImages } from '@/domains/media/hooks/queries';
+import TripTicketActionSheet from '@/domains/trip/components/TripTicketActionSheet';
 import { Trip } from '@/domains/trip/types';
 import useUserStore from '@/domains/user/stores/useUserStore';
 import { formatHyphenToDot, formatToDot } from '@/libs/utils/date';
@@ -31,9 +31,10 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     } = tripInfo;
 
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [isSheetOpen, setIsSheetOpen] = useState(false);
     const showToast = useToastStore((state) => state.showToast);
-
     const userInfo = useUserStore((state) => state.userInfo);
+    const isGuest = useUserStore((state) => state.isGuest);
 
     const { isModalOpen, isDeleting, isUnLinking, handler, deleteTrip, unlinkShared, closeModal } = useTicketHandler(
         tripKey!,
@@ -44,56 +45,47 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     );
     const { isAnimating, handleCardClick } = useTicketNavigation(tripKey!);
 
+    const { data: imagesData } = useTripImages(tripKey ?? '');
+    const mediaFiles = imagesData?.success ? imagesData.data : undefined;
+    const coverPhoto = isCompletedTrip ? mediaFiles?.[0]?.mediaLink : undefined;
+    const photosCount = mediaFiles !== undefined ? `${mediaFiles.length}장` : '—';
+
     if (isCompletedTrip === undefined) return null;
 
     const isOwner = userInfo?.nickname === ownerNickname;
-    const countryEmoji = isCompletedTrip ? country.split('/')[0] || '' : '';
-    const destination = isCompletedTrip ? country.split('/')[1] || '' : '트립티케';
-    const formattedStartDate = isCompletedTrip ? formatToDot(startDate) : '2000-01-01';
-    const formattedEndDate = isCompletedTrip ? formatToDot(endDate) : '2000-01-01';
-    const formattedTitle = isCompletedTrip ? tripTitle : '여행이 아직 완성되지 않았어요';
+    const destination = isCompletedTrip ? country?.split('/')[1] || '' : '트립티케';
+    const formattedStartDate = isCompletedTrip ? formatToDot(startDate) : '—';
+    const formattedEndDate = isCompletedTrip ? formatToDot(endDate) : '—';
     const sharedPeople = [ownerNickname || '', ...(sharedUsersNicknames || [])];
 
+    const durationLabel = (() => {
+        if (!isCompletedTrip) return '—';
+        const days =
+            Math.round((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        return days > 1 ? `${days - 1}박 ${days}일` : '당일치기';
+    })();
+
+    const seedHue = (tripTitle.charCodeAt(0) + tripTitle.charCodeAt(tripTitle.length - 1)) % 360;
+    const fallbackBg = `linear-gradient(135deg, oklch(0.7 0.08 ${seedHue}) 0%, oklch(0.35 0.08 ${seedHue + 40}) 100%)`;
+
     return (
-        <div css={container}>
+        <div css={containerStyle}>
             {isDeleting && <Indicator text='여행 티켓 삭제 중...' />}
             {isUnLinking && <Indicator text='공유 티켓 삭제 중...' />}
 
             {!isCompletedTrip && (
-                <div css={isUncompletedTripOverlayStyle}>
-                    <div css={isUncompletedTripButtonStyle}>
+                <div css={uncompletedOverlayStyle}>
+                    <div css={uncompletedButtonsStyle}>
                         <button
-                            css={css`
-                                padding: 10px 12px;
-                                display: flex;
-                                justify-content: center;
-                                align-items: center;
-                                gap: 6px;
-                                color: ${COLORS.TEXT.DESCRIPTION};
-                                background: none;
-                                border: none;
-                                cursor: pointer;
-                            `}
+                            css={uncompletedActionStyle}
                             onClick={() => handler.edit(isCompletedTrip)}
                             aria-label="여행 정보 이어서 작성하기"
                         >
                             <Plus size={14} aria-hidden="true" /> 여행 정보 이어서 작성하기
                         </button>
-
-                        <div css={buttonSeparator} aria-hidden="true" />
-
+                        <div css={separatorStyle} aria-hidden="true" />
                         <button
-                            css={css`
-                                padding: 10px 12px;
-                                display: flex;
-                                justify-content: center;
-                                align-items: center;
-                                gap: 6px;
-                                border: none;
-                                color: ${COLORS.TEXT.ERROR};
-                                background: none;
-                                cursor: pointer;
-                            `}
+                            css={uncompletedDeleteStyle}
                             onClick={() => handler.delete()}
                             aria-label="삭제하기"
                         >
@@ -103,92 +95,125 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
                 </div>
             )}
 
-            <main css={mainStyle} onClick={handleCardClick}>
-                <header css={header(isOwner)}>
-                    <div css={headerItem}>
-                        <h3 css={labelStyle}>PASSENGER</h3>
-                        <p css={valueStyle}>{ownerNickname}</p>
-                    </div>
-                    <div css={headerItem}>
-                        <h3 css={labelStyle}>DEPART</h3>
-                        <p css={valueStyle}>{formattedStartDate}</p>
-                    </div>
-                    <div css={headerItem}>
-                        <h3 css={labelStyle}>RETURN</h3>
-                        <p css={valueStyle}>{formattedEndDate}</p>
-                    </div>
-                    <div css={headerItem}>
-                        <h3 css={labelStyle}>FLIGHT</h3>
-                        <p css={valueStyle}>TYCHE AIR</p>
-                    </div>
-                </header>
+            <div onClick={handleCardClick} css={cardClickableStyle}>
+                {/* Photo Hero */}
+                <div css={photoHeroStyle(fallbackBg)}>
+                    {coverPhoto && (
+                        <img src={coverPhoto} alt={tripTitle} css={coverPhotoStyle} />
+                    )}
+                    <div css={gradientTopStyle} />
+                    <div css={gradientBottomStyle} />
 
-                <div css={perforationStyle} />
+                    {/* TYCHE AIR badge */}
+                    <div css={badgeContainerStyle}>
+                        <span css={badgeStyle}>
+                            <span css={badgeDotStyle} />
+                            TYCHE AIR
+                        </span>
+                        {!isOwner && <span css={sharedLabelStyle}>공유받은 티켓</span>}
+                    </div>
 
-                <div css={contentStyle}>
-                    <div css={citiesStyle}>
-                        <p css={countryNameStyle}>{TICKET.DEFAULT_COUNTY}</p>
-                        <div css={dotsAndCharacterContainer}>
-                            <div css={pointDots}>
-                                <div css={startPointDot} />
-                                <div css={endPointDot} />
-                            </div>
-                            <div css={characterContainer(isAnimating)}>
-                                <img css={characterStyle} src={characterImg} alt='캐릭터' />
-                                <div css={characterShadow}></div>
-                            </div>
+                    {/* Date + Title overlay */}
+                    <div css={heroOverlayStyle}>
+                        <div css={heroDateStyle}>
+                            {formattedStartDate} — {formattedEndDate}
                         </div>
-                        <p css={countryNameStyle}>{destination}</p>
+                        <div css={heroTitleStyle}>{tripTitle}</div>
+                    </div>
+                </div>
+
+                {/* Boarding-pass band */}
+                <div css={bandStyle}>
+                    <div css={perfLeftStyle} />
+                    <div css={perfRightStyle} />
+
+                    {/* Route row */}
+                    <div css={routeRowStyle}>
+                        <div css={routeCodeStyle}>한국</div>
+                        <div css={routeLineStyle}>
+                            <div css={dashedLineStyle} />
+                            <div css={dashedLineStyle} />
+                            {isAnimating && (
+                                <svg
+                                    width="14"
+                                    height="14"
+                                    viewBox="0 0 24 24"
+                                    fill="#fff"
+                                    css={planeTraverseStyle}
+                                    aria-hidden="true"
+                                >
+                                    <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16z" />
+                                </svg>
+                            )}
+                        </div>
+                        <div css={[routeCodeStyle, css`text-align: right;`]}>{destination}</div>
                     </div>
 
-                    <div css={titleStyle}>
-                        <p css={titleLabelStyle}>Title</p>
-                        <p css={titleValueStyle}>{formattedTitle}</p>
+                    {/* Meta row */}
+                    <div css={metaRowStyle}>
+                        <div>
+                            <div css={metaLabelStyle}>PASSENGER</div>
+                            <div css={metaValueStyle}>{ownerNickname || '—'}</div>
+                        </div>
+                        <div>
+                            <div css={metaLabelStyle}>DURATION</div>
+                            <div css={metaValueStyle}>{durationLabel}</div>
+                        </div>
+                        <div>
+                            <div css={metaLabelStyle}>PHOTOS</div>
+                            <div css={[metaValueStyle, css`color: ${COLORS.PRIMARY};`]}>{photosCount}</div>
+                        </div>
                     </div>
 
-                    <div css={contentFooter}>
-                        <div css={hashtagGroup}>
+                    {/* Hashtags + ⋯ button */}
+                    <div css={tagRowStyle}>
+                        <div css={tagGroupStyle}>
                             {hashtags
                                 .filter((tag) => tag !== '')
-                                .map((tag, index) => (
-                                    <span key={index} css={hashtagStyle}>
-                                        <span css={hashSymbol}>#</span> {tag}
+                                .map((tag, i) => (
+                                    <span key={i} css={tagChipStyle}>
+                                        <span css={css`color: ${COLORS.PRIMARY}; font-weight: 700;`}>#</span>
+                                        {tag}
                                     </span>
                                 ))}
                         </div>
-                        <div css={flagStyle(isOwner)}>{countryEmoji}</div>
+                        <button
+                            aria-label="옵션 더보기"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setIsSheetOpen(true);
+                            }}
+                            css={moreButtonStyle}
+                        >
+                            <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <circle cx="5" cy="12" r="1.5" />
+                                <circle cx="12" cy="12" r="1.5" />
+                                <circle cx="19" cy="12" r="1.5" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
-            </main>
+            </div>
 
-            <footer css={buttonGroup}>
-                <button css={buttonStyle} onClick={() => handler.edit(isCompletedTrip)}>
-                    <Edit size={14} aria-hidden="true" />
-                    {isOwner ? '티켓 수정' : '정보 보기'}
-                </button>
-                <button css={buttonStyle} onClick={() => handler.images()}>
-                    <ImagePlus size={16} aria-hidden="true" />
-                    {isOwner ? '사진 관리' : '사진 보기'}
-                </button>
-                {isOwner ? (
-                    <button css={buttonStyle} onClick={() => setIsShareModalOpen(true)}>
-                        <Share2 size={16} aria-hidden="true" /> 티켓 공유
-                    </button>
-                ) : (
-                    <button css={buttonStyle} onClick={() => setIsShareModalOpen(true)}>
-                        <Info size={16} aria-hidden="true" /> 공유 정보
-                    </button>
-                )}
-                {isOwner ? (
-                    <button css={[buttonStyle, deleteButtonStyle]} onClick={() => handler.delete()}>
-                        <Trash size={14} aria-hidden="true" /> 티켓 삭제
-                    </button>
-                ) : (
-                    <button css={[buttonStyle, deleteButtonStyle]} onClick={() => handler.delete()}>
-                        <Unlink size={14} aria-hidden="true" /> 공유 해제
-                    </button>
-                )}
-            </footer>
+            <TripTicketActionSheet
+                open={isSheetOpen}
+                onClose={() => setIsSheetOpen(false)}
+                trip={{ tripTitle, country, coverPhoto }}
+                isOwner={isOwner}
+                isGuest={isGuest}
+                isCompletedTrip={!!isCompletedTrip}
+                handler={handler}
+                onShare={() => setIsShareModalOpen(true)}
+            />
 
             {isModalOpen && (
                 <ConfirmModal
@@ -220,20 +245,247 @@ const TripTicket = ({ tripInfo }: { tripInfo: Trip }) => {
     );
 };
 
-const container = css`
+/* ── Styles ────────────────────────────────────────────────────────── */
+
+const containerStyle = css`
     width: 100%;
     margin-bottom: 8px;
     position: relative;
-    transition: box-shadow 0.25s ease;
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 8px 32px rgba(0, 0, 0, 0.06);
-    border-radius: 16px;
+    border-radius: 20px;
     overflow: hidden;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+    background: ${COLORS.TICKET_BAND};
     user-select: none;
 `;
 
-const isUncompletedTripOverlayStyle = css`
+const cardClickableStyle = css`
+    cursor: pointer;
+`;
+
+const photoHeroStyle = (fallbackBg: string) => css`
+    position: relative;
+    height: 160px;
+    background: ${fallbackBg};
+    overflow: hidden;
+`;
+
+const coverPhotoStyle = css`
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+`;
+
+const gradientTopStyle = css`
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.08) 0%, transparent 30%);
+    pointer-events: none;
+`;
+
+const gradientBottomStyle = css`
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 35%, rgba(15, 23, 42, 0.75) 90%, rgba(15, 23, 42, 0.95) 100%);
+    pointer-events: none;
+`;
+
+const badgeContainerStyle = css`
+    position: absolute;
+    top: 12px;
+    left: 14px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+`;
+
+const badgeStyle = css`
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #fff;
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 100px;
+    backdrop-filter: blur(8px);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+`;
+
+const badgeDotStyle = css`
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: ${COLORS.PRIMARY};
+    flex-shrink: 0;
+`;
+
+const sharedLabelStyle = css`
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 100px;
+    padding: 3px 8px;
+    backdrop-filter: blur(8px);
+`;
+
+const heroOverlayStyle = css`
+    position: absolute;
+    bottom: 12px;
+    left: 16px;
+    right: 16px;
+    z-index: 2;
+`;
+
+const heroDateStyle = css`
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 4px;
+`;
+
+const heroTitleStyle = css`
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.3px;
+`;
+
+const bandStyle = css`
+    position: relative;
+    background: ${COLORS.TICKET_BAND};
+    color: #fff;
+    padding: 16px 18px;
+`;
+
+const perfLeftStyle = css`
+    position: absolute;
+    top: -8px;
+    left: 20px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: ${COLORS.BACKGROUND.PRIMARY};
+`;
+
+const perfRightStyle = css`
+    position: absolute;
+    top: -8px;
+    right: 20px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: ${COLORS.BACKGROUND.PRIMARY};
+`;
+
+const routeRowStyle = css`
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+`;
+
+const routeCodeStyle = css`
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: #fff;
+    flex-shrink: 0;
+`;
+
+const routeLineStyle = css`
+    flex: 1;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    position: relative;
+    overflow: hidden;
+`;
+
+const dashedLineStyle = css`
+    flex: 1;
+    height: 1px;
+    background: repeating-linear-gradient(to right, rgba(255, 255, 255, 0.4) 0 3px, transparent 3px 7px);
+`;
+
+const metaRowStyle = css`
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+`;
+
+const metaLabelStyle = css`
+    font-size: 9px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+`;
+
+const metaValueStyle = css`
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+`;
+
+const tagRowStyle = css`
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 12px;
+`;
+
+const tagGroupStyle = css`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    flex: 1;
+    min-width: 0;
+`;
+
+const tagChipStyle = css`
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 3px 9px;
+    border-radius: 100px;
+    font-size: 11px;
+    display: inline-flex;
+    gap: 2px;
+`;
+
+const moreButtonStyle = css`
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: rgba(255, 255, 255, 0.75);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.18);
+    }
+`;
+
+const uncompletedOverlayStyle = css`
     width: 100%;
     height: 100%;
     position: absolute;
@@ -247,7 +499,7 @@ const isUncompletedTripOverlayStyle = css`
     cursor: pointer;
 `;
 
-const isUncompletedTripButtonStyle = css`
+const uncompletedButtonsStyle = css`
     display: flex;
     align-items: center;
     gap: 6px;
@@ -262,268 +514,49 @@ const isUncompletedTripButtonStyle = css`
     letter-spacing: -0.224px;
 `;
 
-const mainStyle = css`
-    cursor: pointer;
-`;
-
-const header = (isOwner: boolean) => css`
+const uncompletedActionStyle = css`
+    padding: 10px 12px;
     display: flex;
-    justify-content: space-around;
-    background: ${isOwner
-        ? 'linear-gradient(135deg, #0071e3 0%, #0055d4 100%)'
-        : 'linear-gradient(135deg, #0055d4 0%, #003fa3 100%)'};
-    color: #ffffff;
-    padding: 12px 0;
-    position: relative;
-    overflow: hidden;
-`;
-
-const perforationStyle = css`
-    height: 1px;
-    background: repeating-linear-gradient(
-        to right,
-        rgba(0, 0, 0, 0.1) 0,
-        rgba(0, 0, 0, 0.1) 6px,
-        transparent 6px,
-        transparent 12px
-    );
-    margin: 0 16px;
-`;
-
-const headerItem = css`
-    display: flex;
-    flex-direction: column;
-`;
-
-const labelStyle = css`
-    font-size: 10px;
-    color: rgba(255, 255, 255, 0.6);
-    margin-bottom: 4px;
-    font-weight: 500;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-`;
-
-const valueStyle = css`
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: -0.2px;
-    color: #ffffff;
-`;
-
-const contentStyle = css`
-    width: 100%;
-    padding: 20px 20px 14px;
-    display: flex;
-    flex-direction: column;
-    background: #ffffff;
-`;
-
-const citiesStyle = css`
-    display: flex;
-    align-items: center;
-`;
-
-const countryNameStyle = css`
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: -0.4px;
-    color: #0f172a;
-`;
-
-const dotsAndCharacterContainer = css`
-    flex: 1;
-    position: relative;
-    margin: 0 12px;
-    display: flex;
-    align-items: center;
-`;
-
-const pointDots = css`
-    width: 100%;
-    height: 1px;
-    background: rgba(0, 113, 227, 0.15);
-`;
-
-const startPointDot = css`
-    position: absolute;
-    left: 0;
-    top: 50%;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: #0071e3;
-    opacity: 0.4;
-    transform: translateY(-50%);
-`;
-
-const endPointDot = css`
-    position: absolute;
-    right: 0;
-    top: 50%;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: #0071e3;
-    opacity: 0.4;
-    transform: translateY(-50%);
-`;
-
-const characterContainer = (isHovered: boolean) => css`
-    width: 40px;
-    height: 40px;
-    position: absolute;
-    left: 0;
-    transform: translateX(${isHovered ? '80%' : '0%'});
-    transition: transform 1s ease;
-    display: flex;
-    align-items: center;
     justify-content: center;
-
-    @media (prefers-reduced-motion: reduce) {
-        transition: none;
-    }
-`;
-
-const characterStyle = css`
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    z-index: 2;
-`;
-
-const characterShadow = css`
-    position: absolute;
-    bottom: -6px;
-    width: 30px;
-    height: 6px;
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
-    border-radius: 50%;
-    z-index: 1;
-`;
-
-const titleStyle = css`
-    margin: 20px 0 -8px 4px;
-    display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 6px;
-`;
-
-const titleLabelStyle = css`
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    color: rgba(15, 23, 42, 0.4);
-`;
-
-const titleValueStyle = css`
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: -0.3px;
-    color: #0f172a;
-`;
-
-const contentFooter = css`
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
-`;
-
-const hashtagGroup = css`
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 4px;
-`;
-
-const hashtagStyle = css`
-    background: rgba(0, 113, 227, 0.06);
-    color: #0055d4;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: -0.12px;
-    border: 1px solid rgba(0, 113, 227, 0.12);
-`;
-
-const hashSymbol = css`
-    color: #0071e3;
-    font-weight: 700;
-`;
-
-const flagStyle = (isOwner: boolean) => css`
-    padding: 4px 8px;
-    background-color: ${isOwner ? 'rgba(0, 113, 227, 0.08)' : '#f5f5f7'};
-    border: 1px solid ${isOwner ? 'rgba(0, 113, 227, 0.2)' : 'rgba(0,0,0,0.1)'};
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 36px;
-`;
-
-const buttonGroup = css`
-    display: flex;
-    justify-content: space-between;
-    background: #f8fafc;
-    padding: 10px 16px;
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
-    transition: background 0.25s ease;
-`;
-
-const buttonStyle = css`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px 10px;
+    color: ${COLORS.TEXT.DESCRIPTION};
+    background: none;
     border: none;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: -0.12px;
     cursor: pointer;
-    transition: color 0.15s ease, background 0.15s ease;
-    gap: 5px;
-    background: transparent;
-    color: #64748b;
-    -webkit-tap-highlight-color: transparent;
-
-    @media (hover: hover) {
-        &:hover {
-            color: #0071e3;
-            background: rgba(0, 113, 227, 0.06);
-        }
-    }
-    &:active {
-        color: #0055d4;
-        opacity: 0.8;
-    }
 `;
 
-const deleteButtonStyle = css`
-    margin-left: auto;
+const uncompletedDeleteStyle = css`
+    padding: 10px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    border: none;
     color: ${COLORS.TEXT.ERROR};
-
-    @media (hover: hover) {
-        &:hover {
-            color: ${COLORS.TEXT.ERROR};
-            background: rgba(239, 68, 68, 0.06);
-        }
-    }
-    &:active {
-        color: ${COLORS.TEXT.ERROR};
-        opacity: 0.7;
-    }
+    background: none;
+    cursor: pointer;
 `;
 
-const buttonSeparator = css`
+const separatorStyle = css`
     width: 1px;
     height: 60%;
     background: ${COLORS.BORDER};
     align-self: center;
     flex-shrink: 0;
+`;
+
+const planeTraverseKeyframes = keyframes`
+    from { left: -4px; }
+    to   { left: calc(100% - 10px); }
+`;
+
+const planeTraverseStyle = css`
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    animation: ${planeTraverseKeyframes} 900ms ease-in-out forwards;
+    pointer-events: none;
 `;
 
 export default TripTicket;

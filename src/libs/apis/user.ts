@@ -14,6 +14,8 @@ export const userAPI = {
     // 사용자 닉네임 등록 및 수정
     createNickName: async (nickname: string): Promise<ApiResponse<string>> =>
         await apiClient.patch(`/v1/users/me`, { nickname }),
+    // 게스트 로그인
+    postGuestLogin: async (): Promise<void> => await apiClient.post(`/v1/auth/guest`),
     // 로그아웃
     requestLogout: async () => await apiClient.post(`/v1/auth/logout`),
 };

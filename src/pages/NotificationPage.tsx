@@ -37,7 +37,7 @@ const NotificationPage = () => {
 
     useEffect(() => {
         if (result && !result.success) {
-            navigate(ROUTES.PATH.MAIN);
+            navigate(ROUTES.PATH.TICKETS);
             showToast(result.error || MESSAGE.ERROR.UNKNOWN);
         }
     }, [result]);
@@ -56,7 +56,7 @@ const NotificationPage = () => {
 
     return (
         <div css={page}>
-            <Header title="알림" isBackButton onBack={() => navigate(ROUTES.PATH.MAIN)} />
+            <Header title="알림" isBackButton onBack={() => navigate(ROUTES.PATH.TICKETS)} />
             <TabNavigation tabs={NOTIFICATION_TABS} activeTab={activeTab} onActiveChange={handleTabChange} />
 
             {isLoading ? (
